@@ -12,6 +12,17 @@ import Parser.Line as Line exposing (Line)
 import Tools.Loop exposing (Step(..), loop)
 import Types exposing (BlockMeta, Heading(..), PrimitiveBlock)
 
+verbatimNames : List String
+verbatimNames =
+    [ "math", "chem", "compute", "equation", "aligned", "array", "textarray", "table"
+    , "code", "verse", "verbatim"
+    , "load", "load-data", "load-files", "include"
+    , "hide", "texComment", "docinfo"
+    , "mathmacros", "textmacros"
+    , "csvtable", "chart", "svg", "quiver", "image", "tikz"
+    , "setup", "iframe", "settings"
+    ]
+
 
 {-| Parse a list of strings into a list of PrimitiveBlocks.
 -}
@@ -435,13 +446,15 @@ getOrdinaryHeading line =
         args =
             List.drop 1 parts
     in
-    { heading = Ordinary name
+    { heading = if isVerbatimName name then Verbatim name else  Ordinary name
     , args = args
     , properties = Dict.empty
     , firstLine = ""
     }
 
 
+isVerbatimName : String -> Bool
+isVerbatimName str = List.member  str verbatimNames
 
 -- VERBATIM DETECTION
 
