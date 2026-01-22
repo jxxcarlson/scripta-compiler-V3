@@ -150,3 +150,24 @@ type alias Macro =
 -}
 type alias MathMacroDict =
     Dict String String
+
+
+
+-- COMPILER PARAMETERS
+
+
+{-| Parameters for the compiler.
+
+Simplified from V2 - only includes fields needed for parsing.
+
+-}
+type alias CompilerParameters =
+    { filter : Filter
+    }
+
+
+{-| Filter for the forest of expression blocks.
+-}
+type Filter
+    = NoFilter
+    | SuppressDocumentBlocks
