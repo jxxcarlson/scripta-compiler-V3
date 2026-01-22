@@ -1,6 +1,5 @@
 module Generic.Acc exposing
     ( Accumulator
-    , InListState(..)
     , InitialAccumulatorData
     , TermLoc
     , getMacroArg
@@ -54,7 +53,7 @@ import Parser exposing ((|.), (|=), Parser)
 import RoseTree.Tree as Tree exposing (Tree)
 import Tools.String
 import Tools.Utility as Utility
-import Types exposing (Expr(..), Expression, ExpressionBlock, Heading(..), MathMacroDict)
+import Types exposing (Expr(..), Expression, ExpressionBlock, Heading(..), InListState(..), MathMacroDict)
 
 
 initialData : InitialAccumulatorData
@@ -88,11 +87,6 @@ type alias Accumulator =
     }
 
 
-type InListState
-    = SInList
-    | SNotInList
-
-
 init : InitialAccumulatorData -> Accumulator
 init data =
     { headingIndex =
@@ -110,7 +104,7 @@ init data =
             Just _ ->
                 1
     , documentIndex = Vector.init data.vectorSize
-    , inListState = SNotInList
+    , inListState = NotInList
     , counter = Dict.empty
     , blockCounter = 0
     , itemVector = Vector.init data.vectorSize
@@ -390,17 +384,17 @@ updated inList.
 nextInListState : Heading -> InListState -> InListState
 nextInListState heading state =
     case ( state, heading ) of
-        ( SNotInList, Ordinary "numbered" ) ->
-            SInList
+        ( NotInList, Ordinary "numbered" ) ->
+            InList
 
-        ( SNotInList, _ ) ->
-            SNotInList
+        ( NotInList, _ ) ->
+            NotInList
 
-        ( SInList, Ordinary "numbered" ) ->
-            SInList
+        ( InList, Ordinary "numbered" ) ->
+            InList
 
-        ( SInList, _ ) ->
-            SNotInList
+        ( InList, _ ) ->
+            NotInList
 
 
 type alias ReferenceDatum =
@@ -830,10 +824,10 @@ updateWithOrdinaryBlock block accumulator =
 
                 itemVector =
                     case accumulator.inListState of
-                        SInList ->
+                        InList ->
                             Vector.increment level accumulator.itemVector
 
-                        SNotInList ->
+                        NotInList ->
                             Vector.init 4 |> Vector.increment 0
 
                 index =
