@@ -9,8 +9,7 @@ module ETeX.Transform exposing
 import Dict exposing (Dict)
 import ETeX.Dictionary
 import ETeX.KaTeX exposing (isKaTeX)
-import ETeX.MathMacros exposing (MacroBody(..), MathMacroDict, NewCommand(..))
-import Generic.MathMacro
+import ETeX.MathMacros exposing (Deco(..), MacroBody(..), MathExpr(..), MathMacroDict, NewCommand(..))
 import Maybe.Extra
 import Parser.Advanced as PA
     exposing
@@ -37,42 +36,7 @@ import Result.Extra
 
 
 
--- TYPES
-
-
-type MathExpr
-    = AlphaNum String
-    | F0 String
-    | Arg (List MathExpr)
-    | PArg (List MathExpr)
-    | ParenthExpr (List MathExpr)
-    | Sub Deco
-    | Super Deco
-    | Param Int
-    | WS
-    | MathSpace
-    | MathSmallSpace
-    | MathMediumSpace
-    | LeftMathBrace
-    | RightMathBrace
-    | LeftParen
-    | RightParen
-    | Comma
-    | MathSymbols String
-    | GreekSymbol String
-    | Macro String (List MathExpr)
-    | FCall String (List MathExpr)
-    | Expr (List MathExpr)
-    | Text String
-
-
-type Deco
-    = DecoM MathExpr
-    | DecoI Int
-
-
-
--- OTHER --
+-- MAIN FUNCTIONS --
 
 
 transformETeX : MathMacroDict -> String -> String
@@ -126,8 +90,11 @@ resolveSymbolName expr =
         Macro name args ->
             Macro name (List.map resolveSymbolName args)
 
-        F0 str ->
-            F0 str
+        MacroName str ->
+            MacroName str
+
+        FunctionName str ->
+            FunctionName str
 
         Arg exprs ->
             Arg (List.map resolveSymbolName exprs)
@@ -328,8 +295,11 @@ expandMacroWithDict dict expr =
         AlphaNum str ->
             AlphaNum str
 
-        F0 str ->
-            F0 str
+        MacroName str ->
+            MacroName str
+
+        FunctionName str ->
+            FunctionName str
 
         Param n ->
             Param n
@@ -377,13 +347,8 @@ expandMacroWithDict dict expr =
 
 -}
 expandMacro_ : List MathExpr -> MacroBody -> List MathExpr
-expandMacro_ args (MacroBody arity macroDefBody) =
-    -- Convert ETeX.MathMacros.MathExpr to local MathExpr
-    let
-        localMacroDefBody =
-            List.map convertFromETeXMathExpr macroDefBody
-    in
-    replaceParams args localMacroDefBody
+expandMacro_ args (MacroBody _ macroDefBody) =
+    replaceParams args macroDefBody
 
 
 replaceParam_ : Int -> MathExpr -> MathExpr -> MathExpr
@@ -437,8 +402,11 @@ replaceParam_ k expr target =
         AlphaNum str ->
             AlphaNum str
 
-        F0 str ->
-            F0 str
+        MacroName str ->
+            MacroName str
+
+        FunctionName str ->
+            FunctionName str
 
         WS ->
             WS
@@ -930,322 +898,7 @@ simpleMacroToLaTeX line =
 
 
 
--- CONVERSIONS
--- Convert local MacroBody to Generic.MathMacro.MacroBody
-
-
-convertToGenericMacroBody : MacroBody -> Generic.MathMacro.MacroBody
-convertToGenericMacroBody (MacroBody arity exprs) =
-    let
-        localExprs =
-            List.map convertFromETeXMathExpr exprs
-    in
-    Generic.MathMacro.MacroBody arity (List.map convertToGenericMathExpr localExprs)
-
-
-
--- Convert local MathExpr to Generic.MathMacro.MathExpr
-
-
-convertToGenericMathExpr : MathExpr -> Generic.MathMacro.MathExpr
-convertToGenericMathExpr expr =
-    case expr of
-        AlphaNum str ->
-            Generic.MathMacro.AlphaNum str
-
-        F0 str ->
-            Generic.MathMacro.F0 str
-
-        Arg exprs ->
-            Generic.MathMacro.Arg (List.map convertToGenericMathExpr exprs)
-
-        PArg exprs ->
-            -- Convert PArg to Arg in generic representation
-            Generic.MathMacro.Arg (List.map convertToGenericMathExpr exprs)
-
-        ParenthExpr exprs ->
-            -- Convert ParenthExpr to Expr in generic representation
-            Generic.MathMacro.Expr (List.map convertToGenericMathExpr exprs)
-
-        Sub deco ->
-            Generic.MathMacro.Sub (convertToGenericDeco deco)
-
-        Super deco ->
-            Generic.MathMacro.Super (convertToGenericDeco deco)
-
-        Param n ->
-            Generic.MathMacro.Param n
-
-        WS ->
-            Generic.MathMacro.WS
-
-        MathSpace ->
-            Generic.MathMacro.MathSpace
-
-        MathSmallSpace ->
-            Generic.MathMacro.MathSmallSpace
-
-        MathMediumSpace ->
-            Generic.MathMacro.MathMediumSpace
-
-        LeftMathBrace ->
-            Generic.MathMacro.LeftMathBrace
-
-        RightMathBrace ->
-            Generic.MathMacro.RightMathBrace
-
-        LeftParen ->
-            -- Convert to MathSymbols in generic representation
-            Generic.MathMacro.MathSymbols "("
-
-        RightParen ->
-            -- Convert to MathSymbols in generic representation
-            Generic.MathMacro.MathSymbols ")"
-
-        Comma ->
-            -- Convert to MathSymbols in generic representation
-            Generic.MathMacro.MathSymbols ","
-
-        MathSymbols str ->
-            Generic.MathMacro.MathSymbols str
-
-        Macro name args ->
-            Generic.MathMacro.Macro name (List.map convertToGenericMathExpr args)
-
-        FCall name args ->
-            -- Convert FCall to Macro in generic representation
-            Generic.MathMacro.Macro name (List.map convertToGenericMathExpr args)
-
-        Expr exprs ->
-            Generic.MathMacro.Expr (List.map convertToGenericMathExpr exprs)
-
-        Text str ->
-            -- Generic.MathMacro doesn't have Text, so convert to MathSymbols
-            Generic.MathMacro.MathSymbols str
-
-        GreekSymbol str ->
-            -- Convert GreekSymbol to AlphaNum with backslash
-            Generic.MathMacro.AlphaNum ("\\" ++ str)
-
-
-
--- Convert local Deco to Generic.MathMacro.Deco
-
-
-convertToGenericDeco : Deco -> Generic.MathMacro.Deco
-convertToGenericDeco deco =
-    case deco of
-        DecoM expr ->
-            Generic.MathMacro.DecoM (convertToGenericMathExpr expr)
-
-        DecoI n ->
-            Generic.MathMacro.DecoI n
-
-
-
--- Convert local MathExpr to ETeX.MathMacros.MathExpr
-
-
-convertToETeXMathExpr : MathExpr -> ETeX.MathMacros.MathExpr
-convertToETeXMathExpr expr =
-    case expr of
-        AlphaNum str ->
-            ETeX.MathMacros.AlphaNum str
-
-        F0 str ->
-            ETeX.MathMacros.MacroName str
-
-        Param n ->
-            ETeX.MathMacros.Param n
-
-        WS ->
-            ETeX.MathMacros.WS
-
-        MathSpace ->
-            ETeX.MathMacros.MathSpace
-
-        MathSmallSpace ->
-            ETeX.MathMacros.MathSmallSpace
-
-        MathMediumSpace ->
-            ETeX.MathMacros.MathMediumSpace
-
-        LeftMathBrace ->
-            ETeX.MathMacros.LeftMathBrace
-
-        RightMathBrace ->
-            ETeX.MathMacros.RightMathBrace
-
-        MathSymbols str ->
-            ETeX.MathMacros.MathSymbols str
-
-        Arg exprs ->
-            ETeX.MathMacros.Arg (List.map convertToETeXMathExpr exprs)
-
-        PArg exprs ->
-            -- Convert to Arg since ETeX.MathMacros doesn't have PArg
-            ETeX.MathMacros.Arg (List.map convertToETeXMathExpr exprs)
-
-        ParenthExpr exprs ->
-            -- Convert to Expr since ETeX.MathMacros doesn't have ParenthExpr
-            ETeX.MathMacros.Expr (List.map convertToETeXMathExpr exprs)
-
-        Sub decoExpr ->
-            ETeX.MathMacros.Sub (convertToETeXDeco decoExpr)
-
-        Super decoExpr ->
-            ETeX.MathMacros.Super (convertToETeXDeco decoExpr)
-
-        Macro name args ->
-            ETeX.MathMacros.Macro name (List.map convertToETeXMathExpr args)
-
-        FCall name args ->
-            ETeX.MathMacros.Macro name (List.map convertToETeXMathExpr args)
-
-        Expr exprs ->
-            ETeX.MathMacros.Expr (List.map convertToETeXMathExpr exprs)
-
-        LeftParen ->
-            ETeX.MathMacros.LeftParen
-
-        RightParen ->
-            ETeX.MathMacros.RightParen
-
-        Comma ->
-            ETeX.MathMacros.Comma
-
-        Text str ->
-            ETeX.MathMacros.MathSymbols str
-
-        GreekSymbol str ->
-            ETeX.MathMacros.AlphaNum ("\\" ++ str)
-
-
-
--- Convert local Deco to ETeX.MathMacros.Deco
-
-
-convertToETeXDeco : Deco -> ETeX.MathMacros.Deco
-convertToETeXDeco deco =
-    case deco of
-        DecoM mathExpr ->
-            ETeX.MathMacros.DecoM (convertToETeXMathExpr mathExpr)
-
-        DecoI n ->
-            ETeX.MathMacros.DecoI n
-
-
-
--- Convert ETeX.MathMacros.MathExpr to local MathExpr
-
-
-convertFromETeXMathExpr : ETeX.MathMacros.MathExpr -> MathExpr
-convertFromETeXMathExpr expr =
-    case expr of
-        ETeX.MathMacros.AlphaNum str ->
-            AlphaNum str
-
-        ETeX.MathMacros.MacroName str ->
-            F0 str
-
-        ETeX.MathMacros.FunctionName str ->
-            F0 str
-
-        ETeX.MathMacros.Param n ->
-            Param n
-
-        ETeX.MathMacros.WS ->
-            WS
-
-        ETeX.MathMacros.MathSpace ->
-            MathSpace
-
-        ETeX.MathMacros.MathSmallSpace ->
-            MathSmallSpace
-
-        ETeX.MathMacros.MathMediumSpace ->
-            MathMediumSpace
-
-        ETeX.MathMacros.LeftMathBrace ->
-            LeftMathBrace
-
-        ETeX.MathMacros.RightMathBrace ->
-            RightMathBrace
-
-        ETeX.MathMacros.MathSymbols str ->
-            MathSymbols str
-
-        ETeX.MathMacros.Arg exprs ->
-            Arg (List.map convertFromETeXMathExpr exprs)
-
-        ETeX.MathMacros.Sub decoExpr ->
-            Sub (convertFromETeXDeco decoExpr)
-
-        ETeX.MathMacros.Super decoExpr ->
-            Super (convertFromETeXDeco decoExpr)
-
-        ETeX.MathMacros.Macro name args ->
-            Macro name (List.map convertFromETeXMathExpr args)
-
-        ETeX.MathMacros.Expr exprs ->
-            Expr (List.map convertFromETeXMathExpr exprs)
-
-        ETeX.MathMacros.LeftParen ->
-            LeftParen
-
-        ETeX.MathMacros.RightParen ->
-            RightParen
-
-        ETeX.MathMacros.Comma ->
-            Comma
-
-
-
--- Convert ETeX.MathMacros.Deco to local Deco
-
-
-convertFromETeXDeco : ETeX.MathMacros.Deco -> Deco
-convertFromETeXDeco deco =
-    case deco of
-        ETeX.MathMacros.DecoM mathExpr ->
-            DecoM (convertFromETeXMathExpr mathExpr)
-
-        ETeX.MathMacros.DecoI n ->
-            DecoI n
-
-
-
--- Convert a dictionary of local MacroBody to MathMacroDict
--- Helper to find the maximum parameter number in a macro body
--- Helper to find max param in ETeX.MathMacros.MathExpr type
-
-
-findMaxParamInMathMacros : List ETeX.MathMacros.MathExpr -> Int
-findMaxParamInMathMacros exprs =
-    case exprs of
-        [] ->
-            0
-
-        (ETeX.MathMacros.Param n) :: rest ->
-            max n (findMaxParamInMathMacros rest)
-
-        (ETeX.MathMacros.Arg innerExprs) :: rest ->
-            max (findMaxParamInMathMacros innerExprs) (findMaxParamInMathMacros rest)
-
-        (ETeX.MathMacros.Macro _ args) :: rest ->
-            max (findMaxParamInMathMacros args) (findMaxParamInMathMacros rest)
-
-        (ETeX.MathMacros.Expr innerExprs) :: rest ->
-            max (findMaxParamInMathMacros innerExprs) (findMaxParamInMathMacros rest)
-
-        (ETeX.MathMacros.Sub (ETeX.MathMacros.DecoM expr)) :: rest ->
-            max (findMaxParamInMathMacros [ expr ]) (findMaxParamInMathMacros rest)
-
-        (ETeX.MathMacros.Super (ETeX.MathMacros.DecoM expr)) :: rest ->
-            max (findMaxParamInMathMacros [ expr ]) (findMaxParamInMathMacros rest)
-
-        _ :: rest ->
-            findMaxParamInMathMacros rest
+-- HELPERS
 
 
 findMaxParam : List MathExpr -> Int
@@ -1285,10 +938,10 @@ findMaxParam exprs =
             findMaxParam rest
 
 
-makeEntry : Result error ETeX.MathMacros.NewCommand -> Maybe ( String, MacroBody )
+makeEntry : Result error NewCommand -> Maybe ( String, MacroBody )
 makeEntry newCommand_ =
     case newCommand_ of
-        Ok (ETeX.MathMacros.NewCommand (ETeX.MathMacros.MacroName name) arity [ ETeX.MathMacros.Arg body ]) ->
+        Ok (NewCommand (MacroName name) arity [ Arg body ]) ->
             -- Use the arity from the NewCommand or deduce from parameters
             let
                 deducedArity =
@@ -1296,9 +949,9 @@ makeEntry newCommand_ =
                         arity
 
                     else
-                        findMaxParamInMathMacros body
+                        findMaxParam body
             in
-            Just ( name, ETeX.MathMacros.MacroBody deducedArity body )
+            Just ( name, MacroBody deducedArity body )
 
         _ ->
             Nothing
@@ -1629,7 +1282,7 @@ commaParser =
 
 newCommandParser1 : MathMacroDict -> PA.Parser Context Problem NewCommand
 newCommandParser1 userMacroDict =
-    succeed (\name arity body -> NewCommand (convertToETeXMathExpr name) arity (List.map convertToETeXMathExpr body))
+    succeed (\name arity body -> NewCommand name arity body)
         |. symbol (Token "\\newcommand" ExpectingNewCommand)
         |. symbol (Token "{" ExpectingLeftBrace)
         |= f0Parser
@@ -1640,7 +1293,7 @@ newCommandParser1 userMacroDict =
 
 newCommandParser2 : MathMacroDict -> PA.Parser Context Problem NewCommand
 newCommandParser2 userMacroDict =
-    succeed (\name body -> NewCommand (convertToETeXMathExpr name) 0 (List.map convertToETeXMathExpr body))
+    succeed (\name body -> NewCommand name 0 body)
         |. symbol (Token "\\newcommand" ExpectingNewCommand)
         |. symbol (Token "{" ExpectingLeftBrace)
         |= f0Parser
@@ -1693,7 +1346,7 @@ alphaNumParser_ =
 f0Parser : PA.Parser Context Problem MathExpr
 f0Parser =
     second (symbol (Token "\\" ExpectingBackslash)) alphaNumParser_
-        |> PA.map F0
+        |> PA.map MacroName
 
 
 paramParser =
@@ -1736,18 +1389,11 @@ numericDecoParser =
 
 
 printNewCommand (NewCommand mathExpr arity body) =
-    let
-        localMathExpr =
-            convertFromETeXMathExpr mathExpr
-
-        localBody =
-            List.map convertFromETeXMathExpr body
-    in
     if arity == 0 then
-        "\\newcommand" ++ encloseB (print localMathExpr) ++ printList localBody
+        "\\newcommand" ++ encloseB (print mathExpr) ++ printList body
 
     else
-        "\\newcommand" ++ encloseB (print localMathExpr) ++ "[" ++ String.fromInt arity ++ "]" ++ printList localBody
+        "\\newcommand" ++ encloseB (print mathExpr) ++ "[" ++ String.fromInt arity ++ "]" ++ printList body
 
 
 printList : List MathExpr -> String
@@ -1782,8 +1428,11 @@ print expr =
         MathSpace ->
             "\\ "
 
-        F0 str ->
+        MacroName str ->
             "\\" ++ str
+
+        FunctionName str ->
+            str
 
         Param k ->
             "#" ++ String.fromInt k

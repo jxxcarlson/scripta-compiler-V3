@@ -8,6 +8,8 @@ module ETeX.MathMacros exposing
     , Problem(..)
     , parse
     , parseNewCommand
+    , print
+    , printList
     )
 
 import Dict exposing (Dict)
@@ -66,6 +68,8 @@ type MathExpr
     | MacroName String
     | FunctionName String
     | Arg (List MathExpr)
+    | PArg (List MathExpr)
+    | ParenthExpr (List MathExpr)
     | Sub Deco
     | Super Deco
     | Param Int
@@ -75,12 +79,15 @@ type MathExpr
     | MathMediumSpace
     | LeftMathBrace
     | RightMathBrace
-    | MathSymbols String
-    | Macro String (List MathExpr)
-    | Expr (List MathExpr)
-    | Comma
     | LeftParen
     | RightParen
+    | Comma
+    | MathSymbols String
+    | GreekSymbol String
+    | Macro String (List MathExpr)
+    | FCall String (List MathExpr)
+    | Expr (List MathExpr)
+    | Text String
 
 
 type Deco
@@ -573,16 +580,23 @@ print expr =
         Arg exprs ->
             enclose (printList exprs)
 
+        PArg exprs ->
+            "(" ++ printList exprs ++ ")"
+
+        ParenthExpr exprs ->
+            "(" ++ printList exprs ++ ")"
+
         Sub deco ->
-            -- "_" ++ enclose (printDeco deco)
             "_" ++ printDeco deco
 
         Super deco ->
-            -- "^" ++ enclose (printDeco deco)
             "^" ++ printDeco deco
 
         MathSymbols str ->
             str
+
+        GreekSymbol str ->
+            "\\" ++ str
 
         WS ->
             " "
@@ -590,8 +604,14 @@ print expr =
         Macro name body ->
             "\\" ++ name ++ printList body
 
+        FCall name args ->
+            name ++ "(" ++ printList args ++ ")"
+
         Expr exprs ->
             List.map print exprs |> String.join ""
+
+        Text str ->
+            "\\text{" ++ str ++ "}"
 
         Comma ->
             ","
