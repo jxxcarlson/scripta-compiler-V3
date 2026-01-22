@@ -11,6 +11,7 @@ module Types exposing (..)
 import Dict exposing (Dict)
 import Either exposing (Either)
 import Generic.Vector exposing (Vector)
+import Html exposing (Html)
 
 
 
@@ -157,12 +158,25 @@ type alias MathMacroDict =
 
 
 {-| Parameters for the compiler.
-
-Simplified from V2 - only includes fields needed for parsing.
-
 -}
 type alias CompilerParameters =
     { filter : Filter
+    , windowWidth : Int
+    , selectedId : String
+    , theme : Theme
+    , editCount : Int
+    }
+
+
+{-| Default compiler parameters.
+-}
+defaultCompilerParameters : CompilerParameters
+defaultCompilerParameters =
+    { filter = NoFilter
+    , windowWidth = 600
+    , selectedId = ""
+    , theme = Light
+    , editCount = 0
     }
 
 
@@ -171,3 +185,70 @@ type alias CompilerParameters =
 type Filter
     = NoFilter
     | SuppressDocumentBlocks
+
+
+
+-- COMPILER OUTPUT
+
+
+{-| Output from the compiler containing rendered HTML.
+-}
+type alias CompilerOutput msg =
+    { body : List (Html msg)
+    , banner : Maybe (Html msg)
+    , toc : List (Html msg)
+    , title : Html msg
+    }
+
+
+
+-- MSG TYPE
+
+
+{-| Messages for interactive rendering.
+-}
+type Msg
+    = SendMeta ExprMeta
+    | SelectId String
+    | HighlightId String
+    | NoOp
+
+
+
+-- RENDER SETTINGS
+
+
+{-| Settings for rendering.
+-}
+type alias RenderSettings =
+    { width : Int
+    , selectedId : String
+    , theme : Theme
+    , showTOC : Bool
+    , paragraphSpacing : Int
+    , editCount : Int
+    }
+
+
+{-| Default render settings.
+-}
+defaultRenderSettings : RenderSettings
+defaultRenderSettings =
+    { width = 600
+    , selectedId = ""
+    , theme = Light
+    , showTOC = False
+    , paragraphSpacing = 18
+    , editCount = 0
+    }
+
+
+
+-- THEME
+
+
+{-| Light or dark theme.
+-}
+type Theme
+    = Light
+    | Dark
