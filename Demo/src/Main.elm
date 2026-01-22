@@ -244,7 +244,7 @@ viewHeader model =
             [ HA.style "margin" "0"
             , HA.style "font-size" "1.2em"
             ]
-            [ Html.text "Scripta Compiler Demo" ]
+            [ Html.text "ScriptaV3 Compiler Demo" ]
         , Html.button
             [ HE.onClick ToggleTheme
             , HA.style "padding" "8px 16px"

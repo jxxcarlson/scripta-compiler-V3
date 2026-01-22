@@ -102,12 +102,17 @@ renderMath _ settings acc _ block _ =
 renderEquation : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderEquation _ settings acc _ block _ =
     let
-        content =
+        rawContent =
             getVerbatimContent block
                 |> applyMathMacros acc.mathMacroDict
 
-        label =
-            List.head block.args |> Maybe.withDefault ""
+        -- If content contains &, wrap in aligned environment for KaTeX
+        content =
+            if String.contains "&" rawContent then
+                wrapInAligned rawContent
+
+            else
+                rawContent
 
         equationNumber =
             case Dict.get block.meta.id acc.reference of
