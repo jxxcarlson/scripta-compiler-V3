@@ -9,6 +9,7 @@ a blank line.
 
 import Dict exposing (Dict)
 import Parser.Line as Line exposing (Line)
+import Tools.KV
 import Tools.Loop exposing (Step(..), loop)
 import Types exposing (BlockMeta, Heading(..), PrimitiveBlock)
 
@@ -295,6 +296,12 @@ finalize block =
 
                     else
                         block.firstLine :: reversedBody
+                Ordinary "section" ->
+                     if String.isEmpty block.firstLine then
+                                            reversedBody
+
+                                        else
+                                            block.firstLine :: reversedBody
 
                 _ ->
                     reversedBody
@@ -306,12 +313,14 @@ finalize block =
             else
                 block.firstLine ++ "\n" ++ String.join "\n" reversedBody
 
+
+
+
         meta =
             block.meta
     in
     { block
-        | body = finalBody
-        , meta = { meta | sourceText = sourceText }
+        | body = finalBody , meta = { meta | sourceText = sourceText }
     }
 
 
@@ -350,12 +359,12 @@ getHeadingData line =
             String.trim line
     in
     if String.startsWith "|| " trimmed then
-        -- Verbatim block: || blockname
+        -- Verbatim block: || blockname -- LEGACY, eventually phase out?
         getVerbatimHeading trimmed
 
     else if String.startsWith "| " trimmed then
         -- Ordinary block: | blockname
-        getOrdinaryHeading trimmed
+        getHeading trimmed
 
     else if String.startsWith "```" trimmed then
         -- Code fence
@@ -376,7 +385,7 @@ getHeadingData line =
     else if String.startsWith "# " trimmed then
         -- Markdown heading level 1
         { heading = Ordinary "section"
-        , args = []
+        , args = ["1"]
         , properties = Dict.singleton "level" "1"
         , firstLine = String.dropLeft 2 trimmed
         }
@@ -384,7 +393,7 @@ getHeadingData line =
     else if String.startsWith "## " trimmed then
         -- Markdown heading level 2
         { heading = Ordinary "section"
-        , args = []
+        , args = ["2"]
         , properties = Dict.singleton "level" "2"
         , firstLine = String.dropLeft 3 trimmed
         }
@@ -392,7 +401,7 @@ getHeadingData line =
     else if String.startsWith "### " trimmed then
         -- Markdown heading level 3
         { heading = Ordinary "section"
-        , args = []
+        , args = ["3"]
         , properties = Dict.singleton "level" "3"
         , firstLine = String.dropLeft 4 trimmed
         }
@@ -436,21 +445,21 @@ getVerbatimHeading line =
         name =
             List.head parts |> Maybe.withDefault "code"
 
-        args =
-            List.drop 1 parts
+        (args, properties) = Tools.KV.argsAndPropertiesFromList (List.drop 1 parts)
     in
     { heading = Verbatim name
     , args = args
-    , properties = Dict.empty
+    , properties = properties
     , firstLine = ""
     }
 
 
 {-| Parse ordinary heading: | blockname arg1 arg2 ...
 -}
-getOrdinaryHeading : String -> HeadingData
-getOrdinaryHeading line =
+getHeading : String -> HeadingData
+getHeading line =
     let
+        afterPrefix : String
         afterPrefix =
             String.dropLeft 2 line
 
@@ -460,12 +469,22 @@ getOrdinaryHeading line =
         name =
             List.head parts |> Maybe.withDefault "block"
 
-        args =
-            List.drop 1 parts
+
+
+        (args, properties_) = Tools.KV.argsAndPropertiesFromList (List.drop 1 parts)
+
+        properties = if name /= "section"
+           then properties_
+           else
+             case  List.head args of
+                 Nothing -> Dict.insert "level" "1" properties_
+                 Just str -> case String.toInt str of
+                     Nothing -> Dict.insert "level" "1" properties_
+                     Just _ -> Dict.insert "level" str properties_
     in
     { heading = if isVerbatimName name then Verbatim name else  Ordinary name
     , args = args
-    , properties = Dict.empty
+    , properties = properties
     , firstLine = ""
     }
 
