@@ -1,35 +1,10 @@
-module Tools.KV exposing (argsAndPropertiesFromString, argsAndPropertiesFromList)
+module Tools.KV exposing (argsAndPropertiesFromList)
 
 import Dict exposing (Dict)
 import List.Extra
 import Tools.Loop exposing (Step(..), loop)
 
 
-{-|
-
-    > stuff = "source:http://localhost:80/data/hubble.csv\nfoo:bar\nyuuk"
-    > makeDict stuff
-    Dict.fromList [("foo","bar"),("source","http://localhost:80/data/hubble.csv"),("yuuk","")]
-
--}
-makeDict : String -> Dict String String
-makeDict str =
-    str
-        |> String.lines
-        |> List.map String.trim
-        |> List.filter (\s -> s /= "")
-        |> preparePairs
-        |> Dict.fromList
-
-{-|
-
-    argsAndPropertiesFromString "aa bb cc k1:1 2 3 k2:4 5 6"
-   (["aa","bb","cc"],Dict.fromList [("k1","1 2 3"),("k2","4 5 6")])
-
-   -}
-argsAndPropertiesFromString : String -> ( List String, Dict String String )
-argsAndPropertiesFromString  str =
-    str |> String.words |> argsAndPropertiesFromList
 
 argsAndPropertiesFromList : List String -> ( List String, Dict String String )
 argsAndPropertiesFromList words =
@@ -137,11 +112,6 @@ prepareList strs =
     strs |> explode |> List.map fix |> List.concat |> List.filter (\s -> s /= "")
 
 
-preparePairs : List String -> List ( String, String )
-preparePairs strs =
-    strs |> explode |> List.map makePair |> List.filter (\( k, _ ) -> k /= "")
-
-
 fix : List String -> List String
 fix strs =
     case strs of
@@ -153,20 +123,6 @@ fix strs =
 
         [] ->
             []
-
-
-makePair : List String -> ( String, String )
-makePair strs =
-    case strs of
-        a :: b :: rest ->
-            ( a, String.join ":" (b :: rest) )
-
-        a :: [] ->
-            ( a, "" )
-
-        [] ->
-            ( "", "" )
-
 
 explode : List String -> List (List String)
 explode txt =
