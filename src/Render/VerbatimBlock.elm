@@ -5,6 +5,7 @@ module Render.VerbatimBlock exposing (render)
 
 import Dict exposing (Dict)
 import Either exposing (Either(..))
+import ETeX.Transform
 import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Math exposing (DisplayMode(..), mathText)
@@ -175,14 +176,16 @@ wrapInAligned content =
     "\\begin{aligned}\n" ++ content ++ "\n\\end{aligned}"
 
 
+{-| Transform ETeX notation to LaTeX using ETeX.Transform.evalStr.
+
+Converts notation like `int_0^2`, `frac(1,n+1)` to `\int_0^2`, `\frac{1}{n+1}`.
+
+-}
 applyMathMacros : Dict String String -> String -> String
-applyMathMacros macroDict content =
-    Dict.foldl
-        (\name expansion acc ->
-            String.replace ("\\" ++ name) expansion acc
-        )
-        content
-        macroDict
+applyMathMacros _ content =
+    -- Use ETeX.Transform.evalStr to transform ETeX notation to LaTeX
+    -- Pass empty dict for user-defined macros (TODO: integrate with accumulator)
+    ETeX.Transform.evalStr Dict.empty content
 
 
 

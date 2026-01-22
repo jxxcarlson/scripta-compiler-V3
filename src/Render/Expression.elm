@@ -4,6 +4,7 @@ module Render.Expression exposing (render, renderList)
 -}
 
 import Dict exposing (Dict)
+import ETeX.Transform
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -67,12 +68,12 @@ renderVFun : CompilerParameters -> RenderSettings -> Accumulator -> String -> St
 renderVFun params settings acc name content meta =
     case name of
         "$" ->
-            -- Inline math (legacy)
-            mathText settings.editCount meta.id InlineMathMode content
+            -- Inline math (legacy) - apply ETeX transform
+            mathText settings.editCount meta.id InlineMathMode (applyETeXTransform content)
 
         "math" ->
-            -- Inline math
-            mathText settings.editCount meta.id InlineMathMode content
+            -- Inline math - apply ETeX transform
+            mathText settings.editCount meta.id InlineMathMode (applyETeXTransform content)
 
         "code" ->
             Html.code [ HA.id meta.id ] [ Html.text content ]
@@ -80,6 +81,16 @@ renderVFun params settings acc name content meta =
         _ ->
             -- Default: just show the content
             Html.span [ HA.id meta.id ] [ Html.text content ]
+
+
+{-| Transform ETeX notation to LaTeX using ETeX.Transform.evalStr.
+
+Converts notation like `int_0^2`, `frac(1,n+1)` to `\int_0^2`, `\frac{1}{n+1}`.
+
+-}
+applyETeXTransform : String -> String
+applyETeXTransform content =
+    ETeX.Transform.evalStr Dict.empty content
 
 
 {-| Default rendering for unknown function names.
