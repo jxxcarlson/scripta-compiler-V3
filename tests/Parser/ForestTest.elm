@@ -42,7 +42,7 @@ suite =
 
                         Nothing ->
                             Expect.fail "Expected at least one block"
-            , test "first block body contains Text expression 'One two three'" <|
+            , test "first block body contains full paragraph text" <|
                 \_ ->
                     let
                         result =
@@ -56,7 +56,8 @@ suite =
                         Just block ->
                             case block.body of
                                 Right [ Text text _ ] ->
-                                    Expect.equal "One two three" text
+                                    -- Both lines of the paragraph are now in body
+                                    Expect.equal "This is a test:\nOne two three" text
 
                                 Right _ ->
                                     Expect.fail "Expected single Text expression"

@@ -275,12 +275,29 @@ commitBlock line state =
 
 
 {-| Finalize a block by reversing the body and reconstructing sourceText.
+
+For Paragraph blocks, firstLine is content (not a header), so it's prepended to body.
+For Ordinary/Verbatim blocks, firstLine was the header line and body has the content.
+
 -}
 finalize : PrimitiveBlock -> PrimitiveBlock
 finalize block =
     let
         reversedBody =
             List.reverse block.body
+
+        -- For paragraphs, firstLine is content, not a header
+        finalBody =
+            case block.heading of
+                Paragraph ->
+                    if String.isEmpty block.firstLine then
+                        reversedBody
+
+                    else
+                        block.firstLine :: reversedBody
+
+                _ ->
+                    reversedBody
 
         sourceText =
             if List.isEmpty reversedBody then
@@ -293,7 +310,7 @@ finalize block =
             block.meta
     in
     { block
-        | body = reversedBody
+        | body = finalBody
         , meta = { meta | sourceText = sourceText }
     }
 
