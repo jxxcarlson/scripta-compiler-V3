@@ -67,6 +67,10 @@ renderVFun : CompilerParameters -> RenderSettings -> Accumulator -> String -> St
 renderVFun params settings acc name content meta =
     case name of
         "$" ->
+            -- Inline math (legacy)
+            mathText settings.editCount meta.id InlineMathMode content
+
+        "math" ->
             -- Inline math
             mathText settings.editCount meta.id InlineMathMode content
 
