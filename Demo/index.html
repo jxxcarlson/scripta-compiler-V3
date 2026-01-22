@@ -27,23 +27,61 @@
 
     <script src="main.js"></script>
     <script>
-        // localStorage key for source text
-        var STORAGE_KEY = 'scripta-demo-source';
+        // localStorage keys
+        var OLD_STORAGE_KEY = 'scripta-demo-source';
+        var STORAGE_KEY = 'scripta-demo-documents';
 
-        // Load saved source from localStorage
-        var savedSource = localStorage.getItem(STORAGE_KEY);
+        // Load documents from localStorage
+        var documentsJson = localStorage.getItem(STORAGE_KEY);
+        var documents = [];
+
+        if (documentsJson) {
+            // Parse existing documents
+            try {
+                documents = JSON.parse(documentsJson);
+            } catch (e) {
+                console.error('Failed to parse documents:', e);
+                documents = [];
+            }
+        } else {
+            // Check for migration from old format
+            var oldSource = localStorage.getItem(OLD_STORAGE_KEY);
+            if (oldSource) {
+                // Migrate old single document to new format
+                documents = [{
+                    id: 'doc-1',
+                    title: extractTitle(oldSource),
+                    content: oldSource
+                }];
+                // Save migrated documents and remove old key
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
+                localStorage.removeItem(OLD_STORAGE_KEY);
+            }
+        }
+
+        // Helper function to extract title from content
+        function extractTitle(content) {
+            var parts = content.split('| title\n');
+            if (parts.length > 1) {
+                var lines = parts[1].split('\n');
+                if (lines.length > 0) {
+                    return lines[0].trim() || 'Untitled';
+                }
+            }
+            return 'Untitled';
+        }
 
         // Initialize Elm app with flags
         var app = Elm.Main.init({
             node: document.getElementById('app'),
             flags: {
-                savedSource: savedSource
+                documents: documents
             }
         });
 
-        // Subscribe to saveSource port
-        app.ports.saveSource.subscribe(function(source) {
-            localStorage.setItem(STORAGE_KEY, source);
+        // Subscribe to saveDocuments port
+        app.ports.saveDocuments.subscribe(function(docs) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
         });
 
         // Load KaTeX and initialize math-text custom element (V2 approach)

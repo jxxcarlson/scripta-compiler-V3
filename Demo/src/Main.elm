@@ -2,11 +2,12 @@ port module Main exposing (main)
 
 {-| Demo app for testing the Scripta compiler.
 
-Two side-by-side panels:
-- Left: source text editor
+Three side-by-side panels:
+- Left: document sidebar
+- Center: source text editor
 - Right: rendered HTML output
 
-Source text is persisted to localStorage.
+Documents are persisted to localStorage.
 
 -}
 
@@ -18,6 +19,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Task
 import Types exposing (CompilerOutput, Filter(..), Msg(..), Theme(..))
 
@@ -26,11 +28,22 @@ import Types exposing (CompilerOutput, Filter(..), Msg(..), Theme(..))
 -- PORTS
 
 
-port saveSource : String -> Cmd msg
+port saveDocuments : Encode.Value -> Cmd msg
+
+
+
+-- DOCUMENT
+
+
+type alias Document =
+    { id : String
+    , title : String
+    , content : String
+    }
 
 
 type alias Flags =
-    { savedSource : Maybe String
+    { documents : Decode.Value
     }
 
 
@@ -49,7 +62,9 @@ main =
 
 
 type alias Model =
-    { sourceText : String
+    { documents : List Document
+    , currentDocumentId : String
+    , sourceText : String
     , windowWidth : Int
     , windowHeight : Int
     , theme : Theme
@@ -89,14 +104,85 @@ That's all for now.
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { sourceText = flags.savedSource |> Maybe.withDefault initialSource
+    let
+        documents =
+            case Decode.decodeValue documentsDecoder flags.documents of
+                Ok docs ->
+                    if List.isEmpty docs then
+                        [ defaultDocument ]
+
+                    else
+                        docs
+
+                Err _ ->
+                    [ defaultDocument ]
+
+        currentDoc =
+            List.head documents |> Maybe.withDefault defaultDocument
+    in
+    ( { documents = documents
+      , currentDocumentId = currentDoc.id
+      , sourceText = currentDoc.content
       , windowWidth = 1200
       , windowHeight = 800
       , theme = Light
-      , editCount = 0
+      , editCount = 1
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
+
+
+defaultDocument : Document
+defaultDocument =
+    { id = "doc-1"
+    , title = extractTitle initialSource
+    , content = initialSource
+    }
+
+
+extractTitle : String -> String
+extractTitle content =
+    case String.split "| title\n" content of
+        _ :: rest :: _ ->
+            rest
+                |> String.lines
+                |> List.head
+                |> Maybe.withDefault "Untitled"
+                |> String.trim
+
+        _ ->
+            "Untitled"
+
+
+
+-- JSON ENCODING/DECODING
+
+
+documentDecoder : Decode.Decoder Document
+documentDecoder =
+    Decode.map3 Document
+        (Decode.field "id" Decode.string)
+        (Decode.field "title" Decode.string)
+        (Decode.field "content" Decode.string)
+
+
+documentsDecoder : Decode.Decoder (List Document)
+documentsDecoder =
+    Decode.list documentDecoder
+
+
+encodeDocument : Document -> Encode.Value
+encodeDocument doc =
+    Encode.object
+        [ ( "id", Encode.string doc.id )
+        , ( "title", Encode.string doc.title )
+        , ( "content", Encode.string doc.content )
+        ]
+
+
+encodeDocuments : List Document -> Encode.Value
+encodeDocuments docs =
+    Encode.list encodeDocument docs
 
 
 
@@ -105,6 +191,9 @@ init flags =
 
 type Msg
     = SourceChanged String
+    | SelectDocument String
+    | NewDocument
+    | DeleteDocument String
     | GotViewport Browser.Dom.Viewport
     | WindowResized Int Int
     | ToggleTheme
@@ -115,11 +204,105 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SourceChanged newSource ->
+            let
+                updatedDocuments =
+                    List.map
+                        (\doc ->
+                            if doc.id == model.currentDocumentId then
+                                { doc
+                                    | content = newSource
+                                    , title = extractTitle newSource
+                                }
+
+                            else
+                                doc
+                        )
+                        model.documents
+            in
             ( { model
                 | sourceText = newSource
+                , documents = updatedDocuments
                 , editCount = model.editCount + 1
               }
-            , saveSource newSource
+            , saveDocuments (encodeDocuments updatedDocuments)
+            )
+
+        SelectDocument docId ->
+            let
+                selectedDoc =
+                    model.documents
+                        |> List.filter (\doc -> doc.id == docId)
+                        |> List.head
+            in
+            case selectedDoc of
+                Just doc ->
+                    ( { model
+                        | currentDocumentId = docId
+                        , sourceText = doc.content
+                        , editCount = model.editCount + 1
+                      }
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        NewDocument ->
+            let
+                newId =
+                    "doc-" ++ String.fromInt (model.editCount + 1)
+
+                newDoc =
+                    { id = newId
+                    , title = "Untitled"
+                    , content = "| title\nUntitled\n\nStart writing here...\n"
+                    }
+
+                updatedDocuments =
+                    model.documents ++ [ newDoc ]
+            in
+            ( { model
+                | documents = updatedDocuments
+                , currentDocumentId = newId
+                , sourceText = newDoc.content
+                , editCount = model.editCount + 1
+              }
+            , saveDocuments (encodeDocuments updatedDocuments)
+            )
+
+        DeleteDocument docId ->
+            let
+                updatedDocuments =
+                    List.filter (\doc -> doc.id /= docId) model.documents
+
+                -- If we deleted the current document, switch to another
+                ( newCurrentId, newSourceText ) =
+                    if docId == model.currentDocumentId then
+                        case List.head updatedDocuments of
+                            Just doc ->
+                                ( doc.id, doc.content )
+
+                            Nothing ->
+                                -- Create a new default doc if all deleted
+                                ( defaultDocument.id, defaultDocument.content )
+
+                    else
+                        ( model.currentDocumentId, model.sourceText )
+
+                finalDocuments =
+                    if List.isEmpty updatedDocuments then
+                        [ defaultDocument ]
+
+                    else
+                        updatedDocuments
+            in
+            ( { model
+                | documents = finalDocuments
+                , currentDocumentId = newCurrentId
+                , sourceText = newSourceText
+                , editCount = model.editCount + 1
+              }
+            , saveDocuments (encodeDocuments finalDocuments)
             )
 
         GotViewport viewport ->
@@ -167,6 +350,11 @@ subscriptions _ =
 
 
 -- VIEW
+
+
+sidebarWidth : Int
+sidebarWidth =
+    200
 
 
 view : Model -> Html Msg
@@ -225,9 +413,116 @@ view model =
             , HA.style "padding" "10px"
             , HA.style "gap" "10px"
             ]
-            [ viewEditor model panelBg textColor
+            [ viewSidebar model panelBg textColor
+            , viewEditor model panelBg textColor
             , viewPreview model panelBg textColor output
             ]
+        ]
+
+
+viewSidebar : Model -> String -> String -> Html Msg
+viewSidebar model panelBg textColor =
+    let
+        hoverBg =
+            case model.theme of
+                Light ->
+                    "#e8e8e8"
+
+                Dark ->
+                    "#3a3a3a"
+
+        selectedBg =
+            case model.theme of
+                Light ->
+                    "#d0d0d0"
+
+                Dark ->
+                    "#4a4a4a"
+    in
+    Html.div
+        [ HA.style "width" (String.fromInt sidebarWidth ++ "px")
+        , HA.style "display" "flex"
+        , HA.style "flex-direction" "column"
+        , HA.style "flex-shrink" "0"
+        ]
+        [ Html.div
+            [ HA.style "font-weight" "bold"
+            , HA.style "margin-bottom" "8px"
+            , HA.style "font-size" "0.9em"
+            , HA.style "display" "flex"
+            , HA.style "justify-content" "space-between"
+            , HA.style "align-items" "center"
+            ]
+            [ Html.text "Documents"
+            , Html.button
+                [ HE.onClick NewDocument
+                , HA.style "padding" "4px 8px"
+                , HA.style "cursor" "pointer"
+                , HA.style "border" "1px solid #ccc"
+                , HA.style "border-radius" "4px"
+                , HA.style "background-color" panelBg
+                , HA.style "color" textColor
+                , HA.style "font-size" "0.85em"
+                ]
+                [ Html.text "+ New" ]
+            ]
+        , Html.div
+            [ HA.style "flex" "1"
+            , HA.style "border" "1px solid #ccc"
+            , HA.style "border-radius" "4px"
+            , HA.style "overflow-y" "auto"
+            , HA.style "background-color" panelBg
+            ]
+            (List.map
+                (\doc ->
+                    Html.div
+                        [ HE.onClick (SelectDocument doc.id)
+                        , HA.style "padding" "8px 12px"
+                        , HA.style "cursor" "pointer"
+                        , HA.style "border-bottom" "1px solid #ccc"
+                        , HA.style "display" "flex"
+                        , HA.style "justify-content" "space-between"
+                        , HA.style "align-items" "center"
+                        , HA.style "background-color"
+                            (if doc.id == model.currentDocumentId then
+                                selectedBg
+
+                             else
+                                panelBg
+                            )
+                        ]
+                        [ Html.span
+                            [ HA.style "overflow" "hidden"
+                            , HA.style "text-overflow" "ellipsis"
+                            , HA.style "white-space" "nowrap"
+                            , HA.style "flex" "1"
+                            , HA.style "font-size" "0.9em"
+                            ]
+                            [ Html.text
+                                (if doc.id == model.currentDocumentId then
+                                    "▸ " ++ doc.title
+
+                                 else
+                                    doc.title
+                                )
+                            ]
+                        , Html.button
+                            [ HE.stopPropagationOn "click"
+                                (Decode.succeed ( DeleteDocument doc.id, True ))
+                            , HA.style "padding" "2px 6px"
+                            , HA.style "cursor" "pointer"
+                            , HA.style "border" "1px solid #ccc"
+                            , HA.style "border-radius" "3px"
+                            , HA.style "background-color" "transparent"
+                            , HA.style "color" "#999"
+                            , HA.style "font-size" "0.75em"
+                            , HA.title "Delete document"
+                            ]
+                            [ Html.text "×" ]
+                        ]
+                )
+                model.documents
+            )
         ]
 
 
@@ -344,4 +639,5 @@ viewPreview model panelBg textColor output =
 
 panelWidth : Model -> Int
 panelWidth model =
-    (model.windowWidth - 50) // 2
+    -- Account for sidebar (200px), padding (10px * 2), and gaps (10px * 2)
+    (model.windowWidth - sidebarWidth - 50) // 2
