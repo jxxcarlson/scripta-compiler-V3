@@ -1,0 +1,40 @@
+module Generic.Settings exposing (numberedBlockNames, indentationQuantum)
+
+{-| Settings for the Scripta compiler.
+-}
+
+
+{-| Block names that should be numbered (theorems, equations, figures, etc.)
+-}
+numberedBlockNames : List String
+numberedBlockNames =
+    [ "q"
+    , "axiom"
+    , "box"
+    , "theorem"
+    , "definition"
+    , "lemma"
+    , "construction"
+    , "principle"
+    , "proposition"
+    , "corollary"
+    , "note"
+    , "remark"
+    , "exercise"
+    , "question"
+    , "problem"
+    , "example"
+    , "equation"
+    , "aligned"
+    , "quiver"
+    , "image"
+    , "iframe"
+    , "chart"
+    ]
+
+
+{-| Number of spaces per indentation level.
+-}
+indentationQuantum : Int
+indentationQuantum =
+    3
