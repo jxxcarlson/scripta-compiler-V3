@@ -7,6 +7,7 @@ Run tests and commit changes if tests pass.
 
 ## Instructions
 
+0. Run the elm compiler on all changed or added files.  If there are any errors, display the and stop here.
 1. Run `elm-test` to execute all tests
 2. If tests fail:
    - Display the failure message to the user
