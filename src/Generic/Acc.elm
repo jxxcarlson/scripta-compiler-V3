@@ -1,7 +1,5 @@
 module Generic.Acc exposing
-    ( Accumulator
-    , InitialAccumulatorData
-    , TermLoc
+    ( InitialAccumulatorData
     , getMacroArg
     , initialData
     , transformAccumulate
@@ -53,7 +51,7 @@ import Parser exposing ((|.), (|=), Parser)
 import RoseTree.Tree as Tree exposing (Tree)
 import Tools.String
 import Tools.Utility as Utility
-import Types exposing (Expr(..), Expression, ExpressionBlock, Heading(..), InListState(..), MathMacroDict)
+import Types exposing (Accumulator, Expr(..), Expression, ExpressionBlock, Heading(..), InListState(..), MathMacroDict, TermLoc, TermLoc2)
 
 
 initialData : InitialAccumulatorData
@@ -62,28 +60,6 @@ initialData =
     , textMacros = ""
     , vectorSize = 4
     , shiftAndSetCounter = Nothing
-    }
-
-
-type alias Accumulator =
-    { headingIndex : Vector
-    , documentIndex : Vector
-    , counter : Dict String Int
-    , blockCounter : Int
-    , itemVector : Vector -- Used for section numbering
-    , deltaLevel : Int
-    , numberedItemDict : Dict String { level : Int, index : Int }
-    , numberedBlockNames : List String
-    , inListState : InListState
-    , reference : Dict String { id : String, numRef : String }
-    , terms : Dict String TermLoc
-    , footnotes : Dict String TermLoc2
-    , footnoteNumbers : Dict String Int
-    , mathMacroDict : MathMacroDict
-    , textMacroDict : Dict String Macro
-    , keyValueDict : Dict String String
-    , qAndAList : List ( String, String )
-    , qAndADict : Dict String String
     }
 
 
@@ -1003,14 +979,6 @@ addTermsFromContent block_ dict =
 
 
 --|> updateReference tag id tag
-
-
-type alias TermLoc =
-    { begin : Int, end : Int, id : String }
-
-
-type alias TermLoc2 =
-    { begin : Int, end : Int, id : String, mSourceId : Maybe String }
 
 
 type alias TermData =
