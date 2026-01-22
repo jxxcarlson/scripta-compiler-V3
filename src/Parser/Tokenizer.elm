@@ -5,7 +5,6 @@ module Parser.Tokenizer exposing
     , Token_(..)
     , indexOf
     , run
-    , toString
     , type_
     )
 
@@ -186,7 +185,7 @@ stringValue token =
 
 toString : List Token -> String
 toString tokens =
-    List.map stringValue tokens |> String.join ""
+    List.map stringValue tokens |> String.concat
 
 
 length : Token -> Int

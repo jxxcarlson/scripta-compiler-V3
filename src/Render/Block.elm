@@ -36,7 +36,7 @@ renderParagraph params settings acc block children =
     case block.body of
         Left errorMsg ->
             -- Error case - display error message
-            [ Html.div
+            Html.div
                 ([ idAttr block.meta.id
                  , HA.style "color" "red"
                  , HA.style "margin-bottom" (String.fromInt settings.paragraphSpacing ++ "px")
@@ -44,8 +44,7 @@ renderParagraph params settings acc block children =
                     ++ selectedStyle settings.selectedId block.meta.id settings.theme
                 )
                 [ Html.text ("Error: " ++ errorMsg) ]
-            ]
-                ++ children
+                :: children
 
         Right expressions ->
             if List.isEmpty expressions then
@@ -53,7 +52,7 @@ renderParagraph params settings acc block children =
                 children
 
             else
-                [ Html.p
+                Html.p
                     ([ idAttr block.meta.id
                      , HA.style "margin-bottom" (String.fromInt settings.paragraphSpacing ++ "px")
                      , HA.style "line-height" "1.5"
@@ -61,5 +60,4 @@ renderParagraph params settings acc block children =
                         ++ selectedStyle settings.selectedId block.meta.id settings.theme
                     )
                     (Render.Expression.renderList params settings acc expressions)
-                ]
-                    ++ children
+                    :: children

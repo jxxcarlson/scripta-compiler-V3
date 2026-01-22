@@ -1,4 +1,4 @@
-module Render.Expression exposing (render, renderList)
+module Render.Expression exposing (renderList)
 
 {-| Render expressions to HTML.
 -}

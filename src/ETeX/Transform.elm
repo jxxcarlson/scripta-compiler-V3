@@ -1,8 +1,6 @@
 module ETeX.Transform exposing
     ( evalStr
-    , greekSymbolParser
     , makeMacroDict
-    , toLaTeXNewCommands
     , transformETeX
     )
 
@@ -43,7 +41,7 @@ transformETeX : MathMacroDict -> String -> String
 transformETeX userdefinedMacroDict src =
     case transformETeX_ userdefinedMacroDict src of
         Ok result ->
-            List.map print result |> String.join ""
+            List.map print result |> String.concat
 
         Err _ ->
             src
@@ -591,33 +589,41 @@ tokenizeHelper chars acc =
 
         '#' :: rest ->
             -- Parse parameter number
-            case takeDigits rest of
-                ( digits, remaining ) ->
-                    case String.toInt (String.fromList digits) of
-                        Just n ->
-                            tokenizeHelper remaining (SimpleParam n :: acc)
+            let
+                ( digits, remaining ) =
+                    takeDigits rest
+            in
+            case String.toInt (String.fromList digits) of
+                Just n ->
+                    tokenizeHelper remaining (SimpleParam n :: acc)
 
-                        Nothing ->
-                            tokenizeHelper rest (SimpleSymbol "#" :: acc)
+                Nothing ->
+                    tokenizeHelper rest (SimpleSymbol "#" :: acc)
 
         '{' :: rest ->
             -- Collect content until matching '}'
-            case collectUntilCloseBrace rest 1 [] of
-                ( content, remaining ) ->
-                    tokenizeHelper remaining (SimpleBrace "{" (String.fromList content) :: acc)
+            let
+                ( content, remaining ) =
+                    collectUntilCloseBrace rest 1 []
+            in
+            tokenizeHelper remaining (SimpleBrace "{" (String.fromList content) :: acc)
 
         c :: rest ->
             if Char.isAlpha c then
                 -- Collect alphabetic word
-                case takeAlphas (c :: rest) of
-                    ( word, remaining ) ->
-                        tokenizeHelper remaining (SimpleWord (String.fromList word) :: acc)
+                let
+                    ( word, remaining ) =
+                        takeAlphas (c :: rest)
+                in
+                tokenizeHelper remaining (SimpleWord (String.fromList word) :: acc)
 
             else if c == ' ' || c == '\t' || c == '\n' then
                 -- Collect whitespace
-                case takeSpaces (c :: rest) of
-                    ( spaces, remaining ) ->
-                        tokenizeHelper remaining (SimpleSpace (String.fromList spaces) :: acc)
+                let
+                    ( spaces, remaining ) =
+                        takeSpaces (c :: rest)
+                in
+                tokenizeHelper remaining (SimpleSpace (String.fromList spaces) :: acc)
 
             else
                 -- Single symbol
@@ -1398,7 +1404,7 @@ printNewCommand (NewCommand mathExpr arity body) =
 
 printList : List MathExpr -> String
 printList exprs =
-    List.map print exprs |> String.join ""
+    List.map print exprs |> String.concat
 
 
 print : MathExpr -> String
@@ -1482,7 +1488,7 @@ print expr =
             name ++ "(" ++ printArgList args ++ ")"
 
         Expr exprs ->
-            List.map print exprs |> String.join ""
+            List.map print exprs |> String.concat
 
         Comma ->
             ","

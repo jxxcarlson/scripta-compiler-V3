@@ -1,4 +1,4 @@
-module Parser.Symbol exposing (Symbol(..), balance, toSymbols, value)
+module Parser.Symbol exposing (Symbol(..), toSymbols, value)
 
 import Parser.Tokenizer exposing (Token, Token_(..))
 

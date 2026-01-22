@@ -1,6 +1,6 @@
 module Tools.ParserTools exposing
-    ( Context(..)
-    , Problem(..)
+    ( Context
+    , Problem
     , StringData
     , text
     )

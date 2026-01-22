@@ -76,10 +76,9 @@ renderDefault params settings acc name block children =
          ]
             ++ selectedStyle settings.selectedId block.meta.id settings.theme
         )
-        ([ Html.span [ HA.style "font-weight" "bold", HA.style "color" "blue" ]
+        (Html.span [ HA.style "font-weight" "bold", HA.style "color" "blue" ]
             [ Html.text ("[" ++ name ++ "]") ]
-         ]
-            ++ renderBody params settings acc block
+            :: renderBody params settings acc block
             ++ children
         )
     ]
@@ -131,7 +130,7 @@ renderSection params settings acc _ block children =
             else
                 ""
     in
-    [ tag
+    tag
         ([ idAttr block.meta.id
          , HA.style "margin-top" "1.5em"
          , HA.style "margin-bottom" "0.5em"
@@ -139,26 +138,23 @@ renderSection params settings acc _ block children =
             ++ selectedStyle settings.selectedId block.meta.id settings.theme
         )
         (Html.text prefix :: renderBody params settings acc block)
-    ]
-        ++ children
+        :: children
 
 
 renderSubsection : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubsection params settings acc _ block children =
-    [ Html.h3
-        ([ idAttr block.meta.id ] ++ selectedStyle settings.selectedId block.meta.id settings.theme)
+    Html.h3
+        (idAttr block.meta.id :: selectedStyle settings.selectedId block.meta.id settings.theme)
         (renderBody params settings acc block)
-    ]
-        ++ children
+        :: children
 
 
 renderSubsubsection : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubsubsection params settings acc _ block children =
-    [ Html.h4
-        ([ idAttr block.meta.id ] ++ selectedStyle settings.selectedId block.meta.id settings.theme)
+    Html.h4
+        (idAttr block.meta.id :: selectedStyle settings.selectedId block.meta.id settings.theme)
         (renderBody params settings acc block)
-    ]
-        ++ children
+        :: children
 
 
 
@@ -249,13 +245,12 @@ renderTheorem params settings acc name block children =
          ]
             ++ selectedStyle settings.selectedId block.meta.id settings.theme
         )
-        ([ Html.span
+        (Html.span
             [ HA.style "font-weight" "bold"
             , HA.style "margin-right" "0.5em"
             ]
             [ Html.text (theoremTitle ++ numberString ++ labelDisplay ++ ".") ]
-         ]
-            ++ renderBody params settings acc block
+            :: renderBody params settings acc block
             ++ children
         )
     ]
@@ -270,10 +265,9 @@ renderProof params settings acc _ block children =
          ]
             ++ selectedStyle settings.selectedId block.meta.id settings.theme
         )
-        ([ Html.span [ HA.style "font-style" "italic", HA.style "margin-right" "0.5em" ]
+        (Html.span [ HA.style "font-style" "italic", HA.style "margin-right" "0.5em" ]
             [ Html.text "Proof." ]
-         ]
-            ++ renderBody params settings acc block
+            :: renderBody params settings acc block
             ++ children
             ++ [ Html.span [ HA.style "float" "right" ] [ Html.text "∎" ] ]
         )
@@ -332,10 +326,9 @@ renderAbstract params settings acc _ block children =
          ]
             ++ selectedStyle settings.selectedId block.meta.id settings.theme
         )
-        ([ Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ]
+        (Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ]
             [ Html.text "Abstract" ]
-         ]
-            ++ renderBody params settings acc block
+            :: renderBody params settings acc block
             ++ children
         )
     ]

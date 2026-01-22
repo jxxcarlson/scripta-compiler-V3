@@ -1,6 +1,5 @@
 module Generic.Acc exposing
     ( InitialAccumulatorData
-    , getMacroArg
     , initialData
     , transformAccumulate
     )
@@ -162,7 +161,7 @@ mapAccumulate f s tree =
 
 reverse : List a -> List a
 reverse list =
-    List.foldl (\x xs -> x :: xs) [] list
+    List.reverse list
 
 
 {-|
@@ -287,7 +286,7 @@ transformBlock acc block =
 
                 Just name ->
                     -- Insert the numerical counter, e.g,, equation number, in the arg list of the block
-                    if List.member name [ "section" ] then
+                    if name == "section" then
                         let
                             prefix =
                                 Vector.toString acc.headingIndex
@@ -690,7 +689,7 @@ updateWithOrdinarySectionBlock accumulator name content level id =
 
         sectionTag =
             -- TODO: the below is a bad solution
-            titleWords |> List.map (String.toLower >> String.trim >> String.replace " " "-") |> String.join ""
+            titleWords |> List.map (String.toLower >> String.trim >> String.replace " " "-") |> String.concat
 
         delta =
             case Dict.get "has-chapters" accumulator.keyValueDict of
@@ -1077,7 +1076,7 @@ addFootnotesFromContent block ( dict1, dict2 ) =
                     Nothing
 
                 Right expr ->
-                    List.map getMeta expr |> List.head |> Maybe.map .id
+                    Maybe.map getMeta (expr |> List.head) |> Maybe.map .id
     in
     addFootnotes (getFootnotes blockId block.meta.id block.body) ( dict1, dict2 )
 

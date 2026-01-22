@@ -1,15 +1,11 @@
 module ETeX.MathMacros exposing
-    ( Context(..)
+    ( Context
     , Deco(..)
     , MacroBody(..)
     , MathExpr(..)
     , MathMacroDict
     , NewCommand(..)
-    , Problem(..)
-    , parse
-    , parseNewCommand
-    , print
-    , printList
+    , Problem
     )
 
 import Dict exposing (Dict)
@@ -544,7 +540,7 @@ printNewCommand (NewCommand mathExpr arity body) =
 
 printList : List MathExpr -> String
 printList exprs =
-    List.map print exprs |> String.join ""
+    List.map print exprs |> String.concat
 
 
 print : MathExpr -> String
@@ -608,7 +604,7 @@ print expr =
             name ++ "(" ++ printList args ++ ")"
 
         Expr exprs ->
-            List.map print exprs |> String.join ""
+            List.map print exprs |> String.concat
 
         Text str ->
             "\\text{" ++ str ++ "}"

@@ -1,4 +1,4 @@
-module Render.Settings exposing (fromParams, makeSettings)
+module Render.Settings exposing (fromParams)
 
 {-| Convert CompilerParameters to RenderSettings.
 -}

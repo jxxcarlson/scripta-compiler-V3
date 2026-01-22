@@ -164,7 +164,7 @@ extractBlockText block =
         Right expressions ->
             expressions
                 |> List.map extractExprText
-                |> String.join ""
+                |> String.concat
 
 
 {-| Extract text from an expression.
@@ -176,10 +176,10 @@ extractExprText expr =
             str
 
         Fun _ args _ ->
-            List.map extractExprText args |> String.join ""
+            List.map extractExprText args |> String.concat
 
         VFun _ content _ ->
             content
 
         ExprList _ exprs _ ->
-            List.map extractExprText exprs |> String.join ""
+            List.map extractExprText exprs |> String.concat

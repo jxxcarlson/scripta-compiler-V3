@@ -1,4 +1,4 @@
-module Render.Tree exposing (renderForest, renderTree)
+module Render.Tree exposing (renderForest)
 
 {-| Render a forest of ExpressionBlocks to HTML.
 -}

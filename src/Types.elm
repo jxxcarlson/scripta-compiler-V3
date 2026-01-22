@@ -168,18 +168,6 @@ type alias CompilerParameters =
     }
 
 
-{-| Default compiler parameters.
--}
-defaultCompilerParameters : CompilerParameters
-defaultCompilerParameters =
-    { filter = NoFilter
-    , windowWidth = 600
-    , selectedId = ""
-    , theme = Light
-    , editCount = 0
-    }
-
-
 {-| Filter for the forest of expression blocks.
 -}
 type Filter
@@ -227,19 +215,6 @@ type alias RenderSettings =
     , showTOC : Bool
     , paragraphSpacing : Int
     , editCount : Int
-    }
-
-
-{-| Default render settings.
--}
-defaultRenderSettings : RenderSettings
-defaultRenderSettings =
-    { width = 600
-    , selectedId = ""
-    , theme = Light
-    , showTOC = False
-    , paragraphSpacing = 18
-    , editCount = 0
     }
 
 

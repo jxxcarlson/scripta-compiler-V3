@@ -1,4 +1,4 @@
-module Generic.ASTTools exposing (getText, filterExpressionsOnName_)
+module Generic.ASTTools exposing (filterExpressionsOnName_, getText)
 
 {-| AST utilities for working with expressions.
 -}
@@ -18,8 +18,7 @@ getText expression =
             Just (String.replace "`" "" str)
 
         Fun _ expressions _ ->
-            List.map getText expressions
-                |> List.filterMap identity
+            List.filterMap getText expressions
                 |> String.join " "
                 |> Just
 

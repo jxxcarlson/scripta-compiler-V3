@@ -1,4 +1,4 @@
-module Render.Utility exposing (highlightStyle, idAttr, makeId, selectedStyle)
+module Render.Utility exposing (idAttr, selectedStyle)
 
 {-| Utility functions for rendering.
 -}

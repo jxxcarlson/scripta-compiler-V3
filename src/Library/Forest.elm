@@ -1,9 +1,4 @@
-module Library.Forest exposing
-    ( depths
-    , makeForest
-    , print
-    , toListList
-    )
+module Library.Forest exposing (makeForest)
 
 import Library.Tree
 import RoseTree.Tree exposing (Tree)
@@ -13,8 +8,7 @@ makeForest : (a -> Int) -> List a -> List (Tree a)
 makeForest getLevel input =
     input
         |> toListList getLevel
-        |> List.map (Library.Tree.makeTree getLevel)
-        |> List.filterMap identity
+        |> List.filterMap (Library.Tree.makeTree getLevel)
 
 
 init : (a -> Int) -> List a -> State a
@@ -64,7 +58,7 @@ nextStep getLevel state =
                         , currentLevel = level
                         , currentList = [ x ]
                         , output =
-                            if state.currentList == [] then
+                            if List.isEmpty state.currentList then
                                 state.output
 
                             else

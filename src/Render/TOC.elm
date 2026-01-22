@@ -1,4 +1,4 @@
-module Render.TOC exposing (build, buildTocItem, extractSections)
+module Render.TOC exposing (build)
 
 {-| Build table of contents from expression blocks.
 -}
@@ -48,13 +48,12 @@ build _ settings _ forest =
                         "#1a1a1a"
                 )
             ]
-            ([ Html.div
+            (Html.div
                 [ HA.style "font-weight" "bold"
                 , HA.style "margin-bottom" "0.5em"
                 ]
                 [ Html.text "Contents" ]
-             ]
-                ++ List.map (buildTocItem settings) sections
+                :: List.map (buildTocItem settings) sections
             )
         ]
 
@@ -110,7 +109,7 @@ extractTitle block =
         Right expressions ->
             expressions
                 |> List.map extractTextFromExpr
-                |> String.join ""
+                |> String.concat
 
 
 {-| Extract text from an expression.
@@ -122,13 +121,13 @@ extractTextFromExpr expr =
             str
 
         Fun _ args _ ->
-            List.map extractTextFromExpr args |> String.join ""
+            List.map extractTextFromExpr args |> String.concat
 
         VFun _ content _ ->
             content
 
         ExprList _ exprs _ ->
-            List.map extractTextFromExpr exprs |> String.join ""
+            List.map extractTextFromExpr exprs |> String.concat
 
 
 {-| Build a single TOC item HTML.

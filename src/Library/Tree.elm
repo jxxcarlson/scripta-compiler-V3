@@ -1,4 +1,4 @@
-module Library.Tree exposing (depth, flatten, lev, makeTree, print)
+module Library.Tree exposing (depth, makeTree, print)
 
 import Dict
 import RoseTree.Tree exposing (Tree)
@@ -61,7 +61,7 @@ print_ level f tree =
         g level_ x =
             eol ++ String.repeat level_ "  " ++ f x
     in
-    g level (RoseTree.Tree.value tree) ++ (List.map (print_ (level + 1) f) (RoseTree.Tree.children tree) |> String.join "")
+    g level (RoseTree.Tree.value tree) ++ (List.map (print_ (level + 1) f) (RoseTree.Tree.children tree) |> String.concat)
 
 
 

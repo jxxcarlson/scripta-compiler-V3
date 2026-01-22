@@ -5,7 +5,6 @@ import List.Extra
 import Tools.Loop exposing (Step(..), loop)
 
 
-
 argsAndPropertiesFromList : List String -> ( List String, Dict String String )
 argsAndPropertiesFromList words =
     let
@@ -109,20 +108,21 @@ type KVStatus
 
 prepareList : List String -> List String
 prepareList strs =
-    strs |> explode |> List.map fix |> List.concat |> List.filter (\s -> s /= "")
+    strs |> explode |> List.concatMap fix |> List.filter (\s -> s /= "")
 
 
 fix : List String -> List String
 fix strs =
     case strs of
         a :: b :: _ ->
-            (a ++ ":") :: b :: []
+            [ a ++ ":", b ]
 
         a :: [] ->
-            a :: []
+            [ a ]
 
         [] ->
             []
+
 
 explode : List String -> List (List String)
 explode txt =
