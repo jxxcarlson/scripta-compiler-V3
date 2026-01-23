@@ -139,6 +139,22 @@ markupDict =
         , ( "term_", renderTermHidden )
         , ( "vspace", renderVspace )
         , ( "break", renderVspace )
+          -- Aliases
+        , ( "textbf", renderStrong )
+        , ( "textit", renderItalic )
+        , ( "u", renderUnderline )
+        , ( "underscore", renderUnderline )
+          -- Text styling
+        , ( "bi", renderBoldItalic )
+        , ( "boldItalic", renderBoldItalic )
+        , ( "var", renderVar )
+        , ( "title", renderTitle )
+        , ( "subheading", renderSubheading )
+        , ( "sh", renderSubheading )
+        , ( "smallsubheading", renderSmallSubheading )
+        , ( "ssh", renderSmallSubheading )
+        , ( "large", renderLarge )
+        , ( "qed", renderQed )
         ]
 
 
@@ -402,3 +418,71 @@ getTextContent expr =
 
         _ ->
             Nothing
+
+
+renderBoldItalic : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderBoldItalic params acc args meta =
+    Html.span
+        [ HA.id meta.id
+        , HA.style "font-weight" "bold"
+        , HA.style "font-style" "italic"
+        ]
+        (renderList params acc args)
+
+
+renderVar : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderVar params acc args meta =
+    -- Variable styling (no special formatting in V2, just renders content)
+    Html.span [ HA.id meta.id ] (renderList params acc args)
+
+
+renderTitle : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderTitle params acc args meta =
+    Html.span
+        [ HA.id meta.id
+        , HA.style "font-size" "32px"
+        ]
+        (renderList params acc args)
+
+
+renderSubheading : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderSubheading params acc args meta =
+    Html.div [ HA.id meta.id ]
+        [ Html.p
+            [ HA.style "font-size" "18px"
+            , HA.style "margin-top" "8px"
+            , HA.style "margin-bottom" "0"
+            ]
+            (renderList params acc args)
+        ]
+
+
+renderSmallSubheading : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderSmallSubheading params acc args meta =
+    Html.div [ HA.id meta.id ]
+        [ Html.p
+            [ HA.style "font-size" "16px"
+            , HA.style "font-style" "italic"
+            , HA.style "margin-top" "8px"
+            , HA.style "margin-bottom" "0"
+            ]
+            (renderList params acc args)
+        ]
+
+
+renderLarge : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderLarge params acc args meta =
+    Html.span
+        [ HA.id meta.id
+        , HA.style "font-size" "18px"
+        ]
+        (renderList params acc args)
+
+
+renderQed : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderQed _ _ _ meta =
+    Html.span
+        [ HA.id meta.id
+        , HA.style "font-weight" "bold"
+        ]
+        [ Html.text "Q.E.D." ]
