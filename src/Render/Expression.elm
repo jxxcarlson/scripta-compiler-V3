@@ -197,6 +197,24 @@ markupDict =
         , ( "anchor", renderAnchor )
         , ( "footnote", renderFootnote )
         , ( "marked", renderMarked )
+          -- Tables
+        , ( "table", renderTable )
+        , ( "tableRow", renderTableRow )
+        , ( "tableItem", renderTableItem )
+          -- Images
+        , ( "inlineimage", renderInlineImage )
+          -- Bibliography
+        , ( "bibitem", renderBibitem )
+          -- Links (specialized)
+        , ( "ulink", renderUlink )
+        , ( "reflink", renderReflink )
+        , ( "cslink", renderCslink )
+        , ( "newPost", renderHidden )
+          -- Special/Interactive (simplified)
+        , ( "scheme", renderScheme )
+        , ( "compute", renderCompute )
+        , ( "data", renderData )
+        , ( "button", renderButton )
         ]
 
 
@@ -652,3 +670,251 @@ renderMarked params acc args meta =
 
         _ ->
             Html.span [ HA.id meta.id ] []
+
+
+
+-- TABLE RENDERING
+
+
+renderTable : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderTable params acc rows meta =
+    Html.table
+        [ HA.id meta.id
+        , HA.style "border-collapse" "collapse"
+        , HA.style "margin" "8px 0"
+        ]
+        [ Html.tbody [] (List.map (renderTableRowExpr params acc) rows) ]
+
+
+renderTableRowExpr : CompilerParameters -> Accumulator -> Expression -> Html Msg
+renderTableRowExpr params acc expr =
+    case expr of
+        Fun "tableRow" items rowMeta ->
+            Html.tr [ HA.id rowMeta.id ]
+                (List.map (renderTableItemExpr params acc) items)
+
+        _ ->
+            Html.tr [] []
+
+
+renderTableItemExpr : CompilerParameters -> Accumulator -> Expression -> Html Msg
+renderTableItemExpr params acc expr =
+    case expr of
+        Fun "tableItem" exprList itemMeta ->
+            Html.td
+                [ HA.id itemMeta.id
+                , HA.style "padding" "4px 8px"
+                , HA.style "border" "1px solid #ddd"
+                ]
+                (renderList params acc exprList)
+
+        _ ->
+            Html.td [] []
+
+
+renderTableRow : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderTableRow params acc items meta =
+    Html.tr [ HA.id meta.id ]
+        (List.map (renderTableItemExpr params acc) items)
+
+
+renderTableItem : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderTableItem params acc exprList meta =
+    Html.td
+        [ HA.id meta.id
+        , HA.style "padding" "4px 8px"
+        , HA.style "border" "1px solid #ddd"
+        ]
+        (renderList params acc exprList)
+
+
+
+-- IMAGES
+
+
+renderInlineImage : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderInlineImage params _ args meta =
+    case args of
+        [ Text src _ ] ->
+            Html.img
+                [ HA.id meta.id
+                , HA.src src
+                , HA.style "display" "inline"
+                , HA.style "vertical-align" "middle"
+                , HA.style "max-height" "1.5em"
+                ]
+                []
+
+        _ ->
+            Html.span [ HA.id meta.id ] [ Html.text "[inlineimage: invalid args]" ]
+
+
+
+-- BIBLIOGRAPHY
+
+
+renderBibitem : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderBibitem _ _ args meta =
+    let
+        content =
+            args
+                |> List.filterMap getTextContent
+                |> String.join " "
+    in
+    Html.span [ HA.id meta.id ] [ Html.text ("[" ++ content ++ "]") ]
+
+
+
+-- SPECIALIZED LINKS
+
+
+renderUlink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderUlink _ _ args meta =
+    let
+        argString =
+            args |> List.filterMap getTextContent |> String.join " "
+
+        words =
+            String.words argString
+
+        n =
+            List.length words
+
+        label =
+            List.take (n - 1) words |> String.join " "
+
+        target =
+            List.drop (n - 1) words |> String.join ""
+    in
+    Html.a
+        [ HA.id meta.id
+        , HA.href ("#" ++ target)
+        , HA.style "color" "#0066cc"
+        , HA.style "cursor" "pointer"
+        ]
+        [ Html.text label ]
+
+
+renderReflink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderReflink _ acc args meta =
+    let
+        argString =
+            args |> List.filterMap getTextContent |> String.join " "
+
+        words =
+            String.words argString
+
+        n =
+            List.length words
+
+        key =
+            List.drop (n - 1) words |> String.join ""
+
+        label =
+            List.take (n - 1) words |> String.join " "
+
+        targetId =
+            Dict.get key acc.reference
+                |> Maybe.map .id
+                |> Maybe.withDefault ""
+    in
+    Html.a
+        [ HA.id meta.id
+        , HA.href ("#" ++ targetId)
+        , HE.onClick (SelectId targetId)
+        , HA.style "color" "#0066cc"
+        , HA.style "font-weight" "600"
+        ]
+        [ Html.text label ]
+
+
+renderCslink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderCslink _ _ args meta =
+    let
+        argString =
+            args |> List.filterMap getTextContent |> String.join " "
+
+        words =
+            String.words argString
+
+        n =
+            List.length words
+
+        label =
+            List.take (n - 1) words |> String.join " "
+    in
+    Html.a
+        [ HA.id meta.id
+        , HA.style "color" "#0066cc"
+        , HA.style "cursor" "pointer"
+        ]
+        [ Html.text label ]
+
+
+
+-- SPECIAL/INTERACTIVE (simplified versions)
+
+
+renderScheme : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderScheme _ _ args meta =
+    let
+        content =
+            args |> List.filterMap getTextContent |> String.join " "
+    in
+    Html.code
+        [ HA.id meta.id
+        , HA.style "background-color" "#f5f5f5"
+        , HA.style "padding" "2px 4px"
+        , HA.style "font-family" "monospace"
+        ]
+        [ Html.text content ]
+
+
+renderCompute : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderCompute _ _ args meta =
+    let
+        content =
+            args |> List.filterMap getTextContent |> String.join " "
+    in
+    Html.span
+        [ HA.id meta.id
+        , HA.style "font-family" "monospace"
+        , HA.style "color" "#666"
+        ]
+        [ Html.text ("[compute: " ++ content ++ "]") ]
+
+
+renderData : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderData _ _ args meta =
+    let
+        content =
+            args |> List.filterMap getTextContent |> String.join " "
+    in
+    Html.span
+        [ HA.id meta.id
+        , HA.style "font-family" "monospace"
+        , HA.style "color" "#666"
+        ]
+        [ Html.text ("[data: " ++ content ++ "]") ]
+
+
+renderButton : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderButton _ _ args meta =
+    let
+        content =
+            args |> List.filterMap getTextContent |> String.join " "
+
+        labelText =
+            content
+                |> String.split ","
+                |> List.head
+                |> Maybe.withDefault "Button"
+                |> String.trim
+    in
+    Html.button
+        [ HA.id meta.id
+        , HA.style "padding" "4px 8px"
+        , HA.style "font-size" "14px"
+        , HA.style "cursor" "pointer"
+        ]
+        [ Html.text labelText ]
