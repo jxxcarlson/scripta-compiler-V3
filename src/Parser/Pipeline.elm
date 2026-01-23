@@ -44,16 +44,55 @@ parseBody block =
             Right (parseLines block.meta.lineNumber block.body)
 
         Ordinary "item" ->
-            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber block.firstLine) emptyExprMeta ]
+            -- Single item: parse firstLine content (strip "- " prefix)
+            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber (stripListPrefix block.firstLine)) emptyExprMeta ]
 
         Ordinary "numbered" ->
-            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber block.firstLine) emptyExprMeta ]
+            -- Single numbered item: parse firstLine content (strip ". " prefix)
+            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber (stripListPrefix block.firstLine)) emptyExprMeta ]
+
+        Ordinary "itemList" ->
+            -- Multiple items: parse firstLine + each body line as separate ExprList
+            Right (parseListItems block.indent block.meta.lineNumber (block.firstLine :: block.body))
+
+        Ordinary "numberedList" ->
+            -- Multiple numbered items: parse firstLine + each body line as separate ExprList
+            Right (parseListItems block.indent block.meta.lineNumber (block.firstLine :: block.body))
 
         Ordinary _ ->
             Right (parseLines block.meta.lineNumber block.body)
 
         Verbatim _ ->
             Left (String.join "\n" block.body)
+
+
+{-| Parse list items, each becoming an ExprList with stripped prefix.
+-}
+parseListItems : Int -> Int -> List String -> List Expression
+parseListItems indent lineNumber items =
+    List.map
+        (\item ->
+            ExprList indent (Expression.parse lineNumber (stripListPrefix item)) emptyExprMeta
+        )
+        items
+
+
+{-| Strip list prefix ("- " or ". ") from a string.
+-}
+stripListPrefix : String -> String
+stripListPrefix str =
+    let
+        trimmed =
+            String.trim str
+    in
+    if String.startsWith "- " trimmed then
+        String.dropLeft 2 trimmed
+
+    else if String.startsWith ". " trimmed then
+        String.dropLeft 2 trimmed
+
+    else
+        trimmed
 
 
 {-| Parse multiple lines into a list of expressions.

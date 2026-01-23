@@ -33,7 +33,9 @@ blockDict =
         , ( "subsection", renderSubsection )
         , ( "subsubsection", renderSubsubsection )
         , ( "item", renderItem )
+        , ( "itemList", renderItemList )
         , ( "numbered", renderNumbered )
+        , ( "numberedList", renderNumberedList )
         , ( "theorem", renderTheorem )
         , ( "lemma", renderTheorem )
         , ( "proposition", renderTheorem )
@@ -201,6 +203,57 @@ renderNumbered params acc _ block children =
             ++ children
         )
     ]
+
+
+renderItemList : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderItemList params acc _ block children =
+    [ Html.ul
+        ([ idAttr block.meta.id
+         , HA.style "margin-left" (String.fromInt (18 + block.indent * 20) ++ "px")
+         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (renderListItems params acc block ++ children)
+    ]
+
+
+renderNumberedList : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderNumberedList params acc _ block children =
+    [ Html.ol
+        ([ idAttr block.meta.id
+         , HA.style "margin-left" (String.fromInt (18 + block.indent * 20) ++ "px")
+         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (renderListItems params acc block ++ children)
+    ]
+
+
+{-| Render each ExprList in the body as a list item.
+-}
+renderListItems : CompilerParameters -> Accumulator -> ExpressionBlock -> List (Html Msg)
+renderListItems params acc block =
+    case block.body of
+        Right expressions ->
+            List.map (renderListItemExpr params acc) expressions
+
+        Left _ ->
+            []
+
+
+{-| Render a single ExprList as a <li> element.
+-}
+renderListItemExpr : CompilerParameters -> Accumulator -> Expression -> Html Msg
+renderListItemExpr params acc expr =
+    case expr of
+        ExprList _ innerExprs meta ->
+            Html.li [ HA.id meta.id ]
+                (Render.Expression.renderList params acc innerExprs)
+
+        _ ->
+            Html.li [] (Render.Expression.renderList params acc [ expr ])
 
 
 
