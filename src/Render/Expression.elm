@@ -75,7 +75,19 @@ renderVFun params acc name content meta =
             -- Inline math - apply ETeX transform
             mathText params.editCount meta.id InlineMathMode (applyETeXTransform content)
 
+        "m" ->
+            -- Inline math (short alias) - apply ETeX transform
+            mathText params.editCount meta.id InlineMathMode (applyETeXTransform content)
+
+        "chem" ->
+            -- Chemistry formula - render as math with mhchem
+            mathText params.editCount meta.id InlineMathMode ("\\ce{" ++ content ++ "}")
+
         "code" ->
+            Html.code [ HA.id meta.id ] [ Html.text content ]
+
+        "`" ->
+            -- Backtick code (alias for code)
             Html.code [ HA.id meta.id ] [ Html.text content ]
 
         _ ->
