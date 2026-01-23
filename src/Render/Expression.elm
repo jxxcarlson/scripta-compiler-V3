@@ -215,6 +215,9 @@ markupDict =
         , ( "compute", renderCompute )
         , ( "data", renderData )
         , ( "button", renderButton )
+          -- Misc
+        , ( "hrule", renderHrule )
+        , ( "mark", renderMark )
         ]
 
 
@@ -918,3 +921,29 @@ renderButton _ _ args meta =
         , HA.style "cursor" "pointer"
         ]
         [ Html.text labelText ]
+
+
+renderHrule : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderHrule params _ _ meta =
+    Html.hr
+        [ HA.id meta.id
+        , HA.style "width" (String.fromInt params.width ++ "px")
+        , HA.style "border" "none"
+        , HA.style "border-top" "1px solid #bfbfbf"
+        , HA.style "margin" "8px 0"
+        ]
+        []
+
+
+renderMark : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderMark params acc args meta =
+    case args of
+        [ Text str _, Fun "anchor" list _ ] ->
+            Html.span
+                [ HA.id (String.trim str)
+                , HA.style "text-decoration" "underline"
+                ]
+                (renderList params acc list)
+
+        _ ->
+            Html.span [ HA.id meta.id ] [ Html.text "Parse error in element mark?" ]
