@@ -9,7 +9,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import RoseTree.Tree as Tree exposing (Tree)
-import Types exposing (Accumulator, CompilerParameters, Expr(..), ExpressionBlock, Heading(..), Msg(..), RenderSettings, Theme(..))
+import Types exposing (Accumulator, CompilerParameters, Expr(..), ExpressionBlock, Heading(..), Msg(..), Theme(..))
 
 
 {-| Section data for TOC entry.
@@ -24,8 +24,8 @@ type alias TocEntry =
 
 {-| Build table of contents HTML from a forest.
 -}
-build : CompilerParameters -> RenderSettings -> Accumulator -> List (Tree ExpressionBlock) -> List (Html Msg)
-build _ settings _ forest =
+build : CompilerParameters -> Accumulator -> List (Tree ExpressionBlock) -> List (Html Msg)
+build params _ forest =
     let
         sections =
             extractSections forest
@@ -40,7 +40,7 @@ build _ settings _ forest =
             , HA.style "border" "1px solid #ccc"
             , HA.style "border-radius" "4px"
             , HA.style "background-color"
-                (case settings.theme of
+                (case params.theme of
                     Light ->
                         "#f9f9f9"
 
@@ -53,7 +53,7 @@ build _ settings _ forest =
                 , HA.style "margin-bottom" "0.5em"
                 ]
                 [ Html.text "Contents" ]
-                :: List.map (buildTocItem settings) sections
+                :: List.map (buildTocItem params) sections
             )
         ]
 
@@ -132,8 +132,8 @@ extractTextFromExpr expr =
 
 {-| Build a single TOC item HTML.
 -}
-buildTocItem : RenderSettings -> TocEntry -> Html Msg
-buildTocItem settings entry =
+buildTocItem : CompilerParameters -> TocEntry -> Html Msg
+buildTocItem params entry =
     let
         indent =
             (entry.level - 1) * 20
@@ -153,7 +153,7 @@ buildTocItem settings entry =
             [ HA.href ("#" ++ entry.id)
             , HE.onClick (SelectId entry.id)
             , HA.style "color"
-                (case settings.theme of
+                (case params.theme of
                     Light ->
                         "#0066cc"
 

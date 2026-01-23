@@ -366,6 +366,9 @@ view model =
             , selectedId = ""
             , theme = model.theme
             , editCount = model.editCount
+            , width = panelWidth model
+            , showTOC = False
+            , paragraphSpacing = 18
             }
 
         output =

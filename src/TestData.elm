@@ -7,11 +7,14 @@ import Types
 defaultCompilerParameters: Types.CompilerParameters
 defaultCompilerParameters =
     { filter = Types.NoFilter
-        , windowWidth = 600
-        , selectedId = "selectedId"
-        , theme = Types.Dark
-        , editCount = 0
-        }
+    , windowWidth = 600
+    , selectedId = "selectedId"
+    , theme = Types.Dark
+    , editCount = 0
+    , width = 600
+    , showTOC = False
+    , paragraphSpacing = 18
+    }
 
 
 str1 =

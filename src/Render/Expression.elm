@@ -9,33 +9,33 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Render.Math exposing (DisplayMode(..), mathText)
-import Types exposing (Accumulator, CompilerParameters, Expr(..), ExprMeta, Expression, Msg(..), RenderSettings)
+import Types exposing (Accumulator, CompilerParameters, Expr(..), ExprMeta, Expression, Msg(..))
 
 
 {-| Render a list of expressions.
 -}
-renderList : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> List (Html Msg)
-renderList params settings acc expressions =
-    List.map (render params settings acc) expressions
+renderList : CompilerParameters -> Accumulator -> List Expression -> List (Html Msg)
+renderList params acc expressions =
+    List.map (render params acc) expressions
 
 
 {-| Render a single expression.
 -}
-render : CompilerParameters -> RenderSettings -> Accumulator -> Expression -> Html Msg
-render params settings acc expr =
+render : CompilerParameters -> Accumulator -> Expression -> Html Msg
+render params acc expr =
     case expr of
         Text str meta ->
             renderText str meta
 
         Fun name args meta ->
-            renderFun params settings acc name args meta
+            renderFun params acc name args meta
 
         VFun name content meta ->
-            renderVFun params settings acc name content meta
+            renderVFun params acc name content meta
 
         ExprList _ exprs meta ->
             Html.span [ HA.id meta.id ]
-                (renderList params settings acc exprs)
+                (renderList params acc exprs)
 
 
 {-| Render plain text.
@@ -51,29 +51,29 @@ renderText str meta =
 
 {-| Render a function application.
 -}
-renderFun : CompilerParameters -> RenderSettings -> Accumulator -> String -> List Expression -> ExprMeta -> Html Msg
-renderFun params settings acc name args meta =
+renderFun : CompilerParameters -> Accumulator -> String -> List Expression -> ExprMeta -> Html Msg
+renderFun params acc name args meta =
     case Dict.get name markupDict of
         Just renderer ->
-            renderer params settings acc args meta
+            renderer params acc args meta
 
         Nothing ->
             -- Default rendering for unknown functions
-            renderDefaultFun params settings acc name args meta
+            renderDefaultFun params acc name args meta
 
 
 {-| Render a verbatim function.
 -}
-renderVFun : CompilerParameters -> RenderSettings -> Accumulator -> String -> String -> ExprMeta -> Html Msg
-renderVFun params settings acc name content meta =
+renderVFun : CompilerParameters -> Accumulator -> String -> String -> ExprMeta -> Html Msg
+renderVFun params acc name content meta =
     case name of
         "$" ->
             -- Inline math (legacy) - apply ETeX transform
-            mathText settings.editCount meta.id InlineMathMode (applyETeXTransform content)
+            mathText params.editCount meta.id InlineMathMode (applyETeXTransform content)
 
         "math" ->
             -- Inline math - apply ETeX transform
-            mathText settings.editCount meta.id InlineMathMode (applyETeXTransform content)
+            mathText params.editCount meta.id InlineMathMode (applyETeXTransform content)
 
         "code" ->
             Html.code [ HA.id meta.id ] [ Html.text content ]
@@ -95,11 +95,11 @@ applyETeXTransform content =
 
 {-| Default rendering for unknown function names.
 -}
-renderDefaultFun : CompilerParameters -> RenderSettings -> Accumulator -> String -> List Expression -> ExprMeta -> Html Msg
-renderDefaultFun params settings acc name args meta =
+renderDefaultFun : CompilerParameters -> Accumulator -> String -> List Expression -> ExprMeta -> Html Msg
+renderDefaultFun params acc name args meta =
     Html.span [ HA.id meta.id ]
         (Html.span [ HA.style "color" "blue" ] [ Html.text ("[" ++ name ++ " ") ]
-            :: renderList params settings acc args
+            :: renderList params acc args
             ++ [ Html.text "]" ]
         )
 
@@ -110,7 +110,7 @@ renderDefaultFun params settings acc name args meta =
 
 {-| Dictionary of markup function renderers.
 -}
-markupDict : Dict String (CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg)
+markupDict : Dict String (CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg)
 markupDict =
     Dict.fromList
         [ ( "strong", renderStrong )
@@ -146,38 +146,38 @@ markupDict =
 -- MARKUP RENDERERS
 
 
-renderStrong : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderStrong params settings acc args meta =
-    Html.strong [ HA.id meta.id ] (renderList params settings acc args)
+renderStrong : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderStrong params acc args meta =
+    Html.strong [ HA.id meta.id ] (renderList params acc args)
 
 
-renderItalic : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderItalic params settings acc args meta =
-    Html.em [ HA.id meta.id ] (renderList params settings acc args)
+renderItalic : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderItalic params acc args meta =
+    Html.em [ HA.id meta.id ] (renderList params acc args)
 
 
-renderStrike : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderStrike params settings acc args meta =
-    Html.span [ HA.id meta.id, HA.style "text-decoration" "line-through" ] (renderList params settings acc args)
+renderStrike : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderStrike params acc args meta =
+    Html.span [ HA.id meta.id, HA.style "text-decoration" "line-through" ] (renderList params acc args)
 
 
-renderUnderline : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderUnderline params settings acc args meta =
-    Html.span [ HA.id meta.id, HA.style "text-decoration" "underline" ] (renderList params settings acc args)
+renderUnderline : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderUnderline params acc args meta =
+    Html.span [ HA.id meta.id, HA.style "text-decoration" "underline" ] (renderList params acc args)
 
 
-renderColor : String -> CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderColor color params settings acc args meta =
-    Html.span [ HA.id meta.id, HA.style "color" color ] (renderList params settings acc args)
+renderColor : String -> CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderColor color params acc args meta =
+    Html.span [ HA.id meta.id, HA.style "color" color ] (renderList params acc args)
 
 
-renderHighlight : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderHighlight params settings acc args meta =
-    Html.span [ HA.id meta.id, HA.style "background-color" "yellow" ] (renderList params settings acc args)
+renderHighlight : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderHighlight params acc args meta =
+    Html.span [ HA.id meta.id, HA.style "background-color" "yellow" ] (renderList params acc args)
 
 
-renderLink : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderLink params settings acc args meta =
+renderLink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderLink params acc args meta =
     case args of
         [ Text label _, Text url _ ] ->
             Html.a [ HA.id meta.id, HA.href url, HA.target "_blank" ] [ Html.text label ]
@@ -186,27 +186,27 @@ renderLink params settings acc args meta =
             Html.a [ HA.id meta.id, HA.href url, HA.target "_blank" ] [ Html.text url ]
 
         _ ->
-            Html.span [ HA.id meta.id ] (renderList params settings acc args)
+            Html.span [ HA.id meta.id ] (renderList params acc args)
 
 
-renderHref : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderHref params settings acc args meta =
+renderHref : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderHref params acc args meta =
     case args of
         [ Text url _ ] ->
             Html.a [ HA.id meta.id, HA.href url, HA.target "_blank" ] [ Html.text url ]
 
         _ ->
-            Html.span [ HA.id meta.id ] (renderList params settings acc args)
+            Html.span [ HA.id meta.id ] (renderList params acc args)
 
 
-renderImage : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderImage _ settings _ args meta =
+renderImage : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderImage params _ args meta =
     case args of
         [ Text src _ ] ->
             Html.img
                 [ HA.id meta.id
                 , HA.src src
-                , HA.style "max-width" (String.fromInt settings.width ++ "px")
+                , HA.style "max-width" (String.fromInt params.width ++ "px")
                 ]
                 []
 
@@ -214,8 +214,8 @@ renderImage _ settings _ args meta =
             Html.text "[image: invalid args]"
 
 
-renderIlink : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderIlink params settings acc args meta =
+renderIlink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderIlink params acc args meta =
     -- Internal link - render as link with SelectId message
     case args of
         [ Text label _, Text targetId _ ] ->
@@ -227,17 +227,17 @@ renderIlink params settings acc args meta =
                 [ Html.text label ]
 
         _ ->
-            Html.span [ HA.id meta.id ] (renderList params settings acc args)
+            Html.span [ HA.id meta.id ] (renderList params acc args)
 
 
-renderIndex : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderIndex _ _ _ _ meta =
+renderIndex : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderIndex _ _ _ meta =
     -- Index entries are invisible in the output
     Html.span [ HA.id meta.id, HA.style "display" "none" ] []
 
 
-renderRef : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderRef _ _ acc args meta =
+renderRef : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderRef _ acc args meta =
     case args of
         [ Text refId _ ] ->
             case Dict.get refId acc.reference of
@@ -256,8 +256,8 @@ renderRef _ _ acc args meta =
             Html.span [ HA.id meta.id ] [ Html.text "[ref: invalid]" ]
 
 
-renderEqRef : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderEqRef _ _ acc args meta =
+renderEqRef : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderEqRef _ acc args meta =
     case args of
         [ Text refId _ ] ->
             case Dict.get refId acc.reference of
@@ -276,43 +276,43 @@ renderEqRef _ _ acc args meta =
             Html.span [ HA.id meta.id ] [ Html.text "[eqref: invalid]" ]
 
 
-renderCite : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderCite params settings acc args meta =
+renderCite : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderCite params acc args meta =
     case args of
         [ Text key _ ] ->
             Html.span [ HA.id meta.id ] [ Html.text ("[" ++ key ++ "]") ]
 
         _ ->
-            Html.span [ HA.id meta.id ] (renderList params settings acc args)
+            Html.span [ HA.id meta.id ] (renderList params acc args)
 
 
-renderSup : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderSup params settings acc args meta =
-    Html.sup [ HA.id meta.id ] (renderList params settings acc args)
+renderSup : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderSup params acc args meta =
+    Html.sup [ HA.id meta.id ] (renderList params acc args)
 
 
-renderSub : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderSub params settings acc args meta =
-    Html.sub [ HA.id meta.id ] (renderList params settings acc args)
+renderSub : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderSub params acc args meta =
+    Html.sub [ HA.id meta.id ] (renderList params acc args)
 
 
-renderTerm : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderTerm params settings acc args meta =
+renderTerm : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderTerm params acc args meta =
     Html.em
         [ HA.id meta.id
         , HA.style "padding-right" "2px"
         ]
-        (renderList params settings acc args)
+        (renderList params acc args)
 
 
-renderTermHidden : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderTermHidden _ _ _ _ meta =
+renderTermHidden : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderTermHidden _ _ _ meta =
     -- Hidden term for index entries that shouldn't display inline
     Html.span [ HA.id meta.id, HA.style "display" "none" ] []
 
 
-renderVspace : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderVspace _ _ _ args meta =
+renderVspace : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderVspace _ _ args meta =
     let
         h =
             args

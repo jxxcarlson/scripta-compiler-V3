@@ -23,7 +23,6 @@ import Either exposing (Either(..))
 import Html exposing (Html)
 import Html.Attributes as HA
 import Parser.Forest
-import Render.Settings
 import Render.TOC
 import Render.Tree
 import RoseTree.Tree as Tree exposing (Tree)
@@ -36,7 +35,6 @@ import Types
         , ExpressionBlock
         , Heading(..)
         , Msg
-        , RenderSettings
         )
 
 
@@ -52,15 +50,12 @@ compile params lines =
 render : CompilerParameters -> ( Accumulator, List (Tree ExpressionBlock) ) -> CompilerOutput Msg
 render params ( accumulator, forest ) =
     let
-        settings =
-            Render.Settings.fromParams params
-
         body =
-            Render.Tree.renderForest params settings accumulator forest
+            Render.Tree.renderForest params accumulator forest
 
         toc =
-            if settings.showTOC then
-                Render.TOC.build params settings accumulator forest
+            if params.showTOC then
+                Render.TOC.build params accumulator forest
 
             else
                 []

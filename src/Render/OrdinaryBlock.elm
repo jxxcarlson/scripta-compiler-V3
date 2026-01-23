@@ -9,24 +9,24 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Expression
 import Render.Utility exposing (idAttr, selectedStyle)
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..), RenderSettings, Theme(..))
+import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..), Theme(..))
 
 
 {-| Render an ordinary block by name.
 -}
-render : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-render params settings acc name block children =
+render : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+render params acc name block children =
     case Dict.get name blockDict of
         Just renderer ->
-            renderer params settings acc name block children
+            renderer params acc name block children
 
         Nothing ->
-            renderDefault params settings acc name block children
+            renderDefault params acc name block children
 
 
 {-| Dictionary of block renderers.
 -}
-blockDict : Dict String (CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg))
+blockDict : Dict String (CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg))
 blockDict =
     Dict.fromList
         [ ( "section", renderSection )
@@ -68,17 +68,17 @@ blockDict =
 
 {-| Default rendering for unknown block names.
 -}
-renderDefault : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderDefault params settings acc name block children =
+renderDefault : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderDefault params acc name block children =
     [ Html.div
         ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (String.fromInt settings.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         (Html.span [ HA.style "font-weight" "bold", HA.style "color" "blue" ]
             [ Html.text ("[" ++ name ++ "]") ]
-            :: renderBody params settings acc block
+            :: renderBody params acc block
             ++ children
         )
     ]
@@ -86,22 +86,22 @@ renderDefault params settings acc name block children =
 
 {-| Render block body content.
 -}
-renderBody : CompilerParameters -> RenderSettings -> Accumulator -> ExpressionBlock -> List (Html Msg)
-renderBody params settings acc block =
+renderBody : CompilerParameters -> Accumulator -> ExpressionBlock -> List (Html Msg)
+renderBody params acc block =
     case block.body of
         Left _ ->
             []
 
         Right expressions ->
-            Render.Expression.renderList params settings acc expressions
+            Render.Expression.renderList params acc expressions
 
 
 
 -- SECTION HEADINGS
 
 
-renderSection : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderSection params settings acc _ block children =
+renderSection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderSection params acc _ block children =
     let
         level =
             Dict.get "level" block.properties |> Maybe.andThen String.toInt |> Maybe.withDefault 1
@@ -135,25 +135,25 @@ renderSection params settings acc _ block children =
          , HA.style "margin-top" "1.5em"
          , HA.style "margin-bottom" "0.5em"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (Html.text prefix :: renderBody params settings acc block)
+        (Html.text prefix :: renderBody params acc block)
         :: children
 
 
-renderSubsection : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderSubsection params settings acc _ block children =
+renderSubsection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderSubsection params acc _ block children =
     Html.h3
-        (idAttr block.meta.id :: selectedStyle settings.selectedId block.meta.id settings.theme)
-        (renderBody params settings acc block)
+        (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme)
+        (renderBody params acc block)
         :: children
 
 
-renderSubsubsection : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderSubsubsection params settings acc _ block children =
+renderSubsubsection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderSubsubsection params acc _ block children =
     Html.h4
-        (idAttr block.meta.id :: selectedStyle settings.selectedId block.meta.id settings.theme)
-        (renderBody params settings acc block)
+        (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme)
+        (renderBody params acc block)
         :: children
 
 
@@ -161,20 +161,20 @@ renderSubsubsection params settings acc _ block children =
 -- LIST ITEMS
 
 
-renderItem : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderItem params settings acc _ block children =
+renderItem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderItem params acc _ block children =
     [ Html.li
         ([ idAttr block.meta.id
          , HA.style "margin-left" (String.fromInt (block.indent * 20) ++ "px")
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block ++ children)
+        (renderBody params acc block ++ children)
     ]
 
 
-renderNumbered : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderNumbered params settings acc _ block children =
+renderNumbered : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderNumbered params acc _ block children =
     let
         index =
             case Dict.get block.meta.id acc.numberedItemDict of
@@ -189,10 +189,10 @@ renderNumbered params settings acc _ block children =
          , HA.style "margin-left" (String.fromInt (block.indent * 20) ++ "px")
          , HA.style "margin-bottom" "0.5em"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         (Html.span [ HA.style "margin-right" "0.5em" ] [ Html.text index ]
-            :: renderBody params settings acc block
+            :: renderBody params acc block
             ++ children
         )
     ]
@@ -202,8 +202,8 @@ renderNumbered params settings acc _ block children =
 -- THEOREM-LIKE ENVIRONMENTS
 
 
-renderTheorem : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderTheorem params settings acc name block children =
+renderTheorem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderTheorem params acc name block children =
     let
         theoremTitle =
             String.toUpper (String.left 1 name) ++ String.dropLeft 1 name
@@ -235,7 +235,7 @@ renderTheorem params settings acc name block children =
          , HA.style "padding" "12px"
          , HA.style "border-left" "3px solid #ccc"
          , HA.style "background-color"
-            (case settings.theme of
+            (case params.theme of
                 Light ->
                     "#f9f9f9"
 
@@ -243,31 +243,31 @@ renderTheorem params settings acc name block children =
                     "#2a2a2a"
             )
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         (Html.span
             [ HA.style "font-weight" "bold"
             , HA.style "margin-right" "0.5em"
             ]
             [ Html.text (theoremTitle ++ numberString ++ labelDisplay ++ ".") ]
-            :: renderBody params settings acc block
+            :: renderBody params acc block
             ++ children
         )
     ]
 
 
-renderProof : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderProof params settings acc _ block children =
+renderProof : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderProof params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin-top" "0.5em"
          , HA.style "margin-bottom" "1em"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         (Html.span [ HA.style "font-style" "italic", HA.style "margin-right" "0.5em" ]
             [ Html.text "Proof." ]
-            :: renderBody params settings acc block
+            :: renderBody params acc block
             ++ children
             ++ [ Html.span [ HA.style "float" "right" ] [ Html.text "∎" ] ]
         )
@@ -278,20 +278,20 @@ renderProof params settings acc _ block children =
 -- FORMATTING BLOCKS
 
 
-renderIndent : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderIndent params settings acc _ block children =
+renderIndent : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderIndent params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin-left" "2em"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block ++ children)
+        (renderBody params acc block ++ children)
     ]
 
 
-renderQuotation : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderQuotation params settings acc _ block children =
+renderQuotation : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderQuotation params acc _ block children =
     [ Html.blockquote
         ([ idAttr block.meta.id
          , HA.style "border-left" "3px solid #ccc"
@@ -299,36 +299,36 @@ renderQuotation params settings acc _ block children =
          , HA.style "margin-left" "1em"
          , HA.style "font-style" "italic"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block ++ children)
+        (renderBody params acc block ++ children)
     ]
 
 
-renderCenter : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderCenter params settings acc _ block children =
+renderCenter : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderCenter params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block ++ children)
+        (renderBody params acc block ++ children)
     ]
 
 
-renderAbstract : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderAbstract params settings acc _ block children =
+renderAbstract : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderAbstract params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 2em"
          , HA.style "font-size" "0.9em"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         (Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ]
             [ Html.text "Abstract" ]
-            :: renderBody params settings acc block
+            :: renderBody params acc block
             ++ children
         )
     ]
@@ -338,48 +338,48 @@ renderAbstract params settings acc _ block children =
 -- DOCUMENT METADATA
 
 
-renderTitle : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderTitle params settings acc _ block _ =
+renderTitle : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderTitle params acc _ block _ =
     [ Html.h1
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "margin-bottom" "0.25em"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block)
+        (renderBody params acc block)
     ]
 
 
-renderSubtitle : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderSubtitle params settings acc _ block _ =
+renderSubtitle : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderSubtitle params acc _ block _ =
     [ Html.h2
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "font-weight" "normal"
          , HA.style "margin-top" "0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block)
+        (renderBody params acc block)
     ]
 
 
-renderAuthor : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderAuthor params settings acc _ block _ =
+renderAuthor : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderAuthor params acc _ block _ =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "margin-top" "0.5em"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block)
+        (renderBody params acc block)
     ]
 
 
-renderDate : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderDate params settings acc _ block _ =
+renderDate : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderDate params acc _ block _ =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
@@ -387,9 +387,9 @@ renderDate params settings acc _ block _ =
          , HA.style "font-size" "0.9em"
          , HA.style "color" "#666"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block)
+        (renderBody params acc block)
     ]
 
 
@@ -397,8 +397,8 @@ renderDate params settings acc _ block _ =
 -- SPECIAL BLOCKS
 
 
-renderContents : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderContents _ settings _ _ block _ =
+renderContents : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderContents _ _ _ block _ =
     -- Table of contents placeholder - actual TOC is built by Render.TOC
     [ Html.div
         [ idAttr block.meta.id
@@ -408,14 +408,14 @@ renderContents _ settings _ _ block _ =
     ]
 
 
-renderIndexBlock : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderIndexBlock _ _ _ _ block _ =
+renderIndexBlock : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderIndexBlock _ _ _ block _ =
     -- Index block - invisible in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
-renderBox : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderBox params settings acc _ block children =
+renderBox : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderBox params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "border" "1px solid #ccc"
@@ -423,25 +423,25 @@ renderBox params settings acc _ block children =
          , HA.style "margin" "1em 0"
          , HA.style "border-radius" "4px"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params settings acc block ++ children)
+        (renderBody params acc block ++ children)
     ]
 
 
-renderComment : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderComment _ _ _ _ block _ =
+renderComment : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderComment _ _ _ block _ =
     -- Comments are hidden
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
-renderDocument : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderDocument _ _ _ _ block _ =
+renderDocument : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderDocument _ _ _ block _ =
     -- Document blocks are metadata, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
-renderCollection : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderCollection _ _ _ _ block _ =
+renderCollection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderCollection _ _ _ block _ =
     -- Collection blocks are metadata, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]

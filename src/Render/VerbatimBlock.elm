@@ -10,24 +10,24 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Utility exposing (idAttr, selectedStyle)
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..), RenderSettings, Theme(..))
+import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..), Theme(..))
 
 
 {-| Render a verbatim block by name.
 -}
-render : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-render params settings acc name block children =
+render : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+render params acc name block children =
     case Dict.get name blockDict of
         Just renderer ->
-            renderer params settings acc name block children
+            renderer params acc name block children
 
         Nothing ->
-            renderDefault params settings acc name block children
+            renderDefault params acc name block children
 
 
 {-| Dictionary of verbatim block renderers.
 -}
-blockDict : Dict String (CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg))
+blockDict : Dict String (CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg))
 blockDict =
     Dict.fromList
         [ ( "math", renderMath )
@@ -50,13 +50,13 @@ blockDict =
 
 {-| Default rendering for unknown verbatim block names.
 -}
-renderDefault : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderDefault _ settings _ name block _ =
+renderDefault : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderDefault params _ name block _ =
     [ Html.div
         ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (String.fromInt settings.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.span [ HA.style "font-weight" "bold", HA.style "color" "purple" ]
             [ Html.text ("[verbatim:" ++ name ++ "]") ]
@@ -82,8 +82,8 @@ getVerbatimContent block =
 -- MATH BLOCKS
 
 
-renderMath : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderMath _ settings acc _ block _ =
+renderMath : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderMath params acc _ block _ =
     let
         content =
             getVerbatimContent block
@@ -94,14 +94,14 @@ renderMath _ settings acc _ block _ =
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        [ mathText settings.editCount block.meta.id DisplayMathMode content ]
+        [ mathText params.editCount block.meta.id DisplayMathMode content ]
     ]
 
 
-renderEquation : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderEquation _ settings acc _ block _ =
+renderEquation : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderEquation params acc _ block _ =
     let
         rawContent =
             getVerbatimContent block
@@ -130,11 +130,11 @@ renderEquation _ settings acc _ block _ =
          , HA.style "align-items" "center"
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.div [ HA.style "flex" "1" ] []
         , Html.div []
-            [ mathText settings.editCount block.meta.id DisplayMathMode content ]
+            [ mathText params.editCount block.meta.id DisplayMathMode content ]
         , Html.div
             [ HA.style "flex" "1"
             , HA.style "text-align" "right"
@@ -152,8 +152,8 @@ renderEquation _ settings acc _ block _ =
     ]
 
 
-renderAligned : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderAligned _ settings acc _ block _ =
+renderAligned : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderAligned params acc _ block _ =
     let
         content =
             getVerbatimContent block
@@ -165,9 +165,9 @@ renderAligned _ settings acc _ block _ =
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        [ mathText settings.editCount block.meta.id DisplayMathMode content ]
+        [ mathText params.editCount block.meta.id DisplayMathMode content ]
     ]
 
 
@@ -192,8 +192,8 @@ applyMathMacros _ content =
 -- CODE BLOCKS
 
 
-renderCode : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderCode _ settings _ _ block _ =
+renderCode : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderCode params _ _ block _ =
     let
         language =
             List.head block.args |> Maybe.withDefault ""
@@ -205,11 +205,11 @@ renderCode _ settings _ _ block _ =
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.pre
             [ HA.style "background-color"
-                (case settings.theme of
+                (case params.theme of
                     Light ->
                         "#f5f5f5"
 
@@ -234,8 +234,8 @@ renderCode _ settings _ _ block _ =
 -- VERSE
 
 
-renderVerse : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderVerse _ settings _ _ block _ =
+renderVerse : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderVerse params _ _ block _ =
     let
         content =
             getVerbatimContent block
@@ -246,7 +246,7 @@ renderVerse _ settings _ _ block _ =
          , HA.style "font-style" "italic"
          , HA.style "white-space" "pre-wrap"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.text content ]
     ]
@@ -256,14 +256,14 @@ renderVerse _ settings _ _ block _ =
 -- MACRO DEFINITIONS
 
 
-renderMathMacros : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderMathMacros _ _ _ _ block _ =
+renderMathMacros : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderMathMacros _ _ _ block _ =
     -- Math macros are processed at parse time, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
-renderTextMacros : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderTextMacros _ _ _ _ block _ =
+renderTextMacros : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderTextMacros _ _ _ block _ =
     -- Text macros are processed at parse time, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
@@ -272,8 +272,8 @@ renderTextMacros _ _ _ _ block _ =
 -- DATA AND CHARTS
 
 
-renderDataTable : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderDataTable _ settings _ _ block _ =
+renderDataTable : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderDataTable params _ _ block _ =
     let
         content =
             getVerbatimContent block
@@ -282,7 +282,7 @@ renderDataTable _ settings _ _ block _ =
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.pre [ HA.style "font-family" "monospace" ]
             [ Html.text content ]
@@ -290,8 +290,8 @@ renderDataTable _ settings _ _ block _ =
     ]
 
 
-renderChart : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderChart _ settings _ _ block _ =
+renderChart : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderChart params _ _ block _ =
     -- Chart rendering requires external JS library integration
     [ Html.div
         ([ idAttr block.meta.id
@@ -300,7 +300,7 @@ renderChart _ settings _ _ block _ =
          , HA.style "min-height" "200px"
          , HA.style "border" "1px dashed #ccc"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.text "[Chart]" ]
     ]
@@ -310,8 +310,8 @@ renderChart _ settings _ _ block _ =
 -- GRAPHICS
 
 
-renderSvg : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderSvg _ settings _ _ block _ =
+renderSvg : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderSvg params _ _ block _ =
     -- SVG rendering requires embedding raw HTML, which isn't directly
     -- supported in Elm. This is a placeholder that shows SVG content.
     [ Html.div
@@ -320,7 +320,7 @@ renderSvg _ settings _ _ block _ =
          , HA.style "margin" "1em 0"
          , HA.class "svg-container"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.pre
             [ HA.style "font-family" "monospace"
@@ -331,29 +331,29 @@ renderSvg _ settings _ _ block _ =
     ]
 
 
-renderQuiver : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderQuiver _ settings _ _ block _ =
+renderQuiver : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderQuiver params _ _ block _ =
     -- Quiver diagrams require external integration
     [ Html.div
         ([ idAttr block.meta.id
          , HA.class "quiver-placeholder"
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.text "[Quiver Diagram]" ]
     ]
 
 
-renderTikz : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderTikz _ settings _ _ block _ =
+renderTikz : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderTikz params _ _ block _ =
     -- TikZ requires external integration
     [ Html.div
         ([ idAttr block.meta.id
          , HA.class "tikz-placeholder"
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.text "[TikZ Diagram]" ]
     ]
@@ -363,8 +363,8 @@ renderTikz _ settings _ _ block _ =
 -- MEDIA
 
 
-renderImage : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderImage _ settings _ _ block _ =
+renderImage : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderImage params _ _ block _ =
     let
         src =
             block.firstLine
@@ -372,14 +372,14 @@ renderImage _ settings _ _ block _ =
         width =
             Dict.get "width" block.properties
                 |> Maybe.andThen String.toInt
-                |> Maybe.withDefault settings.width
+                |> Maybe.withDefault params.width
     in
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.img
             [ HA.src src
@@ -390,8 +390,8 @@ renderImage _ settings _ _ block _ =
     ]
 
 
-renderIframe : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderIframe _ settings _ _ block _ =
+renderIframe : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderIframe params _ _ block _ =
     let
         src =
             block.firstLine
@@ -399,7 +399,7 @@ renderIframe _ settings _ _ block _ =
         width =
             Dict.get "width" block.properties
                 |> Maybe.andThen String.toInt
-                |> Maybe.withDefault settings.width
+                |> Maybe.withDefault params.width
 
         height =
             Dict.get "height" block.properties
@@ -411,7 +411,7 @@ renderIframe _ settings _ _ block _ =
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
          ]
-            ++ selectedStyle settings.selectedId block.meta.id settings.theme
+            ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.iframe
             [ HA.src src
@@ -428,7 +428,7 @@ renderIframe _ settings _ _ block _ =
 -- INCLUDES
 
 
-renderLoad : CompilerParameters -> RenderSettings -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderLoad _ _ _ _ block _ =
+renderLoad : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderLoad _ _ _ block _ =
     -- Load blocks are processed at a higher level, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]

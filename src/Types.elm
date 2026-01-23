@@ -165,6 +165,9 @@ type alias CompilerParameters =
     , selectedId : String
     , theme : Theme
     , editCount : Int
+    , width : Int
+    , showTOC : Bool
+    , paragraphSpacing : Int
     }
 
 
@@ -207,16 +210,7 @@ type Msg
 -- RENDER SETTINGS
 
 
-{-| Settings for rendering.
--}
-type alias RenderSettings =
-    { width : Int
-    , selectedId : String
-    , theme : Theme
-    , showTOC : Bool
-    , paragraphSpacing : Int
-    , editCount : Int
-    }
+
 
 
 

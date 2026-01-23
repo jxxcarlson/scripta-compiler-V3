@@ -10,38 +10,38 @@ import Render.Expression
 import Render.OrdinaryBlock
 import Render.Utility exposing (idAttr, selectedStyle)
 import Render.VerbatimBlock
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Heading(..), Msg(..), RenderSettings)
+import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Heading(..), Msg(..))
 
 
 {-| Render a block's body content, dispatching based on heading type.
 Children are the rendered subtree elements.
 -}
-renderBody : CompilerParameters -> RenderSettings -> Accumulator -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderBody params settings acc block children =
+renderBody : CompilerParameters -> Accumulator -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderBody params acc block children =
     case block.heading of
         Paragraph ->
-            renderParagraph params settings acc block children
+            renderParagraph params acc block children
 
         Ordinary name ->
-            Render.OrdinaryBlock.render params settings acc name block children
+            Render.OrdinaryBlock.render params acc name block children
 
         Verbatim name ->
-            Render.VerbatimBlock.render params settings acc name block children
+            Render.VerbatimBlock.render params acc name block children
 
 
 {-| Render a paragraph block.
 -}
-renderParagraph : CompilerParameters -> RenderSettings -> Accumulator -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderParagraph params settings acc block children =
+renderParagraph : CompilerParameters -> Accumulator -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderParagraph params acc block children =
     case block.body of
         Left errorMsg ->
             -- Error case - display error message
             Html.div
                 ([ idAttr block.meta.id
                  , HA.style "color" "red"
-                 , HA.style "margin-bottom" (String.fromInt settings.paragraphSpacing ++ "px")
+                 , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
                  ]
-                    ++ selectedStyle settings.selectedId block.meta.id settings.theme
+                    ++ selectedStyle params.selectedId block.meta.id params.theme
                 )
                 [ Html.text ("Error: " ++ errorMsg) ]
                 :: children
@@ -54,10 +54,10 @@ renderParagraph params settings acc block children =
             else
                 Html.p
                     ([ idAttr block.meta.id
-                     , HA.style "margin-bottom" (String.fromInt settings.paragraphSpacing ++ "px")
+                     , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
                      , HA.style "line-height" "1.5"
                      ]
-                        ++ selectedStyle settings.selectedId block.meta.id settings.theme
+                        ++ selectedStyle params.selectedId block.meta.id params.theme
                     )
-                    (Render.Expression.renderList params settings acc expressions)
+                    (Render.Expression.renderList params acc expressions)
                     :: children
