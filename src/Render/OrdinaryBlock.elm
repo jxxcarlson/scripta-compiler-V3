@@ -70,6 +70,29 @@ blockDict =
         , ( "desc", renderDesc )
           -- Footnotes
         , ( "endnotes", renderEndnotes )
+          -- Additional blocks from V2
+        , ( "subheading", renderSubheading )
+        , ( "sh", renderSubheading )
+        , ( "compact", renderCompact )
+        , ( "identity", renderIdentity )
+        , ( "red", renderColorBlock "red" )
+        , ( "red2", renderColorBlock "#c00" )
+        , ( "blue", renderColorBlock "blue" )
+        , ( "q", renderQuestion )
+        , ( "a", renderAnswer )
+        , ( "reveal", renderReveal )
+        , ( "book", renderNothing )
+        , ( "chapter", renderChapter )
+        , ( "section*", renderUnnumberedSection )
+        , ( "visibleBanner", renderVisibleBanner )
+        , ( "banner", renderNothing )
+        , ( "runninghead_", renderNothing )
+        , ( "tags", renderNothing )
+        , ( "type", renderNothing )
+        , ( "setcounter", renderNothing )
+        , ( "shiftandsetcounter", renderNothing )
+        , ( "bibitem", renderBibitem )
+        , ( "env", renderEnv )
         ]
 
 
@@ -686,3 +709,233 @@ renderFootnoteItem { label, content, id } =
             [ Html.text (String.fromInt label ++ ".") ]
         , Html.text content
         ]
+
+
+
+-- ADDITIONAL BLOCKS FROM V2
+
+
+renderNothing : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderNothing _ _ _ block _ =
+    [ Html.span [ HA.id block.meta.id, HA.style "display" "none" ] [] ]
+
+
+renderSubheading : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderSubheading params acc _ block children =
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "font-size" "1.1em"
+         , HA.style "font-weight" "bold"
+         , HA.style "margin-top" "1em"
+         , HA.style "margin-bottom" "0.5em"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (renderBody params acc block ++ children)
+    ]
+
+
+renderCompact : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderCompact params acc _ block children =
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "line-height" "1.2"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (renderBody params acc block ++ children)
+    ]
+
+
+renderIdentity : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderIdentity params acc _ block children =
+    [ Html.div
+        ([ idAttr block.meta.id ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (renderBody params acc block ++ children)
+    ]
+
+
+renderColorBlock : String -> CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderColorBlock color params acc _ block children =
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "color" color
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (renderBody params acc block ++ children)
+    ]
+
+
+renderQuestion : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderQuestion params acc _ block children =
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "padding" "0.5em"
+         , HA.style "background-color" "#f0f8ff"
+         , HA.style "border-left" "3px solid #4a90d9"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a90d9" ] [ Html.text "Q: " ]
+            :: renderBody params acc block
+            ++ children
+        )
+    ]
+
+
+renderAnswer : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderAnswer params acc _ block children =
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "padding" "0.5em"
+         , HA.style "background-color" "#f0fff0"
+         , HA.style "border-left" "3px solid #4a9"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a9" ] [ Html.text "A: " ]
+            :: renderBody params acc block
+            ++ children
+        )
+    ]
+
+
+renderReveal : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderReveal params acc _ block children =
+    -- Simplified reveal - just shows content (full interactivity would need JS)
+    [ Html.details
+        ([ idAttr block.meta.id
+         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        [ Html.summary [ HA.style "cursor" "pointer", HA.style "font-weight" "bold" ]
+            [ Html.text (String.join " " block.args |> (\s -> if String.isEmpty s then "Click to reveal" else s)) ]
+        , Html.div [ HA.style "padding" "0.5em" ]
+            (renderBody params acc block ++ children)
+        ]
+    ]
+
+
+renderChapter : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderChapter params acc _ block children =
+    [ Html.h1
+        ([ idAttr block.meta.id
+         , HA.style "font-size" "2em"
+         , HA.style "margin-top" "1.5em"
+         , HA.style "margin-bottom" "0.5em"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (renderBody params acc block ++ children)
+    ]
+
+
+renderUnnumberedSection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderUnnumberedSection params acc _ block children =
+    let
+        level =
+            block.args
+                |> List.head
+                |> Maybe.andThen String.toInt
+                |> Maybe.withDefault 1
+
+        fontSize =
+            case level of
+                1 -> "1.5em"
+                2 -> "1.3em"
+                _ -> "1.1em"
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "font-size" fontSize
+         , HA.style "font-weight" "bold"
+         , HA.style "margin-top" "1em"
+         , HA.style "margin-bottom" "0.5em"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (renderBody params acc block ++ children)
+    ]
+
+
+renderVisibleBanner : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderVisibleBanner _ _ _ block _ =
+    let
+        src =
+            block.firstLine
+    in
+    [ Html.img
+        [ HA.id block.meta.id
+        , HA.src src
+        , HA.style "max-width" "100%"
+        , HA.style "margin-bottom" "1em"
+        ]
+        []
+    ]
+
+
+renderBibitem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderBibitem params acc _ block children =
+    let
+        label =
+            block.args
+                |> List.head
+                |> Maybe.withDefault ""
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "display" "flex"
+         , HA.style "margin-bottom" "0.5em"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        [ Html.span
+            [ HA.style "font-weight" "bold"
+            , HA.style "min-width" "60px"
+            ]
+            [ Html.text ("[" ++ label ++ "]") ]
+        , Html.div [ HA.style "flex" "1" ]
+            (renderBody params acc block ++ children)
+        ]
+    ]
+
+
+renderEnv : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderEnv params acc _ block children =
+    -- Generic environment - uses first arg as the environment name
+    let
+        envName =
+            block.args
+                |> List.head
+                |> Maybe.withDefault "environment"
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "padding" "0.5em"
+         , HA.style "border" "1px solid #ddd"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ]
+            [ Html.text (capitalize envName) ]
+            :: renderBody params acc block
+            ++ children
+        )
+    ]
+
+
+capitalize : String -> String
+capitalize str =
+    case String.uncons str of
+        Just ( first, rest ) ->
+            String.cons (Char.toUpper first) rest
+
+        Nothing ->
+            str
