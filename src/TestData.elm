@@ -1,8 +1,25 @@
 module TestData exposing (..)
 
+import Parser.Pipeline
+import Parser.PrimitiveBlock
 import Types
 
 
+q : String -> List Types.ExpressionBlock
+q str =
+    str
+    |> String.lines
+    |> Parser.PrimitiveBlock.parse
+    |> List.map Parser.Pipeline.toExpressionBlock
+
+
+{-| Parse a string to primitive blocks.
+-}
+pb : String -> List Types.PrimitiveBlock
+pb str =
+    str
+    |> String.lines
+    |> Parser.PrimitiveBlock.parse
 
 defaultCompilerParameters: Types.CompilerParameters
 defaultCompilerParameters =
@@ -16,6 +33,7 @@ defaultCompilerParameters =
     , paragraphSpacing = 18
     }
 
+-- ppb str =  Parser.PrimitiveBlock.parse (String.words str)
 
 str1 =
     """
@@ -31,4 +49,13 @@ There are infintelty many primes.
 $$
 int_0^1 x^n dx = frac(1,n+1)
 
+"""
+
+
+cl1 = "- One\n- Two\n- Three\n"
+
+cl2 = """
+. One
+. Two
+. Three
 """

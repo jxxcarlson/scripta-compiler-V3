@@ -223,6 +223,10 @@ blockFromLine line state =
 
 
 {-| Add the current line to the block being built.
+
+Includes list coalescing: when consecutive item or numbered lines are found,
+the block heading changes to itemList or numberedList respectively.
+
 -}
 addCurrentLine : Line -> State -> State
 addCurrentLine line state =
@@ -230,15 +234,79 @@ addCurrentLine line state =
         newPosition =
             state.position + String.length line.content + 1
 
-        updatedBlock =
-            state.currentBlock
-                |> Maybe.map (addLineToBlock line)
+        -- Check if this line has the same list heading as current block
+        lineHeading =
+            inspectHeading line.content
+
+        currentHeading =
+            Maybe.map .heading state.currentBlock
+
+        -- Coalesce lists: item -> itemList, numbered -> numberedList
+        coalescedBlock =
+            case ( currentHeading, lineHeading ) of
+                ( Just (Ordinary "item"), Just (Ordinary "item") ) ->
+                    state.currentBlock
+                        |> Maybe.map (\b -> { b | heading = Ordinary "itemList" })
+                        |> Maybe.map (addListLineToBlock line)
+
+                ( Just (Ordinary "itemList"), Just (Ordinary "item") ) ->
+                    state.currentBlock
+                        |> Maybe.map (addListLineToBlock line)
+
+                ( Just (Ordinary "numbered"), Just (Ordinary "numbered") ) ->
+                    state.currentBlock
+                        |> Maybe.map (\b -> { b | heading = Ordinary "numberedList" })
+                        |> Maybe.map (addListLineToBlock line)
+
+                ( Just (Ordinary "numberedList"), Just (Ordinary "numbered") ) ->
+                    state.currentBlock
+                        |> Maybe.map (addListLineToBlock line)
+
+                _ ->
+                    state.currentBlock
+                        |> Maybe.map (addLineToBlock line)
     in
     { state
-        | currentBlock = updatedBlock
+        | currentBlock = coalescedBlock
         , lines = List.drop 1 state.lines
         , lineNumber = state.lineNumber + 1
         , position = newPosition
+    }
+
+
+{-| Inspect a line to determine what heading it would produce.
+-}
+inspectHeading : String -> Maybe Heading
+inspectHeading content =
+    let
+        trimmed =
+            String.trim content
+    in
+    if String.startsWith "- " trimmed then
+        Just (Ordinary "item")
+
+    else if String.startsWith ". " trimmed then
+        Just (Ordinary "numbered")
+
+    else
+        Nothing
+
+
+{-| Add a list item line to a block, preserving the list prefix.
+-}
+addListLineToBlock : Line -> PrimitiveBlock -> PrimitiveBlock
+addListLineToBlock line block =
+    let
+        -- Preserve full line content including prefix (like V2)
+        contentToAdd =
+            String.trim line.content
+
+        meta =
+            block.meta
+    in
+    { block
+        | body = contentToAdd :: block.body
+        , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
     }
 
 
@@ -429,19 +497,19 @@ getHeadingData line =
         }
 
     else if String.startsWith "- " trimmed then
-        -- List item
+        -- List item (preserve full line including prefix)
         { heading = Ordinary "item"
         , args = []
         , properties = Dict.empty
-        , firstLine = String.dropLeft 2 trimmed
+        , firstLine = trimmed
         }
 
     else if String.startsWith ". " trimmed then
-        -- Numbered item
+        -- Numbered item (preserve full line including prefix)
         { heading = Ordinary "numbered"
         , args = []
         , properties = Dict.empty
-        , firstLine = String.dropLeft 2 trimmed
+        , firstLine = trimmed
         }
 
     else
