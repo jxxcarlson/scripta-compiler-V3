@@ -45,6 +45,24 @@ blockDict =
         , ( "image", renderImage )
         , ( "iframe", renderIframe )
         , ( "load", renderLoad )
+          -- Chemistry
+        , ( "chem", renderChem )
+          -- Arrays/tables
+        , ( "array", renderArray )
+        , ( "textarray", renderTextArray )
+        , ( "table", renderTextArray )
+        , ( "csvtable", renderCsvTable )
+          -- Raw verbatim
+        , ( "verbatim", renderVerbatim )
+          -- No-op/hidden blocks
+        , ( "settings", renderNothing )
+        , ( "load-data", renderNothing )
+        , ( "hide", renderNothing )
+        , ( "texComment", renderNothing )
+        , ( "docinfo", renderNothing )
+        , ( "load-files", renderNothing )
+        , ( "include", renderNothing )
+        , ( "setup", renderNothing )
         ]
 
 
@@ -431,4 +449,225 @@ renderIframe params _ _ block _ =
 renderLoad : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderLoad _ _ _ block _ =
     -- Load blocks are processed at a higher level, hidden in output
+    [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
+
+
+
+-- CHEMISTRY
+
+
+renderChem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderChem params acc _ block children =
+    let
+        content =
+            getVerbatimContent block
+                |> (\s -> "\\ce{" ++ s ++ "}")
+                |> applyMathMacros acc.mathMacroDict
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "text-align" "center"
+         , HA.style "margin" "1em 0"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        [ mathText params.editCount block.meta.id DisplayMathMode content ]
+    ]
+
+
+
+-- ARRAYS
+
+
+renderArray : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderArray params acc _ block _ =
+    let
+        format =
+            List.head block.args |> Maybe.withDefault "c"
+
+        content =
+            getVerbatimContent block
+                |> applyMathMacros acc.mathMacroDict
+
+        -- Wrap in array environment
+        arrayContent =
+            "\\begin{array}{" ++ format ++ "}\n" ++ content ++ "\n\\end{array}"
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "text-align" "center"
+         , HA.style "margin" "1em 0"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        [ mathText params.editCount block.meta.id DisplayMathMode arrayContent ]
+    ]
+
+
+renderTextArray : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderTextArray params _ _ block _ =
+    let
+        content =
+            getVerbatimContent block
+
+        rows =
+            content
+                |> String.lines
+                |> List.filter (\line -> String.trim line /= "")
+                |> List.map parseTableRow
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "margin" "1em 0"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        [ Html.table
+            [ HA.style "border-collapse" "collapse"
+            , HA.style "margin" "0 auto"
+            ]
+            [ Html.tbody [] (List.map renderTextArrayRow rows) ]
+        ]
+    ]
+
+
+parseTableRow : String -> List String
+parseTableRow line =
+    String.split "&" line
+        |> List.map String.trim
+
+
+renderTextArrayRow : List String -> Html Msg
+renderTextArrayRow cells =
+    Html.tr []
+        (List.map
+            (\cell ->
+                Html.td
+                    [ HA.style "padding" "4px 12px"
+                    , HA.style "border" "1px solid #ddd"
+                    ]
+                    [ Html.text cell ]
+            )
+            cells
+        )
+
+
+renderCsvTable : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderCsvTable params _ _ block _ =
+    let
+        content =
+            getVerbatimContent block
+
+        title =
+            Dict.get "title" block.properties
+
+        rows =
+            content
+                |> String.lines
+                |> List.filter (\line -> String.trim line /= "")
+                |> List.map parseCsvRow
+
+        headerRow =
+            List.head rows |> Maybe.withDefault []
+
+        dataRows =
+            List.drop 1 rows
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "margin" "1em 0"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (case title of
+            Just t ->
+                [ Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ] [ Html.text t ]
+                , renderCsvTableHtml headerRow dataRows
+                ]
+
+            Nothing ->
+                [ renderCsvTableHtml headerRow dataRows ]
+        )
+    ]
+
+
+parseCsvRow : String -> List String
+parseCsvRow line =
+    String.split "," line
+        |> List.map String.trim
+
+
+renderCsvTableHtml : List String -> List (List String) -> Html Msg
+renderCsvTableHtml headers rows =
+    Html.table
+        [ HA.style "border-collapse" "collapse" ]
+        [ Html.thead []
+            [ Html.tr []
+                (List.map
+                    (\h ->
+                        Html.th
+                            [ HA.style "padding" "4px 12px"
+                            , HA.style "border-bottom" "2px solid #333"
+                            , HA.style "text-align" "left"
+                            ]
+                            [ Html.text h ]
+                    )
+                    headers
+                )
+            ]
+        , Html.tbody []
+            (List.map
+                (\row ->
+                    Html.tr []
+                        (List.map
+                            (\cell ->
+                                Html.td
+                                    [ HA.style "padding" "4px 12px"
+                                    , HA.style "border-bottom" "1px solid #ddd"
+                                    ]
+                                    [ Html.text cell ]
+                            )
+                            row
+                        )
+                )
+                rows
+            )
+        ]
+
+
+
+-- RAW VERBATIM
+
+
+renderVerbatim : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderVerbatim params _ _ block _ =
+    let
+        content =
+            getVerbatimContent block
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "margin" "1em 0"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        [ Html.pre
+            [ HA.style "font-family" "monospace"
+            , HA.style "font-size" "13px"
+            , HA.style "background-color" "#f5f5f5"
+            , HA.style "padding" "1em"
+            , HA.style "padding-left" "2em"
+            , HA.style "white-space" "pre-wrap"
+            ]
+            [ Html.text content ]
+        ]
+    ]
+
+
+
+-- NO-OP BLOCKS
+
+
+renderNothing : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderNothing _ _ _ block _ =
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]

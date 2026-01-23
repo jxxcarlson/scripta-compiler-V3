@@ -9,7 +9,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Expression
 import Render.Utility exposing (idAttr, selectedStyle)
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..), Theme(..))
+import Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Msg(..), Theme(..))
 
 
 {-| Render an ordinary block by name.
@@ -63,6 +63,11 @@ blockDict =
         , ( "hide", renderComment )
         , ( "document", renderDocument )
         , ( "collection", renderCollection )
+          -- Tables and lists
+        , ( "table", renderTable )
+        , ( "desc", renderDesc )
+          -- Footnotes
+        , ( "endnotes", renderEndnotes )
         ]
 
 
@@ -445,3 +450,186 @@ renderCollection : CompilerParameters -> Accumulator -> String -> ExpressionBloc
 renderCollection _ _ _ block _ =
     -- Collection blocks are metadata, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
+
+
+
+-- TABLES
+
+
+renderTable : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderTable params acc _ block _ =
+    case block.body of
+        Right [ Fun "table" rows _ ] ->
+            let
+                formatList =
+                    Dict.get "format" block.properties
+                        |> Maybe.withDefault ""
+                        |> String.trim
+                        |> String.split " "
+                        |> List.map String.trim
+
+                columnWidths =
+                    Dict.get "columnWidths" block.properties
+                        |> Maybe.withDefault ""
+                        |> String.replace "[" ""
+                        |> String.replace "]" ""
+                        |> String.split ","
+                        |> List.map String.trim
+                        |> List.filterMap String.toInt
+            in
+            [ Html.div
+                ([ idAttr block.meta.id
+                 , HA.style "margin" "1em 0"
+                 , HA.style "padding-left" "24px"
+                 ]
+                    ++ selectedStyle params.selectedId block.meta.id params.theme
+                )
+                [ Html.table [ HA.style "border-collapse" "collapse" ]
+                    [ Html.tbody [] (List.map (renderTableRow params acc formatList columnWidths) rows) ]
+                ]
+            ]
+
+        Right _ ->
+            [ Html.div [ idAttr block.meta.id ] [] ]
+
+        Left data ->
+            [ Html.div [ idAttr block.meta.id ] [ Html.text data ] ]
+
+
+renderTableRow : CompilerParameters -> Accumulator -> List String -> List Int -> Expression -> Html Msg
+renderTableRow params acc formats widths row =
+    case row of
+        Fun "row" cells _ ->
+            Html.tr [ HA.style "height" "20px" ]
+                (List.indexedMap (renderTableCell params acc formats widths) cells)
+
+        _ ->
+            Html.tr [] []
+
+
+renderTableCell : CompilerParameters -> Accumulator -> List String -> List Int -> Int -> Expression -> Html Msg
+renderTableCell params acc formats widths index cell =
+    case cell of
+        Fun "cell" exprs _ ->
+            let
+                width =
+                    List.drop index widths
+                        |> List.head
+                        |> Maybe.withDefault 100
+
+                alignment =
+                    List.drop index formats
+                        |> List.head
+                        |> Maybe.withDefault "l"
+                        |> formatToTextAlign
+            in
+            Html.td
+                [ HA.style "width" (String.fromInt (width + 10) ++ "px")
+                , HA.style "text-align" alignment
+                , HA.style "padding" "4px 8px"
+                ]
+                (Render.Expression.renderList params acc exprs)
+
+        _ ->
+            Html.td [] []
+
+
+formatToTextAlign : String -> String
+formatToTextAlign fmt =
+    case fmt of
+        "l" ->
+            "left"
+
+        "r" ->
+            "right"
+
+        "c" ->
+            "center"
+
+        _ ->
+            "left"
+
+
+
+-- DESCRIPTION LISTS
+
+
+renderDesc : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderDesc params acc _ block children =
+    let
+        label =
+            String.join " " block.args
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "display" "flex"
+         , HA.style "margin-bottom" "0.5em"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        [ Html.dt
+            [ HA.style "font-weight" "bold"
+            , HA.style "width" "100px"
+            , HA.style "flex-shrink" "0"
+            ]
+            [ Html.text label ]
+        , Html.dd
+            [ HA.style "margin-left" "1em"
+            , HA.style "flex" "1"
+            ]
+            (renderBody params acc block ++ children)
+        ]
+    ]
+
+
+
+-- FOOTNOTES/ENDNOTES
+
+
+renderEndnotes : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderEndnotes params acc _ block _ =
+    let
+        endnoteList =
+            acc.footnotes
+                |> Dict.toList
+                |> List.map
+                    (\( content, meta ) ->
+                        { label = Dict.get meta.id acc.footnoteNumbers |> Maybe.withDefault 0
+                        , content = content
+                        , id = meta.id ++ "_"
+                        }
+                    )
+                |> List.sortBy .label
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "margin-top" "2em"
+         , HA.style "padding-top" "1em"
+         , HA.style "border-top" "1px solid #ccc"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (Html.div
+            [ HA.style "font-weight" "bold"
+            , HA.style "font-size" "18px"
+            , HA.style "margin-bottom" "0.5em"
+            ]
+            [ Html.text "Endnotes" ]
+            :: List.map renderFootnoteItem endnoteList
+        )
+    ]
+
+
+renderFootnoteItem : { label : Int, content : String, id : String } -> Html Msg
+renderFootnoteItem { label, content, id } =
+    Html.div
+        [ HA.id id
+        , HA.style "margin-bottom" "0.5em"
+        ]
+        [ Html.span
+            [ HA.style "width" "24px"
+            , HA.style "display" "inline-block"
+            ]
+            [ Html.text (String.fromInt label ++ ".") ]
+        , Html.text content
+        ]
