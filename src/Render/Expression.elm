@@ -173,7 +173,73 @@ renderColor color params acc args meta =
 
 renderHighlight : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderHighlight params acc args meta =
-    Html.span [ HA.id meta.id, HA.style "background-color" "yellow" ] (renderList params acc args)
+    let
+        -- Extract color name from [color colorname] if present
+        colorName =
+            args
+                |> filterExpressionsOnName "color"
+                |> List.head
+                |> Maybe.andThen getTextFromExpr
+                |> Maybe.withDefault "yellow"
+                |> String.trim
+
+        -- Filter out the color expression from display
+        displayArgs =
+            filterOutExpressionsOnName "color" args
+
+        -- Map color name to CSS color value
+        cssColor =
+            Dict.get colorName highlightColorDict |> Maybe.withDefault "#ffff00"
+    in
+    Html.span
+        [ HA.id meta.id
+        , HA.style "background-color" cssColor
+        ]
+        (renderList params acc displayArgs)
+
+
+highlightColorDict : Dict String String
+highlightColorDict =
+    Dict.fromList
+        [ ( "yellow", "#ffff00" )
+        , ( "blue", "#b4b4ff" )
+        , ( "green", "#b4ffb4" )
+        , ( "pink", "#ffb4b4" )
+        , ( "orange", "#ffd494" )
+        , ( "purple", "#d4b4ff" )
+        , ( "cyan", "#b4ffff" )
+        , ( "gray", "#d4d4d4" )
+        ]
+
+
+filterExpressionsOnName : String -> List Expression -> List Expression
+filterExpressionsOnName name exprs =
+    List.filter (hasName name) exprs
+
+
+filterOutExpressionsOnName : String -> List Expression -> List Expression
+filterOutExpressionsOnName name exprs =
+    List.filter (hasName name >> not) exprs
+
+
+hasName : String -> Expression -> Bool
+hasName name expr =
+    case expr of
+        Fun n _ _ ->
+            n == name
+
+        _ ->
+            False
+
+
+getTextFromExpr : Expression -> Maybe String
+getTextFromExpr expr =
+    case expr of
+        Fun _ args _ ->
+            args |> List.filterMap getTextContent |> List.head
+
+        _ ->
+            Nothing
 
 
 renderLink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
