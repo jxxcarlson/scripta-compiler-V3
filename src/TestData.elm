@@ -1,5 +1,18 @@
 module TestData exposing (..)
 
+import Types
+
+
+
+defaultCompilerParameters: Types.CompilerParameters
+defaultCompilerParameters =
+    { filter = Types.NoFilter
+        , windowWidth = 600
+        , selectedId = "selectedId"
+        , theme = Types.Dark
+        , editCount = 0
+        }
+
 
 str1 =
     """

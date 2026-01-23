@@ -36,7 +36,7 @@ config =
     --, NoUnused.Patterns.rule
     --, NoUnused.CustomTypeConstructors.rule []
     --, NoUnused.CustomTypeConstructorArgs.rule
-    --, NoUnused.Dependencies.rule
+    , NoUnused.Dependencies.rule
     , NoUnused.Exports.rule
 
     -- Simplification rules

@@ -135,6 +135,10 @@ markupDict =
         , ( "cite", renderCite )
         , ( "sup", renderSup )
         , ( "sub", renderSub )
+        , ( "term", renderTerm )
+        , ( "term_", renderTermHidden )
+        , ( "vspace", renderVspace )
+        , ( "break", renderVspace )
         ]
 
 
@@ -290,3 +294,45 @@ renderSup params settings acc args meta =
 renderSub : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderSub params settings acc args meta =
     Html.sub [ HA.id meta.id ] (renderList params settings acc args)
+
+
+renderTerm : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderTerm params settings acc args meta =
+    Html.em
+        [ HA.id meta.id
+        , HA.style "padding-right" "2px"
+        ]
+        (renderList params settings acc args)
+
+
+renderTermHidden : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderTermHidden _ _ _ _ meta =
+    -- Hidden term for index entries that shouldn't display inline
+    Html.span [ HA.id meta.id, HA.style "display" "none" ] []
+
+
+renderVspace : CompilerParameters -> RenderSettings -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderVspace _ _ _ args meta =
+    let
+        h =
+            args
+                |> List.filterMap getTextContent
+                |> String.concat
+                |> String.toInt
+                |> Maybe.withDefault 1
+    in
+    Html.div
+        [ HA.id meta.id
+        , HA.style "height" (String.fromInt h ++ "px")
+        ]
+        []
+
+
+getTextContent : Expression -> Maybe String
+getTextContent expr =
+    case expr of
+        Text str _ ->
+            Just str
+
+        _ ->
+            Nothing
