@@ -124,7 +124,13 @@ markupDict =
         , ( "red", renderColor "red" )
         , ( "blue", renderColor "blue" )
         , ( "green", renderColor "green" )
+        , ( "pink", renderColor "#ff6464" )
+        , ( "magenta", renderColor "#ff33c0" )
+        , ( "violet", renderColor "#9664ff" )
+        , ( "gray", renderColor "#808080" )
+        , ( "comment", renderColor "blue" )
         , ( "highlight", renderHighlight )
+        , ( "errorHighlight", renderErrorHighlight )
         , ( "link", renderLink )
         , ( "href", renderHref )
         , ( "image", renderImage )
@@ -155,6 +161,42 @@ markupDict =
         , ( "ssh", renderSmallSubheading )
         , ( "large", renderLarge )
         , ( "qed", renderQed )
+          -- Special characters
+        , ( "mdash", renderChar "—" )
+        , ( "ndash", renderChar "–" )
+        , ( "dollarSign", renderChar "$" )
+        , ( "dollar", renderChar "$" )
+        , ( "ds", renderChar "$" )
+        , ( "backTick", renderChar "`" )
+        , ( "bt", renderChar "`" )
+        , ( "rb", renderChar "]" )
+        , ( "lb", renderChar "[" )
+        , ( "brackets", renderBrackets )
+          -- Checkbox symbols
+        , ( "box", renderBox )
+        , ( "cbox", renderCbox )
+        , ( "rbox", renderRbox )
+        , ( "crbox", renderCrbox )
+        , ( "fbox", renderFbox )
+        , ( "frbox", renderFrbox )
+          -- Hidden/no-op
+        , ( "hide", renderHidden )
+        , ( "author", renderHidden )
+        , ( "date", renderHidden )
+        , ( "today", renderHidden )
+        , ( "lambda", renderHidden )
+        , ( "setcounter", renderHidden )
+        , ( "label", renderHidden )
+        , ( "tags", renderHidden )
+          -- Structure
+        , ( "//", renderPar )
+        , ( "par", renderPar )
+        , ( "indent", renderIndent )
+        , ( "quote", renderQuote )
+        , ( "abstract", renderAbstract )
+        , ( "anchor", renderAnchor )
+        , ( "footnote", renderFootnote )
+        , ( "marked", renderMarked )
         ]
 
 
@@ -486,3 +528,127 @@ renderQed _ _ _ meta =
         , HA.style "font-weight" "bold"
         ]
         [ Html.text "Q.E.D." ]
+
+
+renderErrorHighlight : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderErrorHighlight params acc args meta =
+    Html.span
+        [ HA.id meta.id
+        , HA.style "background-color" "#ffc8c8"
+        , HA.style "padding" "2px 4px"
+        ]
+        (renderList params acc args)
+
+
+renderChar : String -> CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderChar char _ _ _ meta =
+    Html.span [ HA.id meta.id ] [ Html.text char ]
+
+
+renderBrackets : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderBrackets params acc args meta =
+    Html.span [ HA.id meta.id ]
+        (Html.text "[" :: renderList params acc args ++ [ Html.text "]" ])
+
+
+renderBox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderBox _ _ _ meta =
+    Html.span [ HA.id meta.id, HA.style "font-size" "20px" ] [ Html.text "☐" ]
+
+
+renderCbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderCbox _ _ _ meta =
+    Html.span [ HA.id meta.id, HA.style "font-size" "20px" ] [ Html.text "☑" ]
+
+
+renderRbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderRbox _ _ _ meta =
+    Html.span [ HA.id meta.id, HA.style "font-size" "20px", HA.style "color" "#b30000" ] [ Html.text "☐" ]
+
+
+renderCrbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderCrbox _ _ _ meta =
+    Html.span [ HA.id meta.id, HA.style "font-size" "20px", HA.style "color" "#b30000" ] [ Html.text "☑" ]
+
+
+renderFbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderFbox _ _ _ meta =
+    Html.span [ HA.id meta.id, HA.style "font-size" "24px" ] [ Html.text "■" ]
+
+
+renderFrbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderFrbox _ _ _ meta =
+    Html.span [ HA.id meta.id, HA.style "font-size" "24px", HA.style "color" "#b30000" ] [ Html.text "■" ]
+
+
+renderHidden : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderHidden _ _ _ meta =
+    Html.span [ HA.id meta.id, HA.style "display" "none" ] []
+
+
+renderPar : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderPar _ _ _ meta =
+    Html.div [ HA.id meta.id, HA.style "height" "5px" ] []
+
+
+renderIndent : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderIndent _ _ _ meta =
+    Html.span [ HA.id meta.id, HA.style "margin-left" "2em" ] []
+
+
+renderQuote : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderQuote params acc args meta =
+    Html.span [ HA.id meta.id ]
+        (Html.text "\u{201C}" :: renderList params acc args ++ [ Html.text "\u{201D}" ])
+
+
+renderAbstract : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderAbstract params acc args meta =
+    Html.span [ HA.id meta.id ]
+        (Html.span [ HA.style "font-size" "18px" ] [ Html.text "Abstract. " ]
+            :: renderList params acc args
+        )
+
+
+renderAnchor : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderAnchor params acc args meta =
+    Html.span
+        [ HA.id meta.id
+        , HA.style "text-decoration" "underline"
+        ]
+        (renderList params acc args)
+
+
+renderFootnote : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderFootnote _ acc args meta =
+    case args of
+        [ Text _ textMeta ] ->
+            case Dict.get textMeta.id acc.footnoteNumbers of
+                Just k ->
+                    Html.a
+                        [ HA.id meta.id
+                        , HA.href ("#" ++ textMeta.id ++ "_")
+                        , HE.onClick (SelectId (textMeta.id ++ "_"))
+                        , HA.style "font-weight" "bold"
+                        , HA.style "color" "#0000b3"
+                        ]
+                        [ Html.sup [] [ Html.text (String.fromInt k) ] ]
+
+                Nothing ->
+                    Html.span [ HA.id meta.id ] []
+
+        _ ->
+            Html.span [ HA.id meta.id ] []
+
+
+renderMarked : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderMarked params acc args meta =
+    case args of
+        [ first ] ->
+            Html.span [ HA.id meta.id ] (renderList params acc [ first ])
+
+        (Text str _) :: rest ->
+            Html.span [ HA.id str ] (renderList params acc rest)
+
+        _ ->
+            Html.span [ HA.id meta.id ] []
