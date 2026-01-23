@@ -26,9 +26,10 @@ import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Filter(
 {-| Parse source lines into a forest of expression blocks.
 
 Pipeline:
-1. Parse lines into PrimitiveBlocks
-2. Build forest structure based on indentation
-3. Convert each PrimitiveBlock to ExpressionBlock
+
+1.  Parse lines into PrimitiveBlocks
+2.  Build forest structure based on indentation
+3.  Convert each PrimitiveBlock to ExpressionBlock
 
 -}
 parse : List String -> List (Tree ExpressionBlock)
@@ -42,9 +43,10 @@ parse lines =
 {-| Parse source lines into a forest with accumulator.
 
 Pipeline:
-1. Parse lines into forest of ExpressionBlocks
-2. Filter forest based on CompilerParameters
-3. Transform with accumulator (numbering, references, etc.)
+
+1.  Parse lines into forest of ExpressionBlocks
+2.  Filter forest based on CompilerParameters
+3.  Transform with accumulator (numbering, references, etc.)
 
 -}
 parseToForestWithAccumulator : CompilerParameters -> List String -> ( Accumulator, List (Tree ExpressionBlock) )

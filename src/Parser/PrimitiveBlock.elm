@@ -13,15 +13,38 @@ import Tools.KV
 import Tools.Loop exposing (Step(..), loop)
 import Types exposing (BlockMeta, Heading(..), PrimitiveBlock)
 
+
 verbatimNames : List String
 verbatimNames =
-    [ "math", "chem", "compute", "equation", "aligned", "array", "textarray", "table"
-    , "code", "verse", "verbatim"
-    , "load", "load-data", "load-files", "include"
-    , "hide", "texComment", "docinfo"
-    , "mathmacros", "textmacros"
-    , "csvtable", "chart", "svg", "quiver", "image", "tikz"
-    , "setup", "iframe", "settings"
+    [ "math"
+    , "chem"
+    , "compute"
+    , "equation"
+    , "aligned"
+    , "array"
+    , "textarray"
+    , "table"
+    , "code"
+    , "verse"
+    , "verbatim"
+    , "load"
+    , "load-data"
+    , "load-files"
+    , "include"
+    , "hide"
+    , "texComment"
+    , "docinfo"
+    , "mathmacros"
+    , "textmacros"
+    , "csvtable"
+    , "chart"
+    , "svg"
+    , "quiver"
+    , "image"
+    , "tikz"
+    , "setup"
+    , "iframe"
+    , "settings"
     ]
 
 
@@ -296,12 +319,13 @@ finalize block =
 
                     else
                         block.firstLine :: reversedBody
-                Ordinary "section" ->
-                     if String.isEmpty block.firstLine then
-                                            reversedBody
 
-                                        else
-                                            block.firstLine :: reversedBody
+                Ordinary "section" ->
+                    if String.isEmpty block.firstLine then
+                        reversedBody
+
+                    else
+                        block.firstLine :: reversedBody
 
                 _ ->
                     reversedBody
@@ -313,14 +337,12 @@ finalize block =
             else
                 block.firstLine ++ "\n" ++ String.join "\n" reversedBody
 
-
-
-
         meta =
             block.meta
     in
     { block
-        | body = finalBody , meta = { meta | sourceText = sourceText }
+        | body = finalBody
+        , meta = { meta | sourceText = sourceText }
     }
 
 
@@ -385,7 +407,7 @@ getHeadingData line =
     else if String.startsWith "# " trimmed then
         -- Markdown heading level 1
         { heading = Ordinary "section"
-        , args = ["1"]
+        , args = [ "1" ]
         , properties = Dict.singleton "level" "1"
         , firstLine = String.dropLeft 2 trimmed
         }
@@ -393,7 +415,7 @@ getHeadingData line =
     else if String.startsWith "## " trimmed then
         -- Markdown heading level 2
         { heading = Ordinary "section"
-        , args = ["2"]
+        , args = [ "2" ]
         , properties = Dict.singleton "level" "2"
         , firstLine = String.dropLeft 3 trimmed
         }
@@ -401,7 +423,7 @@ getHeadingData line =
     else if String.startsWith "### " trimmed then
         -- Markdown heading level 3
         { heading = Ordinary "section"
-        , args = ["3"]
+        , args = [ "3" ]
         , properties = Dict.singleton "level" "3"
         , firstLine = String.dropLeft 4 trimmed
         }
@@ -445,7 +467,8 @@ getVerbatimHeading line =
         name =
             List.head parts |> Maybe.withDefault "code"
 
-        (args, properties) = Tools.KV.argsAndPropertiesFromList (List.drop 1 parts)
+        ( args, properties ) =
+            Tools.KV.argsAndPropertiesFromList (List.drop 1 parts)
     in
     { heading = Verbatim name
     , args = args
@@ -469,20 +492,32 @@ getHeading line =
         name =
             List.head parts |> Maybe.withDefault "block"
 
+        ( args, properties_ ) =
+            Tools.KV.argsAndPropertiesFromList (List.drop 1 parts)
 
+        properties =
+            if name /= "section" then
+                properties_
 
-        (args, properties_) = Tools.KV.argsAndPropertiesFromList (List.drop 1 parts)
+            else
+                case List.head args of
+                    Nothing ->
+                        Dict.insert "level" "1" properties_
 
-        properties = if name /= "section"
-           then properties_
-           else
-             case  List.head args of
-                 Nothing -> Dict.insert "level" "1" properties_
-                 Just str -> case String.toInt str of
-                     Nothing -> Dict.insert "level" "1" properties_
-                     Just _ -> Dict.insert "level" str properties_
+                    Just str ->
+                        case String.toInt str of
+                            Nothing ->
+                                Dict.insert "level" "1" properties_
+
+                            Just _ ->
+                                Dict.insert "level" str properties_
     in
-    { heading = if isVerbatimName name then Verbatim name else  Ordinary name
+    { heading =
+        if isVerbatimName name then
+            Verbatim name
+
+        else
+            Ordinary name
     , args = args
     , properties = properties
     , firstLine = ""
@@ -490,7 +525,10 @@ getHeading line =
 
 
 isVerbatimName : String -> Bool
-isVerbatimName str = List.member  str verbatimNames
+isVerbatimName str =
+    List.member str verbatimNames
+
+
 
 -- VERBATIM DETECTION
 

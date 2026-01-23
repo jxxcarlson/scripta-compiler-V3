@@ -4,8 +4,8 @@ module Render.VerbatimBlock exposing (render)
 -}
 
 import Dict exposing (Dict)
-import Either exposing (Either(..))
 import ETeX.Transform
+import Either exposing (Either(..))
 import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Math exposing (DisplayMode(..), mathText)

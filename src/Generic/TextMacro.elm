@@ -1,4 +1,4 @@
-module Generic.TextMacro exposing (Macro, expand, buildDictionary)
+module Generic.TextMacro exposing (Macro, buildDictionary, expand)
 
 {-| Text macro handling for the Scripta compiler.
 

@@ -11,4 +11,3 @@ compressWhitespace str =
     str
         |> String.words
         |> String.join " "
-

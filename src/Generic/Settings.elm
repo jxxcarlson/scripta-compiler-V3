@@ -1,4 +1,4 @@
-module Generic.Settings exposing (numberedBlockNames, indentationQuantum)
+module Generic.Settings exposing (indentationQuantum, numberedBlockNames)
 
 {-| Settings for the Scripta compiler.
 -}
