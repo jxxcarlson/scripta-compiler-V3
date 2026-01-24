@@ -381,6 +381,36 @@ renderTikz params _ _ block _ =
 -- MEDIA
 
 
+{-| Render an image block.
+
+    | image [arguments] [properties]
+    <url>
+
+Arguments:
+
+  - expandable: Click thumbnail to open full-size overlay; click overlay to close
+
+Properties:
+
+  - width: Image width. Values: pixel number, "fill" (100%), or "to-edges" (120% of panel)
+  - float: Float image with text wrap. Values: "left" or "right"
+  - ypadding: Vertical padding in pixels (default 18, ignored when floated)
+  - description: Alt text for accessibility
+  - figure: Figure number (displays "Figure N")
+  - caption: Caption text (italic, below image)
+
+Examples:
+
+    | image
+    https://example.com/photo.jpg
+
+    | image expandable width:400 caption:A lovely sunset
+    https://example.com/sunset.jpg
+
+    | image float:left width:200
+    https://example.com/portrait.jpg
+
+-}
 renderImage : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderImage params _ _ block _ =
     let
@@ -413,23 +443,34 @@ renderImage params _ _ block _ =
                         Nothing ->
                             [ HA.style "max-width" (String.fromInt params.width ++ "px") ]
 
-        -- Placement: left, right, center
-        placement =
-            case Dict.get "placement" block.properties of
-                Just "left" ->
-                    "left"
-
-                Just "right" ->
-                    "right"
-
-                _ ->
-                    "center"
-
-        -- Vertical padding
+        -- Vertical padding (used for non-floated images)
         ypadding =
             Dict.get "ypadding" block.properties
                 |> Maybe.andThen String.toInt
                 |> Maybe.withDefault 18
+
+        -- Float: left or right (small top margin to align with text baseline)
+        floatStyle =
+            case Dict.get "float" block.properties of
+                Just "left" ->
+                    [ HA.style "float" "left"
+                    , HA.style "margin-right" "1em"
+                    , HA.style "margin-top" "4px"
+                    , HA.style "margin-bottom" "0.5em"
+                    ]
+
+                Just "right" ->
+                    [ HA.style "float" "right"
+                    , HA.style "margin-left" "1em"
+                    , HA.style "margin-top" "4px"
+                    , HA.style "margin-bottom" "0.5em"
+                    ]
+
+                _ ->
+                    [ HA.style "text-align" "center"
+                    , HA.style "padding-top" (String.fromInt ypadding ++ "px")
+                    , HA.style "padding-bottom" (String.fromInt ypadding ++ "px")
+                    ]
 
         -- Description (alt text)
         description =
@@ -479,24 +520,75 @@ renderImage params _ _ block _ =
                 )
                 []
 
-        -- Wrap in link to open in new tab
-        linkedImage =
-            Html.a
-                [ HA.href src
-                , HA.target "_blank"
-                , HA.style "display" "inline-block"
+        -- Check if expandable (as an argument)
+        isExpandable =
+            List.member "expandable" block.args
+
+        lightboxId =
+            "lightbox-" ++ block.meta.id
+
+        -- Expandable: click to show overlay
+        expandableImage =
+            Html.span []
+                [ -- Clickable thumbnail
+                  Html.a
+                    [ HA.href ("#" ++ lightboxId)
+                    , HA.style "cursor" "zoom-in"
+                    , HA.style "display" "inline-block"
+                    ]
+                    [ imageElement ]
+
+                -- Lightbox overlay (hidden until targeted)
+                , Html.a
+                    [ HA.id lightboxId
+                    , HA.href "#"
+                    , HA.style "position" "fixed"
+                    , HA.style "top" "0"
+                    , HA.style "left" "0"
+                    , HA.style "width" "100vw"
+                    , HA.style "height" "100vh"
+                    , HA.style "background" "rgba(0, 0, 0, 0.85)"
+                    , HA.style "display" "flex"
+                    , HA.style "align-items" "center"
+                    , HA.style "justify-content" "center"
+                    , HA.style "z-index" "9999"
+                    , HA.style "opacity" "0"
+                    , HA.style "pointer-events" "none"
+                    , HA.style "transition" "opacity 0.2s"
+                    , HA.style "cursor" "zoom-out"
+                    ]
+                    [ -- Full-size image (pointer-events:none so clicks go to parent)
+                      Html.img
+                        [ HA.src src
+                        , HA.alt description
+                        , HA.style "max-width" "90vw"
+                        , HA.style "max-height" "90vh"
+                        , HA.style "object-fit" "contain"
+                        , HA.style "pointer-events" "none"
+                        ]
+                        []
+                    ]
+
+                -- CSS for :target (inline style element)
+                , Html.node "style"
+                    []
+                    [ Html.text ("#" ++ lightboxId ++ ":target { opacity: 1 !important; pointer-events: auto !important; }") ]
                 ]
-                [ imageElement ]
+
+        -- Choose which image display to use
+        imageDisplay =
+            if isExpandable then
+                expandableImage
+
+            else
+                imageElement
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "text-align" placement
-         , HA.style "padding-top" (String.fromInt ypadding ++ "px")
-         , HA.style "padding-bottom" (String.fromInt ypadding ++ "px")
-         ]
+        ([ idAttr block.meta.id ]
+            ++ floatStyle
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        [ linkedImage
+        [ imageDisplay
         , figureLabel
         ]
     ]
