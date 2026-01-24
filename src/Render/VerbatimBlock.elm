@@ -100,6 +100,12 @@ getVerbatimContent block =
 -- MATH BLOCKS
 
 
+{-| Render a display math block (unnumbered).
+
+    | math
+    \int_0^1 x^n dx = \frac{1}{n+1}
+
+-}
 renderMath : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderMath params acc _ block _ =
     let
@@ -118,6 +124,18 @@ renderMath params acc _ block _ =
     ]
 
 
+{-| Render a numbered equation block.
+
+    | equation
+    E = mc^2
+
+Supports alignment with & for multi-line equations:
+
+    | equation
+    a &= b + c \\
+    &= d
+
+-}
 renderEquation : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderEquation params acc _ block _ =
     let
@@ -170,6 +188,13 @@ renderEquation params acc _ block _ =
     ]
 
 
+{-| Render an aligned math block (unnumbered, multi-line).
+
+    | aligned
+    a &= b + c \\
+    &= d + e
+
+-}
 renderAligned : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderAligned params acc _ block _ =
     let
@@ -210,6 +235,14 @@ applyMathMacros _ content =
 -- CODE BLOCKS
 
 
+{-| Render a code block with syntax highlighting style.
+
+    | code
+    function hello() {
+        console.log("Hello!");
+    }
+
+-}
 renderCode : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderCode params _ _ block _ =
     let
@@ -252,6 +285,15 @@ renderCode params _ _ block _ =
 -- VERSE
 
 
+{-| Render a verse/poetry block preserving line breaks.
+
+    | verse
+    Roses are red,
+    Violets are blue,
+    Sugar is sweet,
+    And so are you.
+
+-}
 renderVerse : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderVerse params _ _ block _ =
     let
@@ -274,15 +316,26 @@ renderVerse params _ _ block _ =
 -- MACRO DEFINITIONS
 
 
+{-| Define math macros for use in math blocks. Hidden in output.
+
+    | mathmacros
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\norm}[1]{\left\| #1 \right\|}
+
+-}
 renderMathMacros : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderMathMacros _ _ _ block _ =
-    -- Math macros are processed at parse time, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
+{-| Define text macros for use in document. Hidden in output.
+
+    | textmacros
+    \newcommand{\version}{2.0}
+
+-}
 renderTextMacros : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderTextMacros _ _ _ block _ =
-    -- Text macros are processed at parse time, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
@@ -290,6 +343,14 @@ renderTextMacros _ _ _ block _ =
 -- DATA AND CHARTS
 
 
+{-| Render raw data in a preformatted block.
+
+    | datatable
+    x, y, z
+    1, 2, 3
+    4, 5, 6
+
+-}
 renderDataTable : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderDataTable params _ _ block _ =
     let
@@ -308,9 +369,15 @@ renderDataTable params _ _ block _ =
     ]
 
 
+{-| Render a chart (placeholder, requires external JS library).
+
+    | chart
+    type: bar
+    data: ...
+
+-}
 renderChart : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderChart params _ _ block _ =
-    -- Chart rendering requires external JS library integration
     [ Html.div
         ([ idAttr block.meta.id
          , HA.class "chart-placeholder"
@@ -328,10 +395,16 @@ renderChart params _ _ block _ =
 -- GRAPHICS
 
 
+{-| Render inline SVG content (placeholder, requires JS integration).
+
+    | svg
+    <svg width="100" height="100">
+      <circle cx="50" cy="50" r="40" fill="red" />
+    </svg>
+
+-}
 renderSvg : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSvg params _ _ block _ =
-    -- SVG rendering requires embedding raw HTML, which isn't directly
-    -- supported in Elm. This is a placeholder that shows SVG content.
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
@@ -349,9 +422,14 @@ renderSvg params _ _ block _ =
     ]
 
 
+{-| Render a Quiver commutative diagram (placeholder, requires external integration).
+
+    | quiver
+    [quiver diagram data]
+
+-}
 renderQuiver : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderQuiver params _ _ block _ =
-    -- Quiver diagrams require external integration
     [ Html.div
         ([ idAttr block.meta.id
          , HA.class "quiver-placeholder"
@@ -363,9 +441,16 @@ renderQuiver params _ _ block _ =
     ]
 
 
+{-| Render a TikZ diagram (placeholder, requires external integration).
+
+    | tikz
+    \begin{tikzpicture}
+    \draw (0,0) -- (1,1);
+    \end{tikzpicture}
+
+-}
 renderTikz : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderTikz params _ _ block _ =
-    -- TikZ requires external integration
     [ Html.div
         ([ idAttr block.meta.id
          , HA.class "tikz-placeholder"
@@ -594,6 +679,17 @@ renderImage params _ _ block _ =
     ]
 
 
+{-| Render an embedded iframe.
+
+    | iframe
+    https://www.youtube.com/embed/dQw4w9WgXcQ
+
+Properties:
+
+  - width: Width in pixels (default: panel width)
+  - height: Height in pixels (default: 400)
+
+-}
 renderIframe : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderIframe params _ _ block _ =
     let
@@ -632,9 +728,14 @@ renderIframe params _ _ block _ =
 -- INCLUDES
 
 
+{-| Load external content (processed at higher level, hidden in output).
+
+    | load
+    /path/to/file.md
+
+-}
 renderLoad : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderLoad _ _ _ block _ =
-    -- Load blocks are processed at a higher level, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
@@ -642,6 +743,12 @@ renderLoad _ _ _ block _ =
 -- CHEMISTRY
 
 
+{-| Render chemical equations using mhchem notation.
+
+    | chem
+    2H2 + O2 -> 2H2O
+
+-}
 renderChem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderChem params acc _ block children =
     let
@@ -665,6 +772,17 @@ renderChem params acc _ block children =
 -- ARRAYS
 
 
+{-| Render a LaTeX-style math array.
+
+    | array ccc
+    a & b & c \\
+    d & e & f
+
+Arguments:
+
+  - Column format (e.g., "ccc" for 3 centered columns, "lcr" for left/center/right)
+
+-}
 renderArray : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderArray params acc _ block _ =
     let
@@ -690,6 +808,16 @@ renderArray params acc _ block _ =
     ]
 
 
+{-| Render a text table with & as column separator.
+
+    | textarray
+    Name & Age & City
+    Alice & 30 & NYC
+    Bob & 25 & LA
+
+Also available as `| table`.
+
+-}
 renderTextArray : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderTextArray params _ _ block _ =
     let
@@ -738,6 +866,18 @@ renderTextArrayRow cells =
         )
 
 
+{-| Render a CSV table with comma-separated values.
+
+    | csvtable title:Sales Data
+    Product,Q1,Q2,Q3
+    Widgets,100,150,200
+    Gadgets,50,75,100
+
+Properties:
+
+  - title: Optional table title
+
+-}
 renderCsvTable : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderCsvTable params _ _ block _ =
     let
@@ -825,6 +965,13 @@ renderCsvTableHtml headers rows =
 -- RAW VERBATIM
 
 
+{-| Render raw verbatim text in a preformatted block.
+
+    | verbatim
+    This text is displayed exactly as written,
+    with all spacing and formatting preserved.
+
+-}
 renderVerbatim : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderVerbatim params _ _ block _ =
     let
@@ -854,6 +1001,11 @@ renderVerbatim params _ _ block _ =
 -- NO-OP BLOCKS
 
 
+{-| Render nothing (for hidden/configuration blocks).
+
+Used for: settings, load-data, hide, texComment, docinfo, load-files, include, setup
+
+-}
 renderNothing : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderNothing _ _ _ block _ =
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]

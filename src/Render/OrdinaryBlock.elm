@@ -133,6 +133,17 @@ renderBody params acc block =
 -- SECTION HEADINGS
 
 
+{-| Render a numbered section heading.
+
+    | section
+    Introduction
+
+    | section 2
+    Background
+
+The argument specifies heading level (1-3, default 1).
+
+-}
 renderSection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSection params acc _ block children =
     let
@@ -174,6 +185,12 @@ renderSection params acc _ block children =
         :: children
 
 
+{-| Render a subsection heading (level 2).
+
+    | subsection
+    Methods
+
+-}
 renderSubsection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubsection params acc _ block children =
     Html.h3
@@ -182,6 +199,12 @@ renderSubsection params acc _ block children =
         :: children
 
 
+{-| Render a subsubsection heading (level 3).
+
+    | subsubsection
+    Details
+
+-}
 renderSubsubsection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubsubsection params acc _ block children =
     Html.h4
@@ -194,6 +217,12 @@ renderSubsubsection params acc _ block children =
 -- LIST ITEMS
 
 
+{-| Render a single bullet list item.
+
+    - First item
+    - Second item
+
+-}
 renderItem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderItem params acc _ block children =
     [ Html.li
@@ -206,6 +235,12 @@ renderItem params acc _ block children =
     ]
 
 
+{-| Render a single numbered list item.
+
+    . First item
+    . Second item
+
+-}
 renderNumbered : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderNumbered params acc _ block children =
     let
@@ -231,6 +266,13 @@ renderNumbered params acc _ block children =
     ]
 
 
+{-| Render a bullet list (coalesced from consecutive "- " items).
+
+    - First item
+    - Second item
+    - Third item
+
+-}
 renderItemList : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderItemList params acc _ block children =
     [ Html.ul
@@ -244,6 +286,13 @@ renderItemList params acc _ block children =
     ]
 
 
+{-| Render a numbered list (coalesced from consecutive ". " items).
+
+    . First item
+    . Second item
+    . Third item
+
+-}
 renderNumberedList : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderNumberedList params acc _ block children =
     [ Html.ol
@@ -286,6 +335,22 @@ renderListItemExpr params acc expr =
 -- THEOREM-LIKE ENVIRONMENTS
 
 
+{-| Render theorem-like environments with automatic numbering.
+
+    | theorem
+    Every even number greater than 2 is the sum of two primes.
+
+    | theorem Goldbach's Conjecture
+    Every even number greater than 2 is the sum of two primes.
+
+Supported environments: theorem, lemma, proposition, corollary, definition,
+example, remark, note, exercise, problem, question, axiom.
+
+Arguments:
+
+  - Optional label (e.g., "Goldbach's Conjecture")
+
+-}
 renderTheorem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderTheorem params acc name block children =
     let
@@ -340,6 +405,12 @@ renderTheorem params acc name block children =
     ]
 
 
+{-| Render a proof block with "Proof." prefix and QED marker.
+
+    | proof
+    By contradiction, assume...
+
+-}
 renderProof : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderProof params acc _ block children =
     [ Html.div
@@ -362,6 +433,12 @@ renderProof params acc _ block children =
 -- FORMATTING BLOCKS
 
 
+{-| Render indented content.
+
+    | indent
+    This paragraph is indented.
+
+-}
 renderIndent : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderIndent params acc _ block children =
     [ Html.div
@@ -374,6 +451,14 @@ renderIndent params acc _ block children =
     ]
 
 
+{-| Render a block quotation with left border.
+
+    | quotation
+    To be or not to be, that is the question.
+
+Also available as `| quote`.
+
+-}
 renderQuotation : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderQuotation params acc _ block children =
     [ Html.blockquote
@@ -389,6 +474,12 @@ renderQuotation params acc _ block children =
     ]
 
 
+{-| Render centered content.
+
+    | center
+    Centered text here.
+
+-}
 renderCenter : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderCenter params acc _ block children =
     [ Html.div
@@ -401,6 +492,12 @@ renderCenter params acc _ block children =
     ]
 
 
+{-| Render an abstract with "Abstract" heading.
+
+    | abstract
+    This paper presents a new method for...
+
+-}
 renderAbstract : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderAbstract params acc _ block children =
     [ Html.div
@@ -422,6 +519,12 @@ renderAbstract params acc _ block children =
 -- DOCUMENT METADATA
 
 
+{-| Render the document title (centered h1).
+
+    | title
+    My Document Title
+
+-}
 renderTitle : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderTitle params acc _ block _ =
     [ Html.h1
@@ -435,6 +538,12 @@ renderTitle params acc _ block _ =
     ]
 
 
+{-| Render the document subtitle (centered, lighter h2).
+
+    | subtitle
+    A Comprehensive Guide
+
+-}
 renderSubtitle : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubtitle params acc _ block _ =
     [ Html.h2
@@ -449,6 +558,12 @@ renderSubtitle params acc _ block _ =
     ]
 
 
+{-| Render the document author (centered).
+
+    | author
+    John Doe
+
+-}
 renderAuthor : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderAuthor params acc _ block _ =
     [ Html.div
@@ -462,6 +577,12 @@ renderAuthor params acc _ block _ =
     ]
 
 
+{-| Render the document date (centered, smaller).
+
+    | date
+    January 2024
+
+-}
 renderDate : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderDate params acc _ block _ =
     [ Html.div
@@ -481,9 +602,15 @@ renderDate params acc _ block _ =
 -- SPECIAL BLOCKS
 
 
+{-| Render a table of contents placeholder.
+
+    | contents
+
+The actual TOC is built by Render.TOC.
+
+-}
 renderContents : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderContents _ _ _ block _ =
-    -- Table of contents placeholder - actual TOC is built by Render.TOC
     [ Html.div
         [ idAttr block.meta.id
         , HA.id "toc-placeholder"
@@ -492,12 +619,22 @@ renderContents _ _ _ block _ =
     ]
 
 
+{-| Render an index placeholder (hidden in output).
+
+    | index
+
+-}
 renderIndexBlock : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderIndexBlock _ _ _ block _ =
-    -- Index block - invisible in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
+{-| Render content in a bordered box.
+
+    | box
+    Important notice here.
+
+-}
 renderBox : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderBox params acc _ block children =
     [ Html.div
@@ -513,21 +650,39 @@ renderBox params acc _ block children =
     ]
 
 
+{-| Render nothing (comments are hidden).
+
+    | comment
+    This won't appear in output.
+
+Also available as `| hide`.
+
+-}
 renderComment : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderComment _ _ _ block _ =
-    -- Comments are hidden
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
+{-| Render document metadata block (hidden).
+
+    | document
+    type:article
+
+-}
 renderDocument : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderDocument _ _ _ block _ =
-    -- Document blocks are metadata, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
+{-| Render collection metadata block (hidden).
+
+    | collection
+    docs/chapter1.md
+    docs/chapter2.md
+
+-}
 renderCollection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderCollection _ _ _ block _ =
-    -- Collection blocks are metadata, hidden in output
     [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
 
 
@@ -535,6 +690,17 @@ renderCollection _ _ _ block _ =
 -- TABLES
 
 
+{-| Render a table with rows and cells.
+
+    | table format:l c r columnWidths:[100,80,80]
+    [table [row [cell A][cell B][cell C]] [row [cell 1][cell 2][cell 3]]]
+
+Properties:
+
+  - format: Column alignment (l=left, c=center, r=right)
+  - columnWidths: Pixel widths for each column
+
+-}
 renderTable : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderTable params acc _ block _ =
     case block.body of
@@ -633,6 +799,16 @@ formatToTextAlign fmt =
 -- DESCRIPTION LISTS
 
 
+{-| Render a description list item.
+
+    | desc Term
+    Definition of the term.
+
+Arguments:
+
+  - Term label
+
+-}
 renderDesc : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderDesc params acc _ block children =
     let
@@ -665,6 +841,13 @@ renderDesc params acc _ block children =
 -- FOOTNOTES/ENDNOTES
 
 
+{-| Render collected endnotes at the end of a document.
+
+    | endnotes
+
+Displays all footnotes collected from [footnote ...] expressions.
+
+-}
 renderEndnotes : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderEndnotes params acc _ block _ =
     let
@@ -718,11 +901,24 @@ renderFootnoteItem { label, content, id } =
 -- ADDITIONAL BLOCKS FROM V2
 
 
+{-| Render nothing (for configuration/metadata blocks).
+
+Used for: book, banner, runninghead\_, tags, type, setcounter, shiftandsetcounter.
+
+-}
 renderNothing : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderNothing _ _ _ block _ =
     [ Html.span [ HA.id block.meta.id, HA.style "display" "none" ] [] ]
 
 
+{-| Render a subheading (smaller than section, bold).
+
+    | subheading
+    Minor Heading
+
+Also available as `| sh`.
+
+-}
 renderSubheading : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubheading params acc _ block children =
     [ Html.div
@@ -738,6 +934,12 @@ renderSubheading params acc _ block children =
     ]
 
 
+{-| Render content with reduced line spacing.
+
+    | compact
+    Dense content with tighter line spacing.
+
+-}
 renderCompact : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderCompact params acc _ block children =
     [ Html.div
@@ -750,6 +952,12 @@ renderCompact params acc _ block children =
     ]
 
 
+{-| Render content with no special styling (identity transform).
+
+    | identity
+    This content is rendered as-is.
+
+-}
 renderIdentity : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderIdentity params acc _ block children =
     [ Html.div
@@ -760,6 +968,17 @@ renderIdentity params acc _ block children =
     ]
 
 
+{-| Render content in a specified color.
+
+    | red
+    This text is red.
+
+    | blue
+    This text is blue.
+
+Available colors: red, red2, blue.
+
+-}
 renderColorBlock : String -> CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderColorBlock color params acc _ block children =
     [ Html.div
@@ -772,6 +991,12 @@ renderColorBlock color params acc _ block children =
     ]
 
 
+{-| Render a question block with "Q:" prefix.
+
+    | q
+    What is the meaning of life?
+
+-}
 renderQuestion : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderQuestion params acc _ block children =
     [ Html.div
@@ -790,6 +1015,12 @@ renderQuestion params acc _ block children =
     ]
 
 
+{-| Render an answer block with "A:" prefix.
+
+    | a
+    42.
+
+-}
 renderAnswer : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderAnswer params acc _ block children =
     [ Html.div
@@ -808,9 +1039,18 @@ renderAnswer params acc _ block children =
     ]
 
 
+{-| Render collapsible/expandable content.
+
+    | reveal Click to see answer
+    The hidden answer is here.
+
+Arguments:
+
+  - Summary text (default: "Click to reveal")
+
+-}
 renderReveal : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderReveal params acc _ block children =
-    -- Simplified reveal - just shows content (full interactivity would need JS)
     [ Html.details
         ([ idAttr block.meta.id
          , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
@@ -835,6 +1075,12 @@ renderReveal params acc _ block children =
     ]
 
 
+{-| Render a chapter heading (large h1).
+
+    | chapter
+    Introduction to Mathematics
+
+-}
 renderChapter : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderChapter params acc _ block children =
     [ Html.h1
@@ -849,6 +1095,19 @@ renderChapter params acc _ block children =
     ]
 
 
+{-| Render an unnumbered section heading.
+
+    | section*
+    Appendix
+
+    | section* 2
+    Sub-appendix
+
+Arguments:
+
+  - Level (1-3, default 1)
+
+-}
 renderUnnumberedSection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderUnnumberedSection params acc _ block children =
     let
@@ -882,6 +1141,12 @@ renderUnnumberedSection params acc _ block children =
     ]
 
 
+{-| Render a visible banner image.
+
+    | visibleBanner
+    /images/banner.jpg
+
+-}
 renderVisibleBanner : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderVisibleBanner _ _ _ block _ =
     let
@@ -898,6 +1163,16 @@ renderVisibleBanner _ _ _ block _ =
     ]
 
 
+{-| Render a bibliography item.
+
+    | bibitem einstein1905
+    Einstein, A. (1905). On the Electrodynamics of Moving Bodies.
+
+Arguments:
+
+  - Citation key (e.g., "einstein1905")
+
+-}
 renderBibitem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderBibitem params acc _ block children =
     let
@@ -924,9 +1199,20 @@ renderBibitem params acc _ block children =
     ]
 
 
+{-| Render a generic named environment.
+
+    | env Algorithm
+    Step 1: Initialize
+    Step 2: Process
+    Step 3: Output
+
+Arguments:
+
+  - Environment name (displayed as title)
+
+-}
 renderEnv : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderEnv params acc _ block children =
-    -- Generic environment - uses first arg as the environment name
     let
         envName =
             block.args
