@@ -8,20 +8,21 @@ import Types
 q : String -> List Types.ExpressionBlock
 q str =
     str
-    |> String.lines
-    |> Parser.PrimitiveBlock.parse
-    |> List.map Parser.Pipeline.toExpressionBlock
+        |> String.lines
+        |> Parser.PrimitiveBlock.parse
+        |> List.map Parser.Pipeline.toExpressionBlock
 
 
 {-| Parse a string to primitive blocks.
 -}
-pb : String -> List Types.PrimitiveBlock
-pb str =
+p : String -> List Types.PrimitiveBlock
+p str =
     str
-    |> String.lines
-    |> Parser.PrimitiveBlock.parse
+        |> String.lines
+        |> Parser.PrimitiveBlock.parse
 
-defaultCompilerParameters: Types.CompilerParameters
+
+defaultCompilerParameters : Types.CompilerParameters
 defaultCompilerParameters =
     { filter = Types.NoFilter
     , windowWidth = 600
@@ -33,7 +34,10 @@ defaultCompilerParameters =
     , paragraphSpacing = 18
     }
 
+
+
 -- ppb str =  Parser.PrimitiveBlock.parse (String.words str)
+
 
 str1 =
     """
@@ -52,10 +56,27 @@ int_0^1 x^n dx = frac(1,n+1)
 """
 
 
-cl1 = "- One\n- Two\n- Three\n"
+cl1 =
+    "- One\n- Two\n- Three\n"
 
-cl2 = """
+
+cl2 =
+    """
 . One
 . Two
 . Three
+"""
+
+
+imgStr =
+    """
+| image
+https://foo.com/yada.jpg
+"""
+
+
+imgStr2 =
+    """
+| image width:400 caption:Captain Yada
+https://foo.com/yada.jpg
 """
