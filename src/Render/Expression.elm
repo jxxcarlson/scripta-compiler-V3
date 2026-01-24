@@ -157,12 +157,14 @@ markupDict =
         , ( "term_", renderTermHidden )
         , ( "vspace", renderVspace )
         , ( "break", renderVspace )
-          -- Aliases
+
+        -- Aliases
         , ( "textbf", renderStrong )
         , ( "textit", renderItalic )
         , ( "u", renderUnderline )
         , ( "underscore", renderUnderline )
-          -- Text styling
+
+        -- Text styling
         , ( "bi", renderBoldItalic )
         , ( "boldItalic", renderBoldItalic )
         , ( "var", renderVar )
@@ -173,7 +175,8 @@ markupDict =
         , ( "ssh", renderSmallSubheading )
         , ( "large", renderLarge )
         , ( "qed", renderQed )
-          -- Special characters
+
+        -- Special characters
         , ( "mdash", renderChar "—" )
         , ( "ndash", renderChar "–" )
         , ( "dollarSign", renderChar "$" )
@@ -184,14 +187,16 @@ markupDict =
         , ( "rb", renderChar "]" )
         , ( "lb", renderChar "[" )
         , ( "brackets", renderBrackets )
-          -- Checkbox symbols
+
+        -- Checkbox symbols
         , ( "box", renderBox )
         , ( "cbox", renderCbox )
         , ( "rbox", renderRbox )
         , ( "crbox", renderCrbox )
         , ( "fbox", renderFbox )
         , ( "frbox", renderFrbox )
-          -- Hidden/no-op
+
+        -- Hidden/no-op
         , ( "hide", renderHidden )
         , ( "author", renderHidden )
         , ( "date", renderHidden )
@@ -200,7 +205,8 @@ markupDict =
         , ( "setcounter", renderHidden )
         , ( "label", renderHidden )
         , ( "tags", renderHidden )
-          -- Structure
+
+        -- Structure
         , ( "//", renderPar )
         , ( "par", renderPar )
         , ( "indent", renderIndent )
@@ -209,25 +215,31 @@ markupDict =
         , ( "anchor", renderAnchor )
         , ( "footnote", renderFootnote )
         , ( "marked", renderMarked )
-          -- Tables
+
+        -- Tables
         , ( "table", renderTable )
         , ( "tableRow", renderTableRow )
         , ( "tableItem", renderTableItem )
-          -- Images
+
+        -- Images
         , ( "inlineimage", renderInlineImage )
-          -- Bibliography
+
+        -- Bibliography
         , ( "bibitem", renderBibitem )
-          -- Links (specialized)
+
+        -- Links (specialized)
         , ( "ulink", renderUlink )
         , ( "reflink", renderReflink )
         , ( "cslink", renderCslink )
         , ( "newPost", renderHidden )
-          -- Special/Interactive (simplified)
+
+        -- Special/Interactive (simplified)
         , ( "scheme", renderScheme )
         , ( "compute", renderCompute )
         , ( "data", renderData )
         , ( "button", renderButton )
-          -- Misc
+
+        -- Misc
         , ( "hrule", renderHrule )
         , ( "mark", renderMark )
         ]
@@ -632,7 +644,7 @@ renderIndent _ _ _ meta =
 renderQuote : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderQuote params acc args meta =
     Html.span [ HA.id meta.id ]
-        (Html.text "\u{201C}" :: renderList params acc args ++ [ Html.text "\u{201D}" ])
+        (Html.text "“" :: renderList params acc args ++ [ Html.text "”" ])
 
 
 renderAbstract : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -799,7 +811,7 @@ renderUlink _ _ args meta =
             List.take (n - 1) words |> String.join " "
 
         target =
-            List.drop (n - 1) words |> String.join ""
+            List.drop (n - 1) words |> String.concat
     in
     Html.a
         [ HA.id meta.id
@@ -823,7 +835,7 @@ renderReflink _ acc args meta =
             List.length words
 
         key =
-            List.drop (n - 1) words |> String.join ""
+            List.drop (n - 1) words |> String.concat
 
         label =
             List.take (n - 1) words |> String.join " "

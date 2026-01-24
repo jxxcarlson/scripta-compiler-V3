@@ -20,7 +20,7 @@ import NoUnused.Exports
 import NoUnused.Parameters
 import NoUnused.Patterns
 import NoUnused.Variables
-import Review.Rule exposing (Rule)
+import Review.Rule as Rule exposing (Rule)
 import Simplify
 
 
@@ -42,3 +42,11 @@ config =
     -- Simplification rules
     , Simplify.rule Simplify.defaults
     ]
+        |> List.map
+            (Rule.ignoreErrorsForFiles
+                [ "src/TestData.elm"
+                , "src/ETeX/Test.elm"
+                , "src/Compiler.elm"
+                , "src/elm.json"
+                ]
+            )

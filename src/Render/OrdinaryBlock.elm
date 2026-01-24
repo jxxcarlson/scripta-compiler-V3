@@ -65,12 +65,15 @@ blockDict =
         , ( "hide", renderComment )
         , ( "document", renderDocument )
         , ( "collection", renderCollection )
-          -- Tables and lists
+
+        -- Tables and lists
         , ( "table", renderTable )
         , ( "desc", renderDesc )
-          -- Footnotes
+
+        -- Footnotes
         , ( "endnotes", renderEndnotes )
-          -- Additional blocks from V2
+
+        -- Additional blocks from V2
         , ( "subheading", renderSubheading )
         , ( "sh", renderSubheading )
         , ( "compact", renderCompact )
@@ -750,8 +753,8 @@ renderCompact params acc _ block children =
 renderIdentity : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderIdentity params acc _ block children =
     [ Html.div
-        ([ idAttr block.meta.id ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (idAttr block.meta.id
+            :: selectedStyle params.selectedId block.meta.id params.theme
         )
         (renderBody params acc block ++ children)
     ]
@@ -815,7 +818,17 @@ renderReveal params acc _ block children =
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.summary [ HA.style "cursor" "pointer", HA.style "font-weight" "bold" ]
-            [ Html.text (String.join " " block.args |> (\s -> if String.isEmpty s then "Click to reveal" else s)) ]
+            [ Html.text
+                (String.join " " block.args
+                    |> (\s ->
+                            if String.isEmpty s then
+                                "Click to reveal"
+
+                            else
+                                s
+                       )
+                )
+            ]
         , Html.div [ HA.style "padding" "0.5em" ]
             (renderBody params acc block ++ children)
         ]
@@ -847,9 +860,14 @@ renderUnnumberedSection params acc _ block children =
 
         fontSize =
             case level of
-                1 -> "1.5em"
-                2 -> "1.3em"
-                _ -> "1.1em"
+                1 ->
+                    "1.5em"
+
+                2 ->
+                    "1.3em"
+
+                _ ->
+                    "1.1em"
     in
     [ Html.div
         ([ idAttr block.meta.id
