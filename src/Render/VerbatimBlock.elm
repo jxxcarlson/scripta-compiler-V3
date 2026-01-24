@@ -384,26 +384,120 @@ renderTikz params _ _ block _ =
 renderImage : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderImage params _ _ block _ =
     let
+        -- For verbatim blocks, the URL is in body (Left String), not firstLine
         src =
-            block.firstLine
+            case block.body of
+                Left content ->
+                    String.trim content
 
-        width =
-            Dict.get "width" block.properties
+                Right _ ->
+                    block.firstLine
+
+        -- Width: supports "fill", "to-edges", or pixel value
+        widthStyle =
+            case Dict.get "width" block.properties of
+                Nothing ->
+                    [ HA.style "max-width" (String.fromInt params.width ++ "px") ]
+
+                Just "fill" ->
+                    [ HA.style "width" "100%" ]
+
+                Just "to-edges" ->
+                    [ HA.style "max-width" (String.fromInt (round (1.2 * toFloat params.width)) ++ "px") ]
+
+                Just w ->
+                    case String.toInt w of
+                        Just pixels ->
+                            [ HA.style "max-width" (String.fromInt pixels ++ "px") ]
+
+                        Nothing ->
+                            [ HA.style "max-width" (String.fromInt params.width ++ "px") ]
+
+        -- Placement: left, right, center
+        placement =
+            case Dict.get "placement" block.properties of
+                Just "left" ->
+                    "left"
+
+                Just "right" ->
+                    "right"
+
+                _ ->
+                    "center"
+
+        -- Vertical padding
+        ypadding =
+            Dict.get "ypadding" block.properties
                 |> Maybe.andThen String.toInt
-                |> Maybe.withDefault params.width
+                |> Maybe.withDefault 18
+
+        -- Description (alt text)
+        description =
+            Dict.get "description" block.properties
+                |> Maybe.withDefault ""
+
+        -- Figure label and caption
+        figureLabel =
+            case ( Dict.get "figure" block.properties, Dict.get "caption" block.properties ) of
+                ( Nothing, Nothing ) ->
+                    Html.text ""
+
+                ( Nothing, Just cap ) ->
+                    Html.div
+                        [ HA.style "font-size" "0.9em"
+                        , HA.style "font-style" "italic"
+                        , HA.style "margin-top" "0.5em"
+                        , HA.style "color" "#555"
+                        ]
+                        [ Html.text cap ]
+
+                ( Just fig, Nothing ) ->
+                    Html.div
+                        [ HA.style "font-size" "0.9em"
+                        , HA.style "margin-top" "0.5em"
+                        , HA.style "color" "#555"
+                        ]
+                        [ Html.text ("Figure " ++ fig) ]
+
+                ( Just fig, Just cap ) ->
+                    Html.div
+                        [ HA.style "font-size" "0.9em"
+                        , HA.style "margin-top" "0.5em"
+                        , HA.style "color" "#555"
+                        ]
+                        [ Html.span [ HA.style "font-weight" "bold" ] [ Html.text ("Figure " ++ fig ++ ". ") ]
+                        , Html.span [ HA.style "font-style" "italic" ] [ Html.text cap ]
+                        ]
+
+        -- The image element
+        imageElement =
+            Html.img
+                ([ HA.src src
+                 , HA.alt description
+                 ]
+                    ++ widthStyle
+                )
+                []
+
+        -- Wrap in link to open in new tab
+        linkedImage =
+            Html.a
+                [ HA.href src
+                , HA.target "_blank"
+                , HA.style "display" "inline-block"
+                ]
+                [ imageElement ]
     in
     [ Html.div
         ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "margin" "1em 0"
+         , HA.style "text-align" placement
+         , HA.style "padding-top" (String.fromInt ypadding ++ "px")
+         , HA.style "padding-bottom" (String.fromInt ypadding ++ "px")
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        [ Html.img
-            [ HA.src src
-            , HA.style "max-width" (String.fromInt width ++ "px")
-            ]
-            []
+        [ linkedImage
+        , figureLabel
         ]
     ]
 
