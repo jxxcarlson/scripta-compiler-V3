@@ -10,7 +10,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Utility exposing (idAttr, selectedStyle)
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..), Theme(..))
+import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, MathMacroDict, Msg(..), Theme(..))
 
 
 {-| Render a verbatim block by name.
@@ -222,13 +222,12 @@ wrapInAligned content =
 {-| Transform ETeX notation to LaTeX using ETeX.Transform.evalStr.
 
 Converts notation like `int_0^2`, `frac(1,n+1)` to `\int_0^2`, `\frac{1}{n+1}`.
+Also expands user-defined macros from mathmacros blocks.
 
 -}
-applyMathMacros : Dict String String -> String -> String
-applyMathMacros _ content =
-    -- Use ETeX.Transform.evalStr to transform ETeX notation to LaTeX
-    -- Pass empty dict for user-defined macros (TODO: integrate with accumulator)
-    ETeX.Transform.evalStr Dict.empty content
+applyMathMacros : MathMacroDict -> String -> String
+applyMathMacros macroDict content =
+    ETeX.Transform.evalStr macroDict content
 
 
 

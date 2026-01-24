@@ -9,6 +9,7 @@ module Types exposing (..)
 -}
 
 import Dict exposing (Dict)
+import ETeX.MathMacros as MathMacros
 import Either exposing (Either)
 import Generic.Vector exposing (Vector)
 import Html exposing (Html)
@@ -147,10 +148,11 @@ type alias Macro =
     { name : String, body : String }
 
 
-{-| Dictionary of math macros (name -> expansion).
+{-| Dictionary of math macros. Re-exported from ETeX.MathMacros.
+Uses MacroBody (arity, List MathExpr) for proper ETeX macro expansion.
 -}
 type alias MathMacroDict =
-    Dict String String
+    MathMacros.MathMacroDict
 
 
 

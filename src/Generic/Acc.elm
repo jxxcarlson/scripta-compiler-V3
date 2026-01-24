@@ -39,6 +39,7 @@ module Generic.Acc exposing
 -}
 
 import Dict exposing (Dict)
+import ETeX.Transform
 import Either exposing (Either(..))
 import Generic.ASTTools
 import Generic.BlockUtilities
@@ -1153,9 +1154,9 @@ getMeta expr =
             meta
 
 
-{-| Stub for math macro dictionary creation.
-TODO: Implement proper macro parsing.
+{-| Create math macro dictionary from mathmacros block content.
+Supports both ETeX format (name: body) and LaTeX format (\\newcommand{...}).
 -}
 makeMathMacroDict : String -> MathMacroDict
-makeMathMacroDict _ =
-    Dict.empty
+makeMathMacroDict content =
+    ETeX.Transform.makeMacroDict content
