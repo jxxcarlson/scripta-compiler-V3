@@ -1207,27 +1207,38 @@ Arguments:
 
   - Citation key (e.g., "einstein1905")
 
+Renders as: [N] <body content>
+Wrapped in div with id "key:N" for citation linking.
+
 -}
 renderBibitem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderBibitem params acc _ block children =
     let
-        label =
+        key =
             block.args
                 |> List.head
                 |> Maybe.withDefault ""
+
+        -- Get the bibitem number from the bibliography dictionary
+        number =
+            Dict.get key acc.bibliography
+                |> Maybe.andThen identity
+                |> Maybe.withDefault 0
+
+        -- Create id as "key:number" for citation linking
+        bibitemId =
+            key ++ ":" ++ String.fromInt number
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "display" "flex"
-         , HA.style "margin-bottom" "0.5em"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
-        )
+        [ HA.id bibitemId
+        , HA.style "display" "flex"
+        , HA.style "margin-bottom" "0.5em"
+        ]
         [ Html.span
             [ HA.style "font-weight" "bold"
-            , HA.style "min-width" "60px"
+            , HA.style "min-width" "40px"
             ]
-            [ Html.text ("[" ++ label ++ "]") ]
+            [ Html.text ("[" ++ String.fromInt number ++ "]") ]
         , Html.div [ HA.style "flex" "1" ]
             (renderBody params acc block ++ children)
         ]

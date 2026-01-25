@@ -95,6 +95,7 @@ init data =
     , keyValueDict = Dict.empty
     , qAndAList = []
     , qAndADict = Dict.empty
+    , bibliography = Dict.empty
     }
         |> updateWithMathMacros data.mathMacros
 
@@ -787,7 +788,23 @@ updateBibItemBlock accumulator args id =
             accumulator
 
         Just label ->
-            { accumulator | reference = Dict.insert label { id = id, numRef = "_irrelevant_" } accumulator.reference }
+            let
+                -- Count how many bibliography entries already have numbers
+                nextNumber =
+                    accumulator.bibliography
+                        |> Dict.values
+                        |> List.filterMap identity
+                        |> List.length
+                        |> (+) 1
+
+                -- Update bibliography: set the number for this entry (insert if not present)
+                newBibliography =
+                    Dict.insert label (Just nextNumber) accumulator.bibliography
+            in
+            { accumulator
+                | reference = Dict.insert label { id = id, numRef = String.fromInt nextNumber } accumulator.reference
+                , bibliography = newBibliography
+            }
 
 
 updateWithOrdinaryBlock : ExpressionBlock -> Accumulator -> Accumulator
@@ -978,12 +995,16 @@ updateWithParagraph block accumulator =
     let
         ( footnotes, footnoteNumbers ) =
             addFootnotesFromContent block ( accumulator.footnotes, accumulator.footnoteNumbers )
+
+        bibliography =
+            addCitesFromContent block accumulator.bibliography
     in
     { accumulator
         | inListState = nextInListState block.heading accumulator.inListState
         , footnotes = footnotes
         , footnoteNumbers = footnoteNumbers
         , terms = addTermsFromContent block accumulator.terms
+        , bibliography = bibliography
     }
 
 
@@ -999,6 +1020,52 @@ addTermsFromContent block_ dict =
             addTerm termData dict_
     in
     List.foldl folder dict newTerms
+
+
+{-| Extract cite keys from block content and add them to bibliography with Nothing value.
+Only adds if key doesn't already exist (preserves existing numbered entries).
+-}
+addCitesFromContent : ExpressionBlock -> Dict String (Maybe Int) -> Dict String (Maybe Int)
+addCitesFromContent block dict =
+    let
+        citeKeys =
+            getCiteKeys block.body
+    in
+    List.foldl
+        (\key d ->
+            if Dict.member key d then
+                d
+
+            else
+                Dict.insert key Nothing d
+        )
+        dict
+        citeKeys
+
+
+{-| Extract cite keys from block body content.
+-}
+getCiteKeys : Either String (List Expression) -> List String
+getCiteKeys content =
+    case content of
+        Right expressionList ->
+            Generic.ASTTools.filterExpressionsOnName_ "cite" expressionList
+                |> List.filterMap extractCiteKey
+
+        Left _ ->
+            []
+
+
+{-| Extract the key from a cite expression like [cite einstein1905].
+-}
+extractCiteKey : Expression -> Maybe String
+extractCiteKey expr =
+    case expr of
+        Fun "cite" [ Text key _ ] _ ->
+            Just (String.trim key)
+
+        _ ->
+            Nothing
 
 
 

@@ -120,6 +120,7 @@ type alias Accumulator =
     , keyValueDict : Dict String String
     , qAndAList : List ( String, String )
     , qAndADict : Dict String String
+    , bibliography : Dict String (Maybe Int) -- cite key -> bibitem number
     }
 
 

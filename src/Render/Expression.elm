@@ -572,13 +572,34 @@ Displays as "[key]".
 
 -}
 renderCite : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderCite params acc args meta =
+renderCite _ acc args meta =
     case args of
         [ Text key _ ] ->
-            Html.span [ HA.id meta.id ] [ Html.text ("[" ++ key ++ "]") ]
+            let
+                trimmedKey =
+                    String.trim key
+
+                -- Look up the bibitem number in the bibliography dictionary
+                ( targetId, displayNumber ) =
+                    case Dict.get trimmedKey acc.bibliography of
+                        Just (Just number) ->
+                            ( trimmedKey ++ ":" ++ String.fromInt number, String.fromInt number )
+
+                        _ ->
+                            ( trimmedKey, "?" )
+            in
+            Html.a
+                [ HA.id meta.id
+                , HA.href ("#" ++ targetId)
+                , HE.preventDefaultOn "click" (Decode.succeed ( SelectId targetId, True ))
+                , HA.style "color" "#0066cc"
+                , HA.style "text-decoration" "none"
+                , HA.style "cursor" "pointer"
+                ]
+                [ Html.text ("[" ++ displayNumber ++ "]") ]
 
         _ ->
-            Html.span [ HA.id meta.id ] (renderList params acc args)
+            Html.span [ HA.id meta.id ] [ Html.text "[cite: invalid]" ]
 
 
 {-| Render superscript text.
