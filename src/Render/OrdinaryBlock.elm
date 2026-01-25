@@ -3,6 +3,7 @@ module Render.OrdinaryBlock exposing (render)
 {-| Render ordinary (named) blocks to HTML.
 -}
 
+import Char
 import Dict exposing (Dict)
 import Either exposing (Either(..))
 import Html exposing (Html)
@@ -181,17 +182,25 @@ renderSection params acc _ block children =
 
             else
                 ""
+
+        -- Generate slug from heading text
+        slug =
+            getBlockText block |> toSlug
     in
-    tag
-        ([ idAttr block.meta.id
-         , HA.style "font-weight" "normal"
-         , HA.style "margin-top" "1.5em"
-         , HA.style "margin-bottom" "0.5em"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+    [ Html.div
+        [ HA.id slug ]
+        (tag
+            ([ idAttr block.meta.id
+             , HA.style "font-weight" "normal"
+             , HA.style "margin-top" "1.5em"
+             , HA.style "margin-bottom" "0.5em"
+             ]
+                ++ selectedStyle params.selectedId block.meta.id params.theme
+            )
+            (Html.text prefix :: renderBody params acc block)
+            :: children
         )
-        (Html.text prefix :: renderBody params acc block)
-        :: children
+    ]
 
 
 {-| Render a subsection heading (level 2).
@@ -202,10 +211,18 @@ renderSection params acc _ block children =
 -}
 renderSubsection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubsection params acc _ block children =
-    Html.h3
-        (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme)
-        (renderBody params acc block)
-        :: children
+    let
+        slug =
+            getBlockText block |> toSlug
+    in
+    [ Html.div
+        [ HA.id slug ]
+        (Html.h3
+            (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme)
+            (renderBody params acc block)
+            :: children
+        )
+    ]
 
 
 {-| Render a subsubsection heading (level 3).
@@ -216,10 +233,18 @@ renderSubsection params acc _ block children =
 -}
 renderSubsubsection : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubsubsection params acc _ block children =
-    Html.h4
-        (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme)
-        (renderBody params acc block)
-        :: children
+    let
+        slug =
+            getBlockText block |> toSlug
+    in
+    [ Html.div
+        [ HA.id slug ]
+        (Html.h4
+            (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme)
+            (renderBody params acc block)
+            :: children
+        )
+    ]
 
 
 
@@ -1253,3 +1278,73 @@ capitalize str =
 
         Nothing ->
             str
+
+
+{-| Convert text to a URL-friendly slug.
+Removes non-alphanumeric characters, compresses spaces, converts to lowercase, and replaces spaces with dashes.
+
+    toSlug "Jon's Stuff!" == "jons-stuff"
+    toSlug "Hello   World" == "hello-world"
+
+-}
+toSlug : String -> String
+toSlug text =
+    text
+        |> String.toLower
+        |> String.toList
+        |> List.map
+            (\c ->
+                if Char.isAlphaNum c then
+                    c
+
+                else
+                    ' '
+            )
+        |> String.fromList
+        |> String.words
+        |> String.join "-"
+
+
+{-| Extract plain text from a block's body for use in slug generation.
+Falls back to firstLine if body is empty.
+-}
+getBlockText : ExpressionBlock -> String
+getBlockText block =
+    case block.body of
+        Left str ->
+            if String.isEmpty str then
+                block.firstLine
+
+            else
+                str
+
+        Right expressions ->
+            let
+                bodyText =
+                    expressions
+                        |> List.map extractTextFromExpr
+                        |> String.concat
+            in
+            if String.isEmpty bodyText then
+                block.firstLine
+
+            else
+                bodyText
+
+
+{-| Recursively extract text from an expression.
+-}
+extractTextFromExpr : Expression -> String
+extractTextFromExpr expr =
+    case expr of
+        Text str _ ->
+            str
+
+        Fun _ args _ ->
+            List.map extractTextFromExpr args |> String.concat
+
+        VFun _ content _ ->
+            content
+
+        ExprList _ exprs _ ->
+            List.map extractTextFromExpr exprs |> String.concat
