@@ -515,11 +515,12 @@ renderRef _ acc args meta =
     case args of
         [ Text refId _ ] ->
             case Dict.get refId acc.reference of
-                Just { id, numRef } ->
+                Just { numRef } ->
+                    -- Use refId as target since it's the slug id of the section's wrapper div
                     Html.a
                         [ HA.id meta.id
-                        , HA.href ("#" ++ id)
-                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId id, True ))
+                        , HA.href ("#" ++ refId)
+                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId refId, True ))
                         , HA.style "color" "#0066cc"
                         , HA.style "text-decoration" "none"
                         , HA.style "cursor" "pointer"
