@@ -427,11 +427,23 @@
             customElements.define('math-text', MathText);
         }
 
+        // Load mhchem extension for chemistry formulas
+        function loadMhchem() {
+            var mhChemJs = document.createElement('script');
+            mhChemJs.type = 'text/javascript';
+            mhChemJs.onload = function() {
+                console.log("mhchem loaded");
+            };
+            mhChemJs.src = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js";
+            document.head.appendChild(mhChemJs);
+        }
+
         // Load KaTeX script dynamically
         var katexJs = document.createElement('script');
         katexJs.type = 'text/javascript';
         katexJs.onload = function() {
             initKatex();
+            loadMhchem();
         };
         katexJs.src = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js";
         document.head.appendChild(katexJs);
