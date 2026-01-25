@@ -131,9 +131,13 @@
                 // Use the setSyncHighlight effect (imported in codemirror-element.js)
                 // We need to access it via the editor's custom property
                 if (editorElement.setSyncHighlight) {
+                    // Import EditorView.scrollIntoView to center the highlighted text
                     editor.dispatch({
-                        effects: editorElement.setSyncHighlight({ from, to }),
-                        scrollIntoView: true
+                        effects: [
+                            editorElement.setSyncHighlight({ from, to }),
+                            // Scroll to center the highlighted line in the view
+                            editorElement.scrollToCenter(from)
+                        ].filter(Boolean)
                     });
                 }
 

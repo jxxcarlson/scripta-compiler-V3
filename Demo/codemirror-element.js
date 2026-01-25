@@ -465,6 +465,8 @@ class CodemirrorEditor extends HTMLElement {
                 // Expose sync highlight effect for external use
                 this.setSyncHighlight = (range) => setSyncHighlight.of(range);
                 this.clearSyncHighlight = () => clearSyncHighlight.of(null);
+                // Scroll to center a position in the view
+                this.scrollToCenter = (pos) => EditorView.scrollIntoView(pos, { y: 'center' });
 
                 // Dispatch ready event
                 this.dispatchEvent(new CustomEvent('editor-ready', {
