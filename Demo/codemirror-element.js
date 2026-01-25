@@ -426,7 +426,37 @@ class CodemirrorEditor extends HTMLElement {
                                 // ESC clears sync highlight
                                 { key: 'Escape', run: (view) => {
                                     view.dispatch({ effects: clearSyncHighlight.of(null) });
+                                    // Also clear any highlight in rendered output
+                                    document.querySelectorAll('.rendered-sync-highlight').forEach(el => {
+                                        el.classList.remove('rendered-sync-highlight');
+                                    });
                                     return true;
+                                }},
+                                // Ctrl+S triggers left-to-right sync (source to rendered)
+                                { key: 'Ctrl-s', run: (view) => {
+                                    const sel = view.state.selection.main;
+                                    if (sel.empty) return false; // No selection
+
+                                    const fromLine = view.state.doc.lineAt(sel.from);
+                                    const toLine = view.state.doc.lineAt(sel.to);
+
+                                    // Calculate character offset within the starting line's block
+                                    // For multi-line paragraphs, we need to count from the block start
+                                    const lineNum = fromLine.number;
+                                    const charInLine = sel.from - fromLine.from;
+
+                                    // Dispatch custom event for the app to handle
+                                    const event = new CustomEvent('sync-to-rendered', {
+                                        detail: {
+                                            lineNumber: lineNum,
+                                            charOffset: charInLine,
+                                            selectionLength: sel.to - sel.from
+                                        },
+                                        bubbles: true,
+                                        composed: true
+                                    });
+                                    view.dom.dispatchEvent(event);
+                                    return true; // Prevent default Ctrl+S behavior
                                 }},
                                 ...closeBracketsKeymap,
                                 ...defaultKeymap,

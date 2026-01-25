@@ -27,6 +27,12 @@
             height: 100%;
             width: 100%;
         }
+
+        /* Highlight for rendered text when syncing from source (Ctrl+S) */
+        .rendered-sync-highlight {
+            background-color: rgba(0, 255, 255, 0.5) !important;
+            outline: 2px solid cyan;
+        }
     </style>
 
     <!-- Import map to ensure CodeMirror packages share the same @codemirror/state instance -->
@@ -281,6 +287,62 @@
                 }
 
                 editor.focus();
+            }
+        });
+
+        // Handle Ctrl+S sync from source to rendered (left-to-right sync)
+        document.addEventListener('sync-to-rendered', function(e) {
+            var detail = e.detail;
+            var lineNumber = detail.lineNumber;
+            var charOffset = detail.charOffset;
+
+            console.log('Sync to rendered:', detail);
+
+            // Clear any previous highlight
+            document.querySelectorAll('.rendered-sync-highlight').forEach(el => {
+                el.classList.remove('rendered-sync-highlight');
+            });
+
+            var renderedOutput = document.getElementById('rendered-output');
+            if (!renderedOutput) return;
+
+            // Find all elements with data-begin attribute (rendered text elements)
+            var allElements = renderedOutput.querySelectorAll('[data-begin]');
+
+            // Find the element whose line number is <= selected line and closest to it
+            // This handles multi-line paragraphs where the element's line number is the start of the block
+            var bestMatch = null;
+            var bestLineDistance = Infinity;
+
+            allElements.forEach(function(el) {
+                var elId = el.id;
+                if (!elId || !elId.startsWith('e-')) return;
+
+                var elLineStr = elId.substring(2).split('.')[0];
+                var elLine = parseInt(elLineStr, 10);
+
+                if (isNaN(elLine)) return;
+
+                // The element's line should be <= the selected line (block starts before or at selection)
+                if (elLine <= lineNumber) {
+                    var distance = lineNumber - elLine;
+                    if (distance < bestLineDistance) {
+                        bestLineDistance = distance;
+                        bestMatch = el;
+                    }
+                }
+            });
+
+            if (bestMatch) {
+                // Highlight the matched element
+                bestMatch.classList.add('rendered-sync-highlight');
+
+                // Scroll it into view
+                bestMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                console.log('Highlighted element:', bestMatch.id, 'lineDistance:', bestLineDistance);
+            } else {
+                console.log('No matching element found');
             }
         });
 
