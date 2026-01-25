@@ -101,7 +101,7 @@ const darkTheme = EditorView.theme({
         backgroundColor: 'rgba(255, 255, 255, 0.05)',
     },
     '.cm-sync-highlight': {
-        backgroundColor: 'rgba(180, 100, 255, 0.7)',  // bright violet
+        backgroundColor: 'rgba(0, 255, 255, 0.5)',  // cyan
     },
     '.cm-scroller': {
         overflow: 'auto',

@@ -688,7 +688,8 @@ viewPreview model panelBg textColor output =
             ]
             [ Html.text "Rendered Output" ]
         , Html.div
-            [ HA.style "flex" "1"
+            [ HA.id "rendered-output"
+            , HA.style "flex" "1"
             , HA.style "padding" "12px"
             , HA.style "border" "1px solid #ccc"
             , HA.style "border-radius" "4px"

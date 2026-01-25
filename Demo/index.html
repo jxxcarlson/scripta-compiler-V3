@@ -146,6 +146,144 @@
             }
         });
 
+        // Flag to track when we've handled a text selection
+        var handledTextSelection = false;
+
+        // Prevent click events from firing when we just handled a text selection
+        document.addEventListener('click', function(e) {
+            if (handledTextSelection) {
+                handledTextSelection = false;
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            }
+        }, true); // Use capture phase to intercept before Elm
+
+        // Handle text selection in rendered output
+        document.addEventListener('mouseup', function(e) {
+            handledTextSelection = false; // Reset flag
+            var renderedOutput = document.getElementById('rendered-output');
+            if (!renderedOutput || !renderedOutput.contains(e.target)) {
+                return; // Click was outside rendered output
+            }
+
+            var selection = window.getSelection();
+            if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+                return; // No selection or collapsed selection (this is a click, let Elm handle it)
+            }
+
+            // We have a real selection, set flag to block the subsequent click event
+            handledTextSelection = true;
+
+            var range = selection.getRangeAt(0);
+
+            // Find elements with position data at start and end of selection
+            function findPositionElement(node) {
+                // Walk up to find an element with data-begin attribute
+                var el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+                while (el && el !== renderedOutput) {
+                    if (el.hasAttribute && el.hasAttribute('data-begin')) {
+                        return el;
+                    }
+                    el = el.parentElement;
+                }
+                return null;
+            }
+
+            function parseLineNumber(id) {
+                // ID format: "e-{lineNumber}.{tokenIndex}"
+                if (!id || !id.startsWith('e-')) return null;
+                var parts = id.substring(2).split('.');
+                return parseInt(parts[0], 10);
+            }
+
+            var startEl = findPositionElement(range.startContainer);
+            var endEl = findPositionElement(range.endContainer);
+
+            if (!startEl || !endEl) {
+                return; // Could not find position elements
+            }
+
+            var startLine = parseLineNumber(startEl.id);
+            var endLine = parseLineNumber(endEl.id);
+            var startBegin = parseInt(startEl.getAttribute('data-begin'), 10);
+            var endEnd = parseInt(endEl.getAttribute('data-end'), 10);
+
+            if (startLine === null || endLine === null || isNaN(startBegin) || isNaN(endEnd)) {
+                return; // Invalid data
+            }
+
+            // Calculate character positions within the elements
+            // startOffset/endOffset are offsets within the text node
+            // Add 1 to account for off-by-one between rendered text and source positions
+            var startChar = startBegin + range.startOffset + 1;
+            var endChar;
+
+            if (startEl === endEl) {
+                // Selection within same element
+                endChar = startBegin + range.endOffset + 1;
+            } else {
+                // Selection spans multiple elements
+                // For end element, use its data-begin + offset within that element
+                var endElBegin = parseInt(endEl.getAttribute('data-begin'), 10);
+                endChar = endElBegin + range.endOffset + 1;
+            }
+
+            console.log('Selection debug:', {
+                startEl: startEl.id,
+                endEl: endEl.id,
+                startLine, endLine,
+                startBegin, endEnd,
+                'range.startOffset': range.startOffset,
+                'range.endOffset': range.endOffset,
+                startChar, endChar
+            });
+
+            // Send directly to CodeMirror editor
+            var editorElement = document.querySelector('codemirror-editor');
+            if (editorElement && editorElement.editor) {
+                var editor = editorElement.editor;
+                var doc = editor.state.doc;
+
+                // For paragraphs that span multiple lines, we need to find the
+                // absolute position by counting characters from the start line
+                function findAbsolutePosition(lineNum, charOffset) {
+                    var pos = doc.line(lineNum).from;
+                    var remaining = charOffset;
+                    var currentLine = lineNum;
+
+                    while (remaining > 0 && currentLine <= doc.lines) {
+                        var lineLength = doc.line(currentLine).length;
+                        if (remaining <= lineLength) {
+                            return pos + remaining;
+                        }
+                        // Move to next line (+1 for newline character)
+                        remaining -= (lineLength + 1);
+                        currentLine++;
+                        if (currentLine <= doc.lines) {
+                            pos = doc.line(currentLine).from;
+                        }
+                    }
+                    return pos + Math.max(0, remaining);
+                }
+
+                var from = findAbsolutePosition(startLine, startChar);
+                var to = findAbsolutePosition(endLine, endChar);
+
+                // Use sync highlight and scroll to center
+                if (editorElement.setSyncHighlight) {
+                    editor.dispatch({
+                        effects: [
+                            editorElement.setSyncHighlight({ from, to }),
+                            editorElement.scrollToCenter(from)
+                        ].filter(Boolean)
+                    });
+                }
+
+                editor.focus();
+            }
+        });
+
         // Load KaTeX and initialize math-text custom element (V2 approach)
         function initKatex() {
             class MathText extends HTMLElement {

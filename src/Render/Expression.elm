@@ -38,12 +38,14 @@ render params acc expr =
                 (renderList params acc exprs)
 
 
-{-| Render plain text.
+{-| Render plain text with position data attributes for selection sync.
 -}
 renderText : CompilerParameters -> String -> ExprMeta -> Html Msg
 renderText params str meta =
     Html.span
         [ HA.id meta.id
+        , HA.attribute "data-begin" (String.fromInt meta.begin)
+        , HA.attribute "data-end" (String.fromInt meta.end)
         , HE.onClick (SendMeta meta)
         ]
         [ Html.text str ]
