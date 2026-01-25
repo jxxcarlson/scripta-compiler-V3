@@ -95,12 +95,17 @@
         }
 
         // Helper function to extract title from content
+        // Handles title blocks with or without properties: "| title" or "| title number-to-level:2"
         function extractTitle(content) {
-            var parts = content.split('| title\n');
-            if (parts.length > 1) {
-                var lines = parts[1].split('\n');
-                if (lines.length > 0) {
-                    return lines[0].trim() || 'Untitled';
+            var lines = content.split('\n');
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].trim().startsWith('| title')) {
+                    // Title text is on the next line
+                    if (i + 1 < lines.length) {
+                        var titleText = lines[i + 1].trim();
+                        return titleText || 'Untitled';
+                    }
+                    break;
                 }
             }
             return 'Untitled';

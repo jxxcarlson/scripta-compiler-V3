@@ -25,10 +25,10 @@ type alias TocEntry =
 {-| Build table of contents HTML from a forest.
 -}
 build : CompilerParameters -> Accumulator -> List (Tree ExpressionBlock) -> List (Html Msg)
-build params _ forest =
+build params acc forest =
     let
         sections =
-            extractSections forest
+            extractSections acc forest
     in
     if List.isEmpty sections then
         []
@@ -60,15 +60,15 @@ build params _ forest =
 
 {-| Extract section entries from forest.
 -}
-extractSections : List (Tree ExpressionBlock) -> List TocEntry
-extractSections forest =
-    List.concatMap extractSectionsFromTree forest
+extractSections : Accumulator -> List (Tree ExpressionBlock) -> List TocEntry
+extractSections acc forest =
+    List.concatMap (extractSectionsFromTree acc) forest
 
 
 {-| Extract sections from a tree.
 -}
-extractSectionsFromTree : Tree ExpressionBlock -> List TocEntry
-extractSectionsFromTree tree =
+extractSectionsFromTree : Accumulator -> Tree ExpressionBlock -> List TocEntry
+extractSectionsFromTree acc tree =
     let
         block =
             Tree.value tree
@@ -76,25 +76,45 @@ extractSectionsFromTree tree =
         thisEntry =
             case block.heading of
                 Ordinary "section" ->
-                    [ blockToTocEntry block ]
+                    [ blockToTocEntry acc block ]
 
                 _ ->
                     []
 
         childEntries =
-            List.concatMap extractSectionsFromTree (Tree.children tree)
+            List.concatMap (extractSectionsFromTree acc) (Tree.children tree)
     in
     thisEntry ++ childEntries
 
 
 {-| Convert a section block to a TOC entry.
 -}
-blockToTocEntry : ExpressionBlock -> TocEntry
-blockToTocEntry block =
+blockToTocEntry : Accumulator -> ExpressionBlock -> TocEntry
+blockToTocEntry acc block =
+    let
+        level =
+            Dict.get "level" block.properties |> Maybe.andThen String.toInt |> Maybe.withDefault 1
+
+        numberToLevel =
+            Dict.get "number-to-level" acc.keyValueDict
+                |> Maybe.andThen String.toInt
+                |> Maybe.withDefault 0
+
+        label =
+            Dict.get "label" block.properties |> Maybe.withDefault ""
+
+        -- Only include section number if level <= numberToLevel
+        sectionNum =
+            if level <= numberToLevel then
+                label
+
+            else
+                ""
+    in
     { id = block.meta.id
-    , level = Dict.get "level" block.properties |> Maybe.andThen String.toInt |> Maybe.withDefault 1
+    , level = level
     , title = extractTitle block
-    , sectionNumber = Dict.get "section-number" block.properties |> Maybe.withDefault ""
+    , sectionNumber = sectionNum
     }
 
 
@@ -140,7 +160,7 @@ buildTocItem params entry =
 
         prefix =
             if entry.sectionNumber /= "" then
-                entry.sectionNumber ++ " "
+                entry.sectionNumber ++ ". "
 
             else
                 ""

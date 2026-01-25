@@ -1,0 +1,315 @@
+| title
+Verbatim Block Visual Test
+
+This document demonstrates all verbatim block types in Scripta,
+showing each with and without options where applicable.
+
+**Math Blocks:**
+- `math` - Display math
+- `equation` - Numbered equation (with optional `label`)
+- `aligned` - Aligned multi-line equations
+- `array` - Math arrays/matrices (with column format argument)
+- `chem` - Chemical equations
+
+**Code and Text:**
+- `code` - Syntax-highlighted code (with optional language)
+- `verse` - Poetry with italic styling
+- `verbatim` - Raw preformatted text
+
+**Tables:**
+- `table` / `textarray` - Tables with `&` separator
+- `csvtable` - CSV tables (with optional `title`)
+- `datatable` - Raw data display
+
+**Media:**
+- `image` - Images with options:
+  - Arguments: `expandable`
+  - Properties: `width`, `float`, `ypadding`, `description`, `figure`, `caption`
+- `iframe` - Embedded content (with `width`, `height`)
+
+**Graphics (require JS integration):**
+- `svg` - Inline SVG
+- `tikz` - TikZ diagrams
+- `quiver` - Commutative diagrams
+- `chart` - Charts
+
+**Configuration (hidden):**
+- `mathmacros` - Define LaTeX macros
+- `textmacros` - Define text macros
+- `settings`, `load`, `load-data`, `hide`, `docinfo`, `load-files`, `include`, `setup`
+
+
+
+# Math Blocks
+
+## Basic Math (display mode)
+
+The `math` block renders LaTeX mathematics in display mode:
+
+| math
+\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+
+
+## Numbered Equation
+
+The `equation` block creates a numbered equation:
+
+| equation
+E = mc^2
+
+With a label for cross-referencing:
+
+| equation label:einstein
+E = mc^2
+
+
+## Aligned Equations
+
+The `aligned` block renders multi-line aligned equations:
+
+| aligned
+f(x) &= x^2 + 2x + 1 \\
+     &= (x + 1)^2
+
+
+## Math Array
+
+The `array` block creates a matrix or array with column alignment.
+The argument specifies column format (c=center, l=left, r=right):
+
+| array ccc
+1 & 2 & 3 \\
+4 & 5 & 6 \\
+7 & 8 & 9
+
+
+# Chemistry
+
+## Chemical Equations
+
+The `chem` block uses mhchem notation for chemical equations:
+
+| chem
+2H2 + O2 -> 2H2O
+
+Another example:
+
+| chem
+CH3COOH + NaOH -> CH3COONa + H2O
+
+
+# Code Blocks
+
+## Basic Code Block
+
+The `code` block displays syntax-highlighted code:
+
+| code
+function factorial(n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+## Code with Language Specification
+
+| code elm
+renderText : String -> Html Msg
+renderText str =
+    Html.span [] [ Html.text str ]
+
+
+# Poetry and Verse
+
+## Verse Block
+
+The `verse` block displays poetry with preserved line breaks and italic styling:
+
+| verse
+Roses are red,
+Violets are blue,
+Scripta is wonderful,
+And so are you!
+
+
+# Tables
+
+## Text Table (textarray)
+
+The `table` or `textarray` block uses `&` as column separator:
+
+| table
+Name & Age & City
+Alice & 30 & New York
+Bob & 25 & Los Angeles
+Carol & 35 & Chicago
+
+
+## CSV Table
+
+The `csvtable` block parses comma-separated values:
+
+| csvtable
+Product,Q1,Q2,Q3,Q4
+Widgets,100,150,200,250
+Gadgets,50,75,100,125
+Sprockets,30,45,60,75
+
+With a title property:
+
+| csvtable title:Quarterly Sales Report
+Product,Q1,Q2,Q3,Q4
+Widgets,100,150,200,250
+Gadgets,50,75,100,125
+
+
+# Data Display
+
+## Data Table
+
+The `datatable` block displays raw data in preformatted style:
+
+| datatable
+x    y    z
+1    2    3
+4    5    6
+7    8    9
+
+
+# Raw Verbatim Text
+
+## Verbatim Block
+
+The `verbatim` block preserves exact spacing and formatting:
+
+| verbatim
+This   text   has   preserved   spacing.
+    Indentation is maintained.
+        All formatting is kept as-is.
+
+
+# Images
+
+## Basic Image
+
+The `image` block displays an image from a URL:
+
+| image
+https://picsum.photos/200/150
+
+## Image with Width
+
+| image width:300
+https://picsum.photos/400/300
+
+## Image with Caption and Figure Number
+
+| image figure:1 caption:A sample image from Lorem Picsum
+https://picsum.photos/300/200
+
+## Expandable Image
+
+Click the thumbnail to view full size (click overlay to close):
+
+| image expandable width:200 caption:Click to expand
+https://picsum.photos/600/400
+
+## Floated Image
+
+| image float:left width:150
+https://picsum.photos/150/100
+
+This text wraps around the floated image on the left.
+The image has a small top margin to align with the text baseline.
+When using float, the image becomes part of the text flow
+and subsequent content will wrap around it naturally.
+This is useful for magazine-style layouts where images
+are integrated with the surrounding text content.
+
+## Image with Fill Width
+
+| image width:fill
+https://picsum.photos/800/200
+
+
+# Embedded Content
+
+## Iframe
+
+The `iframe` block embeds external content:
+
+| iframe
+https://www.youtube.com/embed/dQw4w9WgXcQ
+
+With custom dimensions:
+
+| iframe width:400 height:300
+https://www.youtube.com/embed/dQw4w9WgXcQ
+
+
+# Graphics Placeholders
+
+These blocks require external JavaScript integration:
+
+## SVG
+
+| svg
+<svg width="100" height="100">
+  <circle cx="50" cy="50" r="40" fill="red" />
+</svg>
+
+## TikZ Diagram
+
+| tikz
+\begin{tikzpicture}
+\draw (0,0) -- (1,1);
+\end{tikzpicture}
+
+## Quiver Diagram
+
+| quiver
+[quiver diagram data goes here]
+
+## Chart
+
+| chart
+type: bar
+data: 10, 20, 30, 40
+
+
+# Macro Definitions
+
+## Math Macros (Hidden)
+
+Define macros for use in math blocks:
+
+| mathmacros
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+Now we can use the macros:
+
+| math
+\norm{x} \in \R
+
+## Text Macros (Hidden)
+
+| textmacros
+\newcommand{\version}{3.0}
+
+
+# Hidden/Configuration Blocks
+
+These blocks are processed but produce no visible output:
+
+## Settings Block
+
+| settings
+theme: dark
+fontSize: 14
+
+## Load Block
+
+| load
+/path/to/external/file.md
+
+

@@ -1,0 +1,426 @@
+| title
+Ordinary Block Visual Test
+
+| subtitle
+A Comprehensive Guide to Scripta Block Types
+
+| author
+Scripta Documentation Team
+
+| date
+January 2024
+
+| abstract
+This document demonstrates all ordinary (named) block types in Scripta,
+showing each with and without options where applicable. Ordinary blocks
+contain parsed expressions and support inline markup like [i italic],
+[b bold], and $x^2$ math.
+
+**Document Metadata:**
+- `title`, `subtitle`, `author`, `date`, `abstract`
+
+**Section Headings:**
+- `section` (numbered, with optional level), `subsection`, `subsubsection`
+- `section*` (unnumbered, with optional level argument)
+- `chapter`, `subheading` / `sh`
+
+**Lists:**
+- Bullet lists: `- ` prefix (coalesced into `itemList`)
+- Numbered lists: `. ` prefix (coalesced into `numberedList`)
+
+**Theorem-like Environments:**
+- `theorem`, `lemma`, `proposition`, `corollary`, `definition`
+- `example`, `remark`, `note`, `exercise`, `problem`, `question`, `axiom`
+- `proof`
+
+**Formatting:**
+- `indent`, `quotation` / `quote`, `center`, `box`
+- `compact`, `identity`
+- `red`, `red2`, `blue` (color blocks)
+
+**Q&A and Interactive:**
+- `q` (question), `a` (answer)
+- `reveal` (collapsible content)
+
+**Tables and Descriptions:**
+- `table` (with `format` and `columnWidths` properties)
+- `desc` (description list with term argument)
+
+**Special:**
+- `contents`, `index`, `endnotes`
+- `comment` / `hide`
+- `visibleBanner`, `bibitem`, `env`
+
+
+# Document Metadata
+
+The document metadata blocks (`title`, `subtitle`, `author`, `date`, `abstract`)
+are demonstrated at the top of this document.
+
+
+# Section Headings
+
+| section
+Numbered Section
+
+This is content under a numbered section heading.
+
+| subsection
+Subsection Heading
+
+Content under a subsection.
+
+| subsubsection
+Subsubsection Heading
+
+Content under a subsubsection.
+
+| section*
+Unnumbered Section
+
+This section has no number. The `section*` block creates unnumbered headings.
+
+| section* 2
+Unnumbered Level 2
+
+Level 2 unnumbered heading (smaller).
+
+| chapter
+Chapter Heading
+
+The `chapter` block creates large chapter-level headings.
+
+| subheading
+Minor Subheading
+
+The `subheading` block (also `sh`) creates smaller headings below section level.
+
+
+# Lists
+
+## Bullet Lists
+
+Use `- ` at the start of a line for bullet items:
+
+- First bullet item
+- Second bullet item with [i italic text]
+- Third item with $E = mc^2$ inline math
+
+Nested bullets work with indentation:
+
+- Outer item
+    - Nested item 1
+    - Nested item 2
+- Back to outer level
+
+## Numbered Lists
+
+Use `. ` at the start of a line for numbered items:
+
+. First numbered item
+. Second numbered item
+. Third numbered item
+
+Nested numbered lists:
+
+. First outer item
+    . First inner item
+    . Second inner item
+. Second outer item
+
+
+# Theorem-like Environments
+
+## Theorem
+
+| theorem
+Every continuous function on a closed interval is bounded.
+
+## Theorem with Label
+
+| theorem Bolzano-Weierstrass
+Every bounded sequence in $\mathbb{R}^n$ has a convergent subsequence.
+
+## Lemma
+
+| lemma
+If $f$ is differentiable at $x$, then $f$ is continuous at $x$.
+
+## Proposition
+
+| proposition
+The set of prime numbers is infinite.
+
+## Corollary
+
+| corollary
+There is no largest prime number.
+
+## Definition
+
+| definition
+A function $f$ is [b continuous] at $x = a$ if
+$\lim_{x \to a} f(x) = f(a)$.
+
+## Example
+
+| example
+Consider the function $f(x) = x^2$. This function is continuous
+everywhere on $\mathbb{R}$.
+
+## Remark
+
+| remark
+The proof of this theorem uses the axiom of choice.
+
+## Note
+
+| note
+This result was first proved by Euler in 1737.
+
+## Exercise
+
+| exercise
+Prove that the sum of two continuous functions is continuous.
+
+## Problem
+
+| problem
+Find all solutions to the equation $x^3 - 6x^2 + 11x - 6 = 0$.
+
+## Question
+
+| question
+What is the relationship between differentiability and continuity?
+
+## Axiom
+
+| axiom Completeness
+Every non-empty set of real numbers that is bounded above
+has a least upper bound.
+
+## Proof
+
+| proof
+By contradiction. Assume there are only finitely many primes
+$p_1, p_2, \ldots, p_n$. Consider $N = p_1 p_2 \cdots p_n + 1$.
+Then $N$ is not divisible by any $p_i$, contradiction. ∎
+
+
+# Formatting Blocks
+
+## Indent
+
+| indent
+This paragraph is indented from the left margin.
+It can contain multiple lines of text.
+
+## Quotation
+
+| quotation
+To be or not to be, that is the question.
+Whether 'tis nobler in the mind to suffer
+the slings and arrows of outrageous fortune...
+
+The `quote` block works the same way:
+
+| quote
+The only thing we have to fear is fear itself.
+
+## Center
+
+| center
+This text is centered.
+
+## Box
+
+| box
+This content is displayed in a bordered box.
+It's useful for highlighting important information.
+
+## Compact
+
+| compact
+This content has reduced line spacing.
+Multiple lines will appear closer together.
+Useful for dense content or footnotes.
+
+## Identity
+
+| identity
+This content is rendered with no special styling.
+It passes through unchanged.
+
+## Color Blocks
+
+| red
+This text appears in red.
+
+| red2
+This text appears in a darker red (#c00).
+
+| blue
+This text appears in blue.
+
+
+# Q&A Blocks
+
+## Question Block
+
+| q
+What is the meaning of life, the universe, and everything?
+
+## Answer Block
+
+| a
+42.
+
+## Combined Q&A
+
+| q
+How do you solve a quadratic equation $ax^2 + bx + c = 0$?
+
+| a
+Use the quadratic formula: $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
+
+
+# Interactive Content
+
+## Reveal Block
+
+| reveal Click to see the answer
+The hidden answer is revealed when you click!
+This is useful for quizzes and self-study materials.
+
+## Reveal with Default Text
+
+| reveal
+When no argument is provided, "Click to reveal" is used.
+
+
+# Description Lists
+
+## Description Block
+
+| desc Term
+The definition or description of the term goes here.
+
+| desc Function
+A relation that assigns exactly one output to each input.
+
+| desc Derivative
+The rate of change of a function at a given point.
+
+
+# Tables
+
+## Table with Format
+
+| table format:l c r columnWidths:[100,80,80]
+[table [row [cell Name][cell Age][cell City]] [row [cell Alice][cell 30][cell NYC]] [row [cell Bob][cell 25][cell LA]]]
+
+
+# Bibliography
+
+## Bibliography Items
+
+| bibitem euler1737
+Euler, L. (1737). Variae observationes circa series infinitas.
+
+| bibitem newton1687
+Newton, I. (1687). Philosophiae Naturalis Principia Mathematica.
+
+
+# Generic Environment
+
+## Custom Environment
+
+| env Algorithm
+Step 1: Initialize all variables
+Step 2: Process input data
+Step 3: Compute result
+Step 4: Output result
+
+
+# Special Blocks
+
+## Contents Block
+
+The `| contents` block generates a table of contents
+(processed separately by Render.TOC).
+
+## Endnotes Block
+
+The `| endnotes` block collects and displays all footnotes
+from `[footnote ...]` expressions in the document.
+
+## Comment Block
+
+| comment
+This text will not appear in the rendered output.
+Use comments for notes to yourself or other authors.
+
+The `hide` block works the same as `comment`:
+
+| hide
+This is also hidden.
+
+## Visible Banner
+
+| visibleBanner
+https://picsum.photos/800/150
+
+
+# Configuration Blocks (Hidden)
+
+These blocks are processed but produce no visible output:
+
+## Document Type
+
+| document
+type:article
+
+## Collection
+
+| collection
+docs/chapter1.md
+docs/chapter2.md
+
+## Tags
+
+| tags
+math, tutorial, calculus
+
+## Counter Control
+
+| setcounter
+theorem:5
+
+
+# Summary
+
+This document demonstrated the following ordinary block types:
+
+**Document Metadata:** `title`, `subtitle`, `author`, `date`, `abstract`
+
+**Headings:** `section` (with level), `subsection`, `subsubsection`,
+`section*` (with level arg), `chapter`, `subheading`/`sh`
+
+**Lists:** `- ` items → `itemList`, `. ` items → `numberedList`
+
+**Theorem-like:** `theorem`, `lemma`, `proposition`, `corollary`,
+`definition`, `example`, `remark`, `note`, `exercise`, `problem`,
+`question`, `axiom` (all with optional label argument), `proof`
+
+**Formatting:** `indent`, `quotation`/`quote`, `center`, `box`,
+`compact`, `identity`, `red`, `red2`, `blue`
+
+**Q&A:** `q`, `a`, `reveal` (with optional summary argument)
+
+**Tables/Lists:** `table` (with `format`, `columnWidths`), `desc` (with term)
+
+**Special:** `contents`, `index`, `endnotes`, `comment`/`hide`,
+`visibleBanner`, `bibitem` (with key), `env` (with name)
+
+**Configuration (hidden):** `document`, `collection`, `book`, `banner`,
+`runninghead_`, `tags`, `type`, `setcounter`, `shiftandsetcounter`

@@ -594,9 +594,19 @@ updateAccumulator ({ heading, indent, args, body, meta, properties } as block) a
 
         Ordinary "title" ->
             -- Only reset headingIndex if it wasn't set by shiftAndSetCounter (deltaLevel == 1)
+            let
+                -- Store number-to-level from title properties in keyValueDict
+                newKeyValueDict =
+                    case Dict.get "number-to-level" block.properties of
+                        Just ntl ->
+                            Dict.insert "number-to-level" ntl accumulator.keyValueDict
+
+                        Nothing ->
+                            accumulator.keyValueDict
+            in
             if accumulator.deltaLevel == 1 then
                 -- Preserve the headingIndex set by shiftAndSetCounter
-                accumulator
+                { accumulator | keyValueDict = newKeyValueDict }
 
             else
                 let
@@ -613,7 +623,7 @@ updateAccumulator ({ heading, indent, args, body, meta, properties } as block) a
                                     Nothing ->
                                         { content = [ 0, 0, 0, 0 ], size = 4 }
                 in
-                { accumulator | headingIndex = headingIndex }
+                { accumulator | headingIndex = headingIndex, keyValueDict = newKeyValueDict }
 
         Ordinary "setcounter" ->
             let

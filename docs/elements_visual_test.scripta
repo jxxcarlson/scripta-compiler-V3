@@ -1,0 +1,468 @@
+| title
+Elements Visual Test
+
+| subtitle
+Inline Markup Reference for Scripta
+
+| author
+Scripta Documentation Team
+
+| date
+January 2024
+
+| abstract
+This document demonstrates all inline elements (expressions) in Scripta.
+Elements are enclosed in square brackets like `[b bold]` or use special
+syntax like `$x^2$` for math. They can be nested and combined.
+
+**Text Styling:**
+- `[b ...]`, `[bold ...]`, `[strong ...]`, `[textbf ...]` - bold
+- `[i ...]`, `[italic ...]`, `[emph ...]`, `[textit ...]` - italic
+- `[bi ...]`, `[boldItalic ...]` - bold italic
+- `[strike ...]` - strikethrough
+- `[u ...]`, `[underline ...]`, `[underscore ...]` - underline
+- `[large ...]` - larger text
+
+**Colors:**
+- `[red ...]`, `[blue ...]`, `[green ...]`, `[pink ...]`
+- `[magenta ...]`, `[violet ...]`, `[gray ...]`
+- `[highlight ...]` - background highlight (with optional `[color name]`)
+
+**Math and Code:**
+- `$...$` or `[m ...]` - inline math with ETeX support
+- `[chem ...]` - chemistry formulas
+- `\`...\`` or `[code ...]` - inline code
+
+**Links and References:**
+- `[link Label URL]` - hyperlink
+- `[href URL]` - URL as link
+- `[ilink Label targetId]` - internal link
+- `[ref label]`, `[eqref label]` - cross-references
+- `[cite key]` - citation
+- `[footnote text]` - footnote
+
+**Formatting:**
+- `[sup ...]`, `[sub ...]` - super/subscript
+- `[term ...]` - definition term
+- `[vspace N]`, `[break N]` - vertical space
+- `[//]`, `[par]` - paragraph break
+- `[quote ...]` - curly quotes
+
+**Special Characters and Symbols:**
+- `[mdash]` → —, `[ndash]` → –
+- `[ds]` → $, `[bt]` → \`
+- `[lb]` → [, `[rb]` → ]
+- `[box]`, `[cbox]`, `[rbox]`, etc. - checkboxes
+
+
+# Text Styling
+
+## Bold Text
+
+Using [b bold text] with the `[b ...]` syntax.
+
+Also available as [bold bold], [strong strong], and [textbf textbf].
+
+## Italic Text
+
+Using [i italic text] with the `[i ...]` syntax.
+
+Also available as [italic italic], [emph emphasized], and [textit textit].
+
+## Bold Italic
+
+Using [bi bold and italic] with the `[bi ...]` syntax.
+
+Also available as [boldItalic bold italic text].
+
+## Strikethrough
+
+Using [strike deleted text] with the `[strike ...]` syntax.
+
+## Underline
+
+Using [u underlined text] with the `[u ...]` syntax.
+
+Also available as [underline underlined] and [underscore underscore].
+
+## Large Text
+
+Using [large larger text here] with the `[large ...]` syntax.
+
+## Combined Styling
+
+You can nest styles: [b [i bold and italic]], [i [strike italic strikethrough]],
+or [u [b underlined bold]].
+
+
+# Colors
+
+## Text Colors
+
+[red This text is red.]
+
+[blue This text is blue.]
+
+[green This text is green.]
+
+[pink This text is pink.]
+
+[magenta This text is magenta.]
+
+[violet This text is violet.]
+
+[gray This text is gray.]
+
+[comment This is a comment (rendered in blue).]
+
+## Highlighting
+
+[highlight Default yellow highlight.]
+
+[highlight [color blue] Blue highlight.]
+
+[highlight [color green] Green highlight.]
+
+[highlight [color pink] Pink highlight.]
+
+[highlight [color orange] Orange highlight.]
+
+[highlight [color purple] Purple highlight.]
+
+[highlight [color cyan] Cyan highlight.]
+
+[highlight [color gray] Gray highlight.]
+
+## Error Highlighting
+
+[errorHighlight This indicates an error with red background.]
+
+
+# Math
+
+## Inline Math with $ Syntax
+
+The quadratic formula is $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
+
+Einstein's famous equation: $E = mc^2$.
+
+## ETeX Shorthand
+
+ETeX converts shorthand: $int_0^1 x^2 dx$ becomes an integral.
+
+Fractions: $frac(1, n+1)$ renders as a fraction.
+
+## Inline Math with [m ...] Syntax
+
+The area of a circle is [m A = \pi r^2].
+
+## Chemistry Formulas
+
+Water molecule: [chem H2O].
+
+Combustion: [chem CH4 + 2O2 -> CO2 + 2H2O].
+
+
+# Code
+
+## Inline Code with Backticks
+
+Use `const x = 42` to define a constant.
+
+The function `factorial(n)` computes n!.
+
+## Inline Code with [code ...]
+
+Use [code let x = 42] to define a variable in Elm.
+
+
+# Links
+
+## External Links
+
+Visit [link Anthropic https://anthropic.com] for more information.
+
+Just a URL: [link https://example.com].
+
+Or use href: [href https://example.com].
+
+## Internal Links
+
+Jump to [ilink Section 1 sec1] within this document.
+
+Use [ulink the introduction intro-section] for user-defined links.
+
+Reference link: [reflink Theorem 1 theorem1].
+
+Cross-site link: [cslink External Page page123].
+
+
+# References
+
+## Cross-References
+
+See [ref theorem1] for the main theorem.
+
+## Equation References
+
+Equation [eqref eq1] shows the relationship.
+
+## Citations
+
+As shown by [cite einstein1905], the theory of relativity...
+
+Multiple citations: [cite newton1687] and [cite euler1737].
+
+## Bibliography Items
+
+[bibitem einstein1905] is referenced above.
+
+
+# Footnotes
+
+This sentence has a footnote[footnote This is the footnote content that appears in endnotes.].
+
+Another footnote here[footnote A second footnote with more details.].
+
+
+# Super and Subscript
+
+## Superscript
+
+Water is H[sup 2]O. Einstein's E = mc[sup 2].
+
+The 1[sup st] and 2[sup nd] items.
+
+## Subscript
+
+Water: H[sub 2]O. Carbon dioxide: CO[sub 2].
+
+Variable x[sub i] for the i-th element.
+
+
+# Terms and Definitions
+
+A [term function] is a mapping from inputs to outputs.
+
+The [term derivative] measures the rate of change.
+
+Hidden term for index only: [term_ hidden index entry].
+
+
+# Spacing and Structure
+
+## Vertical Space
+
+Before space.
+
+[vspace 30]
+
+After 30 pixels of vertical space.
+
+## Break (alias for vspace)
+
+Before break.
+
+[break 20]
+
+After 20 pixels of break.
+
+## Paragraph Break
+
+First paragraph.[//]Second paragraph after [//] break.
+
+Also available as [par]:
+
+Before.[par]After.
+
+## Indentation
+
+Normal text.
+
+[indent]This text is indented by 2em.
+
+
+# Quotation
+
+He said [quote To be or not to be].
+
+Nested quotes: [quote She replied [quote Indeed]].
+
+
+# Headings (Inline)
+
+## Inline Title
+
+[title Large Title Text]
+
+## Subheading
+
+[subheading Section Heading]
+
+Or using short form: [sh Another Heading]
+
+## Small Subheading
+
+[smallsubheading Minor Heading]
+
+Or using short form: [ssh Another Minor Heading]
+
+
+# Special Characters
+
+## Dashes
+
+Em dash: [mdash] (like this—see?)
+
+En dash: [ndash] (pages 1–10)
+
+## Escaped Characters
+
+Dollar sign: [dollarSign] or [dollar] or [ds]
+
+Backtick: [backTick] or [bt]
+
+Left bracket: [lb]
+
+Right bracket: [rb]
+
+Content in brackets: [brackets some content]
+
+
+# Checkboxes
+
+## Standard Checkboxes
+
+[box] Unchecked task
+
+[cbox] Completed task
+
+## Red Checkboxes
+
+[rbox] Urgent unchecked
+
+[crbox] Urgent completed
+
+## Filled Boxes
+
+[fbox] Filled square
+
+[frbox] Red filled square
+
+
+# Images
+
+## Inline Image
+
+An icon [inlineimage https://picsum.photos/20/20] in the middle of text.
+
+## Regular Image Element
+
+[image https://picsum.photos/200/100]
+
+
+# Tables (Inline)
+
+[table [tableRow [tableItem Name][tableItem Value]] [tableRow [tableItem Alpha][tableItem 1]] [tableRow [tableItem Beta][tableItem 2]]]
+
+
+# Interactive Elements
+
+## Scheme Code
+
+Evaluate [scheme (+ 1 2 3)] in Scheme.
+
+## Compute Placeholder
+
+The result is [compute 2 + 3].
+
+## Data Placeholder
+
+Value from [data temperature].
+
+## Button
+
+Click [button Submit, action] to continue.
+
+
+# Miscellaneous
+
+## Horizontal Rule
+
+[hrule]
+
+## Mark with Anchor
+
+[mark section1 [anchor Click here to set anchor]]
+
+## Abstract (Inline)
+
+[abstract This is an inline abstract with the "Abstract." prefix.]
+
+## Q.E.D.
+
+End of proof. [qed]
+
+
+# Hidden Elements
+
+These elements are processed but produce no visible output:
+
+- [hide This text is hidden]
+- [label theorem1] - creates a label for cross-referencing
+- [index calculus] - adds an index entry
+- [setcounter theorem 5] - sets a counter
+- [tags math, tutorial] - document tags
+
+
+# Summary
+
+This document demonstrated the following inline elements:
+
+**Text Styling:**
+`[b]`/`[bold]`/`[strong]`/`[textbf]`, `[i]`/`[italic]`/`[emph]`/`[textit]`,
+`[bi]`/`[boldItalic]`, `[strike]`, `[u]`/`[underline]`/`[underscore]`,
+`[large]`, `[var]`
+
+**Colors:**
+`[red]`, `[blue]`, `[green]`, `[pink]`, `[magenta]`, `[violet]`, `[gray]`,
+`[comment]`, `[highlight]` (with `[color name]`), `[errorHighlight]`
+
+**Math and Code:**
+`$...$`, `[m ...]`, `[math ...]`, `[chem ...]`, `\`...\``, `[code ...]`
+
+**Links:**
+`[link]`, `[href]`, `[ilink]`, `[ulink]`, `[reflink]`, `[cslink]`
+
+**References:**
+`[ref]`, `[eqref]`, `[cite]`, `[bibitem]`, `[footnote]`
+
+**Formatting:**
+`[sup]`, `[sub]`, `[term]`, `[term_]`, `[vspace]`/`[break]`,
+`[//]`/`[par]`, `[indent]`, `[quote]`, `[anchor]`, `[marked]`
+
+**Headings:**
+`[title]`, `[subheading]`/`[sh]`, `[smallsubheading]`/`[ssh]`
+
+**Special Characters:**
+`[mdash]`, `[ndash]`, `[dollarSign]`/`[dollar]`/`[ds]`,
+`[backTick]`/`[bt]`, `[lb]`, `[rb]`, `[brackets]`
+
+**Checkboxes:**
+`[box]`, `[cbox]`, `[rbox]`, `[crbox]`, `[fbox]`, `[frbox]`
+
+**Images:**
+`[image]`, `[inlineimage]`
+
+**Tables:**
+`[table]`, `[tableRow]`, `[tableItem]`
+
+**Interactive:**
+`[scheme]`, `[compute]`, `[data]`, `[button]`
+
+**Misc:**
+`[hrule]`, `[mark]`, `[abstract]`, `[qed]`
+
+**Hidden:**
+`[hide]`, `[label]`, `[index]`, `[setcounter]`, `[tags]`,
+`[author]`, `[date]`, `[today]`, `[lambda]`, `[newPost]`

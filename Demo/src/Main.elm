@@ -114,6 +114,11 @@ That's all for now.
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
+        -- Re-extract titles from content to handle title blocks with properties
+        refreshTitle : Document -> Document
+        refreshTitle doc =
+            { doc | title = extractTitle doc.content }
+
         documents =
             case Decode.decodeValue documentsDecoder flags.documents of
                 Ok docs ->
@@ -121,7 +126,7 @@ init flags =
                         [ defaultDocument ]
 
                     else
-                        docs
+                        List.map refreshTitle docs
 
                 Err _ ->
                     [ defaultDocument ]
@@ -153,16 +158,36 @@ defaultDocument =
 
 extractTitle : String -> String
 extractTitle content =
-    case String.split "| title\n" content of
-        _ :: rest :: _ ->
-            rest
-                |> String.lines
-                |> List.head
-                |> Maybe.withDefault "Untitled"
-                |> String.trim
+    let
+        lines =
+            String.lines content
 
-        _ ->
-            "Untitled"
+        -- Find index of line starting with "| title" (with or without properties)
+        titleLineIndex =
+            lines
+                |> List.indexedMap Tuple.pair
+                |> List.filter (\( _, line ) -> String.startsWith "| title" (String.trim line))
+                |> List.head
+                |> Maybe.map Tuple.first
+
+        -- Get the line after the title block header
+        titleText =
+            case titleLineIndex of
+                Just idx ->
+                    lines
+                        |> List.drop (idx + 1)
+                        |> List.head
+                        |> Maybe.map String.trim
+                        |> Maybe.withDefault "Untitled"
+
+                Nothing ->
+                    "Untitled"
+    in
+    if String.isEmpty titleText then
+        "Untitled"
+
+    else
+        titleText
 
 
 

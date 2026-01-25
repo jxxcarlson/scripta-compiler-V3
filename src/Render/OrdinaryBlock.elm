@@ -164,12 +164,20 @@ renderSection params acc _ block children =
                 _ ->
                     Html.h5
 
-        sectionNumber =
-            Dict.get "section-number" block.properties |> Maybe.withDefault ""
+        -- Get number-to-level from accumulator's keyValueDict (set by title block)
+        numberToLevel =
+            Dict.get "number-to-level" acc.keyValueDict
+                |> Maybe.andThen String.toInt
+                |> Maybe.withDefault 0
 
+        -- Get the section label (set by transformBlock in Acc.elm)
+        sectionLabel =
+            Dict.get "label" block.properties |> Maybe.withDefault ""
+
+        -- Only show section number if level <= numberToLevel
         prefix =
-            if sectionNumber /= "" then
-                sectionNumber ++ " "
+            if level <= numberToLevel && sectionLabel /= "" then
+                sectionLabel ++ ". "
 
             else
                 ""
