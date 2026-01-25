@@ -151,13 +151,9 @@ renderEquation params acc _ block _ =
             else
                 rawContent
 
+        -- Get equation number from block properties (set by transformBlock when label is present)
         equationNumber =
-            case Dict.get block.meta.id acc.reference of
-                Just { numRef } ->
-                    numRef
-
-                Nothing ->
-                    ""
+            Dict.get "equation-number" block.properties |> Maybe.withDefault ""
     in
     [ Html.div
         ([ idAttr block.meta.id

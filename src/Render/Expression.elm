@@ -8,6 +8,7 @@ import ETeX.Transform
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
+import Json.Decode as Decode
 import Render.Math exposing (DisplayMode(..), mathText)
 import Types exposing (Accumulator, CompilerParameters, Expr(..), ExprMeta, Expression, Msg(..))
 
@@ -489,11 +490,14 @@ renderRef _ acc args meta =
     case args of
         [ Text refId _ ] ->
             case Dict.get refId acc.reference of
-                Just { numRef } ->
+                Just { id, numRef } ->
                     Html.a
                         [ HA.id meta.id
-                        , HA.href ("#" ++ refId)
-                        , HE.onClick (SelectId refId)
+                        , HA.href ("#" ++ id)
+                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId id, True ))
+                        , HA.style "color" "#0066cc"
+                        , HA.style "text-decoration" "none"
+                        , HA.style "cursor" "pointer"
                         ]
                         [ Html.text numRef ]
 
@@ -508,7 +512,7 @@ renderRef _ acc args meta =
 
     [eqref eq1]
 
-Displays as "(N)" where N is the equation number.
+Displays as "(N)" where N is the equation number, linking to the equation.
 
 -}
 renderEqRef : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -516,11 +520,14 @@ renderEqRef _ acc args meta =
     case args of
         [ Text refId _ ] ->
             case Dict.get refId acc.reference of
-                Just { numRef } ->
+                Just { id, numRef } ->
                     Html.a
                         [ HA.id meta.id
-                        , HA.href ("#" ++ refId)
-                        , HE.onClick (SelectId refId)
+                        , HA.href ("#" ++ id)
+                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId id, True ))
+                        , HA.style "color" "#0066cc"
+                        , HA.style "text-decoration" "none"
+                        , HA.style "cursor" "pointer"
                         ]
                         [ Html.text ("(" ++ numRef ++ ")") ]
 

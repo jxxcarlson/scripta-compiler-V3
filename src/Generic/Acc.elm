@@ -252,32 +252,42 @@ transformBlock acc block =
             { block | properties = Dict.insert "label" label block.properties }
 
         ( Verbatim "equation", args ) ->
-            let
-                prefix =
-                    Vector.toString acc.headingIndex
+            -- Only number equations that have a label property
+            if Dict.member "label" block.properties then
+                let
+                    prefix =
+                        Vector.toString acc.headingIndex
 
-                equationProp =
-                    if prefix == "" then
-                        getCounterAsString "equation" acc.counter
+                    equationProp =
+                        if prefix == "" then
+                            getCounterAsString "equation" acc.counter
 
-                    else
-                        Vector.toString acc.headingIndex ++ "." ++ getCounterAsString "equation" acc.counter
-            in
-            { block | properties = Dict.insert "equation-number" equationProp block.properties }
+                        else
+                            Vector.toString acc.headingIndex ++ "." ++ getCounterAsString "equation" acc.counter
+                in
+                { block | properties = Dict.insert "equation-number" equationProp block.properties }
+
+            else
+                block
 
         ( Verbatim "aligned", _ ) ->
-            let
-                prefix =
-                    Vector.toString acc.headingIndex
+            -- Only number aligned blocks that have a label property
+            if Dict.member "label" block.properties then
+                let
+                    prefix =
+                        Vector.toString acc.headingIndex
 
-                equationProp =
-                    if prefix == "" then
-                        getCounterAsString "equation" acc.counter
+                    equationProp =
+                        if prefix == "" then
+                            getCounterAsString "equation" acc.counter
 
-                    else
-                        Vector.toString acc.headingIndex ++ "." ++ getCounterAsString "equation" acc.counter
-            in
-            { block | properties = Dict.insert "equation-number" equationProp block.properties }
+                        else
+                            Vector.toString acc.headingIndex ++ "." ++ getCounterAsString "equation" acc.counter
+                in
+                { block | properties = Dict.insert "equation-number" equationProp block.properties }
+
+            else
+                block
 
         ( heading, _ ) ->
             -- TODO: not at all sure that the below is correct
@@ -935,8 +945,12 @@ updateWithVerbatimBlock block accumulator =
 
                 -- Increment the appropriate counter, e.g., "equation" and "aligned"
                 -- reduceName maps these both to "equation"
+                -- Counter increments when block has a label property (for numbered equations)
+                hasLabel =
+                    Dict.member "label" block.properties
+
                 newCounter =
-                    if List.member name accumulator.numberedBlockNames && List.member "numbered" block.args then
+                    if List.member name accumulator.numberedBlockNames && hasLabel then
                         incrementCounter (reduceName name) accumulator.counter
 
                     else

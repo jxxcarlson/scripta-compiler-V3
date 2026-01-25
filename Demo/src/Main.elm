@@ -38,6 +38,11 @@ The record contains lineNumber, begin (char offset), and end (char offset).
 port selectInEditor : { lineNumber : Int, begin : Int, end : Int } -> Cmd msg
 
 
+{-| Scroll an element into view, centered in the viewport.
+-}
+port scrollToElement : String -> Cmd msg
+
+
 
 -- DOCUMENT
 
@@ -377,7 +382,7 @@ update msg model =
             in
             case compilerMsg of
                 Types.SelectId id ->
-                    ( { model | selectedId = id, debugClickCount = newClickCount }, Cmd.none )
+                    ( { model | selectedId = id, debugClickCount = newClickCount }, scrollToElement id )
 
                 Types.SendMeta meta ->
                     -- SendMeta contains source position info for editor sync

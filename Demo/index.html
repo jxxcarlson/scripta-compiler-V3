@@ -124,6 +124,17 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
         });
 
+        // Subscribe to scrollToElement port - scroll element into view centered
+        app.ports.scrollToElement.subscribe(function(elementId) {
+            // Use setTimeout to ensure DOM has updated
+            setTimeout(function() {
+                var element = document.getElementById(elementId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 50);
+        });
+
         // Subscribe to selectInEditor port - sync rendered text clicks to editor
         app.ports.selectInEditor.subscribe(function(selection) {
             // selection = { lineNumber, begin, end }
