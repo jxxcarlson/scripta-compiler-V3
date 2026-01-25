@@ -101,6 +101,42 @@ type alias NullStyle =
 -- ACCUMULATOR
 
 
+{-|
+
+
+# Reference field
+
+The reference field in the Accumulator is a dictionary that
+maps label names to their rendered reference information:
+
+reference : Dict String { id : String, numRef : String }
+
+Purpose: It stores cross-reference data so that [ref ...] and [eqref ...] elements can look up:
+
+  - id - the HTML element id to scroll to
+  - numRef - the display number/label (e.g., "1.4" for a section, "3" for an equation)
+
+How it gets populated:
+
+1.  Sections (# Heading, | section): Stores section number like "1.2.3" with the section's tag/slug
+      - src/Generic/Acc.elm:741 - updateReference called with section data
+2.  Equations (|| equation with label:foo): Stores equation number
+      - src/Generic/Acc.elm:937 - Updates reference when equation has a label property
+3.  Theorems and numbered blocks: Stores block numbers
+      - src/Generic/Acc.elm:877 - For numbered block names like theorem, lemma, etc.
+4.  Bibitems (| bibitem key): Stores bibliography number
+      - src/Generic/Acc.elm:800 - Now stores { id = id, numRef = "7" }
+
+How it's used in rendering:
+
+  - renderRef looks up the label and displays numRef, scrolling to the target
+  - renderEqRef displays equation numbers in parentheses like "(3)"
+
+For example, if you have [label pythag] on an equation numbered "2.1",
+then [eqref pythag] looks up "pythag" in reference to get { id: "...", numRef: "2.1" }
+and renders as "(2.1)".
+
+-}
 type alias Accumulator =
     { headingIndex : Vector
     , documentIndex : Vector
@@ -174,7 +210,6 @@ type alias CompilerParameters =
     }
 
 
-
 {-| Filter for the forest of expression blocks.
 -}
 type Filter
@@ -211,12 +246,6 @@ type Msg
 
 
 -- RENDER SETTINGS
-
-
-
-
-
-
 -- THEME
 
 
