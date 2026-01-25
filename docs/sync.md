@@ -14,13 +14,13 @@ Both modes use a cyan highlight color and support clearing via the ESC key.
 ## Architecture
 
 ```
-┌─────────────────┐                    ┌──────────────────┐
-│                 │   RL Sync (click)  │                  │
-│   Rendered      │ ─────────────────► │   CodeMirror     │
-│   Output        │                    │   Editor         │
-│                 │ ◄───────────────── │                  │
-│                 │   LR Sync (Ctrl+S) │                  │
-└─────────────────┘                    └──────────────────┘
+┌──────────────────┐                    ┌─────────────────┐
+│                  │   LR Sync (Ctrl+S) │                 │
+│   CodeMirror     │ ─────────────────► │   Rendered      │
+│   Editor         │                    │   Output        │
+│                  │ ◄───────────────── │                 │
+│                  │   RL Sync (click)  │                 │
+└──────────────────┘                    └─────────────────┘
 ```
 
 ## Data Structures
