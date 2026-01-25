@@ -397,16 +397,41 @@ getTextFromExpr expr =
 
 -}
 renderLink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderLink params acc args meta =
-    case args of
-        [ Text label _, Text url _ ] ->
-            Html.a [ HA.id meta.id, HA.href url, HA.target "_blank" ] [ Html.text label ]
+renderLink _ _ args meta =
+    let
+        -- Extract all text from args and join with spaces
+        argString =
+            args
+                |> List.filterMap getTextContent
+                |> String.join " "
 
-        [ Text url _ ] ->
-            Html.a [ HA.id meta.id, HA.href url, HA.target "_blank" ] [ Html.text url ]
+        words =
+            String.words argString
 
-        _ ->
-            Html.span [ HA.id meta.id ] (renderList params acc args)
+        n =
+            List.length words
+    in
+    if n == 0 then
+        Html.span [ HA.id meta.id ] [ Html.text "link: missing url" ]
+
+    else if n == 1 then
+        -- Single word is URL only
+        let
+            url =
+                String.join "" words
+        in
+        Html.a [ HA.id meta.id, HA.href url, HA.target "_blank" ] [ Html.text url ]
+
+    else
+        -- Multiple words: last word is URL, rest is label
+        let
+            label =
+                List.take (n - 1) words |> String.join " "
+
+            url =
+                List.drop (n - 1) words |> String.join ""
+        in
+        Html.a [ HA.id meta.id, HA.href url, HA.target "_blank" ] [ Html.text label ]
 
 
 {-| Render a URL as a clickable link.
@@ -720,7 +745,7 @@ renderLarge : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -
 renderLarge params acc args meta =
     Html.span
         [ HA.id meta.id
-        , HA.style "font-size" "18px"
+        , HA.style "font-size" "1.5em"
         ]
         (renderList params acc args)
 

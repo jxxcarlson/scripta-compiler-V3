@@ -225,8 +225,21 @@ reduceTokens lineNumber tokens =
                 unbracket tokens
         in
         case args of
-            (S name meta) :: _ ->
-                [ Fun name (reduceRestOfTokens lineNumber (List.drop 1 args)) (boostMeta lineNumber meta.index meta) ]
+            (S name meta) :: rest ->
+                if List.member name verbatimFunctionNames then
+                    -- For verbatim functions like [m ...], [math ...], [chem ...],
+                    -- collect all remaining tokens as a single string
+                    let
+                        content =
+                            rest
+                                |> List.filterMap tokenToString
+                                |> String.join ""
+                                |> String.trim
+                    in
+                    [ VFun name content (boostMeta lineNumber meta.index meta) ]
+
+                else
+                    [ Fun name (reduceRestOfTokens lineNumber (List.drop 1 args)) (boostMeta lineNumber meta.index meta) ]
 
             _ ->
                 [ errorMessage "[????]" ]
@@ -434,3 +447,26 @@ getAt idx list =
 
     else
         List.head (List.drop idx list)
+
+
+{-| List of function names that should be parsed as VFun (verbatim functions).
+These functions receive their content as a raw string rather than parsed expressions.
+-}
+verbatimFunctionNames : List String
+verbatimFunctionNames =
+    [ "m", "math", "chem", "code" ]
+
+
+{-| Convert a token to its string representation for verbatim functions.
+-}
+tokenToString : Token -> Maybe String
+tokenToString token =
+    case token of
+        S str _ ->
+            Just str
+
+        W str _ ->
+            Just str
+
+        _ ->
+            Nothing

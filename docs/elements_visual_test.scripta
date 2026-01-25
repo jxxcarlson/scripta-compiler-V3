@@ -15,7 +15,7 @@ This document demonstrates all inline elements (expressions) in Scripta.
 Elements are enclosed in square brackets like `[b bold]` or use special
 syntax like `$x^2$` for math. They can be nested and combined.
 
-**Text Styling:**
+[b Text Styling:]
 - `[b ...]`, `[bold ...]`, `[strong ...]`, `[textbf ...]` - bold
 - `[i ...]`, `[italic ...]`, `[emph ...]`, `[textit ...]` - italic
 - `[bi ...]`, `[boldItalic ...]` - bold italic
@@ -23,17 +23,17 @@ syntax like `$x^2$` for math. They can be nested and combined.
 - `[u ...]`, `[underline ...]`, `[underscore ...]` - underline
 - `[large ...]` - larger text
 
-**Colors:**
+[b Colors:]
 - `[red ...]`, `[blue ...]`, `[green ...]`, `[pink ...]`
 - `[magenta ...]`, `[violet ...]`, `[gray ...]`
 - `[highlight ...]` - background highlight (with optional `[color name]`)
 
-**Math and Code:**
+[b Math and Code:]
 - `$...$` or `[m ...]` - inline math with ETeX support
 - `[chem ...]` - chemistry formulas
 - `\`...\`` or `[code ...]` - inline code
 
-**Links and References:**
+[b Links and References:]
 - `[link Label URL]` - hyperlink
 - `[href URL]` - URL as link
 - `[ilink Label targetId]` - internal link
@@ -41,14 +41,14 @@ syntax like `$x^2$` for math. They can be nested and combined.
 - `[cite key]` - citation
 - `[footnote text]` - footnote
 
-**Formatting:**
+[b Formatting:]
 - `[sup ...]`, `[sub ...]` - super/subscript
 - `[term ...]` - definition term
 - `[vspace N]`, `[break N]` - vertical space
 - `[//]`, `[par]` - paragraph break
 - `[quote ...]` - curly quotes
 
-**Special Characters and Symbols:**
+[b Special Characters and Symbols:]
 - `[mdash]` → —, `[ndash]` → –
 - `[ds]` → $, `[bt]` → \`
 - `[lb]` → [, `[rb]` → ]
@@ -57,39 +57,39 @@ syntax like `$x^2$` for math. They can be nested and combined.
 
 # Text Styling
 
-## Bold Text
+## Bold Text [box]
 
 Using [b bold text] with the `[b ...]` syntax.
 
 Also available as [bold bold], [strong strong], and [textbf textbf].
 
-## Italic Text
+## Italic Text [box]
 
 Using [i italic text] with the `[i ...]` syntax.
 
 Also available as [italic italic], [emph emphasized], and [textit textit].
 
-## Bold Italic
+## Bold Italic [box]
 
 Using [bi bold and italic] with the `[bi ...]` syntax.
 
 Also available as [boldItalic bold italic text].
 
-## Strikethrough
+## Strikethrough [box]
 
 Using [strike deleted text] with the `[strike ...]` syntax.
 
-## Underline
+## Underline [box]
 
 Using [u underlined text] with the `[u ...]` syntax.
 
 Also available as [underline underlined] and [underscore underscore].
 
-## Large Text
+## Large Text [box]
 
 Using [large larger text here] with the `[large ...]` syntax.
 
-## Combined Styling
+## Combined Styling [box]
 
 You can nest styles: [b [i bold and italic]], [i [strike italic strikethrough]],
 or [u [b underlined bold]].
@@ -97,7 +97,7 @@ or [u [b underlined bold]].
 
 # Colors
 
-## Text Colors
+## Text Colors [box]
 
 [red This text is red.]
 
@@ -115,7 +115,7 @@ or [u [b underlined bold]].
 
 [comment This is a comment (rendered in blue).]
 
-## Highlighting
+## Highlighting [box]
 
 [highlight Default yellow highlight.]
 
@@ -133,30 +133,30 @@ or [u [b underlined bold]].
 
 [highlight [color gray] Gray highlight.]
 
-## Error Highlighting
+## Error Highlighting [box]
 
 [errorHighlight This indicates an error with red background.]
 
 
 # Math
 
-## Inline Math with $ Syntax
+## Inline Math with $ Syntax [box]
 
 The quadratic formula is $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
 
 Einstein's famous equation: $E = mc^2$.
 
-## ETeX Shorthand
+## ETeX Shorthand [box]
 
 ETeX converts shorthand: $int_0^1 x^2 dx$ becomes an integral.
 
 Fractions: $frac(1, n+1)$ renders as a fraction.
 
-## Inline Math with [m ...] Syntax
+## Inline Math with [m ...] Syntax [box]
 
 The area of a circle is [m A = \pi r^2].
 
-## Chemistry Formulas
+## Chemistry Formulas [box]
 
 Water molecule: [chem H2O].
 
@@ -165,20 +165,20 @@ Combustion: [chem CH4 + 2O2 -> CO2 + 2H2O].
 
 # Code
 
-## Inline Code with Backticks
+## Inline Code with Backticks [box]
 
 Use `const x = 42` to define a constant.
 
 The function `factorial(n)` computes n!.
 
-## Inline Code with [code ...]
+## Inline Code with [code ...] [box]
 
 Use [code let x = 42] to define a variable in Elm.
 
 
 # Links
 
-## External Links
+## External Links [box]
 
 Visit [link Anthropic https://anthropic.com] for more information.
 
@@ -186,7 +186,7 @@ Just a URL: [link https://example.com].
 
 Or use href: [href https://example.com].
 
-## Internal Links
+## Internal Links [box]
 
 Jump to [ilink Section 1 sec1] within this document.
 
@@ -199,21 +199,21 @@ Cross-site link: [cslink External Page page123].
 
 # References
 
-## Cross-References
+## Cross-References [box]
 
 See [ref theorem1] for the main theorem.
 
-## Equation References
+## Equation References [box]
 
 Equation [eqref eq1] shows the relationship.
 
-## Citations
+## Citations [box]
 
 As shown by [cite einstein1905], the theory of relativity...
 
 Multiple citations: [cite newton1687] and [cite euler1737].
 
-## Bibliography Items
+## Bibliography Items [box]
 
 [bibitem einstein1905] is referenced above.
 
@@ -227,13 +227,13 @@ Another footnote here[footnote A second footnote with more details.].
 
 # Super and Subscript
 
-## Superscript
+## Superscript [box]
 
 Water is H[sup 2]O. Einstein's E = mc[sup 2].
 
 The 1[sup st] and 2[sup nd] items.
 
-## Subscript
+## Subscript [box]
 
 Water: H[sub 2]O. Carbon dioxide: CO[sub 2].
 
@@ -251,7 +251,7 @@ Hidden term for index only: [term_ hidden index entry].
 
 # Spacing and Structure
 
-## Vertical Space
+## Vertical Space [box]
 
 Before space.
 
@@ -259,7 +259,7 @@ Before space.
 
 After 30 pixels of vertical space.
 
-## Break (alias for vspace)
+## Break (alias for vspace) [box]
 
 Before break.
 
@@ -267,7 +267,7 @@ Before break.
 
 After 20 pixels of break.
 
-## Paragraph Break
+## Paragraph Break [box]
 
 First paragraph.[//]Second paragraph after [//] break.
 
@@ -275,7 +275,7 @@ Also available as [par]:
 
 Before.[par]After.
 
-## Indentation
+## Indentation [box]
 
 Normal text.
 
@@ -291,17 +291,17 @@ Nested quotes: [quote She replied [quote Indeed]].
 
 # Headings (Inline)
 
-## Inline Title
+## Inline Title [box]
 
 [title Large Title Text]
 
-## Subheading
+## Subheading [box]
 
 [subheading Section Heading]
 
 Or using short form: [sh Another Heading]
 
-## Small Subheading
+## Small Subheading [box]
 
 [smallsubheading Minor Heading]
 
@@ -310,13 +310,13 @@ Or using short form: [ssh Another Minor Heading]
 
 # Special Characters
 
-## Dashes
+## Dashes [box]
 
 Em dash: [mdash] (like this—see?)
 
 En dash: [ndash] (pages 1–10)
 
-## Escaped Characters
+## Escaped Characters [box]
 
 Dollar sign: [dollarSign] or [dollar] or [ds]
 
@@ -331,19 +331,19 @@ Content in brackets: [brackets some content]
 
 # Checkboxes
 
-## Standard Checkboxes
+## Standard Checkboxes [box]
 
 [box] Unchecked task
 
 [cbox] Completed task
 
-## Red Checkboxes
+## Red Checkboxes [box]
 
 [rbox] Urgent unchecked
 
 [crbox] Urgent completed
 
-## Filled Boxes
+## Filled Boxes [box]
 
 [fbox] Filled square
 
@@ -352,54 +352,54 @@ Content in brackets: [brackets some content]
 
 # Images
 
-## Inline Image
+## Inline Image [box]
 
 An icon [inlineimage https://picsum.photos/20/20] in the middle of text.
 
-## Regular Image Element
+## Regular Image Element [box]
 
-[image https://picsum.photos/200/100]
+This is an image: [image  https://picsum.photos/200/100] (That was an image)
 
 
 # Tables (Inline)
 
-[table [tableRow [tableItem Name][tableItem Value]] [tableRow [tableItem Alpha][tableItem 1]] [tableRow [tableItem Beta][tableItem 2]]]
+[table [tableRow [tableItem Name][tableItem Value]] [tableRow [tableItem Alpha][tableItem $x^2$]] [tableRow [tableItem Beta][tableItem 2]]]
 
 
 # Interactive Elements
 
-## Scheme Code
+## Scheme Code [box]
 
 Evaluate [scheme (+ 1 2 3)] in Scheme.
 
-## Compute Placeholder
+## Compute Placeholder [box]
 
 The result is [compute 2 + 3].
 
-## Data Placeholder
+## Data Placeholder [box]
 
 Value from [data temperature].
 
-## Button
+## Button [box]
 
 Click [button Submit, action] to continue.
 
 
 # Miscellaneous
 
-## Horizontal Rule
+## Horizontal Rule [box]
 
 [hrule]
 
-## Mark with Anchor
+## Mark with Anchor [box]
 
 [mark section1 [anchor Click here to set anchor]]
 
-## Abstract (Inline)
+## Abstract (Inline) [box]
 
 [abstract This is an inline abstract with the "Abstract." prefix.]
 
-## Q.E.D.
+## Q.E.D. [box]
 
 End of proof. [qed]
 
@@ -419,50 +419,50 @@ These elements are processed but produce no visible output:
 
 This document demonstrated the following inline elements:
 
-**Text Styling:**
+[b Text Styling:]
 `[b]`/`[bold]`/`[strong]`/`[textbf]`, `[i]`/`[italic]`/`[emph]`/`[textit]`,
 `[bi]`/`[boldItalic]`, `[strike]`, `[u]`/`[underline]`/`[underscore]`,
 `[large]`, `[var]`
 
-**Colors:**
+[b Colors:]
 `[red]`, `[blue]`, `[green]`, `[pink]`, `[magenta]`, `[violet]`, `[gray]`,
 `[comment]`, `[highlight]` (with `[color name]`), `[errorHighlight]`
 
-**Math and Code:**
+[b Math and Code:]
 `$...$`, `[m ...]`, `[math ...]`, `[chem ...]`, `\`...\``, `[code ...]`
 
-**Links:**
+[b Links:]
 `[link]`, `[href]`, `[ilink]`, `[ulink]`, `[reflink]`, `[cslink]`
 
-**References:**
+[b References:]
 `[ref]`, `[eqref]`, `[cite]`, `[bibitem]`, `[footnote]`
 
-**Formatting:**
+[b Formatting:]
 `[sup]`, `[sub]`, `[term]`, `[term_]`, `[vspace]`/`[break]`,
 `[//]`/`[par]`, `[indent]`, `[quote]`, `[anchor]`, `[marked]`
 
-**Headings:**
+[b Headings:]
 `[title]`, `[subheading]`/`[sh]`, `[smallsubheading]`/`[ssh]`
 
-**Special Characters:**
+[b Special Characters:]
 `[mdash]`, `[ndash]`, `[dollarSign]`/`[dollar]`/`[ds]`,
 `[backTick]`/`[bt]`, `[lb]`, `[rb]`, `[brackets]`
 
-**Checkboxes:**
+[b Checkboxes:]
 `[box]`, `[cbox]`, `[rbox]`, `[crbox]`, `[fbox]`, `[frbox]`
 
-**Images:**
+[b Images:]
 `[image]`, `[inlineimage]`
 
-**Tables:**
+[b Tables:]
 `[table]`, `[tableRow]`, `[tableItem]`
 
-**Interactive:**
+[b Interactive:]
 `[scheme]`, `[compute]`, `[data]`, `[button]`
 
-**Misc:**
+[b Misc:]
 `[hrule]`, `[mark]`, `[abstract]`, `[qed]`
 
-**Hidden:**
+[b Hidden:]
 `[hide]`, `[label]`, `[index]`, `[setcounter]`, `[tags]`,
 `[author]`, `[date]`, `[today]`, `[lambda]`, `[newPost]`
