@@ -1,0 +1,4 @@
+scripts:
+
+  kill-server:  lsof -ti:8880 | xargs kill -9 2>/dev/null || echo "No process on port 8888"
+  run-server: python3 -m http.server 8880
