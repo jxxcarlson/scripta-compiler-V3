@@ -914,6 +914,7 @@ renderAnchor params acc args meta =
     [footnote This is the footnote text.]
 
 Displays as superscript number linking to endnotes.
+Clicking scrolls to endnote; ESC returns to footnote.
 
 -}
 renderFootnote : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -925,9 +926,11 @@ renderFootnote _ acc args meta =
                     Html.a
                         [ HA.id meta.id
                         , HA.href ("#" ++ textMeta.id ++ "_")
-                        , HE.onClick (SelectId (textMeta.id ++ "_"))
+                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId (textMeta.id ++ "_"), True ))
                         , HA.style "font-weight" "bold"
                         , HA.style "color" "#0000b3"
+                        , HA.style "text-decoration" "none"
+                        , HA.style "cursor" "pointer"
                         ]
                         [ Html.sup [] [ Html.text (String.fromInt k) ] ]
 

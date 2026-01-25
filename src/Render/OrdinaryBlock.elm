@@ -184,6 +184,7 @@ renderSection params acc _ block children =
     in
     tag
         ([ idAttr block.meta.id
+         , HA.style "font-weight" "normal"
          , HA.style "margin-top" "1.5em"
          , HA.style "margin-bottom" "0.5em"
          ]
@@ -538,6 +539,7 @@ renderTitle params acc _ block _ =
     [ Html.h1
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
+         , HA.style "font-weight" "normal"
          , HA.style "margin-bottom" "0.25em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
@@ -919,7 +921,7 @@ renderNothing _ _ _ block _ =
     [ Html.span [ HA.id block.meta.id, HA.style "display" "none" ] [] ]
 
 
-{-| Render a subheading (smaller than section, bold).
+{-| Render a subheading (smaller than section).
 
     | subheading
     Minor Heading
@@ -932,7 +934,7 @@ renderSubheading params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "font-size" "1.1em"
-         , HA.style "font-weight" "bold"
+         , HA.style "font-weight" "normal"
          , HA.style "margin-top" "1em"
          , HA.style "margin-bottom" "0.5em"
          ]

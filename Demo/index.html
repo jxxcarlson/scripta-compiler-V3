@@ -124,15 +124,52 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
         });
 
+        // Track previous scroll position and highlighted element for ESC to restore
+        var savedScrollState = null;
+
         // Subscribe to scrollToElement port - scroll element into view centered
         app.ports.scrollToElement.subscribe(function(elementId) {
+            // Save current scroll position before navigating
+            var renderedOutput = document.getElementById('rendered-output');
+            if (renderedOutput) {
+                savedScrollState = {
+                    scrollTop: renderedOutput.scrollTop,
+                    elementId: elementId
+                };
+            }
+
             // Use setTimeout to ensure DOM has updated
             setTimeout(function() {
                 var element = document.getElementById(elementId);
                 if (element) {
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Add highlight to the target element
+                    element.classList.add('rendered-sync-highlight');
                 }
             }, 50);
+        });
+
+        // Handle ESC key to restore previous scroll position and remove highlighting
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && savedScrollState) {
+                // Remove highlight from the element
+                var element = document.getElementById(savedScrollState.elementId);
+                if (element) {
+                    element.classList.remove('rendered-sync-highlight');
+                }
+
+                // Scroll back to previous position
+                var renderedOutput = document.getElementById('rendered-output');
+                if (renderedOutput) {
+                    renderedOutput.scrollTo({
+                        top: savedScrollState.scrollTop,
+                        behavior: 'smooth'
+                    });
+                }
+
+                // Clear the saved state
+                savedScrollState = null;
+            }
         });
 
         // Subscribe to selectInEditor port - sync rendered text clicks to editor
