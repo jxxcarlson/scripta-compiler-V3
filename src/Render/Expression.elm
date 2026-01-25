@@ -25,7 +25,7 @@ render : CompilerParameters -> Accumulator -> Expression -> Html Msg
 render params acc expr =
     case expr of
         Text str meta ->
-            renderText str meta
+            renderText params str meta
 
         Fun name args meta ->
             renderFun params acc name args meta
@@ -40,11 +40,11 @@ render params acc expr =
 
 {-| Render plain text.
 -}
-renderText : String -> ExprMeta -> Html Msg
-renderText str meta =
+renderText : CompilerParameters -> String -> ExprMeta -> Html Msg
+renderText params str meta =
     Html.span
         [ HA.id meta.id
-        , HE.onClick (SelectId meta.id)
+        , HE.onClick (SendMeta meta)
         ]
         [ Html.text str ]
 

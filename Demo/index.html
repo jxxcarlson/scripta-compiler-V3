@@ -20,7 +20,36 @@
             width: 100%;
             overflow: hidden;
         }
+
+        /* CodeMirror container styling */
+        codemirror-editor {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
     </style>
+
+    <!-- Import map to ensure CodeMirror packages share the same @codemirror/state instance -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@codemirror/state": "https://esm.sh/@codemirror/state@6.4.1",
+            "@codemirror/view": "https://esm.sh/@codemirror/view@6.26.0?external=@codemirror/state",
+            "@codemirror/commands": "https://esm.sh/@codemirror/commands@6.3.3?external=@codemirror/state,@codemirror/view,@codemirror/language",
+            "@codemirror/autocomplete": "https://esm.sh/@codemirror/autocomplete@6.15.0?external=@codemirror/state,@codemirror/view,@codemirror/language,@lezer/common",
+            "@codemirror/language": "https://esm.sh/@codemirror/language@6.10.1?external=@codemirror/state,@codemirror/view,@lezer/common,@lezer/highlight,@lezer/lr",
+            "@codemirror/search": "https://esm.sh/@codemirror/search@6.5.6?external=@codemirror/state,@codemirror/view",
+            "@codemirror/lint": "https://esm.sh/@codemirror/lint@6.5.0?external=@codemirror/state,@codemirror/view",
+            "@lezer/common": "https://esm.sh/@lezer/common@1.2.1",
+            "@lezer/highlight": "https://esm.sh/@lezer/highlight@1.2.0?external=@lezer/common",
+            "@lezer/lr": "https://esm.sh/@lezer/lr@1.4.0?external=@lezer/common",
+            "codemirror": "https://esm.sh/codemirror@6.0.1?external=@codemirror/state,@codemirror/view,@codemirror/commands,@codemirror/autocomplete,@codemirror/language,@codemirror/search,@codemirror/lint"
+        }
+    }
+    </script>
+
+    <!-- Load CodeMirror custom element as ES module -->
+    <script type="module" src="codemirror-element.js"></script>
 </head>
 <body>
     <div id="app"></div>
@@ -82,6 +111,35 @@
         // Subscribe to saveDocuments port
         app.ports.saveDocuments.subscribe(function(docs) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+        });
+
+        // Subscribe to selectInEditor port - sync rendered text clicks to editor
+        app.ports.selectInEditor.subscribe(function(selection) {
+            // selection = { lineNumber, begin, end }
+            var editorElement = document.querySelector('codemirror-editor');
+            if (editorElement && editorElement.editor) {
+                var editor = editorElement.editor;
+                var doc = editor.state.doc;
+
+                // Get the start position of the target line (1-indexed to 0-indexed)
+                var lineStart = doc.line(selection.lineNumber).from;
+
+                // Calculate absolute positions (end is inclusive, so add 1 for CodeMirror's exclusive range)
+                var from = lineStart + selection.begin;
+                var to = lineStart + selection.end + 1;
+
+                // Use the setSyncHighlight effect (imported in codemirror-element.js)
+                // We need to access it via the editor's custom property
+                if (editorElement.setSyncHighlight) {
+                    editor.dispatch({
+                        effects: editorElement.setSyncHighlight({ from, to }),
+                        scrollIntoView: true
+                    });
+                }
+
+                // Focus the editor
+                editor.focus();
+            }
         });
 
         // Load KaTeX and initialize math-text custom element (V2 approach)

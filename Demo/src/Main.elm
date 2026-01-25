@@ -18,6 +18,7 @@ import Compiler
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
+import Html.Keyed as Keyed
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Task
@@ -29,6 +30,12 @@ import Types exposing (CompilerOutput, Filter(..), Msg(..), Theme(..))
 
 
 port saveDocuments : Encode.Value -> Cmd msg
+
+
+{-| Send selection position to the editor.
+The record contains lineNumber, begin (char offset), and end (char offset).
+-}
+port selectInEditor : { lineNumber : Int, begin : Int, end : Int } -> Cmd msg
 
 
 
@@ -69,6 +76,8 @@ type alias Model =
     , windowHeight : Int
     , theme : Theme
     , editCount : Int
+    , selectedId : String
+    , debugClickCount : Int
     }
 
 
@@ -127,6 +136,8 @@ init flags =
       , windowHeight = 800
       , theme = Light
       , editCount = 1
+      , selectedId = ""
+      , debugClickCount = 0
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
@@ -334,9 +345,42 @@ update msg model =
             , Cmd.none
             )
 
-        CompilerMsg _ ->
-            -- Handle compiler messages (selection, etc.)
-            ( model, Cmd.none )
+        CompilerMsg compilerMsg ->
+            let
+                newClickCount =
+                    model.debugClickCount + 1
+            in
+            case compilerMsg of
+                Types.SelectId id ->
+                    ( { model | selectedId = id, debugClickCount = newClickCount }, Cmd.none )
+
+                Types.SendMeta meta ->
+                    -- SendMeta contains source position info for editor sync
+                    -- Extract line number from id format "e-{lineNumber}.{tokenIndex}"
+                    let
+                        lineNumber =
+                            meta.id
+                                |> String.dropLeft 2
+                                -- drop "e-"
+                                |> String.split "."
+                                |> List.head
+                                |> Maybe.andThen String.toInt
+                                |> Maybe.withDefault 0
+
+                        cmd =
+                            selectInEditor
+                                { lineNumber = lineNumber
+                                , begin = meta.begin
+                                , end = meta.end
+                                }
+                    in
+                    ( { model | selectedId = meta.id, debugClickCount = newClickCount }, cmd )
+
+                Types.HighlightId id ->
+                    ( { model | selectedId = id, debugClickCount = newClickCount }, Cmd.none )
+
+                Types.NoOp ->
+                    ( { model | debugClickCount = newClickCount }, Cmd.none )
 
 
 
@@ -363,7 +407,7 @@ view model =
         params =
             { filter = NoFilter
             , windowWidth = panelWidth model
-            , selectedId = ""
+            , selectedId = model.selectedId
             , theme = model.theme
             , editCount = model.editCount
             , width = panelWidth model
@@ -542,7 +586,7 @@ viewHeader model =
             [ HA.style "margin" "0"
             , HA.style "font-size" "1.2em"
             ]
-            [ Html.text "ScriptaV3 Compiler Demo" ]
+            [ Html.text ("ScriptaV3 Demo | clicks: " ++ String.fromInt model.debugClickCount ++ " | sel: " ++ model.selectedId) ]
         , Html.button
             [ HE.onClick ToggleTheme
             , HA.style "padding" "8px 16px"
@@ -592,24 +636,41 @@ viewEditor model panelBg textColor =
             , HA.style "font-size" "0.9em"
             ]
             [ Html.text "Source" ]
-        , Html.textarea
-            [ HA.value model.sourceText
-            , HE.onInput SourceChanged
-            , HA.style "flex" "1"
-            , HA.style "width" "100%"
-            , HA.style "padding" "12px"
-            , HA.style "font-family" "monospace"
-            , HA.style "font-size" "14px"
-            , HA.style "line-height" "1.5"
+        , Html.div
+            [ HA.style "flex" "1"
             , HA.style "border" "1px solid #ccc"
             , HA.style "border-radius" "4px"
-            , HA.style "resize" "none"
+            , HA.style "overflow" "hidden"
             , HA.style "background-color" panelBg
-            , HA.style "color" textColor
-            , HA.style "box-sizing" "border-box"
             ]
-            []
+            [ -- Use Keyed.node to force recreation when document changes
+              Keyed.node "div"
+                [ HA.style "height" "100%"
+                , HA.style "width" "100%"
+                ]
+                [ ( model.currentDocumentId
+                  , Html.node "codemirror-editor"
+                        [ HA.attribute "load" model.sourceText
+                        , onTextChange
+                        , HA.style "height" "100%"
+                        , HA.style "width" "100%"
+                        ]
+                        []
+                  )
+                ]
+            ]
         ]
+
+
+{-| Decode the text-change custom event from CodeMirror.
+The event detail contains { position: Int, source: String }.
+-}
+onTextChange : Html.Attribute Msg
+onTextChange =
+    HE.on "text-change"
+        (Decode.at [ "detail", "source" ] Decode.string
+            |> Decode.map SourceChanged
+        )
 
 
 viewPreview : Model -> String -> String -> CompilerOutput Types.Msg -> Html Msg
