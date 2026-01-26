@@ -8,6 +8,8 @@ import Dict exposing (Dict)
 import Either exposing (Either(..))
 import Html exposing (Html)
 import Html.Attributes as HA
+import Html.Events as HE
+import Json.Decode as Decode
 import Render.Expression
 import Render.Utility exposing (idAttr, selectedStyle)
 import Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Msg(..), Theme(..))
@@ -654,14 +656,105 @@ renderContents _ _ _ block _ =
     ]
 
 
-{-| Render an index placeholder (hidden in output).
+{-| Render an index of all terms collected from [term ...] elements.
 
     | index
 
+Displays an alphabetically sorted list of terms with links to their locations.
+
 -}
 renderIndexBlock : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderIndexBlock _ _ _ block _ =
-    [ Html.div [ idAttr block.meta.id, HA.style "display" "none" ] [] ]
+renderIndexBlock _ acc _ block _ =
+    let
+        -- Get all terms sorted alphabetically (case-insensitive)
+        sortedTerms =
+            acc.terms
+                |> Dict.toList
+                |> List.sortBy (\( term, _ ) -> String.toLower term)
+
+        -- Group terms by first letter
+        groupedTerms =
+            groupByFirstLetter sortedTerms
+
+        -- Render each group
+        renderGroup ( letter, terms ) =
+            Html.div
+                [ HA.style "margin-bottom" "1em" ]
+                [ Html.div
+                    [ HA.style "font-weight" "bold"
+                    , HA.style "font-size" "1.2em"
+                    , HA.style "border-bottom" "1px solid #ccc"
+                    , HA.style "margin-bottom" "0.5em"
+                    ]
+                    [ Html.text (String.toUpper letter) ]
+                , Html.div [] (List.map renderIndexEntry terms)
+                ]
+
+        -- Render a single index entry as a clickable link
+        renderIndexEntry ( term, loc ) =
+            Html.div
+                [ HA.style "margin-left" "1em"
+                , HA.style "margin-bottom" "0.25em"
+                ]
+                [ Html.a
+                    [ HA.href ("#" ++ loc.id)
+                    , HE.preventDefaultOn "click" (Decode.succeed ( SelectId loc.id, True ))
+                    , HA.style "color" "#0066cc"
+                    , HA.style "text-decoration" "none"
+                    , HA.style "cursor" "pointer"
+                    ]
+                    [ Html.text term ]
+                ]
+    in
+    [ Html.div
+        [ idAttr block.meta.id ]
+        [ Html.h2
+            [ HA.style "font-weight" "normal"
+            , HA.style "margin-bottom" "1em"
+            ]
+            [ Html.text "Index" ]
+        , Html.div
+            [ HA.style "column-count" "2"
+            , HA.style "column-gap" "2em"
+            ]
+            (if List.isEmpty sortedTerms then
+                [ Html.text "(No index entries)" ]
+
+             else
+                List.map renderGroup groupedTerms
+            )
+        ]
+    ]
+
+
+{-| Group terms by their first letter.
+-}
+groupByFirstLetter : List ( String, a ) -> List ( String, List ( String, a ) )
+groupByFirstLetter terms =
+    let
+        getFirstLetter term =
+            String.left 1 term |> String.toLower
+
+        addToGroup ( term, loc ) groups =
+            let
+                letter =
+                    getFirstLetter term
+            in
+            case groups of
+                [] ->
+                    [ ( letter, [ ( term, loc ) ] ) ]
+
+                ( currentLetter, currentTerms ) :: rest ->
+                    if currentLetter == letter then
+                        ( currentLetter, ( term, loc ) :: currentTerms ) :: rest
+
+                    else
+                        ( letter, [ ( term, loc ) ] ) :: groups
+    in
+    terms
+        |> List.foldl addToGroup []
+        |> List.map (\( letter, ts ) -> ( letter, List.reverse ts ))
+        |> List.reverse
 
 
 {-| Render content in a bordered box.

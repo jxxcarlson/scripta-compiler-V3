@@ -83,6 +83,7 @@ type alias Model =
     , editCount : Int
     , selectedId : String
     , debugClickCount : Int
+    , deleteConfirmation : Maybe String -- Document ID pending deletion confirmation
     }
 
 
@@ -148,6 +149,7 @@ init flags =
       , editCount = 1
       , selectedId = ""
       , debugClickCount = 0
+      , deleteConfirmation = Nothing
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
@@ -234,7 +236,9 @@ type Msg
     = SourceChanged String
     | SelectDocument String
     | NewDocument
-    | DeleteDocument String
+    | RequestDeleteDocument String
+    | ConfirmDelete
+    | CancelDelete
     | GotViewport Browser.Dom.Viewport
     | WindowResized Int Int
     | ToggleTheme
@@ -311,40 +315,52 @@ update msg model =
             , saveDocuments (encodeDocuments updatedDocuments)
             )
 
-        DeleteDocument docId ->
-            let
-                updatedDocuments =
-                    List.filter (\doc -> doc.id /= docId) model.documents
+        RequestDeleteDocument docId ->
+            ( { model | deleteConfirmation = Just docId }, Cmd.none )
 
-                -- If we deleted the current document, switch to another
-                ( newCurrentId, newSourceText ) =
-                    if docId == model.currentDocumentId then
-                        case List.head updatedDocuments of
-                            Just doc ->
-                                ( doc.id, doc.content )
+        CancelDelete ->
+            ( { model | deleteConfirmation = Nothing }, Cmd.none )
 
-                            Nothing ->
-                                -- Create a new default doc if all deleted
-                                ( defaultDocument.id, defaultDocument.content )
+        ConfirmDelete ->
+            case model.deleteConfirmation of
+                Nothing ->
+                    ( model, Cmd.none )
 
-                    else
-                        ( model.currentDocumentId, model.sourceText )
+                Just docId ->
+                    let
+                        updatedDocuments =
+                            List.filter (\doc -> doc.id /= docId) model.documents
 
-                finalDocuments =
-                    if List.isEmpty updatedDocuments then
-                        [ defaultDocument ]
+                        -- If we deleted the current document, switch to another
+                        ( newCurrentId, newSourceText ) =
+                            if docId == model.currentDocumentId then
+                                case List.head updatedDocuments of
+                                    Just doc ->
+                                        ( doc.id, doc.content )
 
-                    else
-                        updatedDocuments
-            in
-            ( { model
-                | documents = finalDocuments
-                , currentDocumentId = newCurrentId
-                , sourceText = newSourceText
-                , editCount = model.editCount + 1
-              }
-            , saveDocuments (encodeDocuments finalDocuments)
-            )
+                                    Nothing ->
+                                        -- Create a new default doc if all deleted
+                                        ( defaultDocument.id, defaultDocument.content )
+
+                            else
+                                ( model.currentDocumentId, model.sourceText )
+
+                        finalDocuments =
+                            if List.isEmpty updatedDocuments then
+                                [ defaultDocument ]
+
+                            else
+                                updatedDocuments
+                    in
+                    ( { model
+                        | documents = finalDocuments
+                        , currentDocumentId = newCurrentId
+                        , sourceText = newSourceText
+                        , editCount = model.editCount + 1
+                        , deleteConfirmation = Nothing
+                      }
+                    , saveDocuments (encodeDocuments finalDocuments)
+                    )
 
         GotViewport viewport ->
             ( { model
@@ -494,6 +510,7 @@ view model =
             , viewEditor model panelBg textColor
             , viewPreview model panelBg textColor output
             ]
+        , viewDeleteConfirmation model
         ]
 
 
@@ -585,7 +602,7 @@ viewSidebar model panelBg textColor =
                             ]
                         , Html.button
                             [ HE.stopPropagationOn "click"
-                                (Decode.succeed ( DeleteDocument doc.id, True ))
+                                (Decode.succeed ( RequestDeleteDocument doc.id, True ))
                             , HA.style "padding" "2px 6px"
                             , HA.style "cursor" "pointer"
                             , HA.style "border" "1px solid #ccc"
@@ -730,6 +747,72 @@ viewPreview model panelBg textColor output =
             ]
             (List.map (Html.map CompilerMsg) output.body)
         ]
+
+
+viewDeleteConfirmation : Model -> Html Msg
+viewDeleteConfirmation model =
+    case model.deleteConfirmation of
+        Nothing ->
+            Html.text ""
+
+        Just _ ->
+            Html.div
+                [ HA.style "position" "fixed"
+                , HA.style "top" "0"
+                , HA.style "left" "0"
+                , HA.style "width" "100vw"
+                , HA.style "height" "100vh"
+                , HA.style "background-color" "rgba(0, 0, 0, 0.5)"
+                , HA.style "display" "flex"
+                , HA.style "justify-content" "center"
+                , HA.style "align-items" "center"
+                , HA.style "z-index" "1000"
+                ]
+                [ Html.div
+                    [ HA.style "background-color" "#fff"
+                    , HA.style "padding" "24px"
+                    , HA.style "border-radius" "8px"
+                    , HA.style "box-shadow" "0 4px 20px rgba(0, 0, 0, 0.3)"
+                    , HA.style "max-width" "400px"
+                    , HA.style "text-align" "center"
+                    ]
+                    [ Html.p
+                        [ HA.style "margin" "0 0 20px 0"
+                        , HA.style "color" "#333"
+                        , HA.style "font-size" "1em"
+                        , HA.style "line-height" "1.5"
+                        ]
+                        [ Html.text "Do you want to delete this document? This action cannot be undone." ]
+                    , Html.div
+                        [ HA.style "display" "flex"
+                        , HA.style "justify-content" "center"
+                        , HA.style "gap" "12px"
+                        ]
+                        [ Html.button
+                            [ HE.onClick ConfirmDelete
+                            , HA.style "padding" "8px 24px"
+                            , HA.style "cursor" "pointer"
+                            , HA.style "border" "none"
+                            , HA.style "border-radius" "4px"
+                            , HA.style "background-color" "#dc3545"
+                            , HA.style "color" "#fff"
+                            , HA.style "font-size" "0.95em"
+                            ]
+                            [ Html.text "Yes" ]
+                        , Html.button
+                            [ HE.onClick CancelDelete
+                            , HA.style "padding" "8px 24px"
+                            , HA.style "cursor" "pointer"
+                            , HA.style "border" "1px solid #ccc"
+                            , HA.style "border-radius" "4px"
+                            , HA.style "background-color" "#fff"
+                            , HA.style "color" "#333"
+                            , HA.style "font-size" "0.95em"
+                            ]
+                            [ Html.text "No" ]
+                        ]
+                    ]
+                ]
 
 
 panelWidth : Model -> Int
