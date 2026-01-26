@@ -168,9 +168,11 @@ type InListState
 
 
 {-| Location of a term in the source.
+The displayAs field allows customizing how the term appears in the index.
+For example, [term change color show-as:color, change] displays as "color, change" in the index.
 -}
 type alias TermLoc =
-    { begin : Int, end : Int, id : String }
+    { begin : Int, end : Int, id : String, displayAs : Maybe String }
 
 
 {-| Location of a footnote with optional source reference.

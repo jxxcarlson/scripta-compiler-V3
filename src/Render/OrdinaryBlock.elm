@@ -12,7 +12,7 @@ import Html.Events as HE
 import Json.Decode as Decode
 import Render.Expression
 import Render.Utility exposing (idAttr, selectedStyle)
-import Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Msg(..), Theme(..))
+import Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Msg(..), TermLoc, Theme(..))
 
 
 {-| Render an ordinary block by name.
@@ -430,14 +430,15 @@ renderTheorem params acc name block children =
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (Html.span
+        [ Html.span
             [ HA.style "font-weight" "bold"
             , HA.style "margin-right" "0.5em"
             ]
             [ Html.text (theoremTitle ++ numberString ++ labelDisplay ++ ".") ]
-            :: renderBody params acc block
-            ++ children
-        )
+        , Html.span
+            [ HA.style "font-style" "italic" ]
+            (renderBody params acc block ++ children)
+        ]
     ]
 
 
@@ -666,15 +667,19 @@ Displays an alphabetically sorted list of terms with links to their locations.
 renderIndexBlock : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderIndexBlock _ acc _ block _ =
     let
-        -- Get all terms sorted alphabetically (case-insensitive)
+        -- Helper to get display text for sorting/grouping
+        getDisplayText ( term, loc ) =
+            loc.displayAs |> Maybe.withDefault term
+
+        -- Get all terms sorted alphabetically by display text (case-insensitive)
         sortedTerms =
             acc.terms
                 |> Dict.toList
-                |> List.sortBy (\( term, _ ) -> String.toLower term)
+                |> List.sortBy (\entry -> String.toLower (getDisplayText entry))
 
-        -- Group terms by first letter
+        -- Group terms by first letter of display text
         groupedTerms =
-            groupByFirstLetter sortedTerms
+            groupByFirstLetterWithDisplay sortedTerms
 
         -- Render each group
         renderGroup ( letter, terms ) =
@@ -691,7 +696,12 @@ renderIndexBlock _ acc _ block _ =
                 ]
 
         -- Render a single index entry as a clickable link
+        -- Uses displayAs if present, otherwise uses the term itself
         renderIndexEntry ( term, loc ) =
+            let
+                displayText =
+                    loc.displayAs |> Maybe.withDefault term
+            in
             Html.div
                 [ HA.style "margin-left" "1em"
                 , HA.style "margin-bottom" "0.25em"
@@ -703,7 +713,7 @@ renderIndexBlock _ acc _ block _ =
                     , HA.style "text-decoration" "none"
                     , HA.style "cursor" "pointer"
                     ]
-                    [ Html.text term ]
+                    [ Html.text displayText ]
                 ]
     in
     [ Html.div
@@ -727,29 +737,32 @@ renderIndexBlock _ acc _ block _ =
     ]
 
 
-{-| Group terms by their first letter.
+{-| Group terms by their first letter, using displayAs when present.
 -}
-groupByFirstLetter : List ( String, a ) -> List ( String, List ( String, a ) )
-groupByFirstLetter terms =
+groupByFirstLetterWithDisplay : List ( String, TermLoc ) -> List ( String, List ( String, TermLoc ) )
+groupByFirstLetterWithDisplay terms =
     let
-        getFirstLetter term =
-            String.left 1 term |> String.toLower
+        getDisplayText ( term, loc ) =
+            loc.displayAs |> Maybe.withDefault term
 
-        addToGroup ( term, loc ) groups =
+        getFirstLetter entry =
+            String.left 1 (getDisplayText entry) |> String.toLower
+
+        addToGroup entry groups =
             let
                 letter =
-                    getFirstLetter term
+                    getFirstLetter entry
             in
             case groups of
                 [] ->
-                    [ ( letter, [ ( term, loc ) ] ) ]
+                    [ ( letter, [ entry ] ) ]
 
                 ( currentLetter, currentTerms ) :: rest ->
                     if currentLetter == letter then
-                        ( currentLetter, ( term, loc ) :: currentTerms ) :: rest
+                        ( currentLetter, entry :: currentTerms ) :: rest
 
                     else
-                        ( letter, [ ( term, loc ) ] ) :: groups
+                        ( letter, [ entry ] ) :: groups
     in
     terms
         |> List.foldl addToGroup []

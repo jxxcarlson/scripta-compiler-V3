@@ -1084,7 +1084,14 @@ getTerms : String -> Either String (List Expression) -> List TermData
 getTerms id content_ =
     case content_ of
         Right expressionList ->
-            Generic.ASTTools.filterExpressionsOnName_ "term" expressionList
+            let
+                termExprs =
+                    Generic.ASTTools.filterExpressionsOnName_ "term" expressionList
+
+                termHiddenExprs =
+                    Generic.ASTTools.filterExpressionsOnName_ "term_" expressionList
+            in
+            (termExprs ++ termHiddenExprs)
                 |> List.map (extract id)
                 |> Maybe.Extra.values
 
@@ -1099,11 +1106,85 @@ getTerms id content_ =
 extract : String -> Expression -> Maybe TermData
 extract id expr =
     case expr of
-        Fun "term" [ Text name { begin, end } ] _ ->
-            Just { term = name, loc = { begin = begin, end = end, id = id } }
+        Fun "term" args _ ->
+            extractTermFromArgs id args
 
-        Fun "term_" [ Text name { begin, end } ] _ ->
-            Just { term = name, loc = { begin = begin, end = end, id = id } }
+        Fun "term_" args _ ->
+            extractTermFromArgs id args
+
+        _ ->
+            Nothing
+
+
+{-| Extract term data from function arguments, handling both single and multi-word terms.
+Supports optional list-as: property for custom index display.
+Example: [term change color list-as:color, change]
+-}
+extractTermFromArgs : String -> List Expression -> Maybe TermData
+extractTermFromArgs id args =
+    case args of
+        [ Text name { begin, end } ] ->
+            -- Single word term, possibly with show-as:
+            let
+                ( termName, displayAs ) =
+                    parseListAs name
+            in
+            Just { term = termName, loc = { begin = begin, end = end, id = id, displayAs = displayAs } }
+
+        (Text firstWord { begin }) :: rest ->
+            -- Multi-word term: join all text nodes
+            let
+                allWords =
+                    firstWord :: List.filterMap getTextContent rest
+
+                fullText =
+                    String.join " " allWords
+
+                ( termName, displayAs ) =
+                    parseListAs fullText
+
+                lastEnd =
+                    rest
+                        |> List.reverse
+                        |> List.head
+                        |> Maybe.andThen getTextEnd
+                        |> Maybe.withDefault begin
+            in
+            Just { term = termName, loc = { begin = begin, end = lastEnd, id = id, displayAs = displayAs } }
+
+        _ ->
+            Nothing
+
+
+{-| Parse a term string to extract the list-as: property if present.
+Returns (termName, Maybe displayAs).
+Example: "change color list-as:color, change" -> ("change color", Just "color, change")
+-}
+parseListAs : String -> ( String, Maybe String )
+parseListAs text =
+    case String.split "list-as:" text of
+        [ termPart, displayPart ] ->
+            ( String.trim termPart, Just (String.trim displayPart) )
+
+        _ ->
+            ( text, Nothing )
+
+
+getTextContent : Expression -> Maybe String
+getTextContent expr =
+    case expr of
+        Text str _ ->
+            Just str
+
+        _ ->
+            Nothing
+
+
+getTextEnd : Expression -> Maybe Int
+getTextEnd expr =
+    case expr of
+        Text _ { end } ->
+            Just end
 
         _ ->
             Nothing
@@ -1194,12 +1275,17 @@ getMacroArg name str =
 
 getTag : ExpressionBlock -> String
 getTag block =
-    case Dict.get "tag" block.properties of
-        Just tag ->
-            tag
+    case Dict.get "label" block.properties of
+        Just label ->
+            label
 
         Nothing ->
-            block.meta.id
+            case Dict.get "tag" block.properties of
+                Just tag ->
+                    tag
+
+                Nothing ->
+                    block.meta.id
 
 
 

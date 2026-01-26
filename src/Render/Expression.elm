@@ -625,15 +625,45 @@ renderSub params acc args meta =
 {-| Render a term (italicized, for definitions).
 
     [term entropy]
+    [term prime number list-as:number, prime]
+
+The list-as: property is stripped from display (it only affects index listing).
 
 -}
 renderTerm : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderTerm params acc args meta =
+renderTerm _ _ args meta =
+    let
+        -- Get all text content and strip list-as: property
+        fullText =
+            args
+                |> List.filterMap getExprText
+                |> String.join " "
+
+        displayText =
+            case String.split "list-as:" fullText of
+                termPart :: _ ->
+                    String.trim termPart
+
+                [] ->
+                    fullText
+    in
     Html.em
         [ HA.id meta.id
         , HA.style "padding-right" "2px"
         ]
-        (renderList params acc args)
+        [ Html.text displayText ]
+
+
+{-| Extract text content from an expression.
+-}
+getExprText : Expression -> Maybe String
+getExprText expr =
+    case expr of
+        Text str _ ->
+            Just str
+
+        _ ->
+            Nothing
 
 
 {-| Render a hidden term (for index only, not displayed).
