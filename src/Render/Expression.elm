@@ -514,21 +514,27 @@ renderRef : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> 
 renderRef _ acc args meta =
     case args of
         [ Text refId _ ] ->
-            case Dict.get refId acc.reference of
-                Just { numRef } ->
-                    -- Use refId as target since it's the slug id of the section's wrapper div
+            let
+                trimmedRefId =
+                    String.trim refId
+            in
+            case Dict.get trimmedRefId acc.reference of
+                Just { id, numRef } ->
+                    -- Use id from reference dict as the scroll target
                     Html.a
                         [ HA.id meta.id
-                        , HA.href ("#" ++ refId)
-                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId refId, True ))
+                        , HA.href ("#" ++ id)
+                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId id, True ))
                         , HA.style "color" "#0066cc"
                         , HA.style "text-decoration" "none"
                         , HA.style "cursor" "pointer"
+                        , HA.style "padding" "2px 4px"
+                        , HA.style "margin" "-2px -4px"
                         ]
                         [ Html.text numRef ]
 
                 Nothing ->
-                    Html.span [ HA.id meta.id, HA.style "color" "red" ] [ Html.text ("??" ++ refId) ]
+                    Html.span [ HA.id meta.id, HA.style "color" "red" ] [ Html.text ("??" ++ trimmedRefId) ]
 
         _ ->
             Html.span [ HA.id meta.id ] [ Html.text "[ref: invalid]" ]
@@ -545,7 +551,11 @@ renderEqRef : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -
 renderEqRef _ acc args meta =
     case args of
         [ Text refId _ ] ->
-            case Dict.get refId acc.reference of
+            let
+                trimmedRefId =
+                    String.trim refId
+            in
+            case Dict.get trimmedRefId acc.reference of
                 Just { id, numRef } ->
                     Html.a
                         [ HA.id meta.id
@@ -554,11 +564,13 @@ renderEqRef _ acc args meta =
                         , HA.style "color" "#0066cc"
                         , HA.style "text-decoration" "none"
                         , HA.style "cursor" "pointer"
+                        , HA.style "padding" "2px 4px"
+                        , HA.style "margin" "-2px -4px"
                         ]
                         [ Html.text ("(" ++ numRef ++ ")") ]
 
                 Nothing ->
-                    Html.span [ HA.id meta.id, HA.style "color" "red" ] [ Html.text ("(??" ++ refId ++ ")") ]
+                    Html.span [ HA.id meta.id, HA.style "color" "red" ] [ Html.text ("(??" ++ trimmedRefId ++ ")") ]
 
         _ ->
             Html.span [ HA.id meta.id ] [ Html.text "[eqref: invalid]" ]

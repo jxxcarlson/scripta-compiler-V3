@@ -73,6 +73,11 @@ main =
 -- MODEL
 
 
+type SortMode
+    = ByDate -- Most recent first (creation order)
+    | Alphabetical -- A to Z, ignoring case and noise words
+
+
 type alias Model =
     { documents : List Document
     , currentDocumentId : String
@@ -82,8 +87,10 @@ type alias Model =
     , theme : Theme
     , editCount : Int
     , selectedId : String
+    , previousId : String -- For ESC-to-return scroll navigation
     , debugClickCount : Int
     , deleteConfirmation : Maybe String -- Document ID pending deletion confirmation
+    , sortMode : SortMode
     }
 
 
@@ -148,8 +155,10 @@ init flags =
       , theme = Light
       , editCount = 1
       , selectedId = ""
+      , previousId = ""
       , debugClickCount = 0
       , deleteConfirmation = Nothing
+      , sortMode = ByDate
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
@@ -239,9 +248,12 @@ type Msg
     | RequestDeleteDocument String
     | ConfirmDelete
     | CancelDelete
+    | SetSortMode SortMode
     | GotViewport Browser.Dom.Viewport
     | WindowResized Int Int
     | ToggleTheme
+    | EscapePressed
+    | ShiftEscapePressed
     | CompilerMsg Types.Msg
 
 
@@ -321,6 +333,9 @@ update msg model =
         CancelDelete ->
             ( { model | deleteConfirmation = Nothing }, Cmd.none )
 
+        SetSortMode mode ->
+            ( { model | sortMode = mode }, Cmd.none )
+
         ConfirmDelete ->
             case model.deleteConfirmation of
                 Nothing ->
@@ -391,6 +406,28 @@ update msg model =
             , Cmd.none
             )
 
+        EscapePressed ->
+            -- Return to previous position if available
+            if model.previousId /= "" then
+                ( { model
+                    | selectedId = model.previousId
+                    , previousId = model.selectedId
+                  }
+                , scrollToElement model.previousId
+                )
+
+            else
+                ( model, Cmd.none )
+
+        ShiftEscapePressed ->
+            -- Clear all highlighting
+            ( { model
+                | selectedId = ""
+                , previousId = ""
+              }
+            , Cmd.none
+            )
+
         CompilerMsg compilerMsg ->
             let
                 newClickCount =
@@ -398,7 +435,14 @@ update msg model =
             in
             case compilerMsg of
                 Types.SelectId id ->
-                    ( { model | selectedId = id, debugClickCount = newClickCount }, scrollToElement id )
+                    -- Save current position before navigating
+                    ( { model
+                        | selectedId = id
+                        , previousId = model.selectedId
+                        , debugClickCount = newClickCount
+                      }
+                    , scrollToElement id
+                    )
 
                 Types.SendMeta meta ->
                     -- SendMeta contains source position info for editor sync
@@ -435,7 +479,31 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Browser.Events.onResize WindowResized
+    Sub.batch
+        [ Browser.Events.onResize WindowResized
+        , Browser.Events.onKeyDown escapeKeyDecoder
+        ]
+
+
+{-| Decode ESC key press. Shift+ESC clears highlighting, ESC alone returns to previous position.
+-}
+escapeKeyDecoder : Decode.Decoder Msg
+escapeKeyDecoder =
+    Decode.map2 Tuple.pair
+        (Decode.field "key" Decode.string)
+        (Decode.field "shiftKey" Decode.bool)
+        |> Decode.andThen
+            (\( key, shiftKey ) ->
+                if key == "Escape" then
+                    if shiftKey then
+                        Decode.succeed ShiftEscapePressed
+
+                    else
+                        Decode.succeed EscapePressed
+
+                else
+                    Decode.fail "not escape"
+            )
 
 
 
@@ -517,14 +585,6 @@ view model =
 viewSidebar : Model -> String -> String -> Html Msg
 viewSidebar model panelBg textColor =
     let
-        hoverBg =
-            case model.theme of
-                Light ->
-                    "#e8e8e8"
-
-                Dark ->
-                    "#3a3a3a"
-
         selectedBg =
             case model.theme of
                 Light ->
@@ -532,6 +592,36 @@ viewSidebar model panelBg textColor =
 
                 Dark ->
                     "#4a4a4a"
+
+        sortedDocs =
+            sortDocuments model.sortMode model.documents
+
+        sortButtonStyle isActive =
+            [ HA.style "padding" "2px 6px"
+            , HA.style "cursor" "pointer"
+            , HA.style "border" "1px solid #ccc"
+            , HA.style "border-radius" "3px"
+            , HA.style "font-size" "0.75em"
+            , HA.style "background-color"
+                (if isActive then
+                    case model.theme of
+                        Light ->
+                            "#007bff"
+
+                        Dark ->
+                            "#0056b3"
+
+                 else
+                    panelBg
+                )
+            , HA.style "color"
+                (if isActive then
+                    "#fff"
+
+                 else
+                    textColor
+                )
+            ]
     in
     Html.div
         [ HA.style "width" (String.fromInt sidebarWidth ++ "px")
@@ -559,6 +649,24 @@ viewSidebar model panelBg textColor =
                 , HA.style "font-size" "0.85em"
                 ]
                 [ Html.text "+ New" ]
+            ]
+        , Html.div
+            [ HA.style "display" "flex"
+            , HA.style "gap" "4px"
+            , HA.style "margin-bottom" "8px"
+            , HA.style "font-size" "0.8em"
+            ]
+            [ Html.span
+                [ HA.style "margin-right" "4px"
+                , HA.style "color" textColor
+                ]
+                [ Html.text "Sort:" ]
+            , Html.button
+                (HE.onClick (SetSortMode ByDate) :: sortButtonStyle (model.sortMode == ByDate))
+                [ Html.text "Date" ]
+            , Html.button
+                (HE.onClick (SetSortMode Alphabetical) :: sortButtonStyle (model.sortMode == Alphabetical))
+                [ Html.text "A-Z" ]
             ]
         , Html.div
             [ HA.style "flex" "1"
@@ -615,7 +723,7 @@ viewSidebar model panelBg textColor =
                             [ Html.text "×" ]
                         ]
                 )
-                model.documents
+                sortedDocs
             )
         ]
 
@@ -819,3 +927,54 @@ panelWidth : Model -> Int
 panelWidth model =
     -- Account for sidebar (200px), padding (10px * 2), and gaps (10px * 2)
     (model.windowWidth - sidebarWidth - 50) // 2
+
+
+
+-- SORTING
+
+
+{-| Noise words to ignore when sorting alphabetically.
+-}
+noiseWords : List String
+noiseWords =
+    [ "a", "an", "the" ]
+
+
+{-| Get the sort key for a document title, ignoring case and leading noise words.
+-}
+sortKey : String -> String
+sortKey title =
+    let
+        lowerTitle =
+            String.toLower (String.trim title)
+
+        words =
+            String.words lowerTitle
+
+        -- Remove leading noise word if present
+        significantWords =
+            case words of
+                first :: rest ->
+                    if List.member first noiseWords then
+                        rest
+
+                    else
+                        words
+
+                [] ->
+                    []
+    in
+    String.join " " significantWords
+
+
+{-| Sort documents according to the current sort mode.
+-}
+sortDocuments : SortMode -> List Document -> List Document
+sortDocuments mode docs =
+    case mode of
+        ByDate ->
+            -- Keep original order (most recent last in the list, but we display newest first)
+            List.reverse docs
+
+        Alphabetical ->
+            List.sortBy (\doc -> sortKey doc.title) docs
