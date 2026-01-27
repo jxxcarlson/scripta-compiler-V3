@@ -21,6 +21,11 @@
             overflow: hidden;
         }
 
+        #app {
+            height: 100%;
+            width: 100%;
+        }
+
         /* CodeMirror container styling */
         codemirror-editor {
             display: block;
@@ -125,13 +130,14 @@
         });
 
         // Subscribe to exportDocuments port - download as JSON file
-        app.ports.exportDocuments.subscribe(function(docs) {
-            var dataStr = JSON.stringify(docs, null, 2);
+        // Receives { filename: String, documents: List Document }
+        app.ports.exportDocuments.subscribe(function(data) {
+            var dataStr = JSON.stringify(data.documents, null, 2);
             var blob = new Blob([dataStr], { type: 'application/json' });
             var url = URL.createObjectURL(blob);
             var a = document.createElement('a');
             a.href = url;
-            a.download = 'scripta-documents-' + new Date().toISOString().slice(0, 10) + '.json';
+            a.download = data.filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

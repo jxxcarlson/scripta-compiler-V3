@@ -54,8 +54,9 @@ port preserveScrollPosition : () -> Cmd msg
 
 
 {-| Trigger a file download with the current documents as JSON.
+The value contains { filename: String, documents: List Document }
 -}
-port exportDocuments : Encode.Value -> Cmd msg
+port exportDocuments : { filename : String, documents : Encode.Value } -> Cmd msg
 
 
 {-| Request the browser to open a file picker for importing documents.
@@ -229,6 +230,28 @@ extractTitle content =
 
     else
         titleText
+
+
+{-| Convert a title to a valid filename.
+Lowercases, removes non-alphanumeric characters (except spaces),
+compresses runs of spaces, and replaces spaces with underscores.
+-}
+titleToFilename : String -> String
+titleToFilename title =
+    title
+        |> String.toLower
+        |> String.toList
+        |> List.map
+            (\c ->
+                if Char.isAlphaNum c || c == ' ' then
+                    c
+
+                else
+                    ' '
+            )
+        |> String.fromList
+        |> String.words
+        |> String.join "_"
 
 
 
@@ -457,7 +480,26 @@ update msg model =
             )
 
         ExportDocuments ->
-            ( model, exportDocuments (encodeDocuments model.documents) )
+            let
+                currentDoc =
+                    model.documents
+                        |> List.filter (\doc -> doc.id == model.currentDocumentId)
+                        |> List.head
+
+                filename =
+                    case currentDoc of
+                        Just doc ->
+                            titleToFilename doc.title ++ ".json"
+
+                        Nothing ->
+                            "scripta-documents.json"
+            in
+            ( model
+            , exportDocuments
+                { filename = filename
+                , documents = encodeDocuments model.documents
+                }
+            )
 
         RequestImportDocuments ->
             ( model, requestImport () )
@@ -819,15 +861,20 @@ viewHeader model =
         , HA.style "align-items" "center"
         , HA.style "padding" "10px 20px"
         , HA.style "border-bottom" "1px solid #ccc"
+        , HA.style "flex-shrink" "0"
+        , HA.style "min-height" "50px"
+        , HA.style "overflow" "visible"
         ]
         [ Html.h1
             [ HA.style "margin" "0"
             , HA.style "font-size" "1.2em"
+            , HA.style "white-space" "nowrap"
             ]
-            [ Html.text ("ScriptaV3 Demo | clicks: " ++ String.fromInt model.debugClickCount ++ " | sel: " ++ model.selectedId) ]
+            [ Html.text "ScriptaV3 Demo" ]
         , Html.div
             [ HA.style "display" "flex"
             , HA.style "gap" "8px"
+            , HA.style "flex-shrink" "0"
             ]
             [ Html.button
                 (HE.onClick ExportDocuments :: buttonStyle)

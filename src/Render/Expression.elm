@@ -10,7 +10,7 @@ import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as Decode
 import Render.Math exposing (DisplayMode(..), mathText)
-import Types exposing (Accumulator, CompilerParameters, Expr(..), ExprMeta, Expression, Msg(..))
+import Types exposing (Accumulator, CompilerParameters, Expr(..), ExprMeta, Expression, MathMacroDict, Msg(..))
 
 
 {-| Render a list of expressions.
@@ -71,27 +71,27 @@ renderVFun : CompilerParameters -> Accumulator -> String -> String -> ExprMeta -
 renderVFun params acc name content meta =
     case name of
         "$" ->
-            -- Inline math (legacy) - apply ETeX transform
-            mathText params.editCount meta.id InlineMathMode (applyETeXTransform content)
+            -- Inline math (legacy) - apply ETeX transform with user macros
+            mathText params.editCount meta.id InlineMathMode (applyMathMacros acc.mathMacroDict content)
 
         "math" ->
-            -- Inline math - apply ETeX transform
-            mathText params.editCount meta.id InlineMathMode (applyETeXTransform content)
+            -- Inline math - apply ETeX transform with user macros
+            mathText params.editCount meta.id InlineMathMode (applyMathMacros acc.mathMacroDict content)
 
         "m" ->
-            -- Inline math (short alias) - apply ETeX transform
-            mathText params.editCount meta.id InlineMathMode (applyETeXTransform content)
+            -- Inline math (short alias) - apply ETeX transform with user macros
+            mathText params.editCount meta.id InlineMathMode (applyMathMacros acc.mathMacroDict content)
 
         "chem" ->
             -- Chemistry formula - render as math with mhchem
             mathText params.editCount meta.id InlineMathMode ("\\ce{" ++ content ++ "}")
 
         "code" ->
-            Html.code [ HA.id meta.id ] [ Html.text content ]
+            Html.code [ HA.id meta.id, HA.style "font-size" "1em" ] [ Html.text content ]
 
         "`" ->
             -- Backtick code (alias for code)
-            Html.code [ HA.id meta.id ] [ Html.text content ]
+            Html.code [ HA.id meta.id, HA.style "font-size" "1em" ] [ Html.text content ]
 
         _ ->
             -- Default: just show the content
@@ -101,11 +101,12 @@ renderVFun params acc name content meta =
 {-| Transform ETeX notation to LaTeX using ETeX.Transform.evalStr.
 
 Converts notation like `int_0^2`, `frac(1,n+1)` to `\int_0^2`, `\frac{1}{n+1}`.
+Also expands user-defined macros from mathmacros blocks.
 
 -}
-applyETeXTransform : String -> String
-applyETeXTransform content =
-    ETeX.Transform.evalStr Dict.empty content
+applyMathMacros : MathMacroDict -> String -> String
+applyMathMacros macroDict content =
+    ETeX.Transform.evalStr macroDict content
 
 
 {-| Default rendering for unknown function names.

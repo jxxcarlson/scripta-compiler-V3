@@ -266,7 +266,7 @@ renderCode params _ _ block _ =
             , HA.style "border-radius" "4px"
             , HA.style "overflow-x" "auto"
             , HA.style "font-family" "monospace"
-            , HA.style "font-size" "0.9em"
+            , HA.style "font-size" "13px"
             ]
             [ Html.code
                 [ HA.class ("language-" ++ language) ]
@@ -410,7 +410,7 @@ renderSvg params _ _ block _ =
         )
         [ Html.pre
             [ HA.style "font-family" "monospace"
-            , HA.style "font-size" "0.8em"
+            , HA.style "font-size" "13px"
             ]
             [ Html.text "[SVG content - requires JS integration]" ]
         ]
