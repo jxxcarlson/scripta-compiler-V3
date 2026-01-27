@@ -124,6 +124,52 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
         });
 
+        // Subscribe to exportDocuments port - download as JSON file
+        app.ports.exportDocuments.subscribe(function(docs) {
+            var dataStr = JSON.stringify(docs, null, 2);
+            var blob = new Blob([dataStr], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'scripta-documents-' + new Date().toISOString().slice(0, 10) + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Create hidden file input for import
+        var importInput = document.createElement('input');
+        importInput.type = 'file';
+        importInput.accept = '.json';
+        importInput.style.display = 'none';
+        document.body.appendChild(importInput);
+
+        // Handle file selection
+        importInput.addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    var docs = JSON.parse(event.target.result);
+                    app.ports.importedDocuments.send(docs);
+                } catch (err) {
+                    console.error('Failed to parse imported file:', err);
+                    alert('Failed to import: Invalid JSON file');
+                }
+            };
+            reader.readAsText(file);
+            // Reset input so the same file can be selected again
+            importInput.value = '';
+        });
+
+        // Subscribe to requestImport port - open file picker
+        app.ports.requestImport.subscribe(function() {
+            importInput.click();
+        });
+
         // Track previous scroll position and highlighted element for ESC to restore
         var savedScrollState = null;
 

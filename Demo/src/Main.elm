@@ -53,6 +53,21 @@ port blurActiveElement : () -> Cmd msg
 port preserveScrollPosition : () -> Cmd msg
 
 
+{-| Trigger a file download with the current documents as JSON.
+-}
+port exportDocuments : Encode.Value -> Cmd msg
+
+
+{-| Request the browser to open a file picker for importing documents.
+-}
+port requestImport : () -> Cmd msg
+
+
+{-| Receive imported documents from JavaScript.
+-}
+port importedDocuments : (Decode.Value -> msg) -> Sub msg
+
+
 
 -- DOCUMENT
 
@@ -264,6 +279,9 @@ type Msg
     | ToggleTheme
     | EscapePressed
     | ShiftEscapePressed
+    | ExportDocuments
+    | RequestImportDocuments
+    | GotImportedDocuments Decode.Value
     | CompilerMsg Types.Msg
 
 
@@ -438,6 +456,36 @@ update msg model =
             , Cmd.batch [ blurActiveElement (), preserveScrollPosition () ]
             )
 
+        ExportDocuments ->
+            ( model, exportDocuments (encodeDocuments model.documents) )
+
+        RequestImportDocuments ->
+            ( model, requestImport () )
+
+        GotImportedDocuments value ->
+            case Decode.decodeValue documentsDecoder value of
+                Ok importedDocs ->
+                    let
+                        -- Merge imported docs, avoiding duplicates by id
+                        existingIds =
+                            List.map .id model.documents
+
+                        newDocs =
+                            List.filter (\doc -> not (List.member doc.id existingIds)) importedDocs
+
+                        mergedDocuments =
+                            model.documents ++ newDocs
+                    in
+                    ( { model
+                        | documents = mergedDocuments
+                        , editCount = model.editCount + 1
+                      }
+                    , saveDocuments (encodeDocuments mergedDocuments)
+                    )
+
+                Err _ ->
+                    ( model, Cmd.none )
+
         CompilerMsg compilerMsg ->
             let
                 newClickCount =
@@ -492,6 +540,7 @@ subscriptions _ =
     Sub.batch
         [ Browser.Events.onResize WindowResized
         , Browser.Events.onKeyUp escapeKeyDecoder
+        , importedDocuments GotImportedDocuments
         ]
 
 
@@ -740,21 +789,9 @@ viewSidebar model panelBg textColor =
 
 viewHeader : Model -> Html Msg
 viewHeader model =
-    Html.div
-        [ HA.style "display" "flex"
-        , HA.style "justify-content" "space-between"
-        , HA.style "align-items" "center"
-        , HA.style "padding" "10px 20px"
-        , HA.style "border-bottom" "1px solid #ccc"
-        ]
-        [ Html.h1
-            [ HA.style "margin" "0"
-            , HA.style "font-size" "1.2em"
-            ]
-            [ Html.text ("ScriptaV3 Demo | clicks: " ++ String.fromInt model.debugClickCount ++ " | sel: " ++ model.selectedId) ]
-        , Html.button
-            [ HE.onClick ToggleTheme
-            , HA.style "padding" "8px 16px"
+    let
+        buttonStyle =
+            [ HA.style "padding" "8px 16px"
             , HA.style "cursor" "pointer"
             , HA.style "border" "1px solid #ccc"
             , HA.style "border-radius" "4px"
@@ -775,14 +812,40 @@ viewHeader model =
                         "#e0e0e0"
                 )
             ]
-            [ Html.text
-                (case model.theme of
-                    Light ->
-                        "Dark Mode"
+    in
+    Html.div
+        [ HA.style "display" "flex"
+        , HA.style "justify-content" "space-between"
+        , HA.style "align-items" "center"
+        , HA.style "padding" "10px 20px"
+        , HA.style "border-bottom" "1px solid #ccc"
+        ]
+        [ Html.h1
+            [ HA.style "margin" "0"
+            , HA.style "font-size" "1.2em"
+            ]
+            [ Html.text ("ScriptaV3 Demo | clicks: " ++ String.fromInt model.debugClickCount ++ " | sel: " ++ model.selectedId) ]
+        , Html.div
+            [ HA.style "display" "flex"
+            , HA.style "gap" "8px"
+            ]
+            [ Html.button
+                (HE.onClick ExportDocuments :: buttonStyle)
+                [ Html.text "Export" ]
+            , Html.button
+                (HE.onClick RequestImportDocuments :: buttonStyle)
+                [ Html.text "Import" ]
+            , Html.button
+                (HE.onClick ToggleTheme :: buttonStyle)
+                [ Html.text
+                    (case model.theme of
+                        Light ->
+                            "Dark Mode"
 
-                    Dark ->
-                        "Light Mode"
-                )
+                        Dark ->
+                            "Light Mode"
+                    )
+                ]
             ]
         ]
 
