@@ -205,6 +205,27 @@
             }
         });
 
+        // Subscribe to blurActiveElement port - blur focused element to prevent scroll on re-render
+        app.ports.blurActiveElement.subscribe(function() {
+            if (document.activeElement && document.activeElement !== document.body) {
+                document.activeElement.blur();
+            }
+        });
+
+        // Subscribe to preserveScrollPosition port - capture and restore scroll position
+        app.ports.preserveScrollPosition.subscribe(function() {
+            var renderedOutput = document.getElementById('rendered-output');
+            if (renderedOutput) {
+                var scrollTop = renderedOutput.scrollTop;
+                // Use requestAnimationFrame to restore after DOM updates
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        renderedOutput.scrollTop = scrollTop;
+                    });
+                });
+            }
+        });
+
         // Flag to track when we've handled a text selection
         var handledTextSelection = false;
 

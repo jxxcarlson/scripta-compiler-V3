@@ -43,6 +43,16 @@ port selectInEditor : { lineNumber : Int, begin : Int, end : Int } -> Cmd msg
 port scrollToElement : String -> Cmd msg
 
 
+{-| Blur the currently focused element to prevent focus-based scrolling.
+-}
+port blurActiveElement : () -> Cmd msg
+
+
+{-| Preserve current scroll position (captures and immediately restores).
+-}
+port preserveScrollPosition : () -> Cmd msg
+
+
 
 -- DOCUMENT
 
@@ -420,12 +430,12 @@ update msg model =
                 ( model, Cmd.none )
 
         ShiftEscapePressed ->
-            -- Clear all highlighting
+            -- Clear all highlighting, preserve scroll position
             ( { model
                 | selectedId = ""
                 , previousId = ""
               }
-            , Cmd.none
+            , Cmd.batch [ blurActiveElement (), preserveScrollPosition () ]
             )
 
         CompilerMsg compilerMsg ->
@@ -481,7 +491,7 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onResize WindowResized
-        , Browser.Events.onKeyDown escapeKeyDecoder
+        , Browser.Events.onKeyUp escapeKeyDecoder
         ]
 
 
