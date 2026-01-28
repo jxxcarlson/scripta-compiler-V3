@@ -468,5 +468,11 @@ tokenToString token =
         W str _ ->
             Just str
 
+        LB _ ->
+            Just "["
+
+        RB _ ->
+            Just "]"
+
         _ ->
             Nothing
