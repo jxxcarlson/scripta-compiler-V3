@@ -40,9 +40,9 @@ showing each with and without options where applicable.
 
 
 
-# Math Blocks
+# Math Blocks [box]
 
-## Basic Math (display mode)
+## Basic Math (display mode) [box]
 
 The `math` block renders LaTeX mathematics in display mode:
 
@@ -50,7 +50,7 @@ The `math` block renders LaTeX mathematics in display mode:
 \int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
 
 
-## Numbered Equation
+## Numbered Equation [box]
 
 The `equation` block creates a numbered equation:
 
@@ -63,7 +63,7 @@ With a label for cross-referencing:
 E = mc^2
 
 
-## Aligned Equations
+## Aligned Equations [box]
 
 The `aligned` block renders multi-line aligned equations:
 
@@ -72,7 +72,7 @@ f(x) &= x^2 + 2x + 1 \\
      &= (x + 1)^2
 
 
-## Math Array
+## Math Array [box]
 
 The `array` block creates a matrix or array with column alignment.
 The argument specifies column format (c=center, l=left, r=right):
@@ -83,9 +83,9 @@ The argument specifies column format (c=center, l=left, r=right):
 7 & 8 & 9
 
 
-# Chemistry
+# Chemistry [box]
 
-## Chemical Equations
+## Chemical Equations [box]
 
 The `chem` block uses mhchem notation for chemical equations:
 
@@ -98,9 +98,9 @@ Another example:
 CH3COOH + NaOH -> CH3COONa + H2O
 
 
-# Code Blocks
+# Code Blocks [box]
 
-## Basic Code Block
+## Basic Code Block [box]
 
 The `code` block displays syntax-highlighted code:
 
@@ -110,7 +110,7 @@ function factorial(n) {
     return n * factorial(n - 1);
 }
 
-## Code with Language Specification
+## Code with Language Specification [box]
 
 | code elm
 renderText : String -> Html Msg
@@ -118,9 +118,9 @@ renderText str =
     Html.span [] [ Html.text str ]
 
 
-# Poetry and Verse
+# Poetry and Verse [box]
 
-## Verse Block
+## Verse Block [box]
 
 The `verse` block displays poetry with preserved line breaks and italic styling:
 
@@ -131,9 +131,9 @@ Scripta is wonderful,
 And so are you!
 
 
-# Tables
+# Tables [box]
 
-## Text Table (textarray)
+## Text Table (textarray) [box]
 
 The `table` or `textarray` block uses `&` as column separator:
 
@@ -144,7 +144,7 @@ Bob & 25 & Los Angeles
 Carol & 35 & Chicago
 
 
-## CSV Table
+## CSV Table [box]
 
 The `csvtable` block parses comma-separated values:
 
@@ -162,9 +162,9 @@ Widgets,100,150,200,250
 Gadgets,50,75,100,125
 
 
-# Data Display
+# Data Display [box]
 
-## Data Table
+## Data Table [box]
 
 The `datatable` block displays raw data in preformatted style:
 
@@ -175,9 +175,9 @@ x    y    z
 7    8    9
 
 
-# Raw Verbatim Text
+# Raw Verbatim Text [box]
 
-## Verbatim Block
+## Verbatim Block [box]
 
 The `verbatim` block preserves exact spacing and formatting:
 
@@ -187,33 +187,33 @@ This   text   has   preserved   spacing.
         All formatting is kept as-is.
 
 
-# Images
+# Images [box]
 
-## Basic Image
+## Basic Image [box]
 
 The `image` block displays an image from a URL:
 
 | image
 https://picsum.photos/200/150
 
-## Image with Width
+## Image with Width [box]
 
 | image width:300
 https://picsum.photos/400/300
 
-## Image with Caption and Figure Number
+## Image with Caption and Figure Number [box]
 
 | image figure:1 caption:A sample image from Lorem Picsum
 https://picsum.photos/300/200
 
-## Expandable Image
+## Expandable Image [box]
 
 Click the thumbnail to view full size (click overlay to close):
 
 | image expandable width:200 caption:Click to expand
 https://picsum.photos/600/400
 
-## Floated Image
+## Floated Image [box]
 
 | image float:left width:150
 https://picsum.photos/150/100
@@ -225,15 +225,15 @@ and subsequent content will wrap around it naturally.
 This is useful for magazine-style layouts where images
 are integrated with the surrounding text content.
 
-## Image with Fill Width
+## Image with Fill Width [box]
 
 | image width:fill
 https://picsum.photos/800/200
 
 
-# Embedded Content
+# Embedded Content [box]
 
-## Iframe
+## Iframe [box]
 
 The `iframe` block embeds external content:
 
@@ -246,39 +246,39 @@ With custom dimensions:
 https://www.youtube.com/embed/dQw4w9WgXcQ
 
 
-# Graphics Placeholders
+# Graphics Placeholders [box]
 
 These blocks require external JavaScript integration:
 
-## SVG
+## SVG [box]
 
 | svg
 <svg width="100" height="100">
   <circle cx="50" cy="50" r="40" fill="red" />
 </svg>
 
-## TikZ Diagram
+## TikZ Diagram [box]
 
 | tikz
 \begin{tikzpicture}
 \draw (0,0) -- (1,1);
 \end{tikzpicture}
 
-## Quiver Diagram
+## Quiver Diagram [box]
 
 | quiver
 [quiver diagram data goes here]
 
-## Chart
+## Chart [box]
 
 | chart
 type: bar
 data: 10, 20, 30, 40
 
 
-# Macro Definitions
+# Macro Definitions [box]
 
-## Math Macros (Hidden)
+## Math Macros (Hidden) [box]
 
 Define macros for use in math blocks:
 
@@ -291,23 +291,23 @@ Now we can use the macros:
 | math
 \norm{x} \in \R
 
-## Text Macros (Hidden)
+## Text Macros (Hidden) [box]
 
 | textmacros
 \newcommand{\version}{3.0}
 
 
-# Hidden/Configuration Blocks
+# Hidden/Configuration Blocks [box]
 
 These blocks are processed but produce no visible output:
 
-## Settings Block
+## Settings Block [box]
 
 | settings
 theme: dark
 fontSize: 14
 
-## Load Block
+## Load Block [box]
 
 | load
 /path/to/external/file.md

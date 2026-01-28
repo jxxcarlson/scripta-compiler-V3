@@ -55,7 +55,7 @@ syntax like `$x^2$` for math. They can be nested and combined.
 - `[box]`, `[cbox]`, `[rbox]`, etc. - checkboxes
 
 
-# Text Styling
+# Text Styling [box]
 
 ## Bold Text [box]
 
@@ -95,7 +95,7 @@ You can nest styles: [b [i bold and italic]], [i [strike italic strikethrough]],
 or [u [b underlined bold]].
 
 
-# Colors
+# Colors [box]
 
 ## Text Colors [box]
 
@@ -138,7 +138,7 @@ or [u [b underlined bold]].
 [errorHighlight This indicates an error with red background.]
 
 
-# Math
+# Math [box]
 
 ## Inline Math with $ Syntax [box]
 
@@ -163,7 +163,7 @@ Water molecule: [chem H2O].
 Combustion: [chem CH4 + 2O2 -> CO2 + 2H2O].
 
 
-# Code
+# Code [box]
 
 ## Inline Code with Backticks [box]
 
@@ -176,7 +176,7 @@ The function `factorial(n)` computes n!.
 Use [code let x = 42] to define a variable in Elm.
 
 
-# Links
+# Links [box]
 
 ## External Links [box]
 
@@ -197,7 +197,7 @@ Reference link: [reflink Theorem 1 theorem1].
 Cross-site link: [cslink External Page page123].
 
 
-# References
+# References [box]
 
 ## Cross-References [box]
 
@@ -218,14 +218,14 @@ Multiple citations: [cite newton1687] and [cite euler1737].
 [bibitem einstein1905] is referenced above.
 
 
-# Footnotes
+# Footnotes [box]
 
 This sentence has a footnote[footnote This is the footnote content that appears in endnotes.].
 
 Another footnote here[footnote A second footnote with more details.].
 
 
-# Super and Subscript
+# Super and Subscript [box]
 
 ## Superscript [box]
 
@@ -240,7 +240,7 @@ Water: H[sub 2]O. Carbon dioxide: CO[sub 2].
 Variable x[sub i] for the i-th element.
 
 
-# Terms and Definitions
+# Terms and Definitions [box]
 
 A [term function] is a mapping from inputs to outputs.
 
@@ -249,7 +249,7 @@ The [term derivative] measures the rate of change.
 Hidden term for index only: [term_ hidden index entry].
 
 
-# Spacing and Structure
+# Spacing and Structure [box]
 
 ## Vertical Space [box]
 
@@ -282,14 +282,14 @@ Normal text.
 [indent]This text is indented by 2em.
 
 
-# Quotation
+# Quotation [box]
 
 He said [quote To be or not to be].
 
 Nested quotes: [quote She replied [quote Indeed]].
 
 
-# Headings (Inline)
+# Headings (Inline) [box]
 
 ## Inline Title [box]
 
@@ -308,7 +308,7 @@ Or using short form: [sh Another Heading]
 Or using short form: [ssh Another Minor Heading]
 
 
-# Special Characters
+# Special Characters [box]
 
 ## Dashes [box]
 
@@ -329,7 +329,7 @@ Right bracket: [rb]
 Content in brackets: [brackets some content]
 
 
-# Checkboxes
+# Checkboxes [box]
 
 ## Standard Checkboxes [box]
 
@@ -350,7 +350,7 @@ Content in brackets: [brackets some content]
 [frbox] Red filled square
 
 
-# Images
+# Images [box]
 
 ## Inline Image [box]
 
@@ -361,12 +361,12 @@ An icon [inlineimage https://picsum.photos/20/20] in the middle of text.
 This is an image: [image  https://picsum.photos/200/100] (That was an image)
 
 
-# Tables (Inline)
+# Tables (Inline) [box]
 
 [table [tableRow [tableItem Name][tableItem Value]] [tableRow [tableItem Alpha][tableItem $x^2$]] [tableRow [tableItem Beta][tableItem 2]]]
 
 
-# Interactive Elements
+# Interactive Elements [box]
 
 ## Scheme Code [box]
 
@@ -385,7 +385,7 @@ Value from [data temperature].
 Click [button Submit, action] to continue.
 
 
-# Miscellaneous
+# Miscellaneous [box]
 
 ## Horizontal Rule [box]
 
@@ -404,7 +404,7 @@ Click [button Submit, action] to continue.
 End of proof. [qed]
 
 
-# Hidden Elements
+# Hidden Elements [box]
 
 These elements are processed but produce no visible output:
 
@@ -415,7 +415,7 @@ These elements are processed but produce no visible output:
 - [tags math, tutorial] - document tags
 
 
-# Summary
+# Summary [box]
 
 This document demonstrated the following inline elements:
 

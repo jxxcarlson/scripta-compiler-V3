@@ -52,13 +52,13 @@ contain parsed expressions and support inline markup like [i italic],
 - `visibleBanner`, `bibitem`, `env`
 
 
-# Document Metadata
+# Document Metadata [box]
 
 The document metadata blocks (`title`, `subtitle`, `author`, `date`, `abstract`)
 are demonstrated at the top of this document.
 
 
-# Section Headings
+# Section Headings [box]
 
 | section
 Numbered Section
@@ -96,9 +96,9 @@ Minor Subheading
 The `subheading` block (also `sh`) creates smaller headings below section level.
 
 
-# Lists
+# Lists [box]
 
-## Bullet Lists
+## Bullet Lists [box]
 
 Use `- ` at the start of a line for bullet items:
 
@@ -113,7 +113,7 @@ Nested bullets work with indentation:
     - Nested item 2
 - Back to outer level
 
-## Numbered Lists
+## Numbered Lists [box]
 
 Use `. ` at the start of a line for numbered items:
 
@@ -129,77 +129,77 @@ Nested numbered lists:
 . Second outer item
 
 
-# Theorem-like Environments
+# Theorem-like Environments [box]
 
-## Theorem
+## Theorem [box]
 
 | theorem
 Every continuous function on a closed interval is bounded.
 
-## Theorem with Label
+## Theorem with Label [box]
 
 | theorem Bolzano-Weierstrass
 Every bounded sequence in $\mathbb{R}^n$ has a convergent subsequence.
 
-## Lemma
+## Lemma [box]
 
 | lemma
 If $f$ is differentiable at $x$, then $f$ is continuous at $x$.
 
-## Proposition
+## Proposition [box]
 
 | proposition
 The set of prime numbers is infinite.
 
-## Corollary
+## Corollary [box]
 
 | corollary
 There is no largest prime number.
 
-## Definition
+## Definition [box]
 
 | definition
 A function $f$ is [b continuous] at $x = a$ if
 $\lim_{x \to a} f(x) = f(a)$.
 
-## Example
+## Example [box]
 
 | example
 Consider the function $f(x) = x^2$. This function is continuous
 everywhere on $\mathbb{R}$.
 
-## Remark
+## Remark [box]
 
 | remark
 The proof of this theorem uses the axiom of choice.
 
-## Note
+## Note [box]
 
 | note
 This result was first proved by Euler in 1737.
 
-## Exercise
+## Exercise [box]
 
 | exercise
 Prove that the sum of two continuous functions is continuous.
 
-## Problem
+## Problem [box]
 
 | problem
 Find all solutions to the equation $x^3 - 6x^2 + 11x - 6 = 0$.
 
-## Question
+## Question [box]
 
 | question
 What is the relationship between differentiability and continuity?
 
-## Axiom
+## Axiom [box]
 
 | axiom Completeness
 Every non-empty set of real numbers that is bounded above
 has a least upper bound.
 
-## Proof
+## Proof [box]
 
 | proof
 By contradiction. Assume there are only finitely many primes
@@ -207,15 +207,15 @@ $p_1, p_2, \ldots, p_n$. Consider $N = p_1 p_2 \cdots p_n + 1$.
 Then $N$ is not divisible by any $p_i$, contradiction. ∎
 
 
-# Formatting Blocks
+# Formatting Blocks [box]
 
-## Indent
+## Indent [box]
 
 | indent
 This paragraph is indented from the left margin.
 It can contain multiple lines of text.
 
-## Quotation
+## Quotation [box]
 
 | quotation
 To be or not to be, that is the question.
@@ -227,31 +227,31 @@ The `quote` block works the same way:
 | quote
 The only thing we have to fear is fear itself.
 
-## Center
+## Center [box]
 
 | center
 This text is centered.
 
-## Box
+## Box [box]
 
 | box
 This content is displayed in a bordered box.
 It's useful for highlighting important information.
 
-## Compact
+## Compact [box]
 
 | compact
 This content has reduced line spacing.
 Multiple lines will appear closer together.
 Useful for dense content or footnotes.
 
-## Identity
+## Identity [box]
 
 | identity
 This content is rendered with no special styling.
 It passes through unchanged.
 
-## Color Blocks
+## Color Blocks [box]
 
 | red
 This text appears in red.
@@ -263,19 +263,19 @@ This text appears in a darker red (#c00).
 This text appears in blue.
 
 
-# Q&A Blocks
+# Q&A Blocks [box]
 
-## Question Block
+## Question Block [box]
 
 | q
 What is the meaning of life, the universe, and everything?
 
-## Answer Block
+## Answer Block [box]
 
 | a
 42.
 
-## Combined Q&A
+## Combined Q&A [box]
 
 | q
 How do you solve a quadratic equation $ax^2 + bx + c = 0$?
@@ -284,23 +284,23 @@ How do you solve a quadratic equation $ax^2 + bx + c = 0$?
 Use the quadratic formula: $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
 
 
-# Interactive Content
+# Interactive Content [box]
 
-## Reveal Block
+## Reveal Block [box]
 
 | reveal Click to see the answer
 The hidden answer is revealed when you click!
 This is useful for quizzes and self-study materials.
 
-## Reveal with Default Text
+## Reveal with Default Text [box]
 
 | reveal
 When no argument is provided, "Click to reveal" is used.
 
 
-# Description Lists
+# Description Lists [box]
 
-## Description Block
+## Description Block [box]
 
 | desc Term
 The definition or description of the term goes here.
@@ -312,17 +312,17 @@ A relation that assigns exactly one output to each input.
 The rate of change of a function at a given point.
 
 
-# Tables
+# Tables [box]
 
-## Table with Format
+## Table with Format [box]
 
 | table format:l c r columnWidths:[100,80,80]
 [table [row [cell Name][cell Age][cell City]] [row [cell Alice][cell 30][cell NYC]] [row [cell Bob][cell 25][cell LA]]]
 
 
-# Bibliography
+# Bibliography [box]
 
-## Bibliography Items
+## Bibliography Items [box]
 
 | bibitem euler1737
 Euler, L. (1737). Variae observationes circa series infinitas.
@@ -331,9 +331,9 @@ Euler, L. (1737). Variae observationes circa series infinitas.
 Newton, I. (1687). Philosophiae Naturalis Principia Mathematica.
 
 
-# Generic Environment
+# Generic Environment [box]
 
-## Custom Environment
+## Custom Environment [box]
 
 | env Algorithm
 Step 1: Initialize all variables
@@ -342,19 +342,19 @@ Step 3: Compute result
 Step 4: Output result
 
 
-# Special Blocks
+# Special Blocks [box]
 
-## Contents Block
+## Contents Block [box]
 
 The `| contents` block generates a table of contents
 (processed separately by Render.TOC).
 
-## Endnotes Block
+## Endnotes Block [box]
 
 The `| endnotes` block collects and displays all footnotes
 from `[footnote ...]` expressions in the document.
 
-## Comment Block
+## Comment Block [box]
 
 | comment
 This text will not appear in the rendered output.
@@ -365,39 +365,39 @@ The `hide` block works the same as `comment`:
 | hide
 This is also hidden.
 
-## Visible Banner
+## Visible Banner [box]
 
 | visibleBanner
 https://picsum.photos/800/150
 
 
-# Configuration Blocks (Hidden)
+# Configuration Blocks (Hidden) [box]
 
 These blocks are processed but produce no visible output:
 
-## Document Type
+## Document Type [box]
 
 | document
 type:article
 
-## Collection
+## Collection [box]
 
 | collection
 docs/chapter1.md
 docs/chapter2.md
 
-## Tags
+## Tags [box]
 
 | tags
 math, tutorial, calculus
 
-## Counter Control
+## Counter Control [box]
 
 | setcounter
 theorem:5
 
 
-# Summary
+# Summary [box]
 
 This document demonstrated the following ordinary block types:
 
