@@ -4,37 +4,101 @@ module Generic.Acc exposing
     , transformAccumulate
     )
 
-{-|
+{-| The Accumulator module collects information from the AST during a
+traversal pass, then uses that information to transform blocks.
 
-    The function the Generic.Acc module is to collect information from the AST that will
-    be used when it is rendered. This information is built up in an Accumulator, a
-    data structure used for
+**What the Accumulator tracks:**
 
-            - numbering sections, theorems, figures, etc.
-            - creating
-               - a dictionary of references
-               - a dictionary of terms
-               - a dictionary of footnotes
-               - a dictionary of math macros
-               - a dictionary of text macros
-               - a dictionary of key-value pairs
-               - a dictionary of questions and answers
+  - Section/heading numbering (headingIndex vector)
+  - Block numbering for theorems, equations, figures (blockCounter, counter dict)
+  - Cross-reference dictionary (reference)
+  - Term/index entries (terms)
+  - Footnotes (footnotes, footnoteNumbers)
+  - Math and text macro definitions (mathMacroDict, textMacroDict)
+  - Bibliography entries (bibliography)
+  - Q&A pairings (qAndAList, qAndADict)
 
+**Main entry point:**
 
-     The main function is transformAccumulate, which has the signature
+    transformAccumulate : InitialAccumulatorData -> Forest ExpressionBlock -> ( Accumulator, Forest ExpressionBlock )
 
-           InitialAccumulatorData -> Forest ExpressionBlock -> ( Accumulator, Forest ExpressionBlock )
+This function does two things for each block:
 
-     Two helper functions are of special interest,
+1.  `updateAccumulator` - extracts info from the block (e.g., increments counters)
+2.  `transformBlock` - adds info back to the block (e.g., sets "label" property with number)
 
-          updateAccumulator : ExpressionBlock -> Accumulator -> Accumulator
+**Numbering mechanisms:**
 
-     and
+  - Sections: `headingIndex` vector, stored in block.properties["label"]
+  - Theorems/numbered blocks: `blockCounter` int, stored in block.properties["label"]
+  - Equations/figures: `counter` dict (keyed by "equation", "figure"), stored in block.properties
 
-          transformBlock : Accumulator -> ExpressionBlock -> ExpressionBlock
+**Functions (54 total):**
 
-      The first function is used to update the accumulator with information from the AST. The second
-      updates expression blocks with information already gathered in the accumulator.
+  - Core (tree traversal)
+      - initialData
+      - init
+      - transformAccumulate
+      - transformAccumulateTree
+      - transformAccumulateBlock
+      - mapAccumulate
+      - reverse
+  - Block transformation
+      - transformBlock
+      - expand
+      - vectorPrefix
+  - Counters
+      - getCounter
+      - getCounterAsString
+      - incrementCounter
+      - reduceName
+  - References
+      - makeReferenceDatum
+      - updateReference
+      - updateReferenceWithBlock
+      - getReferenceDatum
+  - Accumulator updates (by block type)
+      - updateAccumulator
+      - updateWithOrdinarySectionBlock
+      - updateWithOrdinaryDocumentBlock
+      - updateWithOrdinaryBlock
+      - updateWithVerbatimBlock
+      - updateWithParagraph
+      - verbatimBlockReference
+      - nextInListState
+  - Macros
+      - updateWithTextMacros
+      - updateWithMathMacros
+      - makeMathMacroDict
+      - macroParser
+  - Terms (index entries)
+      - addTermsFromContent
+      - getTerms
+      - extract
+      - extractTermFromArgs
+      - parseListAs
+      - addTerm
+      - getTextContent
+      - getTextEnd
+  - Citations/Bibliography
+      - addCitesFromContent
+      - getCiteKeys
+      - extractCiteKey
+  - Footnotes
+      - getFootnotes
+      - extractFootnote
+      - addFootnote
+      - addFootnoteLabel
+      - addFootnotes
+      - addFootnotesFromContent
+  - Block helpers
+      - getNameContentId
+      - getNameContentIdTag
+      - getNameFromHeading
+      - getVerbatimContent
+      - getMeta
+      - getTag
+      - normalizeLines
 
 -}
 
@@ -100,8 +164,6 @@ init data =
         |> updateWithMathMacros data.mathMacros
 
 
-{-| Note that function transformAccumulate operates on initialized accumulator.
--}
 transformAccumulate : InitialAccumulatorData -> List (Tree ExpressionBlock) -> ( Accumulator, List (Tree ExpressionBlock) )
 transformAccumulate data forest =
     List.foldl (\tree ( acc_, ast_ ) -> transformAccumulateTree tree acc_ |> mapper ast_) ( init data, [] ) forest
