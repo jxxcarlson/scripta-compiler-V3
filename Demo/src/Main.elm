@@ -3,9 +3,10 @@ port module Main exposing (main)
 {-| Demo app for testing the Scripta compiler.
 
 Three side-by-side panels:
-- Left: document sidebar
-- Center: source text editor
-- Right: rendered HTML output
+
+  - Left: document sidebar
+  - Center: source text editor
+  - Right: rendered HTML output
 
 Documents are persisted to localStorage.
 
@@ -619,6 +620,7 @@ sidebarWidth =
 view : Model -> Html Msg
 view model =
     let
+        params : Types.CompilerParameters
         params =
             { filter = NoFilter
             , windowWidth = panelWidth model
@@ -628,6 +630,7 @@ view model =
             , width = panelWidth model
             , showTOC = False
             , paragraphSpacing = 18
+            , maxLevel = 1
             }
 
         output =
