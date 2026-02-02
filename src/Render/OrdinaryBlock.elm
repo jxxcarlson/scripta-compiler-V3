@@ -393,22 +393,26 @@ renderTheorem params acc name block children =
         theoremTitle =
             String.toUpper (String.left 1 name) ++ String.dropLeft 1 name
 
-        counter =
-            Dict.get name acc.counter |> Maybe.withDefault 0
-
+        -- Get the number from block.properties["label"] (set by Acc.transformBlock)
         numberString =
-            if counter > 0 then
-                " " ++ String.fromInt counter
+            case Dict.get "label" block.properties of
+                Just label_ ->
+                    if label_ /= "" then
+                        " " ++ label_
 
-            else
-                ""
+                    else
+                        ""
 
-        label =
+                Nothing ->
+                    ""
+
+        -- User-provided label (e.g., "Goldbach's Conjecture")
+        userLabel =
             List.head block.args |> Maybe.withDefault ""
 
         labelDisplay =
-            if label /= "" then
-                " (" ++ label ++ ")"
+            if userLabel /= "" then
+                " (" ++ userLabel ++ ")"
 
             else
                 ""

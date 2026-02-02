@@ -120,7 +120,7 @@ How it gets populated:
 
 1.  Sections (# Heading, | section): Stores section number like "1.2.3" with the section's tag/slug
       - src/Generic/Acc.elm:741 - updateReference called with section data
-2.  Equations (|| equation with label:foo): Stores equation number
+2.  Equations (| equation with label:foo): Stores equation number
       - src/Generic/Acc.elm:937 - Updates reference when equation has a label property
 3.  Theorems and numbered blocks: Stores block numbers
       - src/Generic/Acc.elm:877 - For numbered block names like theorem, lemma, etc.
