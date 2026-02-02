@@ -156,6 +156,7 @@ type alias Accumulator =
     , keyValueDict : Dict String String
     , qAndAList : List ( String, String )
     , qAndADict : Dict String String
+    , maxLevel : Int
     , bibliography : Dict String (Maybe Int) -- cite key -> bibitem number
     }
 
@@ -209,6 +210,7 @@ type alias CompilerParameters =
     , width : Int
     , showTOC : Bool
     , paragraphSpacing : Int
+    , maxLevel : Int
     }
 
 

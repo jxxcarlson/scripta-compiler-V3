@@ -1,4 +1,4 @@
-module Generic.Vector exposing (Vector, get, increment, init, set, toString)
+module Generic.Vector exposing (Vector, get, increment, init, set, toString, toStringWithLevel)
 
 {-| A fixed-size vector of integers for section/item numbering.
 -}
@@ -16,6 +16,22 @@ init k =
 toString : Vector -> String
 toString v =
     v.content
+        |> List.filter (\x -> x > 0)
+        |> List.map String.fromInt
+        |> String.join "."
+
+
+toStringWithLevel : Int -> Vector -> String
+toStringWithLevel lev v =
+    v.content
+        |> List.indexedMap
+            (\idx k ->
+                if idx < lev then
+                    k
+
+                else
+                    0
+            )
         |> List.filter (\x -> x > 0)
         |> List.map String.fromInt
         |> String.join "."

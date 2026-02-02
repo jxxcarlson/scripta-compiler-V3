@@ -32,6 +32,7 @@ defaultCompilerParameters =
     , width = 600
     , showTOC = False
     , paragraphSpacing = 18
+    , maxLevel = 1
     }
 
 

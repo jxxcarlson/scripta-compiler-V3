@@ -124,6 +124,7 @@ initialData =
     , textMacros = ""
     , vectorSize = 4
     , shiftAndSetCounter = Nothing
+    , maxLevel = 1
     }
 
 
@@ -160,6 +161,7 @@ init data =
     , qAndAList = []
     , qAndADict = Dict.empty
     , bibliography = Dict.empty
+    , maxLevel = initialData.maxLevel
     }
         |> updateWithMathMacros data.mathMacros
 
@@ -190,6 +192,7 @@ type alias InitialAccumulatorData =
     , textMacros : String
     , vectorSize : Int
     , shiftAndSetCounter : Maybe Int
+    , maxLevel : Int
     }
 
 
@@ -319,14 +322,14 @@ transformBlock acc block =
             if Dict.member "label" block.properties then
                 let
                     prefix =
-                        Vector.toString acc.headingIndex
+                        Vector.toStringWithLevel acc.maxLevel acc.headingIndex |> Debug.log "@@EQPREFIX"
 
                     equationProp =
                         if prefix == "" then
                             getCounterAsString "equation" acc.counter
 
                         else
-                            Vector.toString acc.headingIndex ++ "." ++ getCounterAsString "equation" acc.counter
+                            Vector.toStringWithLevel acc.maxLevel acc.headingIndex ++ "." ++ getCounterAsString "equation" acc.counter
                 in
                 { block | properties = Dict.insert "equation-number" equationProp block.properties }
 
@@ -382,7 +385,7 @@ transformBlock acc block =
                             { block
                                 | properties =
                                     Dict.insert "label"
-                                        (vectorPrefix acc.headingIndex ++ String.fromInt acc.blockCounter)
+                                        ((Vector.toStringWithLevel acc.maxLevel acc.headingIndex |> Debug.log "@@@label-prefix") ++ "." ++ String.fromInt acc.blockCounter |> Debug.log "@@@label-value")
                                         block.properties
                             }
 
@@ -393,16 +396,21 @@ transformBlock acc block =
 
 
 vectorPrefix : Vector -> String
-vectorPrefix headingIndex =
+vectorPrefix vector =
     let
         prefix =
-            Vector.toString headingIndex
+            Vector.toString vector
     in
     if prefix == "" then
         ""
 
     else
-        Vector.toString headingIndex ++ "."
+        Vector.toString vector ++ "."
+
+
+vectorPrefixWithLevel : Int -> Vector -> String
+vectorPrefixWithLevel lev vector =
+    Vector.toStringWithLevel lev vector |> Debug.log "@@prefix"
 
 
 {-| Map name to name of counter
@@ -763,6 +771,9 @@ normalizeLines lines =
 updateWithOrdinarySectionBlock : Accumulator -> Maybe String -> Either String (List Expression) -> String -> String -> Accumulator
 updateWithOrdinarySectionBlock accumulator name content level id =
     let
+        _ =
+            Debug.log "@@updateWithOrdinarySectionBlock-content-level" ( content, level )
+
         titleWords =
             case content of
                 Left str ->
@@ -786,20 +797,34 @@ updateWithOrdinarySectionBlock accumulator name content level id =
                 _ ->
                     0
 
+        levelAsInt =
+            String.toInt level |> Maybe.withDefault 1
+
         headingIndex =
             Vector.increment (String.toInt level |> Maybe.withDefault 1 |> (\x -> x - 1 + delta + accumulator.deltaLevel)) accumulator.headingIndex
 
         blockCounter =
-            0
+            if levelAsInt <= accumulator.maxLevel then
+                0
+
+            else
+                levelAsInt
 
         referenceDatum =
             makeReferenceDatum id sectionTag (Vector.toString headingIndex)
+
+        newCounter =
+            if levelAsInt <= accumulator.maxLevel then
+                Dict.insert "equation" 0 accumulator.counter
+
+            else
+                accumulator.counter
     in
     -- TODO: take care of numberedItemIndex = 0 here and elsewhere
     { accumulator
         | headingIndex = headingIndex
         , blockCounter = blockCounter
-        , counter = Dict.insert "equation" 0 accumulator.counter --TODO: this is strange!!
+        , counter = newCounter
     }
         |> updateReference accumulator.headingIndex referenceDatum
 
@@ -1011,7 +1036,7 @@ updateWithVerbatimBlock block accumulator =
                                 referenceDatum =
                                     makeReferenceDatum block.meta.id
                                         tag
-                                        (verbatimBlockReference isSimple accumulator.headingIndex name newCounter)
+                                        (verbatimBlockReference isSimple accumulator.headingIndex name newCounter accumulator)
                             in
                             \acc -> updateReference accumulator.headingIndex referenceDatum acc
 
@@ -1039,17 +1064,17 @@ updateWithVerbatimBlock block accumulator =
                 |> updateAccumulatorWithLabel
 
 
-verbatimBlockReference : Bool -> Vector -> String -> Dict String Int -> String
-verbatimBlockReference isSimple headingIndex name newCounter =
+verbatimBlockReference : Bool -> Vector -> String -> Dict String Int -> Accumulator -> String
+verbatimBlockReference isSimple headingIndex name newCounter acc =
     let
-        a =
-            Vector.toString headingIndex
+        prefix =
+            Vector.toStringWithLevel (acc.maxLevel |> Debug.log "@@maxLevel") (headingIndex |> Debug.log "@@headingIndex") |> Debug.log "@@prefix in verbatimBlockReference"
     in
-    if a == "" || isSimple then
+    if prefix == "" || isSimple then
         getCounter (reduceName name) newCounter |> String.fromInt
 
     else
-        a ++ "." ++ (getCounter (reduceName name) newCounter |> String.fromInt)
+        prefix ++ "." ++ (getCounter (reduceName name) newCounter |> String.fromInt)
 
 
 updateWithParagraph : ExpressionBlock -> Accumulator -> Accumulator

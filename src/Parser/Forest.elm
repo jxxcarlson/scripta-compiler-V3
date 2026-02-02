@@ -14,6 +14,7 @@ module Parser.Forest exposing (parse, parseToForestWithAccumulator)
 
 -}
 
+import Dict
 import Generic.Acc
 import Generic.BlockUtilities
 import Generic.ForestTransform
@@ -51,10 +52,17 @@ Pipeline:
 -}
 parseToForestWithAccumulator : CompilerParameters -> List String -> ( Accumulator, List (Tree ExpressionBlock) )
 parseToForestWithAccumulator params lines =
+    let
+        initialData_ =
+            Generic.Acc.initialData
+
+        initialData =
+            { initialData_ | maxLevel = initialData_.maxLevel }
+    in
     lines
         |> parse
         |> filterForest params.filter
-        |> Generic.Acc.transformAccumulate Generic.Acc.initialData
+        |> Generic.Acc.transformAccumulate initialData
 
 
 {-| Filter the forest based on filter settings.
