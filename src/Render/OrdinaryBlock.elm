@@ -1244,6 +1244,7 @@ renderChapter params acc _ block children =
     [ Html.h1
         ([ idAttr block.meta.id
          , HA.style "font-size" "2em"
+         , HA.style "font-weight" "normal"
          , HA.style "margin-top" "1.5em"
          , HA.style "margin-bottom" "0.5em"
          ]
