@@ -124,7 +124,7 @@ initialData =
     , textMacros = ""
     , vectorSize = 4
     , shiftAndSetCounter = Nothing
-    , maxLevel = 1
+    , maxLevel = 0
     }
 
 
@@ -381,11 +381,19 @@ transformBlock acc block =
 
                     else
                         -- Default insertion of "label" property (used for block numbering)
+                        let
+                            punctuation =
+                                if acc.maxLevel > 0 then
+                                    "."
+
+                                else
+                                    ""
+                        in
                         (if List.member name Generic.Settings.numberedBlockNames then
                             { block
                                 | properties =
                                     Dict.insert "label"
-                                        ((Vector.toStringWithLevel acc.maxLevel acc.headingIndex |> Debug.log "@@@label-prefix") ++ "." ++ String.fromInt acc.blockCounter |> Debug.log "@@@label-value")
+                                        ((Vector.toStringWithLevel acc.maxLevel acc.headingIndex |> Debug.log "@@@label-prefix") ++ punctuation ++ String.fromInt acc.blockCounter |> Debug.log "@@@label-value")
                                         block.properties
                             }
 
@@ -567,10 +575,17 @@ getReferenceDatum acc block =
             -- TODO: REVIEW!
             Dict.get "tag" block.properties |> Maybe.withDefault "no-tag"
 
+        punctuation =
+            if (acc.maxLevel |> Debug.log "@@PUNCT") > 0 then
+                "."
+
+            else
+                ""
+
         numRef =
-            (acc.headingIndex |> Vector.toString) ++ "." ++ (acc.blockCounter |> String.fromInt)
+            (acc.headingIndex |> Vector.toStringWithLevel acc.maxLevel) ++ punctuation ++ (acc.blockCounter |> String.fromInt)
     in
-    Just { id = id, tag = tag, numRef = numRef }
+    Just { id = id, tag = tag, numRef = numRef } |> Debug.log "@@NUMREF"
 
 
 {-|

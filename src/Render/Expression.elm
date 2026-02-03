@@ -255,9 +255,11 @@ markupDict =
 
 {-| Render bold/strong text.
 
-    [strong bold text]
-    [b bold text]
-    [bold bold text]
+    [ strong bold text ]
+
+    [ b bold text ]
+
+    [ bold bold text ]
 
 -}
 renderStrong : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -267,9 +269,11 @@ renderStrong params acc args meta =
 
 {-| Render italic/emphasized text.
 
-    [italic emphasized text]
-    [i emphasized text]
-    [emph emphasized text]
+    [ italic emphasized text ]
+
+    [ i emphasized text ]
+
+    [ emph emphasized text ]
 
 -}
 renderItalic : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -279,7 +283,7 @@ renderItalic params acc args meta =
 
 {-| Render strikethrough text.
 
-    [strike deleted text]
+    [ strike deleted text ]
 
 -}
 renderStrike : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -289,8 +293,9 @@ renderStrike params acc args meta =
 
 {-| Render underlined text.
 
-    [underline important text]
-    [u underlined]
+    [ underline important text ]
+
+    [ u underlined ]
 
 -}
 renderUnderline : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -300,9 +305,11 @@ renderUnderline params acc args meta =
 
 {-| Render colored text.
 
-    [red warning text]
-    [blue info text]
-    [green success text]
+    [ red warning text ]
+
+    [ blue info text ]
+
+    [ green success text ]
 
 Available colors: red, blue, green, pink, magenta, violet, gray.
 
@@ -314,8 +321,9 @@ renderColor color params acc args meta =
 
 {-| Render highlighted text with background color.
 
-    [highlight important text]
-    [highlight [color blue] blue highlighted]
+    [ highlight important text ]
+
+    [ highlight [ color blue ] blue highlighted ]
 
 Colors: yellow (default), blue, green, pink, orange, purple, cyan, gray.
 
@@ -393,8 +401,9 @@ getTextFromExpr expr =
 
 {-| Render a hyperlink.
 
-    [link Label https://example.com]
-    [link https://example.com]
+    [ link Label https :// example.com ]
+
+    [ link https :// example.com ]
 
 -}
 renderLink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -437,7 +446,7 @@ renderLink _ _ args meta =
 
 {-| Render a URL as a clickable link.
 
-    [href https://example.com]
+    [ href https :// example.com ]
 
 -}
 renderHref : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -452,7 +461,7 @@ renderHref params acc args meta =
 
 {-| Render an inline image.
 
-    [image https://example.com/photo.jpg]
+    [ image https :// example.com / photo.jpg ]
 
 -}
 renderImage : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -472,7 +481,7 @@ renderImage params _ args meta =
 
 {-| Render an internal document link.
 
-    [ilink Section 1 sec1]
+    [ ilink Section 1 sec1 ]
 
 Clicking navigates within the document.
 
@@ -494,7 +503,7 @@ renderIlink params acc args meta =
 
 {-| Render an index entry (hidden in output).
 
-    [index term]
+    [ index term ]
 
 The term is collected for index generation but not displayed.
 
@@ -506,7 +515,7 @@ renderIndex _ _ _ meta =
 
 {-| Render a cross-reference to a labeled element.
 
-    [ref theorem1]
+    [ ref theorem1 ]
 
 Displays the number of the referenced element.
 
@@ -532,7 +541,7 @@ renderRef _ acc args meta =
                         , HA.style "padding" "2px 4px"
                         , HA.style "margin" "-2px -4px"
                         ]
-                        [ Html.text numRef ]
+                        [ Html.text (numRef |> Debug.log "@@renderRef(numRef)") ]
 
                 Nothing ->
                     Html.span [ HA.id meta.id, HA.style "color" "red" ] [ Html.text ("??" ++ trimmedRefId) ]
@@ -543,7 +552,7 @@ renderRef _ acc args meta =
 
 {-| Render a cross-reference to an equation.
 
-    [eqref eq1]
+    [ eqref eq1 ]
 
 Displays as "(N)" where N is the equation number, linking to the equation.
 
@@ -579,7 +588,7 @@ renderEqRef _ acc args meta =
 
 {-| Render a citation.
 
-    [cite einstein1905]
+    [ cite einstein1905 ]
 
 Displays as "[key]".
 
@@ -617,7 +626,7 @@ renderCite _ acc args meta =
 
 {-| Render superscript text.
 
-    [sup 2]
+    [ sup 2 ]
 
 -}
 renderSup : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -627,7 +636,7 @@ renderSup params acc args meta =
 
 {-| Render subscript text.
 
-    [sub i]
+    [ sub i ]
 
 -}
 renderSub : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -681,7 +690,7 @@ getExprText expr =
 
 {-| Render a hidden term (for index only, not displayed).
 
-    [term_ hidden entry]
+    [ term_ hidden entry ]
 
 -}
 renderTermHidden : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -691,8 +700,9 @@ renderTermHidden _ _ _ meta =
 
 {-| Render vertical space.
 
-    [vspace 20]
-    [break 10]
+    [ vspace 20 ]
+
+    [ break 10 ]
 
 Argument is height in pixels.
 
@@ -726,8 +736,9 @@ getTextContent expr =
 
 {-| Render bold italic text.
 
-    [bi bold and italic]
-    [boldItalic text]
+    [ bi bold and italic ]
+
+    [ boldItalic text ]
 
 -}
 renderBoldItalic : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -742,7 +753,7 @@ renderBoldItalic params acc args meta =
 
 {-| Render a variable (no special formatting).
 
-    [var x]
+    [ var x ]
 
 -}
 renderVar : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -752,7 +763,7 @@ renderVar params acc args meta =
 
 {-| Render inline title text (32px).
 
-    [title Document Title]
+    [ title Document Title ]
 
 -}
 renderTitle : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -766,8 +777,9 @@ renderTitle params acc args meta =
 
 {-| Render an inline subheading (18px).
 
-    [subheading Section Name]
-    [sh Section Name]
+    [ subheading Section Name ]
+
+    [ sh Section Name ]
 
 -}
 renderSubheading : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -784,8 +796,9 @@ renderSubheading params acc args meta =
 
 {-| Render a small subheading (16px, italic).
 
-    [smallsubheading Minor Heading]
-    [ssh Minor Heading]
+    [ smallsubheading Minor Heading ]
+
+    [ ssh Minor Heading ]
 
 -}
 renderSmallSubheading : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -803,7 +816,7 @@ renderSmallSubheading params acc args meta =
 
 {-| Render large text (18px).
 
-    [large larger text]
+    [ large larger text ]
 
 -}
 renderLarge : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -817,7 +830,7 @@ renderLarge params acc args meta =
 
 {-| Render Q.E.D. marker (end of proof).
 
-    [qed]
+    [ qed ]
 
 -}
 renderQed : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -831,7 +844,7 @@ renderQed _ _ _ meta =
 
 {-| Render error-highlighted text (red background).
 
-    [errorHighlight problematic text]
+    [ errorHighlight problematic text ]
 
 -}
 renderErrorHighlight : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -861,7 +874,7 @@ renderChar char _ _ _ meta =
 
 {-| Render content in square brackets.
 
-    [brackets content]
+    [ brackets content ]
 
 -}
 renderBrackets : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -872,7 +885,7 @@ renderBrackets params acc args meta =
 
 {-| Render an empty checkbox ☐.
 
-    [box]
+    [ box ]
 
 -}
 renderBox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -882,7 +895,7 @@ renderBox _ _ _ meta =
 
 {-| Render a checked checkbox ☑.
 
-    [cbox]
+    [ cbox ]
 
 -}
 renderCbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -892,7 +905,7 @@ renderCbox _ _ _ meta =
 
 {-| Render a red empty checkbox ☐.
 
-    [rbox]
+    [ rbox ]
 
 -}
 renderRbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -902,7 +915,7 @@ renderRbox _ _ _ meta =
 
 {-| Render a red checked checkbox ☑.
 
-    [crbox]
+    [ crbox ]
 
 -}
 renderCrbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -912,7 +925,7 @@ renderCrbox _ _ _ meta =
 
 {-| Render a filled box ■.
 
-    [fbox]
+    [ fbox ]
 
 -}
 renderFbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -922,7 +935,7 @@ renderFbox _ _ _ meta =
 
 {-| Render a red filled box ■.
 
-    [frbox]
+    [ frbox ]
 
 -}
 renderFrbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -953,7 +966,7 @@ renderPar _ _ _ meta =
 
 {-| Render inline indentation (2em).
 
-    [indent]
+    [ indent ]
 
 -}
 renderIndent : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -963,18 +976,18 @@ renderIndent _ _ _ meta =
 
 {-| Render quoted text with curly quotes.
 
-    [quote text here]
+    [ quote text here ]
 
 -}
 renderQuote : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderQuote params acc args meta =
     Html.span [ HA.id meta.id ]
-        (Html.text "\u{201C}" :: renderList params acc args ++ [ Html.text "\u{201D}" ])
+        (Html.text "“" :: renderList params acc args ++ [ Html.text "”" ])
 
 
 {-| Render inline abstract with "Abstract." prefix.
 
-    [abstract text here]
+    [ abstract text here ]
 
 -}
 renderAbstract : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -987,7 +1000,7 @@ renderAbstract params acc args meta =
 
 {-| Render an anchor (underlined text).
 
-    [anchor some text]
+    [ anchor some text ]
 
 -}
 renderAnchor : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1033,7 +1046,7 @@ renderFootnote _ acc args meta =
 
 {-| Render marked/labeled content.
 
-    [marked label content]
+    [ marked label content ]
 
 First arg is used as the element ID.
 
@@ -1057,7 +1070,7 @@ renderMarked params acc args meta =
 
 {-| Render an inline table.
 
-    [table [tableRow [tableItem A][tableItem B]] [tableRow [tableItem 1][tableItem 2]]]
+    [ table [ tableRow [ tableItem A ] [ tableItem B ] ] [ tableRow [ tableItem 1 ] [ tableItem 2 ] ] ]
 
 -}
 renderTable : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1102,7 +1115,7 @@ renderTableItemExpr params acc expr =
 
 {-| Render a table row.
 
-    [tableRow [tableItem A][tableItem B]]
+    [ tableRow [ tableItem A ] [ tableItem B ] ]
 
 -}
 renderTableRow : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1113,7 +1126,7 @@ renderTableRow params acc items meta =
 
 {-| Render a table cell.
 
-    [tableItem cell content]
+    [ tableItem cell content ]
 
 -}
 renderTableItem : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1132,7 +1145,7 @@ renderTableItem params acc exprList meta =
 
 {-| Render an inline image (fits within text line).
 
-    [inlineimage https://example.com/icon.png]
+    [ inlineimage https :// example.com / icon.png ]
 
 Max height is 1.5em to fit inline.
 
@@ -1160,7 +1173,7 @@ renderInlineImage params _ args meta =
 
 {-| Render an inline bibliography reference.
 
-    [bibitem einstein1905]
+    [ bibitem einstein1905 ]
 
 -}
 renderBibitem : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1180,7 +1193,7 @@ renderBibitem _ _ args meta =
 
 {-| Render a user-defined link (internal navigation).
 
-    [ulink Section 1 sec1]
+    [ ulink Section 1 sec1 ]
 
 Last word is the target ID.
 
@@ -1214,7 +1227,7 @@ renderUlink _ _ args meta =
 
 {-| Render a reference link with lookup.
 
-    [reflink Theorem theorem1]
+    [ reflink Theorem theorem1 ]
 
 Last word is the reference key.
 
@@ -1254,7 +1267,7 @@ renderReflink _ acc args meta =
 
 {-| Render a cross-site link.
 
-    [cslink External Page page123]
+    [ cslink External Page page123 ]
 
 -}
 renderCslink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1306,7 +1319,7 @@ renderScheme _ _ args meta =
 
 {-| Render a compute placeholder (displays as "[compute: ...]").
 
-    [compute expression]
+    [ compute expression ]
 
 -}
 renderCompute : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1325,7 +1338,7 @@ renderCompute _ _ args meta =
 
 {-| Render a data placeholder (displays as "[data: ...]").
 
-    [data key]
+    [ data key ]
 
 -}
 renderData : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1344,7 +1357,7 @@ renderData _ _ args meta =
 
 {-| Render a button.
 
-    [button Click Me, action]
+    [ button Click Me, action ]
 
 First part before comma is the label.
 
@@ -1373,7 +1386,7 @@ renderButton _ _ args meta =
 
 {-| Render a horizontal rule.
 
-    [hrule]
+    [ hrule ]
 
 -}
 renderHrule : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
@@ -1390,7 +1403,7 @@ renderHrule params _ _ meta =
 
 {-| Render a mark with anchor.
 
-    [mark id [anchor text]]
+    [ mark id [ anchor text ] ]
 
 Sets element ID for linking.
 
