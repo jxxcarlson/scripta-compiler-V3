@@ -568,17 +568,8 @@ renderAbstract params acc _ block children =
 
 -}
 renderTitle : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderTitle params acc _ block _ =
-    [ Html.h1
-        ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "font-weight" "normal"
-         , HA.style "margin-bottom" "0.25em"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
-        )
-        (renderBody params acc block)
-    ]
+renderTitle _ _ _ _ _ =
+    []
 
 
 {-| Render the document subtitle (centered, lighter h2).
