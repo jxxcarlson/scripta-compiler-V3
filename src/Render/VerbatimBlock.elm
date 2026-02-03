@@ -54,6 +54,8 @@ blockDict =
         , ( "csvtable", renderCsvTable )
           -- Raw verbatim
         , ( "verbatim", renderVerbatim )
+          -- Book/document info
+        , ( "book", renderBook )
           -- No-op/hidden blocks
         , ( "settings", renderNothing )
         , ( "load-data", renderNothing )
@@ -990,6 +992,100 @@ renderVerbatim params _ _ block _ =
             [ Html.text content ]
         ]
     ]
+
+
+{-| Render a book block.
+
+    | book
+    title: Nature
+    author: Phineas Peabody
+    publication-date: 2026
+
+Renders as:
+
+    Nature
+
+    by Phineas Peabody
+
+-}
+renderBook : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderBook params _ _ block _ =
+    let
+        kvPairs =
+            parseKeyValueBody block
+
+        title =
+            Dict.get "title" kvPairs |> Maybe.withDefault "Untitled"
+
+        author =
+            Dict.get "author" kvPairs |> Maybe.withDefault ""
+
+        authorLine =
+            if author /= "" then
+                [ Html.div
+                    [ HA.style "margin-top" "0.5em"
+                    , HA.style "font-size" "1.2em"
+                    ]
+                    [ Html.text ("by " ++ author) ]
+                ]
+
+            else
+                []
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "text-align" "center"
+         , HA.style "margin" "2em 0"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+        )
+        (Html.div
+            [ HA.style "font-size" "2em"
+            , HA.style "margin-bottom" "0.5em"
+            ]
+            [ Html.text title ]
+            :: authorLine
+        )
+    ]
+
+
+{-| Parse key-value pairs from a verbatim block body.
+Each line should be in the format "key: value".
+-}
+parseKeyValueBody : ExpressionBlock -> Dict String String
+parseKeyValueBody block =
+    case block.body of
+        Left content ->
+            content
+                |> String.lines
+                |> List.filterMap parseKeyValueLine
+                |> Dict.fromList
+
+        Right _ ->
+            Dict.empty
+
+
+{-| Parse a single "key: value" line.
+-}
+parseKeyValueLine : String -> Maybe ( String, String )
+parseKeyValueLine line =
+    case String.split ":" line of
+        key :: rest ->
+            let
+                trimmedKey =
+                    String.trim key
+
+                value =
+                    String.join ":" rest |> String.trim
+            in
+            if trimmedKey /= "" then
+                Just ( trimmedKey, value )
+
+            else
+                Nothing
+
+        _ ->
+            Nothing
 
 
 
