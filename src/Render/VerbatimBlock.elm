@@ -1040,7 +1040,7 @@ renderBook params _ _ block _ =
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         (Html.div
-            [ HA.style "font-size" "2em"
+            [ HA.style "font-size" "2.5em"
             , HA.style "margin-bottom" "0.5em"
             ]
             [ Html.text title ]
