@@ -189,6 +189,46 @@ incrementCounter name dict =
     Dict.insert name (getCounter name dict + 1) dict
 
 
+{-| Parse key-value pairs from a verbatim block body.
+Each line should be in the format "key: value".
+Used for book and article blocks.
+-}
+parseKeyValueBody : ExpressionBlock -> Dict String String
+parseKeyValueBody block =
+    case block.body of
+        Left content ->
+            content
+                |> String.lines
+                |> List.filterMap parseKeyValueLine
+                |> Dict.fromList
+
+        Right _ ->
+            Dict.empty
+
+
+{-| Parse a single "key: value" line.
+-}
+parseKeyValueLine : String -> Maybe ( String, String )
+parseKeyValueLine line =
+    case String.split ":" line of
+        key :: rest ->
+            let
+                trimmedKey =
+                    String.trim key
+
+                value =
+                    String.join ":" rest |> String.trim
+            in
+            if trimmedKey /= "" then
+                Just ( trimmedKey, value )
+
+            else
+                Nothing
+
+        _ ->
+            Nothing
+
+
 type alias InitialAccumulatorData =
     { mathMacros : String
     , textMacros : String
@@ -385,6 +425,12 @@ transformBlock acc block =
 
             else
                 block
+
+        ( Verbatim "book", _ ) ->
+            { block | properties = Dict.union (parseKeyValueBody block) block.properties }
+
+        ( Verbatim "article", _ ) ->
+            { block | properties = Dict.union (parseKeyValueBody block) block.properties }
 
         ( heading, _ ) ->
             -- TODO: not at all sure that the below is correct

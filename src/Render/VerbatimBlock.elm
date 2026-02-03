@@ -1012,14 +1012,11 @@ Renders as:
 renderBook : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderBook params _ _ block _ =
     let
-        kvPairs =
-            parseKeyValueBody block
-
         title =
-            Dict.get "title" kvPairs |> Maybe.withDefault "Untitled"
+            Dict.get "title" block.properties |> Maybe.withDefault "Untitled"
 
         author =
-            Dict.get "author" kvPairs |> Maybe.withDefault ""
+            Dict.get "author" block.properties |> Maybe.withDefault ""
 
         authorLine =
             if author /= "" then
@@ -1062,45 +1059,6 @@ Renders the same as a book block.
 renderArticle : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderArticle params acc name block children =
     renderBook params acc name block children
-
-
-{-| Parse key-value pairs from a verbatim block body.
-Each line should be in the format "key: value".
--}
-parseKeyValueBody : ExpressionBlock -> Dict String String
-parseKeyValueBody block =
-    case block.body of
-        Left content ->
-            content
-                |> String.lines
-                |> List.filterMap parseKeyValueLine
-                |> Dict.fromList
-
-        Right _ ->
-            Dict.empty
-
-
-{-| Parse a single "key: value" line.
--}
-parseKeyValueLine : String -> Maybe ( String, String )
-parseKeyValueLine line =
-    case String.split ":" line of
-        key :: rest ->
-            let
-                trimmedKey =
-                    String.trim key
-
-                value =
-                    String.join ":" rest |> String.trim
-            in
-            if trimmedKey /= "" then
-                Just ( trimmedKey, value )
-
-            else
-                Nothing
-
-        _ ->
-            Nothing
 
 
 
