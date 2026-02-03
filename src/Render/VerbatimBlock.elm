@@ -56,6 +56,7 @@ blockDict =
         , ( "verbatim", renderVerbatim )
           -- Book/document info
         , ( "book", renderBook )
+        , ( "article", renderArticle )
           -- No-op/hidden blocks
         , ( "settings", renderNothing )
         , ( "load-data", renderNothing )
@@ -1047,6 +1048,20 @@ renderBook params _ _ block _ =
             :: authorLine
         )
     ]
+
+
+{-| Render an article block.
+
+    | article
+    title: On the Nature of Things
+    author: Jane Smith
+
+Renders the same as a book block.
+
+-}
+renderArticle : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderArticle params acc name block children =
+    renderBook params acc name block children
 
 
 {-| Parse key-value pairs from a verbatim block body.

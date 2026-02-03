@@ -46,6 +46,7 @@ verbatimNames =
     , "iframe"
     , "settings"
     , "book"
+    , "article"
     ]
 
 
