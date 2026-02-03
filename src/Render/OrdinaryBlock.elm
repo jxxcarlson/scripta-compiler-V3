@@ -1229,6 +1229,18 @@ renderReveal params acc _ block children =
 -}
 renderChapter : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderChapter params acc _ block children =
+    let
+        chapterNumber =
+            Dict.get "chapter-number" block.properties
+                |> Maybe.withDefault ""
+
+        chapterLabel =
+            if chapterNumber /= "" then
+                "Chapter " ++ chapterNumber ++ ". "
+
+            else
+                ""
+    in
     [ Html.h1
         ([ idAttr block.meta.id
          , HA.style "font-size" "2em"
@@ -1237,7 +1249,7 @@ renderChapter params acc _ block children =
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params acc block ++ children)
+        (Html.text chapterLabel :: renderBody params acc block ++ children)
     ]
 
 

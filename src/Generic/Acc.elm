@@ -125,6 +125,7 @@ initialData =
     , vectorSize = 4
     , shiftAndSetCounter = Nothing
     , maxLevel = 0
+    , chapterCounter = 0
     }
 
 
@@ -148,6 +149,7 @@ init data =
     , inListState = NotInList
     , counter = Dict.empty
     , blockCounter = 0
+    , chapterCounter = data.chapterCounter
     , itemVector = Vector.init data.vectorSize
     , numberedItemDict = Dict.empty
     , numberedBlockNames = Generic.Settings.numberedBlockNames
@@ -193,6 +195,7 @@ type alias InitialAccumulatorData =
     , vectorSize : Int
     , shiftAndSetCounter : Maybe Int
     , maxLevel : Int
+    , chapterCounter : Int
     }
 
 
@@ -260,10 +263,18 @@ transformBlock : Accumulator -> ExpressionBlock -> ExpressionBlock
 transformBlock acc block =
     case ( block.heading, block.args ) of
         ( Ordinary "section", _ ) ->
+            let
+                chapterPart =
+                    if acc.chapterCounter > 0 then
+                        String.fromInt acc.chapterCounter ++ "."
+
+                    else
+                        ""
+            in
             { block
                 | properties =
                     block.properties
-                        |> Dict.insert "label" (Vector.toString acc.headingIndex)
+                        |> Dict.insert "label" (chapterPart ++ Vector.toString acc.headingIndex)
                         |> Dict.insert "tag" (block.firstLine |> Tools.String.makeSlug)
             }
 
@@ -280,9 +291,9 @@ transformBlock acc block =
             { block
                 | properties =
                     block.properties
-                        |> Dict.insert "label" (Vector.toString acc.headingIndex)
+                        |> Dict.insert "label" (String.fromInt acc.chapterCounter)
                         |> Dict.insert "tag" tag
-                        |> Dict.insert "chapter-number" (getCounterAsString "chapter" acc.counter)
+                        |> Dict.insert "chapter-number" (String.fromInt acc.chapterCounter)
                         |> Dict.insert "level" "0"
             }
 
@@ -321,15 +332,25 @@ transformBlock acc block =
             -- Only number equations that have a label property
             if Dict.member "label" block.properties then
                 let
-                    prefix =
-                        Vector.toStringWithLevel acc.maxLevel acc.headingIndex |> Debug.log "@@EQPREFIX"
-
-                    equationProp =
-                        if prefix == "" then
-                            getCounterAsString "equation" acc.counter
+                    chapterPart =
+                        if acc.chapterCounter > 0 then
+                            String.fromInt acc.chapterCounter ++ "."
 
                         else
-                            Vector.toStringWithLevel acc.maxLevel acc.headingIndex ++ "." ++ getCounterAsString "equation" acc.counter
+                            ""
+
+                    sectionPart =
+                        Vector.toStringWithLevel acc.maxLevel acc.headingIndex
+
+                    punctuation =
+                        if sectionPart /= "" then
+                            "."
+
+                        else
+                            ""
+
+                    equationProp =
+                        chapterPart ++ sectionPart ++ punctuation ++ getCounterAsString "equation" acc.counter
                 in
                 { block | properties = Dict.insert "equation-number" equationProp block.properties }
 
@@ -340,15 +361,25 @@ transformBlock acc block =
             -- Only number aligned blocks that have a label property
             if Dict.member "label" block.properties then
                 let
-                    prefix =
-                        Vector.toString acc.headingIndex
-
-                    equationProp =
-                        if prefix == "" then
-                            getCounterAsString "equation" acc.counter
+                    chapterPart =
+                        if acc.chapterCounter > 0 then
+                            String.fromInt acc.chapterCounter ++ "."
 
                         else
-                            Vector.toString acc.headingIndex ++ "." ++ getCounterAsString "equation" acc.counter
+                            ""
+
+                    sectionPart =
+                        Vector.toStringWithLevel acc.maxLevel acc.headingIndex
+
+                    punctuation =
+                        if sectionPart /= "" then
+                            "."
+
+                        else
+                            ""
+
+                    equationProp =
+                        chapterPart ++ sectionPart ++ punctuation ++ getCounterAsString "equation" acc.counter
                 in
                 { block | properties = Dict.insert "equation-number" equationProp block.properties }
 
@@ -382,19 +413,30 @@ transformBlock acc block =
                     else
                         -- Default insertion of "label" property (used for block numbering)
                         let
+                            chapterPart =
+                                if acc.chapterCounter > 0 then
+                                    String.fromInt acc.chapterCounter ++ "."
+
+                                else
+                                    ""
+
+                            sectionPart =
+                                Vector.toStringWithLevel acc.maxLevel acc.headingIndex
+
                             punctuation =
-                                if acc.maxLevel > 0 then
+                                if sectionPart /= "" then
                                     "."
 
                                 else
                                     ""
+
+                            label =
+                                chapterPart ++ sectionPart ++ punctuation ++ String.fromInt acc.blockCounter
                         in
                         (if List.member name Generic.Settings.numberedBlockNames then
                             { block
                                 | properties =
-                                    Dict.insert "label"
-                                        ((Vector.toStringWithLevel acc.maxLevel acc.headingIndex |> Debug.log "@@@label-prefix") ++ punctuation ++ String.fromInt acc.blockCounter |> Debug.log "@@@label-value")
-                                        block.properties
+                                    Dict.insert "label" label block.properties
                             }
 
                          else
@@ -419,6 +461,19 @@ vectorPrefix vector =
 vectorPrefixWithLevel : Int -> Vector -> String
 vectorPrefixWithLevel lev vector =
     Vector.toStringWithLevel lev vector |> Debug.log "@@prefix"
+
+
+{-| Returns the chapter prefix string for numbering.
+If chapterCounter > 0, returns "N." where N is the chapter number.
+If chapterCounter = 0, returns "" (no chapter prefix).
+-}
+chapterPrefix : Accumulator -> String
+chapterPrefix acc =
+    if acc.chapterCounter > 0 then
+        String.fromInt acc.chapterCounter
+
+    else
+        ""
 
 
 {-| Map name to name of counter
@@ -565,27 +620,35 @@ getNameContentIdTag block =
 
 getReferenceDatum : Accumulator -> ExpressionBlock -> Maybe ReferenceDatum
 getReferenceDatum acc block =
-    -- TODO: REVIEW!
     let
         id : String
         id =
             block.meta.id
 
         tag =
-            -- TODO: REVIEW!
             Dict.get "tag" block.properties |> Maybe.withDefault "no-tag"
 
+        chapterPart =
+            if acc.chapterCounter > 0 then
+                String.fromInt acc.chapterCounter ++ "."
+
+            else
+                ""
+
+        sectionPart =
+            acc.headingIndex |> Vector.toStringWithLevel acc.maxLevel
+
         punctuation =
-            if (acc.maxLevel |> Debug.log "@@PUNCT") > 0 then
+            if sectionPart /= "" then
                 "."
 
             else
                 ""
 
         numRef =
-            (acc.headingIndex |> Vector.toStringWithLevel acc.maxLevel) ++ punctuation ++ (acc.blockCounter |> String.fromInt)
+            chapterPart ++ sectionPart ++ punctuation ++ (acc.blockCounter |> String.fromInt)
     in
-    Just { id = id, tag = tag, numRef = numRef } |> Debug.log "@@NUMREF"
+    Just { id = id, tag = tag, numRef = numRef }
 
 
 {-|
@@ -642,17 +705,23 @@ updateAccumulator ({ heading, indent, args, body, meta, properties } as block) a
 
         Ordinary "chapter" ->
             let
-                level : String
-                level =
-                    "0"
-            in
-            case getNameContentId block of
-                Just { name, content, id } ->
-                    updateWithOrdinarySectionBlock accumulator (Just name) content level id
-                        |> updateReferenceWithBlock block
+                newChapterCounter =
+                    accumulator.chapterCounter + 1
 
-                Nothing ->
-                    accumulator |> updateReferenceWithBlock block
+                chapterTag =
+                    Dict.get "label" block.properties
+                        |> Maybe.withDefault block.meta.id
+
+                referenceDatum =
+                    makeReferenceDatum block.meta.id chapterTag (String.fromInt newChapterCounter)
+            in
+            { accumulator
+                | chapterCounter = newChapterCounter
+                , headingIndex = Vector.init accumulator.headingIndex.size
+                , blockCounter = 0
+                , counter = Dict.insert "equation" 0 accumulator.counter
+            }
+                |> updateReference accumulator.headingIndex referenceDatum
 
         Ordinary "section" ->
             let
@@ -825,8 +894,15 @@ updateWithOrdinarySectionBlock accumulator name content level id =
             else
                 accumulator.blockCounter
 
+        chapterPart =
+            if accumulator.chapterCounter > 0 then
+                String.fromInt accumulator.chapterCounter ++ "."
+
+            else
+                ""
+
         referenceDatum =
-            makeReferenceDatum id sectionTag (Vector.toString headingIndex)
+            makeReferenceDatum id sectionTag (chapterPart ++ Vector.toString headingIndex)
 
         newCounter =
             if levelAsInt <= accumulator.maxLevel then
@@ -977,18 +1053,25 @@ updateWithOrdinaryBlock block accumulator =
                     newBlockCounter =
                         accumulator.blockCounter + 1
 
-                    prefix =
+                    chapterPart =
+                        if accumulator.chapterCounter > 0 then
+                            String.fromInt accumulator.chapterCounter ++ "."
+
+                        else
+                            ""
+
+                    sectionPart =
                         Vector.toStringWithLevel accumulator.maxLevel accumulator.headingIndex
 
                     punctuation =
-                        if accumulator.maxLevel > 0 then
+                        if sectionPart /= "" then
                             "."
 
                         else
                             ""
 
                     numRef =
-                        prefix ++ punctuation ++ String.fromInt newBlockCounter
+                        chapterPart ++ sectionPart ++ punctuation ++ String.fromInt newBlockCounter
 
                     referenceDatum =
                         makeReferenceDatum block.meta.id (getTag block) numRef
@@ -1086,14 +1169,31 @@ updateWithVerbatimBlock block accumulator =
 verbatimBlockReference : Bool -> Vector -> String -> Dict String Int -> Accumulator -> String
 verbatimBlockReference isSimple headingIndex name newCounter acc =
     let
-        prefix =
-            Vector.toStringWithLevel (acc.maxLevel |> Debug.log "@@maxLevel") (headingIndex |> Debug.log "@@headingIndex") |> Debug.log "@@prefix in verbatimBlockReference"
+        chapterPart =
+            if acc.chapterCounter > 0 then
+                String.fromInt acc.chapterCounter ++ "."
+
+            else
+                ""
+
+        sectionPart =
+            Vector.toStringWithLevel acc.maxLevel headingIndex
+
+        punctuation =
+            if sectionPart /= "" then
+                "."
+
+            else
+                ""
+
+        eqNum =
+            getCounter (reduceName name) newCounter |> String.fromInt
     in
-    if prefix == "" || isSimple then
-        getCounter (reduceName name) newCounter |> String.fromInt
+    if isSimple then
+        eqNum
 
     else
-        prefix ++ "." ++ (getCounter (reduceName name) newCounter |> String.fromInt)
+        chapterPart ++ sectionPart ++ punctuation ++ eqNum
 
 
 updateWithParagraph : ExpressionBlock -> Accumulator -> Accumulator

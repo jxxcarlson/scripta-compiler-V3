@@ -630,7 +630,7 @@ view model =
             , width = panelWidth model
             , showTOC = False
             , paragraphSpacing = 18
-            , maxLevel = 1
+            , maxLevel = 0
             }
 
         output =

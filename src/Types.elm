@@ -142,6 +142,7 @@ type alias Accumulator =
     , documentIndex : Vector
     , counter : Dict String Int
     , blockCounter : Int
+    , chapterCounter : Int
     , itemVector : Vector -- Used for section numbering
     , deltaLevel : Int
     , numberedItemDict : Dict String { level : Int, index : Int }
