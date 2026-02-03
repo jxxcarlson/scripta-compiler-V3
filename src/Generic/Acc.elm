@@ -823,7 +823,7 @@ updateWithOrdinarySectionBlock accumulator name content level id =
                 0
 
             else
-                levelAsInt
+                accumulator.blockCounter
 
         referenceDatum =
             makeReferenceDatum id sectionTag (Vector.toString headingIndex)
