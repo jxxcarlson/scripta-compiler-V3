@@ -973,25 +973,29 @@ updateWithOrdinaryBlock block accumulator =
                 accumulator
 
             else if List.member name_ Generic.Settings.numberedBlockNames then
-                --- TODO: fix thereom labels
                 let
-                    level =
-                        block.indent // Generic.Settings.indentationQuantum
+                    newBlockCounter =
+                        accumulator.blockCounter + 1
 
-                    itemVector =
-                        Vector.increment level accumulator.itemVector
+                    prefix =
+                        Vector.toStringWithLevel accumulator.maxLevel accumulator.headingIndex
 
-                    numberedItemDict =
-                        Dict.insert block.meta.id { level = level, index = Vector.get level itemVector } accumulator.numberedItemDict
+                    punctuation =
+                        if accumulator.maxLevel > 0 then
+                            "."
+
+                        else
+                            ""
+
+                    numRef =
+                        prefix ++ punctuation ++ String.fromInt newBlockCounter
 
                     referenceDatum =
-                        makeReferenceDatum block.meta.id (getTag block) (String.fromInt (Vector.get level itemVector))
+                        makeReferenceDatum block.meta.id (getTag block) numRef
                 in
                 { accumulator
                     | inListState = nextInListState block.heading accumulator.inListState
-                    , blockCounter = accumulator.blockCounter + 1
-                    , itemVector = itemVector
-                    , numberedItemDict = numberedItemDict
+                    , blockCounter = newBlockCounter
                 }
                     |> updateReference accumulator.headingIndex referenceDatum
 
