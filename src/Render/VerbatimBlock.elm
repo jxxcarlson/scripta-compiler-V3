@@ -10,7 +10,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Utility exposing (idAttr, selectedStyle)
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, MathMacroDict, Msg(..), Theme(..))
+import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, MathMacroDict, Msg(..), Theme(..))
 
 
 {-| Render a verbatim block by name.
@@ -45,19 +45,24 @@ blockDict =
         , ( "image", renderImage )
         , ( "iframe", renderIframe )
         , ( "load", renderLoad )
-          -- Chemistry
+
+        -- Chemistry
         , ( "chem", renderChem )
-          -- Arrays/tables
+
+        -- Arrays/tables
         , ( "array", renderArray )
         , ( "textarray", renderTextArray )
         , ( "table", renderTextArray )
         , ( "csvtable", renderCsvTable )
-          -- Raw verbatim
+
+        -- Raw verbatim
         , ( "verbatim", renderVerbatim )
-          -- Book/document info
+
+        -- Book/document info
         , ( "book", renderBook )
         , ( "article", renderArticle )
-          -- No-op/hidden blocks
+
+        -- No-op/hidden blocks
         , ( "settings", renderNothing )
         , ( "load-data", renderNothing )
         , ( "hide", renderNothing )
@@ -120,10 +125,14 @@ renderMath params acc _ block _ =
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync (.meta block)
         )
-        [ mathText params.editCount block.meta.id DisplayMathMode content ]
+        [ Html.div [ HA.style "pointer-events" "none" ]
+            [ mathText params.editCount block.meta.id DisplayMathMode content ]
+        ]
     ]
 
 
@@ -164,16 +173,19 @@ renderEquation params acc _ block _ =
          , HA.style "justify-content" "center"
          , HA.style "align-items" "center"
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync (.meta block)
         )
         [ Html.div [ HA.style "flex" "1" ] []
-        , Html.div []
+        , Html.div [ HA.style "pointer-events" "none" ]
             [ mathText params.editCount block.meta.id DisplayMathMode content ]
         , Html.div
             [ HA.style "flex" "1"
             , HA.style "text-align" "right"
             , HA.style "padding-right" "1em"
+            , HA.style "pointer-events" "none"
             ]
             [ Html.text
                 (if equationNumber /= "" then
@@ -206,10 +218,14 @@ renderAligned params acc _ block _ =
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync (.meta block)
         )
-        [ mathText params.editCount block.meta.id DisplayMathMode content ]
+        [ Html.div [ HA.style "pointer-events" "none" ]
+            [ mathText params.editCount block.meta.id DisplayMathMode content ]
+        ]
     ]
 
 

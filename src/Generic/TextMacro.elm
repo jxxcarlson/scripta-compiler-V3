@@ -7,7 +7,7 @@ NOTE: This is a simplified stub. Full macro expansion is not yet implemented.
 -}
 
 import Dict exposing (Dict)
-import Types exposing (Expression)
+import V3.Types exposing (Expression)
 
 
 {-| A text macro with name and body.

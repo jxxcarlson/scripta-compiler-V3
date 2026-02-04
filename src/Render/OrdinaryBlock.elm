@@ -12,7 +12,7 @@ import Html.Events as HE
 import Json.Decode as Decode
 import Render.Expression
 import Render.Utility exposing (idAttr, selectedStyle)
-import Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Msg(..), TermLoc, Theme(..))
+import V3.Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Msg(..), TermLoc, Theme(..))
 
 
 {-| Render an ordinary block by name.

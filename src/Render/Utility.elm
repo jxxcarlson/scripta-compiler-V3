@@ -1,11 +1,38 @@
-module Render.Utility exposing (idAttr, selectedStyle)
+module Render.Utility exposing (idAttr, rlBlockSync, rlSync, selectedStyle)
 
 {-| Utility functions for rendering.
 -}
 
 import Html exposing (Attribute)
 import Html.Attributes as HA
-import Types exposing (Theme(..))
+import Html.Events as HE
+import V3.Types exposing (Theme(..))
+
+
+rlSync : V3.Types.ExprMeta -> List (Html.Attribute V3.Types.Msg)
+rlSync meta =
+    [ HA.id meta.id
+    , HA.attribute "data-begin" (String.fromInt meta.begin)
+    , HA.attribute "data-end" (String.fromInt meta.end)
+    , HE.onClick (V3.Types.SendMeta meta)
+    ]
+
+
+rlBlockSync : V3.Types.BlockMeta -> List (Html.Attribute V3.Types.Msg)
+rlBlockSync blockMeta =
+    let
+        -- Use expression id format "e-{lineNumber}.0" so mapV3Msg can extract the line number.
+        -- Block ids use a different format ("{lineNumber}-{index}") that mapV3Msg can't parse.
+        exprId =
+            "e-" ++ String.fromInt blockMeta.lineNumber ++ ".0"
+
+        meta =
+            { begin = 0, end = String.length blockMeta.sourceText, index = 0, id = exprId }
+    in
+    [ HA.attribute "data-begin" (String.fromInt meta.begin)
+    , HA.attribute "data-end" (String.fromInt meta.end)
+    , HE.onClick (V3.Types.SendMeta meta)
+    ]
 
 
 {-| Create an id attribute from block id.

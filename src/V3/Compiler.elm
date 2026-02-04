@@ -1,4 +1,4 @@
-module Compiler exposing (compile, render)
+module V3.Compiler exposing (compile, render)
 
 {-| Compile source text to HTML.
 
@@ -26,7 +26,7 @@ import Parser.Forest
 import Render.TOC
 import Render.Tree
 import RoseTree.Tree as Tree exposing (Tree)
-import Types
+import V3.Types
     exposing
         ( Accumulator
         , CompilerOutput
@@ -164,7 +164,7 @@ extractBlockText block =
 
 {-| Extract text from an expression.
 -}
-extractExprText : Types.Expression -> String
+extractExprText : V3.Types.Expression -> String
 extractExprText expr =
     case expr of
         Text str _ ->

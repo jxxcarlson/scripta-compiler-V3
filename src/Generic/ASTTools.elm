@@ -3,7 +3,7 @@ module Generic.ASTTools exposing (filterExpressionsOnName_, getText)
 {-| AST utilities for working with expressions.
 -}
 
-import Types exposing (Expr(..), Expression)
+import V3.Types exposing (Expr(..), Expression)
 
 
 {-| Extract text content from an expression.

@@ -21,7 +21,7 @@ import Generic.ForestTransform
 import Parser.Pipeline
 import Parser.PrimitiveBlock
 import RoseTree.Tree as Tree exposing (Tree)
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Filter(..), PrimitiveBlock)
+import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Filter(..), PrimitiveBlock)
 
 
 {-| Parse source lines into a forest of expression blocks.

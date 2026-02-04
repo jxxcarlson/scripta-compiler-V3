@@ -1,4 +1,4 @@
-module Types exposing (..)
+module V3.Types exposing (..)
 
 {-| The Scripta Language consists of blocks and expressions.
 

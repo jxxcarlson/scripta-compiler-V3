@@ -5,7 +5,7 @@ import Either exposing (Either(..))
 import Expect
 import Parser.Pipeline exposing (toExpressionBlock)
 import Test exposing (..)
-import Types exposing (Expr(..), ExpressionBlock, Heading(..), PrimitiveBlock)
+import V3.Types exposing (Expr(..), ExpressionBlock, Heading(..), PrimitiveBlock)
 
 
 suite : Test

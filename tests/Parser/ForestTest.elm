@@ -7,7 +7,7 @@ import Parser.Forest as PF
 import RoseTree.Tree as Tree
 import Test exposing (..)
 import TestData
-import Types exposing (Expr(..), ExpressionBlock, Heading(..))
+import V3.Types exposing (Expr(..), ExpressionBlock, Heading(..))
 
 
 suite : Test

@@ -15,7 +15,7 @@ Documents are persisted to localStorage.
 import Browser
 import Browser.Dom
 import Browser.Events
-import Compiler
+import V3.Compiler
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -23,7 +23,7 @@ import Html.Keyed as Keyed
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Task
-import Types exposing (CompilerOutput, Filter(..), Msg(..), Theme(..))
+import V3.Types exposing (CompilerOutput, Filter(..), Msg(..), Theme(..))
 
 
 
@@ -306,7 +306,7 @@ type Msg
     | ExportDocuments
     | RequestImportDocuments
     | GotImportedDocuments Decode.Value
-    | CompilerMsg Types.Msg
+    | CompilerMsg V3.Types.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -535,7 +535,7 @@ update msg model =
                     model.debugClickCount + 1
             in
             case compilerMsg of
-                Types.SelectId id ->
+                V3.Types.SelectId id ->
                     -- Save current position before navigating
                     ( { model
                         | selectedId = id
@@ -545,7 +545,7 @@ update msg model =
                     , scrollToElement id
                     )
 
-                Types.SendMeta meta ->
+                V3.Types.SendMeta meta ->
                     -- SendMeta contains source position info for editor sync
                     -- Extract line number from id format "e-{lineNumber}.{tokenIndex}"
                     let
@@ -567,10 +567,10 @@ update msg model =
                     in
                     ( { model | selectedId = meta.id, debugClickCount = newClickCount }, cmd )
 
-                Types.HighlightId id ->
+                V3.Types.HighlightId id ->
                     ( { model | selectedId = id, debugClickCount = newClickCount }, Cmd.none )
 
-                Types.NoOp ->
+                V3.Types.NoOp ->
                     ( { model | debugClickCount = newClickCount }, Cmd.none )
 
 
@@ -620,7 +620,7 @@ sidebarWidth =
 view : Model -> Html Msg
 view model =
     let
-        params : Types.CompilerParameters
+        params : V3.Types.CompilerParameters
         params =
             { filter = NoFilter
             , windowWidth = panelWidth model
@@ -634,7 +634,7 @@ view model =
             }
 
         output =
-            Compiler.compile params (String.lines model.sourceText)
+            V3.Compiler.compile params (String.lines model.sourceText)
 
         bgColor =
             case model.theme of
@@ -951,7 +951,7 @@ onTextChange =
         )
 
 
-viewPreview : Model -> String -> String -> CompilerOutput Types.Msg -> Html Msg
+viewPreview : Model -> String -> String -> CompilerOutput V3.Types.Msg -> Html Msg
 viewPreview model panelBg textColor output =
     Html.div
         [ HA.style "flex" "1"

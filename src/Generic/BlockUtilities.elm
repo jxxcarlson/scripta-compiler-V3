@@ -3,7 +3,7 @@ module Generic.BlockUtilities exposing (getExpressionBlockName)
 {-| Block utilities for working with expression blocks.
 -}
 
-import Types exposing (ExpressionBlock, Heading(..))
+import V3.Types exposing (ExpressionBlock, Heading(..))
 
 
 {-| Get the name of an expression block from its heading.

@@ -4,10 +4,10 @@ import Expect
 import Parser.PrimitiveBlock exposing (parse)
 import Test exposing (..)
 import TestData
-import Types exposing (Heading(..))
+import V3.Types exposing (Heading(..))
 
 
-p : String -> List Types.PrimitiveBlock
+p : String -> List V3.Types.PrimitiveBlock
 p str =
     String.lines str |> parse
 

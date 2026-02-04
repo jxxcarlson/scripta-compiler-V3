@@ -7,7 +7,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Block
 import RoseTree.Tree as Tree exposing (Tree)
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..))
+import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..))
 
 
 {-| Render a forest (list of trees) to HTML.

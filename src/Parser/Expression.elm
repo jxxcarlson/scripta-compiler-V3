@@ -20,7 +20,7 @@ import Parser.Match as M
 import Parser.Symbol as Symbol exposing (Symbol(..))
 import Parser.Tokenizer as Token exposing (Token, TokenType(..), Token_(..))
 import Tools.Loop exposing (Step(..), loop)
-import Types exposing (Expr(..), ExprMeta, Expression)
+import V3.Types exposing (Expr(..), ExprMeta, Expression)
 
 
 type alias State =

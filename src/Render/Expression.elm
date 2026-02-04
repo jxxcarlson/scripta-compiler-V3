@@ -10,7 +10,8 @@ import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as Decode
 import Render.Math exposing (DisplayMode(..), mathText)
-import Types exposing (Accumulator, CompilerParameters, Expr(..), ExprMeta, Expression, MathMacroDict, Msg(..))
+import Render.Utility
+import V3.Types exposing (Accumulator, CompilerParameters, Expr(..), ExprMeta, Expression, MathMacroDict, Msg(..))
 
 
 {-| Render a list of expressions.
@@ -44,11 +45,7 @@ render params acc expr =
 renderText : CompilerParameters -> String -> ExprMeta -> Html Msg
 renderText params str meta =
     Html.span
-        [ HA.id meta.id
-        , HA.attribute "data-begin" (String.fromInt meta.begin)
-        , HA.attribute "data-end" (String.fromInt meta.end)
-        , HE.onClick (SendMeta meta)
-        ]
+        (Render.Utility.rlSync meta)
         [ Html.text str ]
 
 

@@ -11,7 +11,7 @@ import Dict exposing (Dict)
 import Parser.Line as Line exposing (Line)
 import Tools.KV
 import Tools.Loop exposing (Step(..), loop)
-import Types exposing (BlockMeta, Heading(..), PrimitiveBlock)
+import V3.Types exposing (BlockMeta, Heading(..), PrimitiveBlock)
 
 
 verbatimNames : List String

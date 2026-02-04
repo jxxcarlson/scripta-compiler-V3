@@ -9,7 +9,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import RoseTree.Tree as Tree exposing (Tree)
-import Types exposing (Accumulator, CompilerParameters, Expr(..), ExpressionBlock, Heading(..), Msg(..), Theme(..))
+import V3.Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Heading(..), Msg(..), Theme(..))
 
 
 {-| Section data for TOC entry.
@@ -134,7 +134,7 @@ extractTitle block =
 
 {-| Extract text from an expression.
 -}
-extractTextFromExpr : Types.Expression -> String
+extractTextFromExpr : Expression -> String
 extractTextFromExpr expr =
     case expr of
         Text str _ ->

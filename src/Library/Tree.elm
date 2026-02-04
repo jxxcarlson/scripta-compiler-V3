@@ -1,4 +1,4 @@
-module Library.Tree exposing (depth, makeTree, print)
+module Library.Tree exposing (depth, flatten, makeTree, print)
 
 import Dict
 import RoseTree.Tree exposing (Tree)

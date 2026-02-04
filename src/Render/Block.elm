@@ -10,7 +10,7 @@ import Render.Expression
 import Render.OrdinaryBlock
 import Render.Utility exposing (idAttr, selectedStyle)
 import Render.VerbatimBlock
-import Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Heading(..), Msg(..))
+import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Heading(..), Msg(..))
 
 
 {-| Render a block's body content, dispatching based on heading type.

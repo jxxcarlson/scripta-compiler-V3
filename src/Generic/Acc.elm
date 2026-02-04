@@ -115,7 +115,7 @@ import Parser exposing ((|.), (|=), Parser)
 import RoseTree.Tree as Tree exposing (Tree)
 import Tools.String
 import Tools.Utility as Utility
-import Types exposing (Accumulator, Expr(..), Expression, ExpressionBlock, Heading(..), InListState(..), MathMacroDict, TermLoc, TermLoc2)
+import V3.Types exposing (Accumulator, Expr(..), ExprMeta, Expression, ExpressionBlock, Heading(..), InListState(..), MathMacroDict, TermLoc, TermLoc2)
 
 
 initialData : InitialAccumulatorData
@@ -1567,7 +1567,7 @@ getVerbatimContent block =
             Nothing
 
 
-getMeta : Expression -> Types.ExprMeta
+getMeta : Expression -> ExprMeta
 getMeta expr =
     case expr of
         Fun _ _ meta ->

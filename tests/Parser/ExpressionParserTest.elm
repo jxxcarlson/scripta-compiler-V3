@@ -3,7 +3,7 @@ module Parser.ExpressionParserTest exposing (..)
 import Expect
 import Parser.Expression as PE
 import Test exposing (..)
-import Types exposing (Expr(..), Expression)
+import V3.Types exposing (Expr(..), Expression)
 
 
 pe : String -> List Expression

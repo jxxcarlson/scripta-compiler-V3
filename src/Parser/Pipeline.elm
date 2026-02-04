@@ -13,7 +13,7 @@ module Parser.Pipeline exposing (toExpressionBlock)
 import Dict
 import Either exposing (Either(..))
 import Parser.Expression as Expression
-import Types exposing (BlockMeta, Expr(..), ExprMeta, Expression, ExpressionBlock, Heading(..), PrimitiveBlock)
+import V3.Types exposing (BlockMeta, Expr(..), ExprMeta, Expression, ExpressionBlock, Heading(..), PrimitiveBlock)
 
 
 {-| Convert a PrimitiveBlock to an ExpressionBlock.

@@ -2,10 +2,10 @@ module TestData exposing (..)
 
 import Parser.Pipeline
 import Parser.PrimitiveBlock
-import Types
+import V3.Types
 
 
-q : String -> List Types.ExpressionBlock
+q : String -> List V3.Types.ExpressionBlock
 q str =
     str
         |> String.lines
@@ -15,19 +15,19 @@ q str =
 
 {-| Parse a string to primitive blocks.
 -}
-p : String -> List Types.PrimitiveBlock
+p : String -> List V3.Types.PrimitiveBlock
 p str =
     str
         |> String.lines
         |> Parser.PrimitiveBlock.parse
 
 
-defaultCompilerParameters : Types.CompilerParameters
+defaultCompilerParameters : V3.Types.CompilerParameters
 defaultCompilerParameters =
-    { filter = Types.NoFilter
+    { filter = V3.Types.NoFilter
     , windowWidth = 600
     , selectedId = "selectedId"
-    , theme = Types.Dark
+    , theme = V3.Types.Dark
     , editCount = 0
     , width = 600
     , showTOC = False
