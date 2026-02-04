@@ -81,12 +81,14 @@ renderDefault params _ name block _ =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        [ Html.span [ HA.style "font-weight" "bold", HA.style "color" "purple" ]
+        [ Html.span [ HA.style "font-weight" "bold", HA.style "color" "purple", HA.style "pointer-events" "none" ]
             [ Html.text ("[verbatim:" ++ name ++ "]") ]
-        , Html.pre [ HA.style "margin" "0.5em 0" ]
+        , Html.pre [ HA.style "margin" "0.5em 0", HA.style "pointer-events" "none" ]
             [ Html.text (getVerbatimContent block) ]
         ]
     ]
@@ -269,8 +271,10 @@ renderCode params _ _ block _ =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.pre
             [ HA.style "background-color"
@@ -286,6 +290,7 @@ renderCode params _ _ block _ =
             , HA.style "overflow-x" "auto"
             , HA.style "font-family" "monospace"
             , HA.style "font-size" "13px"
+            , HA.style "pointer-events" "none"
             ]
             [ Html.code
                 [ HA.class ("language-" ++ language) ]
@@ -319,10 +324,12 @@ renderVerse params _ _ block _ =
          , HA.style "margin" "1em 2em"
          , HA.style "font-style" "italic"
          , HA.style "white-space" "pre-wrap"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        [ Html.text content ]
+        [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text content ] ]
     ]
 
 
@@ -374,10 +381,12 @@ renderDataTable params _ _ block _ =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        [ Html.pre [ HA.style "font-family" "monospace" ]
+        [ Html.pre [ HA.style "font-family" "monospace", HA.style "pointer-events" "none" ]
             [ Html.text content ]
         ]
     ]
@@ -398,10 +407,12 @@ renderChart params _ _ block _ =
          , HA.style "margin" "1em 0"
          , HA.style "min-height" "200px"
          , HA.style "border" "1px dashed #ccc"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        [ Html.text "[Chart]" ]
+        [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[Chart]" ] ]
     ]
 
 
@@ -424,12 +435,15 @@ renderSvg params _ _ block _ =
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
          , HA.class "svg-container"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.pre
             [ HA.style "font-family" "monospace"
             , HA.style "font-size" "13px"
+            , HA.style "pointer-events" "none"
             ]
             [ Html.text "[SVG content - requires JS integration]" ]
         ]
@@ -448,10 +462,12 @@ renderQuiver params _ _ block _ =
         ([ idAttr block.meta.id
          , HA.class "quiver-placeholder"
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        [ Html.text "[Quiver Diagram]" ]
+        [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[Quiver Diagram]" ] ]
     ]
 
 
@@ -469,10 +485,12 @@ renderTikz params _ _ block _ =
         ([ idAttr block.meta.id
          , HA.class "tikz-placeholder"
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        [ Html.text "[TikZ Diagram]" ]
+        [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[TikZ Diagram]" ] ]
     ]
 
 
@@ -775,10 +793,14 @@ renderChem params acc _ block children =
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        [ mathText params.editCount block.meta.id DisplayMathMode content ]
+        [ Html.div [ HA.style "pointer-events" "none" ]
+            [ mathText params.editCount block.meta.id DisplayMathMode content ]
+        ]
     ]
 
 
@@ -815,10 +837,14 @@ renderArray params acc _ block _ =
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        [ mathText params.editCount block.meta.id DisplayMathMode arrayContent ]
+        [ Html.div [ HA.style "pointer-events" "none" ]
+            [ mathText params.editCount block.meta.id DisplayMathMode arrayContent ]
+        ]
     ]
 
 
@@ -847,12 +873,15 @@ renderTextArray params _ _ block _ =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.table
             [ HA.style "border-collapse" "collapse"
             , HA.style "margin" "0 auto"
+            , HA.style "pointer-events" "none"
             ]
             [ Html.tbody [] (List.map renderTextArrayRow rows) ]
         ]
@@ -916,18 +945,22 @@ renderCsvTable params _ _ block _ =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        (case title of
-            Just t ->
-                [ Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ] [ Html.text t ]
-                , renderCsvTableHtml headerRow dataRows
-                ]
+        [ Html.div [ HA.style "pointer-events" "none" ]
+            (case title of
+                Just t ->
+                    [ Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ] [ Html.text t ]
+                    , renderCsvTableHtml headerRow dataRows
+                    ]
 
-            Nothing ->
-                [ renderCsvTableHtml headerRow dataRows ]
-        )
+                Nothing ->
+                    [ renderCsvTableHtml headerRow dataRows ]
+            )
+        ]
     ]
 
 
@@ -995,8 +1028,10 @@ renderVerbatim params _ _ block _ =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.pre
             [ HA.style "font-family" "monospace"
@@ -1005,6 +1040,7 @@ renderVerbatim params _ _ block _ =
             , HA.style "padding" "1em"
             , HA.style "padding-left" "2em"
             , HA.style "white-space" "pre-wrap"
+            , HA.style "pointer-events" "none"
             ]
             [ Html.text content ]
         ]
@@ -1050,16 +1086,20 @@ renderBook params _ _ block _ =
         ([ idAttr block.meta.id
          , HA.style "text-align" "center"
          , HA.style "margin" "2em 0"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
-        (Html.div
-            [ HA.style "font-size" "2.5em"
-            , HA.style "margin-bottom" "0.5em"
-            ]
-            [ Html.text title ]
-            :: authorLine
-        )
+        [ Html.div [ HA.style "pointer-events" "none" ]
+            (Html.div
+                [ HA.style "font-size" "2.5em"
+                , HA.style "margin-bottom" "0.5em"
+                ]
+                [ Html.text title ]
+                :: authorLine
+            )
+        ]
     ]
 
 
