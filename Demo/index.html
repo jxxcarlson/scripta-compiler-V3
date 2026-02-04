@@ -226,7 +226,7 @@
 
         // Subscribe to selectInEditor port - sync rendered text clicks to editor
         app.ports.selectInEditor.subscribe(function(selection) {
-            // selection = { lineNumber, begin, end }
+            // selection = { lineNumber, begin, end, numberOfLines }
             var editorElement = document.querySelector('codemirror-editor');
             if (editorElement && editorElement.editor) {
                 var editor = editorElement.editor;
@@ -235,9 +235,19 @@
                 // Get the start position of the target line (1-indexed to 0-indexed)
                 var lineStart = doc.line(selection.lineNumber).from;
 
-                // Calculate absolute positions (end is inclusive, so add 1 for CodeMirror's exclusive range)
-                var from = lineStart + selection.begin;
-                var to = lineStart + selection.end + 1;
+                var from, to;
+                if (selection.numberOfLines > 0) {
+                    // Block-level selection: select whole lines
+                    // numberOfLines includes the header line, so the block spans
+                    // lineNumber through lineNumber + numberOfLines - 1
+                    from = lineStart;
+                    var endLineNum = Math.min(selection.lineNumber + selection.numberOfLines, doc.lines);
+                    to = doc.line(endLineNum).to;
+                } else {
+                    // Character-level selection (end is inclusive, so add 1 for CodeMirror's exclusive range)
+                    from = lineStart + selection.begin;
+                    to = lineStart + selection.end + 1;
+                }
 
                 // Use the setSyncHighlight effect (imported in codemirror-element.js)
                 // We need to access it via the editor's custom property

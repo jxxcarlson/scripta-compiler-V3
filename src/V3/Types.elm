@@ -244,6 +244,7 @@ type alias CompilerOutput msg =
 -}
 type Msg
     = SendMeta ExprMeta
+    | SendBlockMeta BlockMeta
     | SelectId String
     | HighlightId String
     | NoOp

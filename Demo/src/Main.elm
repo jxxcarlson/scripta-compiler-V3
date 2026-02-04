@@ -34,9 +34,10 @@ port saveDocuments : Encode.Value -> Cmd msg
 
 
 {-| Send selection position to the editor.
-The record contains lineNumber, begin (char offset), and end (char offset).
+The record contains lineNumber, begin (char offset), end (char offset),
+and numberOfLines (for block-level selection of multi-line elements).
 -}
-port selectInEditor : { lineNumber : Int, begin : Int, end : Int } -> Cmd msg
+port selectInEditor : { lineNumber : Int, begin : Int, end : Int, numberOfLines : Int } -> Cmd msg
 
 
 {-| Scroll an element into view, centered in the viewport.
@@ -563,9 +564,22 @@ update msg model =
                                 { lineNumber = lineNumber
                                 , begin = meta.begin
                                 , end = meta.end
+                                , numberOfLines = 0
                                 }
                     in
                     ( { model | selectedId = meta.id, debugClickCount = newClickCount }, cmd )
+
+                V3.Types.SendBlockMeta blockMeta ->
+                    let
+                        cmd =
+                            selectInEditor
+                                { lineNumber = blockMeta.lineNumber
+                                , begin = 0
+                                , end = 0
+                                , numberOfLines = blockMeta.numberOfLines
+                                }
+                    in
+                    ( { model | selectedId = blockMeta.id, debugClickCount = newClickCount }, cmd )
 
                 V3.Types.HighlightId id ->
                     ( { model | selectedId = id, debugClickCount = newClickCount }, Cmd.none )
