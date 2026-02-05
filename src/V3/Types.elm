@@ -270,6 +270,8 @@ type alias SizingConfig =
     , paragraphSpacing : Float -- in px, default 12.0
     , marginLeft : Float -- in px, default 0.0
     , marginRight : Float -- in px, default 0.0
+    , indentation : Float -- in px, default 20.0, per indent level
+    , indentUnit : Int -- spaces per indent level in source, default 2
     , scale : Float -- multiplier, default 1.0
     }
 
@@ -282,5 +284,7 @@ defaultSizingConfig =
     , paragraphSpacing = 12.0
     , marginLeft = 0.0
     , marginRight = 0.0
+    , indentation = 60.0
+    , indentUnit = 2
     , scale = 1.0
     }

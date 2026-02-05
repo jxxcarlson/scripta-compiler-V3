@@ -639,6 +639,8 @@ view model =
             , paragraphSpacing = 18.0
             , marginLeft = 0.0
             , marginRight = 120.0
+            , indentation = 20.0
+            , indentUnit = 2
             , scale = 1.0
             }
 

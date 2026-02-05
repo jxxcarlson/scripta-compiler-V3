@@ -1,9 +1,12 @@
 module Render.Sizing exposing
     ( codeSize
+    , indentPx
+    , indentWithDeltaPx
     , itemSpacingPx
     , marginLeftPx
-    , marginLeftWithDeltaPx
+    , marginLeftWithIndentPx
     , marginRightPx
+    , marginRightWithDeltaPx
     , paragraphSpacingPx
     , scaled
     , toEm
@@ -86,3 +89,48 @@ marginLeftWithDeltaPx delta config =
 marginRightPx : SizingConfig -> String
 marginRightPx config =
     toPx config config.marginRight
+
+
+{-| Get indentation for a given raw indent (spaces) as a CSS px string.
+Converts spaces to levels using indentUnit, then applies indentation and scale.
+-}
+indentPx : Int -> SizingConfig -> String
+indentPx rawIndent config =
+    let
+        level =
+            toFloat rawIndent / toFloat config.indentUnit
+    in
+    toPx config (config.indentation * level)
+
+
+{-| Get indentation for a given raw indent (spaces) as a CSS px string.
+Converts spaces to levels using indentUnit, then applies indentation, delta, and scale.
+-}
+indentWithDeltaPx : Int -> Int -> SizingConfig -> String
+indentWithDeltaPx delta rawIndent config =
+    let
+        level =
+            toFloat rawIndent / toFloat config.indentUnit
+    in
+    toPx config (config.indentation * (level + toFloat delta))
+
+
+marginRightWithDeltaPx : Int -> Int -> SizingConfig -> String
+marginRightWithDeltaPx delta rawIndent config =
+    let
+        level =
+            toFloat rawIndent / toFloat config.indentUnit
+    in
+    toPx config (config.marginRight + (-level + toFloat delta) * config.indentation)
+
+
+{-| Get left margin plus indentation as a CSS px string.
+Combines base marginLeft with indentation based on raw indent (spaces).
+-}
+marginLeftWithIndentPx : Int -> SizingConfig -> String
+marginLeftWithIndentPx rawIndent config =
+    let
+        level =
+            toFloat rawIndent / toFloat config.indentUnit
+    in
+    toPx config (config.marginLeft + config.indentation * level)

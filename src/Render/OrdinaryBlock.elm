@@ -266,15 +266,11 @@ Uses flexbox so subsequent lines align with the first character after the bullet
 -}
 renderItem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderItem params acc _ block children =
-    let
-        totalLeftMargin =
-            Render.Sizing.scaled params.sizing params.sizing.marginLeft + toFloat (block.indent * 20)
-    in
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "display" "flex"
-         , HA.style "margin-left" (String.fromFloat totalLeftMargin ++ "px")
-         , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)
+         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
          , HA.style "margin-bottom" (Render.Sizing.itemSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
@@ -308,15 +304,12 @@ renderNumbered params acc _ block children =
 
                 Nothing ->
                     ""
-
-        totalLeftMargin =
-            Render.Sizing.scaled params.sizing params.sizing.marginLeft + toFloat (block.indent * 20)
     in
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "display" "flex"
-         , HA.style "margin-left" (String.fromFloat totalLeftMargin ++ "px")
-         , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)
+         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
          , HA.style "margin-bottom" (Render.Sizing.itemSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
@@ -341,14 +334,11 @@ renderNumbered params acc _ block children =
 -}
 renderItemList : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderItemList params acc _ block children =
-    let
-        totalLeftMargin =
-            Render.Sizing.scaled params.sizing params.sizing.marginLeft + toFloat (18 + block.indent * 20)
-    in
     [ Html.ul
         ([ idAttr block.meta.id
-         , HA.style "margin-left" (String.fromFloat totalLeftMargin ++ "px")
-         , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)
+         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "padding-left" "1.5em"
+         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
          , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
@@ -366,14 +356,11 @@ renderItemList params acc _ block children =
 -}
 renderNumberedList : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderNumberedList params acc _ block children =
-    let
-        totalLeftMargin =
-            Render.Sizing.scaled params.sizing params.sizing.marginLeft + toFloat (18 + block.indent * 20)
-    in
     [ Html.ol
         ([ idAttr block.meta.id
-         , HA.style "margin-left" (String.fromFloat totalLeftMargin ++ "px")
-         , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)
+         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "padding-left" "1.5em"
+         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
          , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
@@ -546,9 +533,9 @@ renderQuotation params acc _ block children =
     [ Html.blockquote
         ([ idAttr block.meta.id
          , HA.style "border-left" "3px solid #ccc"
-         , HA.style "padding-left" "12px" -- TODO: shouldn't use literalss
-         , HA.style "margin-left" (Render.Sizing.marginLeftPx params.sizing)
-         , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)
+         , HA.style "padding-left" "12px"
+         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
          , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          , HA.style "font-style" "italic"
          ]
