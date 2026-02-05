@@ -259,22 +259,27 @@ renderSubsubsection params acc _ block children =
     - First item
     - Second item
 
+Uses flexbox so subsequent lines align with the first character after the bullet.
+
 -}
 renderItem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderItem params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
+         , HA.style "display" "flex"
          , HA.style "margin-left" (String.fromInt (block.indent * 20) ++ "px")
          , HA.style "margin-bottom" (Render.Sizing.itemSpacingPx params.sizing)
-         , HA.style "padding-left" "1.5em"
-         , HA.style "text-indent" "-1.5em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (Html.span [ HA.style "margin-right" "0.5em" ] [ Html.text "•" ]
-            :: renderBody params acc block
-            ++ children
-        )
+        [ Html.span
+            [ HA.style "flex-shrink" "0"
+            , HA.style "width" "1.5em"
+            ]
+            [ Html.text "•" ]
+        , Html.div []
+            (renderBody params acc block ++ children)
+        ]
     ]
 
 
@@ -283,6 +288,8 @@ renderItem params acc _ block children =
     . First item
     . Second item
 
+Uses flexbox so subsequent lines align with the first character after the number.
+
 -}
 renderNumbered : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderNumbered params acc _ block children =
@@ -290,24 +297,27 @@ renderNumbered params acc _ block children =
         index =
             case Dict.get block.meta.id acc.numberedItemDict of
                 Just info ->
-                    String.fromInt info.index ++ ". "
+                    String.fromInt info.index ++ "."
 
                 Nothing ->
                     ""
     in
     [ Html.div
         ([ idAttr block.meta.id
+         , HA.style "display" "flex"
          , HA.style "margin-left" (String.fromInt (block.indent * 20) ++ "px")
          , HA.style "margin-bottom" (Render.Sizing.itemSpacingPx params.sizing)
-         , HA.style "padding-left" "1.5em"
-         , HA.style "text-indent" "-1.5em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (Html.span [ HA.style "margin-right" "0.5em" ] [ Html.text index ]
-            :: renderBody params acc block
-            ++ children
-        )
+        [ Html.span
+            [ HA.style "flex-shrink" "0"
+            , HA.style "width" "1.5em"
+            ]
+            [ Html.text index ]
+        , Html.div []
+            (renderBody params acc block ++ children)
+        ]
     ]
 
 
