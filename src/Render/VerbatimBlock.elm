@@ -9,6 +9,7 @@ import Either exposing (Either(..))
 import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Math exposing (DisplayMode(..), mathText)
+import Render.Sizing
 import Render.Utility exposing (idAttr, selectedStyle)
 import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, MathMacroDict, Msg(..), Theme(..))
 
@@ -80,7 +81,7 @@ renderDefault : CompilerParameters -> Accumulator -> String -> ExpressionBlock -
 renderDefault params _ name block _ =
     [ Html.div
         ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
@@ -289,7 +290,7 @@ renderCode params _ _ block _ =
             , HA.style "border-radius" "4px"
             , HA.style "overflow-x" "auto"
             , HA.style "font-family" "monospace"
-            , HA.style "font-size" "13px"
+            , HA.style "font-size" (Render.Sizing.codeSize params.sizing)
             , HA.style "pointer-events" "none"
             ]
             [ Html.code
@@ -442,7 +443,7 @@ renderSvg params _ _ block _ =
         )
         [ Html.pre
             [ HA.style "font-family" "monospace"
-            , HA.style "font-size" "13px"
+            , HA.style "font-size" (Render.Sizing.codeSize params.sizing)
             , HA.style "pointer-events" "none"
             ]
             [ Html.text "[SVG content - requires JS integration]" ]
@@ -1035,7 +1036,7 @@ renderVerbatim params _ _ block _ =
         )
         [ Html.pre
             [ HA.style "font-family" "monospace"
-            , HA.style "font-size" "13px"
+            , HA.style "font-size" (Render.Sizing.codeSize params.sizing)
             , HA.style "background-color" "#f5f5f5"
             , HA.style "padding" "1em"
             , HA.style "padding-left" "2em"

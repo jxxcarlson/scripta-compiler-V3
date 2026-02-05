@@ -210,7 +210,7 @@ type alias CompilerParameters =
     , editCount : Int
     , width : Int
     , showTOC : Bool
-    , paragraphSpacing : Int
+    , sizing : SizingConfig
     , maxLevel : Int
     }
 
@@ -260,3 +260,20 @@ type Msg
 type Theme
     = Light
     | Dark
+
+
+{-| Configuration for sizing and spacing.
+All values in pixels (Float), with a scale multiplier for global adjustments.
+-}
+type alias SizingConfig =
+    { baseFontSize : Float -- in px, default 14.0
+    , paragraphSpacing : Float -- in px, default 12.0
+    , scale : Float -- multiplier, default 1.0
+    }
+
+
+{-| Default sizing configuration.
+-}
+defaultSizingConfig : SizingConfig
+defaultSizingConfig =
+    { baseFontSize = 14.0, paragraphSpacing = 12.0, scale = 1.0 }

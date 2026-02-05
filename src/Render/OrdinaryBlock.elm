@@ -11,6 +11,7 @@ import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as Decode
 import Render.Expression
+import Render.Sizing
 import Render.Utility exposing (idAttr, selectedStyle)
 import V3.Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Msg(..), TermLoc, Theme(..))
 
@@ -108,7 +109,7 @@ renderDefault : CompilerParameters -> Accumulator -> String -> ExpressionBlock -
 renderDefault params acc name block children =
     [ Html.div
         ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
@@ -261,13 +262,19 @@ renderSubsubsection params acc _ block children =
 -}
 renderItem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderItem params acc _ block children =
-    [ Html.li
+    [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin-left" (String.fromInt (block.indent * 20) ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.itemSpacingPx params.sizing)
+         , HA.style "padding-left" "1.5em"
+         , HA.style "text-indent" "-1.5em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderBody params acc block ++ children)
+        (Html.span [ HA.style "margin-right" "0.5em" ] [ Html.text "•" ]
+            :: renderBody params acc block
+            ++ children
+        )
     ]
 
 
@@ -291,7 +298,9 @@ renderNumbered params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin-left" (String.fromInt (block.indent * 20) ++ "px")
-         , HA.style "margin-bottom" "0.5em"
+         , HA.style "margin-bottom" (Render.Sizing.itemSpacingPx params.sizing)
+         , HA.style "padding-left" "1.5em"
+         , HA.style "text-indent" "-1.5em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
@@ -314,7 +323,7 @@ renderItemList params acc _ block children =
     [ Html.ul
         ([ idAttr block.meta.id
          , HA.style "margin-left" (String.fromInt (18 + block.indent * 20) ++ "px")
-         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
@@ -334,7 +343,7 @@ renderNumberedList params acc _ block children =
     [ Html.ol
         ([ idAttr block.meta.id
          , HA.style "margin-left" (String.fromInt (18 + block.indent * 20) ++ "px")
-         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
@@ -1010,7 +1019,7 @@ renderEndnotes params acc _ block _ =
         )
         (Html.div
             [ HA.style "font-weight" "bold"
-            , HA.style "font-size" "18px"
+            , HA.style "font-size" (Render.Sizing.toPx params.sizing 18.0)
             , HA.style "margin-bottom" "0.5em"
             ]
             [ Html.text "Endnotes" ]
@@ -1138,7 +1147,7 @@ renderQuestion : CompilerParameters -> Accumulator -> String -> ExpressionBlock 
 renderQuestion params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          , HA.style "padding" "0.5em"
          , HA.style "background-color" "#f0f8ff"
          , HA.style "border-left" "3px solid #4a90d9"
@@ -1162,7 +1171,7 @@ renderAnswer : CompilerParameters -> Accumulator -> String -> ExpressionBlock ->
 renderAnswer params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          , HA.style "padding" "0.5em"
          , HA.style "background-color" "#f0fff0"
          , HA.style "border-left" "3px solid #4a9"
@@ -1190,7 +1199,7 @@ renderReveal : CompilerParameters -> Accumulator -> String -> ExpressionBlock ->
 renderReveal params acc _ block children =
     [ Html.details
         ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
@@ -1382,7 +1391,7 @@ renderEnv params acc _ block children =
     in
     [ Html.div
         ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          , HA.style "padding" "0.5em"
          , HA.style "border" "1px solid #ddd"
          ]

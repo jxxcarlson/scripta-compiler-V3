@@ -8,6 +8,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Render.Expression
 import Render.OrdinaryBlock
+import Render.Sizing
 import Render.Utility exposing (idAttr, selectedStyle)
 import Render.VerbatimBlock
 import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Heading(..), Msg(..))
@@ -39,7 +40,7 @@ renderParagraph params acc block children =
             Html.div
                 ([ idAttr block.meta.id
                  , HA.style "color" "red"
-                 , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+                 , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                  ]
                     ++ selectedStyle params.selectedId block.meta.id params.theme
                 )
@@ -54,7 +55,7 @@ renderParagraph params acc block children =
             else
                 Html.p
                     ([ idAttr block.meta.id
-                     , HA.style "margin-bottom" (String.fromInt params.paragraphSpacing ++ "px")
+                     , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                      , HA.style "line-height" "1.5"
                      ]
                         ++ selectedStyle params.selectedId block.meta.id params.theme

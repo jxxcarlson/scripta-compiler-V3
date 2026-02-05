@@ -31,7 +31,7 @@ defaultCompilerParameters =
     , editCount = 0
     , width = 600
     , showTOC = False
-    , paragraphSpacing = 18
+    , sizing = { baseFontSize = 14.0, paragraphSpacing = 18.0, scale = 1.0 }
     , maxLevel = 1
     }
 
