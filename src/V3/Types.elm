@@ -268,6 +268,8 @@ All values in pixels (Float), with a scale multiplier for global adjustments.
 type alias SizingConfig =
     { baseFontSize : Float -- in px, default 14.0
     , paragraphSpacing : Float -- in px, default 12.0
+    , marginLeft : Float -- in px, default 0.0
+    , marginRight : Float -- in px, default 0.0
     , scale : Float -- multiplier, default 1.0
     }
 
@@ -276,4 +278,9 @@ type alias SizingConfig =
 -}
 defaultSizingConfig : SizingConfig
 defaultSizingConfig =
-    { baseFontSize = 14.0, paragraphSpacing = 12.0, scale = 1.0 }
+    { baseFontSize = 14.0
+    , paragraphSpacing = 12.0
+    , marginLeft = 0.0
+    , marginRight = 0.0
+    , scale = 1.0
+    }

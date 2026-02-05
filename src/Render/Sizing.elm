@@ -1,6 +1,9 @@
 module Render.Sizing exposing
     ( codeSize
     , itemSpacingPx
+    , marginLeftPx
+    , marginLeftWithDeltaPx
+    , marginRightPx
     , paragraphSpacingPx
     , scaled
     , toEm
@@ -62,3 +65,24 @@ Code size is 93% of base font size, scaled.
 codeSize : SizingConfig -> String
 codeSize config =
     toPx config (config.baseFontSize * 0.93)
+
+
+{-| Get left margin as a CSS px string, applying scale.
+-}
+marginLeftPx : SizingConfig -> String
+marginLeftPx config =
+    toPx config config.marginLeft
+
+
+{-| Get left margin as a CSS px string, applying increment delta and then scale.
+-}
+marginLeftWithDeltaPx : Float -> SizingConfig -> String
+marginLeftWithDeltaPx delta config =
+    toPx config (config.marginLeft + delta)
+
+
+{-| Get right margin as a CSS px string, applying scale.
+-}
+marginRightPx : SizingConfig -> String
+marginRightPx config =
+    toPx config config.marginRight

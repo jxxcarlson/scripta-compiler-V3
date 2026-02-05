@@ -15,7 +15,6 @@ Documents are persisted to localStorage.
 import Browser
 import Browser.Dom
 import Browser.Events
-import V3.Compiler
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -23,6 +22,7 @@ import Html.Keyed as Keyed
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Task
+import V3.Compiler
 import V3.Types exposing (CompilerOutput, Filter(..), Msg(..), Theme(..))
 
 
@@ -634,6 +634,14 @@ sidebarWidth =
 view : Model -> Html Msg
 view model =
     let
+        sizing =
+            { baseFontSize = 14.0
+            , paragraphSpacing = 18.0
+            , marginLeft = 0.0
+            , marginRight = 120.0
+            , scale = 1.0
+            }
+
         params : V3.Types.CompilerParameters
         params =
             { filter = NoFilter
@@ -643,7 +651,7 @@ view model =
             , editCount = model.editCount
             , width = panelWidth model
             , showTOC = False
-            , paragraphSpacing = 18
+            , sizing = sizing
             , maxLevel = 0
             }
 
