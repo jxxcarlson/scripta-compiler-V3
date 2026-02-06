@@ -32,7 +32,7 @@ render params acc name block children =
 blockDict : Dict String (CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg))
 blockDict =
     Dict.fromList
-        [ ( "math", renderMath )
+        [ ( "math", renderEquation )
         , ( "equation", renderEquation )
         , ( "aligned", renderAligned )
         , ( "code", renderCode )
