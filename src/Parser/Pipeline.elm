@@ -44,12 +44,22 @@ parseBody block =
             Right (parseLines block.meta.lineNumber block.body)
 
         Ordinary "item" ->
-            -- Single item: parse firstLine content (strip "- " prefix)
-            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber (stripListPrefix block.firstLine)) emptyExprMeta ]
+            -- Single item: parse firstLine + body as one paragraph
+            let
+                content =
+                    (stripListPrefix block.firstLine :: block.body)
+                        |> String.join " "
+            in
+            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber content) emptyExprMeta ]
 
         Ordinary "numbered" ->
-            -- Single numbered item: parse firstLine content (strip ". " prefix)
-            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber (stripListPrefix block.firstLine)) emptyExprMeta ]
+            -- Single numbered item: parse firstLine + body as one paragraph
+            let
+                content =
+                    (stripListPrefix block.firstLine :: block.body)
+                        |> String.join " "
+            in
+            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber content) emptyExprMeta ]
 
         Ordinary "itemList" ->
             -- Multiple items: parse firstLine + each body line as separate ExprList

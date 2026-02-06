@@ -284,7 +284,7 @@ defaultSizingConfig =
     , paragraphSpacing = 12.0
     , marginLeft = 0.0
     , marginRight = 0.0
-    , indentation = 60.0
+    , indentation = 20.0
     , indentUnit = 2
     , scale = 1.0
     }
