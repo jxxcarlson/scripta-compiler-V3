@@ -611,15 +611,16 @@ indexToRoman n =
     | theorem
     Every even number greater than 2 is the sum of two primes.
 
-    | theorem Goldbach's Conjecture
+    | theorem
+    | title:Goldbach's Conjecture
     Every even number greater than 2 is the sum of two primes.
 
 Supported environments: theorem, lemma, proposition, corollary, definition,
 example, remark, note, exercise, problem, question, axiom.
 
-Arguments:
+Properties:
 
-  - Optional label (e.g., "Goldbach's Conjecture")
+  - title: Optional title (e.g., "Goldbach's Conjecture")
 
 -}
 renderTheorem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
@@ -641,13 +642,13 @@ renderTheorem params acc name block children =
                 Nothing ->
                     ""
 
-        -- User-provided label (e.g., "Goldbach's Conjecture")
+        -- User-provided title (e.g., "Goldbach's Conjecture")
         userLabel =
-            List.head block.args |> Maybe.withDefault ""
+            Dict.get "title" block.properties |> Maybe.withDefault ""
 
         labelDisplay =
             if userLabel /= "" then
-                " (" ++ userLabel ++ ")"
+                " " ++ userLabel ++ ":"
 
             else
                 ""
@@ -670,10 +671,13 @@ renderTheorem params acc name block children =
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
         [ Html.span
-            [ HA.style "font-weight" "bold"
-            , HA.style "margin-right" "0.5em"
+            [ HA.style "font-weight" "600"
             ]
-            [ Html.text (theoremTitle ++ numberString ++ labelDisplay ++ ".") ]
+            [ Html.text (theoremTitle ++ numberString ++ ".") ]
+        , Html.span
+            [ HA.style "margin-right" "0.5em"
+            ]
+            [ Html.text labelDisplay ]
         , Html.span
             [ HA.style "font-style" "italic" ]
             (renderBody params acc block ++ children)
