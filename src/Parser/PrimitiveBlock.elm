@@ -71,6 +71,7 @@ type alias State =
     , position : Int -- character position in source
     , inVerbatim : Bool -- are we in a verbatim block?
     , blocksCommitted : Int -- number of committed blocks
+    , inHeader : Bool -- are we still in the extended header (continuation lines)?
     }
 
 
@@ -85,6 +86,7 @@ init lines =
     , position = 0
     , inVerbatim = False
     , blocksCommitted = 0
+    , inHeader = False
     }
 
 
@@ -191,6 +193,7 @@ createBlock line state =
         , inBlock = True
         , indent = line.indent
         , inVerbatim = isVerbatimLine line.content
+        , inHeader = isBlockWithHeader newBlock
     }
 
 
@@ -229,6 +232,8 @@ blockFromLine line state =
 Includes list coalescing: when consecutive item or numbered lines are found,
 the block heading changes to itemList or numberedList respectively.
 
+Also handles continuation lines for extended header syntax.
+
 -}
 addCurrentLine : Line -> State -> State
 addCurrentLine line state =
@@ -236,54 +241,71 @@ addCurrentLine line state =
         newPosition =
             state.position + String.length line.content + 1
 
-        -- Check if this line has the same list heading as current block
-        lineHeading =
-            inspectHeading line.content
-
-        currentHeading =
-            Maybe.map .heading state.currentBlock
-
-        -- Coalesce lists: item -> itemList, numbered -> numberedList
-        coalescedBlock =
-            case ( currentHeading, lineHeading ) of
-                ( Just (Ordinary "item"), Just (Ordinary "item") ) ->
-                    state.currentBlock
-                        |> Maybe.map (\b -> { b | heading = Ordinary "itemList" })
-                        |> Maybe.map (addListLineToBlock line)
-
-                ( Just (Ordinary "itemList"), Just (Ordinary "item") ) ->
-                    state.currentBlock
-                        |> Maybe.map (addListLineToBlock line)
-
-                ( Just (Ordinary "numbered"), Just (Ordinary "numbered") ) ->
-                    state.currentBlock
-                        |> Maybe.map (\b -> { b | heading = Ordinary "numberedList" })
-                        |> Maybe.map (addListLineToBlock line)
-
-                ( Just (Ordinary "numberedList"), Just (Ordinary "numbered") ) ->
-                    state.currentBlock
-                        |> Maybe.map (addListLineToBlock line)
-
-                ( Just (Ordinary "itemList"), Nothing ) ->
-                    -- Continuation of last item in list
-                    state.currentBlock
-                        |> Maybe.map (appendToLastListItem line)
-
-                ( Just (Ordinary "numberedList"), Nothing ) ->
-                    -- Continuation of last numbered item in list
-                    state.currentBlock
-                        |> Maybe.map (appendToLastListItem line)
-
-                _ ->
-                    state.currentBlock
-                        |> Maybe.map (addLineToBlock line)
+        -- Check if this is a continuation line for extended header syntax
+        isContinuation =
+            state.inHeader && isContinuationLine line.content
     in
-    { state
-        | currentBlock = coalescedBlock
-        , lines = List.drop 1 state.lines
-        , lineNumber = state.lineNumber + 1
-        , position = newPosition
-    }
+    if isContinuation then
+        -- Merge continuation line's args/properties into the current block
+        { state
+            | currentBlock = Maybe.map (mergeContinuationLine line) state.currentBlock
+            , lines = List.drop 1 state.lines
+            , lineNumber = state.lineNumber + 1
+            , position = newPosition
+        }
+
+    else
+        -- Normal line processing (end of header, now in body)
+        let
+            -- Check if this line has the same list heading as current block
+            lineHeading =
+                inspectHeading line.content
+
+            currentHeading =
+                Maybe.map .heading state.currentBlock
+
+            -- Coalesce lists: item -> itemList, numbered -> numberedList
+            coalescedBlock =
+                case ( currentHeading, lineHeading ) of
+                    ( Just (Ordinary "item"), Just (Ordinary "item") ) ->
+                        state.currentBlock
+                            |> Maybe.map (\b -> { b | heading = Ordinary "itemList" })
+                            |> Maybe.map (addListLineToBlock line)
+
+                    ( Just (Ordinary "itemList"), Just (Ordinary "item") ) ->
+                        state.currentBlock
+                            |> Maybe.map (addListLineToBlock line)
+
+                    ( Just (Ordinary "numbered"), Just (Ordinary "numbered") ) ->
+                        state.currentBlock
+                            |> Maybe.map (\b -> { b | heading = Ordinary "numberedList" })
+                            |> Maybe.map (addListLineToBlock line)
+
+                    ( Just (Ordinary "numberedList"), Just (Ordinary "numbered") ) ->
+                        state.currentBlock
+                            |> Maybe.map (addListLineToBlock line)
+
+                    ( Just (Ordinary "itemList"), Nothing ) ->
+                        -- Continuation of last item in list
+                        state.currentBlock
+                            |> Maybe.map (appendToLastListItem line)
+
+                    ( Just (Ordinary "numberedList"), Nothing ) ->
+                        -- Continuation of last numbered item in list
+                        state.currentBlock
+                            |> Maybe.map (appendToLastListItem line)
+
+                    _ ->
+                        state.currentBlock
+                            |> Maybe.map (addLineToBlock line)
+        in
+        { state
+            | currentBlock = coalescedBlock
+            , lines = List.drop 1 state.lines
+            , lineNumber = state.lineNumber + 1
+            , position = newPosition
+            , inHeader = False
+        }
 
 
 {-| Inspect a line to determine what heading it would produce.
@@ -402,6 +424,7 @@ commitBlock line state =
         , inBlock = False
         , inVerbatim = False
         , blocksCommitted = state.blocksCommitted + 1
+        , inHeader = False
     }
 
 
@@ -651,3 +674,123 @@ isVerbatimLine line =
     String.startsWith "|| " trimmed
         || String.startsWith "```" trimmed
         || String.startsWith "$$" trimmed
+
+
+
+-- CONTINUATION LINE HANDLING
+
+
+{-| List of known ordinary block names (not verbatim).
+Used to distinguish continuation lines from new blocks.
+-}
+ordinaryNames : List String
+ordinaryNames =
+    [ "section"
+    , "theorem"
+    , "definition"
+    , "lemma"
+    , "corollary"
+    , "proposition"
+    , "proof"
+    , "remark"
+    , "example"
+    , "exercise"
+    , "note"
+    , "problem"
+    , "solution"
+    , "question"
+    , "answer"
+    , "abstract"
+    , "title"
+    , "subtitle"
+    , "author"
+    , "date"
+    , "contents"
+    , "index"
+    , "bibliography"
+    , "quotation"
+    , "item"
+    , "numbered"
+    , "heading"
+    , "subheading"
+    , "document"
+    , "endnotes"
+    , "set-key"
+    ]
+
+
+{-| Check if a block has a header (Ordinary or Verbatim, not Paragraph).
+-}
+isBlockWithHeader : PrimitiveBlock -> Bool
+isBlockWithHeader block =
+    case block.heading of
+        Paragraph ->
+            False
+
+        _ ->
+            True
+
+
+{-| Check if a line is a continuation line (extends the header with more args/properties).
+A continuation line:
+1. Starts with "| " (pipe + space)
+2. The first word after "| " is NOT a known block name (unless it contains a colon)
+-}
+isContinuationLine : String -> Bool
+isContinuationLine line =
+    let
+        trimmed =
+            String.trim line
+    in
+    if String.startsWith "| " trimmed then
+        let
+            afterPrefix =
+                String.dropLeft 2 trimmed
+
+            firstWord =
+                String.words afterPrefix |> List.head |> Maybe.withDefault ""
+        in
+        -- It's a continuation if the first word contains ":" (it's a property)
+        -- OR if the first word is NOT a known block name
+        String.contains ":" firstWord
+            || not (isKnownBlockName firstWord)
+
+    else
+        False
+
+
+{-| Check if a name is a known block name (verbatim or ordinary).
+-}
+isKnownBlockName : String -> Bool
+isKnownBlockName name =
+    List.member name verbatimNames || List.member name ordinaryNames
+
+
+{-| Merge a continuation line's args and properties into a block.
+-}
+mergeContinuationLine : Line -> PrimitiveBlock -> PrimitiveBlock
+mergeContinuationLine line block =
+    let
+        trimmed =
+            String.trim line.content
+
+        afterPrefix =
+            String.dropLeft 2 trimmed
+
+        parts =
+            String.words afterPrefix
+
+        ( newArgs, newProps ) =
+            Tools.KV.argsAndPropertiesFromList parts
+
+        ( mergedArgs, mergedProps ) =
+            Tools.KV.mergeArgsAndProperties ( block.args, block.properties ) ( newArgs, newProps )
+
+        meta =
+            block.meta
+    in
+    { block
+        | args = mergedArgs
+        , properties = mergedProps
+        , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
+    }

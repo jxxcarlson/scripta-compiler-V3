@@ -1,4 +1,4 @@
-module Tools.KV exposing (argsAndPropertiesFromList)
+module Tools.KV exposing (argsAndPropertiesFromList, mergeArgsAndProperties)
 
 import Dict exposing (Dict)
 import List.Extra
@@ -18,6 +18,17 @@ argsAndPropertiesFromList words =
             namedArgs |> prepareList |> prepareKVData
     in
     ( args, properties )
+
+
+{-| Merge two (args, properties) pairs. Args are concatenated, properties are merged
+with the second pair's values taking precedence for duplicate keys.
+-}
+mergeArgsAndProperties :
+    ( List String, Dict String String )
+    -> ( List String, Dict String String )
+    -> ( List String, Dict String String )
+mergeArgsAndProperties ( args1, props1 ) ( args2, props2 ) =
+    ( args1 ++ args2, Dict.union props2 props1 )
 
 
 prepareKVData : List String -> Dict String String

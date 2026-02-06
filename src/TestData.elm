@@ -81,3 +81,64 @@ imgStr2 =
 | image width:400 caption:Captain Yada
 https://foo.com/yada.jpg
 """
+
+
+
+-- Multi-line header test data
+
+
+multiLineHeader1 =
+    """
+| image width:400
+| caption:A beautiful sunset
+| alt:Sunset over mountains
+https://example.com/sunset.jpg
+"""
+
+
+multiLineHeader2 =
+    """
+| theorem numbered
+| label:main-theorem
+| title:Main Result
+There are infinitely many primes.
+"""
+
+
+multiLineHeader3 =
+    """
+| code lang:elm
+| highlight:1-5
+module Main exposing (..)
+"""
+
+
+multiLineArgs =
+    """
+| block arg1 arg2
+| arg3 arg4
+Body content
+"""
+
+
+multiLineMixed =
+    """
+| theorem numbered
+| label:pythagoras
+| title:Pythagorean Theorem
+For a right triangle with legs a and b and hypotenuse c:
+a^2 + b^2 = c^2
+"""
+
+
+{-| Test case from user: block name on first line with no args,
+then continuation lines for args and properties.
+-}
+userTestCase =
+    """
+| theorem
+| foo bar
+| title:Pythagorean theorem
+| label:pyth
+a^2 + b^2 = c^2
+"""
