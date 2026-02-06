@@ -264,6 +264,16 @@ addCurrentLine line state =
                     state.currentBlock
                         |> Maybe.map (addListLineToBlock line)
 
+                ( Just (Ordinary "itemList"), Nothing ) ->
+                    -- Continuation of last item in list
+                    state.currentBlock
+                        |> Maybe.map (appendToLastListItem line)
+
+                ( Just (Ordinary "numberedList"), Nothing ) ->
+                    -- Continuation of last numbered item in list
+                    state.currentBlock
+                        |> Maybe.map (appendToLastListItem line)
+
                 _ ->
                     state.currentBlock
                         |> Maybe.map (addLineToBlock line)
@@ -308,6 +318,32 @@ addListLineToBlock line block =
     in
     { block
         | body = contentToAdd :: block.body
+        , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
+    }
+
+
+{-| Append a continuation line to the last list item in a list block.
+-}
+appendToLastListItem : Line -> PrimitiveBlock -> PrimitiveBlock
+appendToLastListItem line block =
+    let
+        contentToAdd =
+            String.trim line.content
+
+        meta =
+            block.meta
+
+        -- body is in reverse order, so first element is the last item
+        updatedBody =
+            case block.body of
+                lastItem :: rest ->
+                    (lastItem ++ " " ++ contentToAdd) :: rest
+
+                [] ->
+                    [ contentToAdd ]
+    in
+    { block
+        | body = updatedBody
         , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
     }
 

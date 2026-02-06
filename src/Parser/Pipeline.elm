@@ -77,14 +77,44 @@ parseBody block =
 
 
 {-| Parse list items, each becoming an ExprList with stripped prefix.
+Lines that don't start with "- " or ". " are appended to the previous item.
 -}
 parseListItems : Int -> Int -> List String -> List Expression
 parseListItems indent lineNumber items =
-    List.map
-        (\item ->
-            ExprList indent (Expression.parse lineNumber (stripListPrefix item)) emptyExprMeta
+    items
+        |> groupListItems
+        |> List.map
+            (\item ->
+                ExprList indent (Expression.parse lineNumber (stripListPrefix item)) emptyExprMeta
+            )
+
+
+{-| Group list items: lines without "- " or ". " prefix are appended to previous item.
+-}
+groupListItems : List String -> List String
+groupListItems items =
+    List.foldl
+        (\line acc ->
+            let
+                trimmed =
+                    String.trim line
+            in
+            if String.startsWith "- " trimmed || String.startsWith ". " trimmed then
+                -- New list item
+                line :: acc
+
+            else
+                -- Continuation: append to previous item
+                case acc of
+                    prev :: rest ->
+                        (prev ++ " " ++ trimmed) :: rest
+
+                    [] ->
+                        [ line ]
         )
+        []
         items
+        |> List.reverse
 
 
 {-| Strip list prefix ("- " or ". ") from a string.
