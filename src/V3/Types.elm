@@ -247,6 +247,7 @@ type Msg
     | SendBlockMeta BlockMeta
     | SelectId String
     | HighlightId String
+    | ExpandImage String
     | NoOp
 
 

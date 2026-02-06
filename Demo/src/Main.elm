@@ -584,6 +584,10 @@ update msg model =
                 V3.Types.HighlightId id ->
                     ( { model | selectedId = id, debugClickCount = newClickCount }, Cmd.none )
 
+                V3.Types.ExpandImage _ ->
+                    -- Image expansion not implemented in Demo app
+                    ( { model | debugClickCount = newClickCount }, Cmd.none )
+
                 V3.Types.NoOp ->
                     ( { model | debugClickCount = newClickCount }, Cmd.none )
 

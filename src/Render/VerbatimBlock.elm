@@ -8,6 +8,7 @@ import ETeX.Transform
 import Either exposing (Either(..))
 import Html exposing (Html)
 import Html.Attributes as HA
+import Html.Events
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Sizing
 import Render.Utility exposing (idAttr, selectedStyle)
@@ -642,56 +643,14 @@ renderImage params _ _ block _ =
         isExpandable =
             List.member "expandable" block.args
 
-        lightboxId =
-            "lightbox-" ++ block.meta.id
-
-        -- Expandable: click to show overlay
+        -- Expandable: click to show overlay via Elm message
         expandableImage =
-            Html.span []
-                [ -- Clickable thumbnail
-                  Html.a
-                    [ HA.href ("#" ++ lightboxId)
-                    , HA.style "cursor" "zoom-in"
-                    , HA.style "display" "inline-block"
-                    ]
-                    [ imageElement ]
-
-                -- Lightbox overlay (hidden until targeted)
-                , Html.a
-                    [ HA.id lightboxId
-                    , HA.href "#"
-                    , HA.style "position" "fixed"
-                    , HA.style "top" "0"
-                    , HA.style "left" "0"
-                    , HA.style "width" "100vw"
-                    , HA.style "height" "100vh"
-                    , HA.style "background" "rgba(0, 0, 0, 0.85)"
-                    , HA.style "display" "flex"
-                    , HA.style "align-items" "center"
-                    , HA.style "justify-content" "center"
-                    , HA.style "z-index" "9999"
-                    , HA.style "opacity" "0"
-                    , HA.style "pointer-events" "none"
-                    , HA.style "transition" "opacity 0.2s"
-                    , HA.style "cursor" "zoom-out"
-                    ]
-                    [ -- Full-size image (pointer-events:none so clicks go to parent)
-                      Html.img
-                        [ HA.src src
-                        , HA.alt description
-                        , HA.style "max-width" "90vw"
-                        , HA.style "max-height" "90vh"
-                        , HA.style "object-fit" "contain"
-                        , HA.style "pointer-events" "none"
-                        ]
-                        []
-                    ]
-
-                -- CSS for :target (inline style element)
-                , Html.node "style"
-                    []
-                    [ Html.text ("#" ++ lightboxId ++ ":target { opacity: 1 !important; pointer-events: auto !important; }") ]
+            Html.span
+                [ HA.style "cursor" "zoom-in"
+                , HA.style "display" "inline-block"
+                , Html.Events.onClick (ExpandImage src)
                 ]
+                [ imageElement ]
 
         -- Choose which image display to use
         imageDisplay =
