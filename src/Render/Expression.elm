@@ -84,11 +84,11 @@ renderVFun params acc name content meta =
             mathText params.editCount meta.id InlineMathMode ("\\ce{" ++ content ++ "}")
 
         "code" ->
-            Html.code [ HA.id meta.id, HA.style "font-size" "1em" ] [ Html.text content ]
+            Html.code [ HA.id meta.id, HA.style "font-size" "0.9em" ] [ Html.text content ]
 
         "`" ->
             -- Backtick code (alias for code)
-            Html.code [ HA.id meta.id, HA.style "font-size" "1em" ] [ Html.text content ]
+            Html.code [ HA.id meta.id, HA.style "font-size" "0.9em" ] [ Html.text content ]
 
         _ ->
             -- Default: just show the content
@@ -261,7 +261,7 @@ markupDict =
 -}
 renderStrong : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderStrong params acc args meta =
-    Html.span [ HA.id meta.id, HA.style "font-weight" "600" ] (renderList params acc args)
+    Html.span [ HA.id meta.id, HA.style "font-weight" "570" ] (renderList params acc args)
 
 
 {-| Render italic/emphasized text.
