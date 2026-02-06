@@ -261,7 +261,7 @@ markupDict =
 -}
 renderStrong : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderStrong params acc args meta =
-    Html.span [ HA.id meta.id, HA.style "font-weight" "570" ] (renderList params acc args)
+    Html.span [ HA.id meta.id, HA.style "font-weight" "600" ] (renderList params acc args)
 
 
 {-| Render italic/emphasized text.
