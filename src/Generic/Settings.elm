@@ -37,4 +37,4 @@ numberedBlockNames =
 -}
 indentationQuantum : Int
 indentationQuantum =
-    3
+    2

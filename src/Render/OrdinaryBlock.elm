@@ -266,12 +266,31 @@ Uses flexbox so subsequent lines align with the first character after the bullet
 -}
 renderItem : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderItem params acc _ block children =
+    let
+        -- Items with children don't need margin-bottom (last child provides it)
+        marginBottom =
+            if List.isEmpty children then
+                Render.Sizing.itemSpacingPx params.sizing
+
+            else
+                "0px"
+
+        -- Wrap children with margin-top to space them from parent content
+        wrappedChildren =
+            if List.isEmpty children then
+                []
+
+            else
+                [ Html.div
+                    [ HA.style "margin-top" (Render.Sizing.itemSpacingPx params.sizing) ]
+                    children
+                ]
+    in
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "display" "flex"
-         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
-         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
-         , HA.style "margin-bottom" (Render.Sizing.itemSpacingPx params.sizing)
+         , HA.style "margin-left" "0px"
+         , HA.style "margin-bottom" marginBottom
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
@@ -281,7 +300,7 @@ renderItem params acc _ block children =
             ]
             [ Html.text "•" ]
         , Html.div []
-            (renderBody params acc block ++ children)
+            (renderBody params acc block ++ wrappedChildren)
         ]
     ]
 
@@ -300,17 +319,35 @@ renderNumbered params acc _ block children =
         index =
             case Dict.get block.meta.id acc.numberedItemDict of
                 Just info ->
-                    String.fromInt info.index ++ "."
+                    formatListIndex info.level info.index
 
                 Nothing ->
                     ""
+
+        -- Items with children don't need margin-bottom (last child provides it)
+        marginBottom =
+            if List.isEmpty children then
+                Render.Sizing.itemSpacingPx params.sizing
+
+            else
+                "0px"
+
+        -- Wrap children with margin-top to space them from parent content
+        wrappedChildren =
+            if List.isEmpty children then
+                []
+
+            else
+                [ Html.div
+                    [ HA.style "margin-top" (Render.Sizing.itemSpacingPx params.sizing) ]
+                    children
+                ]
     in
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "display" "flex"
-         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
-         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
-         , HA.style "margin-bottom" (Render.Sizing.itemSpacingPx params.sizing)
+         , HA.style "margin-left" "0px"
+         , HA.style "margin-bottom" marginBottom
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
@@ -320,7 +357,7 @@ renderNumbered params acc _ block children =
             ]
             [ Html.text index ]
         , Html.div []
-            (renderBody params acc block ++ children)
+            (renderBody params acc block ++ wrappedChildren)
         ]
     ]
 
@@ -336,9 +373,8 @@ renderItemList : CompilerParameters -> Accumulator -> String -> ExpressionBlock 
 renderItemList params acc _ block children =
     [ Html.ul
         ([ idAttr block.meta.id
-         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "margin-left" "0px"
          , HA.style "padding-left" "1.5em"
-         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
          , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
@@ -358,9 +394,8 @@ renderNumberedList : CompilerParameters -> Accumulator -> String -> ExpressionBl
 renderNumberedList params acc _ block children =
     [ Html.ol
         ([ idAttr block.meta.id
-         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "margin-left" "0px"
          , HA.style "padding-left" "1.5em"
-         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
          , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
@@ -392,6 +427,67 @@ renderListItemExpr params acc expr =
 
         _ ->
             Html.li [] (Render.Expression.renderList params acc [ expr ])
+
+
+{-| Format a list index based on nesting level.
+
+  - Level 0: 1. 2. 3. (numbers)
+  - Level 1: a. b. c. (lowercase letters)
+  - Level 2: i. ii. iii. (lowercase roman numerals)
+  - Level 3+: cycles back to numbers
+
+-}
+formatListIndex : Int -> Int -> String
+formatListIndex level index =
+    case modBy 3 level of
+        0 ->
+            String.fromInt index ++ "."
+
+        1 ->
+            indexToLetter index ++ "."
+
+        _ ->
+            indexToRoman index ++ "."
+
+
+{-| Convert 1-based index to lowercase letter (a, b, c, ..., z, aa, ab, ...).
+-}
+indexToLetter : Int -> String
+indexToLetter n =
+    if n <= 0 then
+        ""
+
+    else if n <= 26 then
+        String.fromChar (Char.fromCode (96 + n))
+
+    else
+        indexToLetter ((n - 1) // 26) ++ indexToLetter (modBy 26 n |> (\x -> if x == 0 then 26 else x))
+
+
+{-| Convert 1-based index to lowercase roman numeral.
+-}
+indexToRoman : Int -> String
+indexToRoman n =
+    let
+        numerals =
+            [ ( 1000, "m" ), ( 900, "cm" ), ( 500, "d" ), ( 400, "cd" )
+            , ( 100, "c" ), ( 90, "xc" ), ( 50, "l" ), ( 40, "xl" )
+            , ( 10, "x" ), ( 9, "ix" ), ( 5, "v" ), ( 4, "iv" ), ( 1, "i" )
+            ]
+
+        convert num =
+            if num <= 0 then
+                ""
+
+            else
+                case List.filter (\( v, _ ) -> v <= num) numerals |> List.head of
+                    Just ( value, symbol ) ->
+                        symbol ++ convert (num - value)
+
+                    Nothing ->
+                        ""
+    in
+    convert n
 
 
 
