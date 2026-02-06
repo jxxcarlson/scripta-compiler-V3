@@ -379,7 +379,7 @@ renderItemList params acc _ block children =
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderListItems params acc block ++ children)
+        (renderListItems params acc BulletList block ++ children)
     ]
 
 
@@ -397,36 +397,148 @@ renderNumberedList params acc _ block children =
          , HA.style "margin-left" "0px"
          , HA.style "padding-left" "1.5em"
          , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
+         , HA.style "list-style-type" "decimal"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
         )
-        (renderListItems params acc block ++ children)
+        (renderListItems params acc NumberedList block ++ children)
     ]
 
 
-{-| Render each ExprList in the body as a list item.
+{-| List type for rendering (bullet or numbered).
 -}
-renderListItems : CompilerParameters -> Accumulator -> ExpressionBlock -> List (Html Msg)
-renderListItems params acc block =
+type ListType
+    = BulletList
+    | NumberedList
+
+
+{-| Render each ExprList in the body as a list item, handling nesting.
+-}
+renderListItems : CompilerParameters -> Accumulator -> ListType -> ExpressionBlock -> List (Html Msg)
+renderListItems params acc listType block =
     case block.body of
         Right expressions ->
-            List.map (renderListItemExpr params acc) expressions
+            renderNestedListItems params acc listType 0 expressions
 
         Left _ ->
             []
 
 
-{-| Render a single ExprList as a <li> element.
+{-| Render a nested list of items. Items with higher indent become children of the preceding item.
+The depth parameter tracks nesting level for numbering style (0 = top level).
 -}
-renderListItemExpr : CompilerParameters -> Accumulator -> Expression -> Html Msg
-renderListItemExpr params acc expr =
+renderNestedListItems : CompilerParameters -> Accumulator -> ListType -> Int -> List Expression -> List (Html Msg)
+renderNestedListItems params acc listType depth expressions =
+    case expressions of
+        [] ->
+            []
+
+        first :: rest ->
+            let
+                firstIndent =
+                    getExprIndent first
+
+                -- Collect children (items with indent > firstIndent) and remaining siblings
+                ( children, siblings ) =
+                    collectChildren firstIndent rest
+
+                -- Render children as nested list if any
+                nestedList =
+                    if List.isEmpty children then
+                        []
+
+                    else
+                        let
+                            listTag =
+                                case listType of
+                                    BulletList ->
+                                        Html.ul
+
+                                    NumberedList ->
+                                        Html.ol
+
+                            -- For numbered lists, set list-style-type based on depth
+                            listStyleType =
+                                case listType of
+                                    BulletList ->
+                                        "disc"
+
+                                    NumberedList ->
+                                        case modBy 3 (depth + 1) of
+                                            0 ->
+                                                "decimal"
+
+                                            1 ->
+                                                "lower-alpha"
+
+                                            _ ->
+                                                "lower-roman"
+                        in
+                        [ listTag
+                            [ HA.style "margin-left" "0px"
+                            , HA.style "padding-left" "1.5em"
+                            , HA.style "margin-top" "0px"
+                            , HA.style "margin-bottom" "0px"
+                            , HA.style "list-style-type" listStyleType
+                            ]
+                            (renderNestedListItems params acc listType (depth + 1) children)
+                        ]
+
+                -- Render the current item with its children
+                renderedItem =
+                    renderListItemWithChildren params acc first nestedList
+            in
+            renderedItem :: renderNestedListItems params acc listType depth siblings
+
+
+{-| Collect consecutive items that are children (higher indent) of the current item.
+Returns (children, remaining siblings).
+-}
+collectChildren : Int -> List Expression -> ( List Expression, List Expression )
+collectChildren parentIndent items =
+    let
+        isChild expr =
+            getExprIndent expr > parentIndent
+    in
+    case items of
+        [] ->
+            ( [], [] )
+
+        first :: rest ->
+            if isChild first then
+                let
+                    ( moreChildren, siblings ) =
+                        collectChildren parentIndent rest
+                in
+                ( first :: moreChildren, siblings )
+
+            else
+                ( [], items )
+
+
+{-| Get the indent from an expression (ExprList stores indent as first param).
+-}
+getExprIndent : Expression -> Int
+getExprIndent expr =
+    case expr of
+        ExprList indent _ _ ->
+            indent
+
+        _ ->
+            0
+
+
+{-| Render a single list item with optional nested children.
+-}
+renderListItemWithChildren : CompilerParameters -> Accumulator -> Expression -> List (Html Msg) -> Html Msg
+renderListItemWithChildren params acc expr children =
     case expr of
         ExprList _ innerExprs meta ->
             Html.li [ HA.id meta.id ]
-                (Render.Expression.renderList params acc innerExprs)
+                (Render.Expression.renderList params acc innerExprs ++ children)
 
         _ ->
-            Html.li [] (Render.Expression.renderList params acc [ expr ])
+            Html.li [] (Render.Expression.renderList params acc [ expr ] ++ children)
 
 
 {-| Format a list index based on nesting level.

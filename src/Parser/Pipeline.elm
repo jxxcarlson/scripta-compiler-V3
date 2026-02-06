@@ -76,17 +76,28 @@ parseBody block =
             Left (String.join "\n" block.body)
 
 
-{-| Parse list items, each becoming an ExprList with stripped prefix.
+{-| Parse list items, each becoming an ExprList with its own indent level.
 Lines that don't start with "- " or ". " are appended to the previous item.
 -}
 parseListItems : Int -> Int -> List String -> List Expression
-parseListItems indent lineNumber items =
+parseListItems _ lineNumber items =
     items
         |> groupListItems
         |> List.map
             (\item ->
-                ExprList indent (Expression.parse lineNumber (stripListPrefix item)) emptyExprMeta
+                let
+                    itemIndent =
+                        measureIndent item
+                in
+                ExprList itemIndent (Expression.parse lineNumber (stripListPrefix item)) emptyExprMeta
             )
+
+
+{-| Measure the indentation of a line (number of leading spaces).
+-}
+measureIndent : String -> Int
+measureIndent str =
+    String.length str - String.length (String.trimLeft str)
 
 
 {-| Group list items: lines without "- " or ". " prefix are appended to previous item.

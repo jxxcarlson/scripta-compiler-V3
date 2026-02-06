@@ -304,14 +304,15 @@ inspectHeading content =
         Nothing
 
 
-{-| Add a list item line to a block, preserving the list prefix.
+{-| Add a list item line to a block, preserving indentation and list prefix.
 -}
 addListLineToBlock : Line -> PrimitiveBlock -> PrimitiveBlock
 addListLineToBlock line block =
     let
-        -- Preserve full line content including prefix (like V2)
+        -- Preserve full line content including indentation and prefix
+        -- This allows nested list items to be identified by their indent
         contentToAdd =
-            String.trim line.content
+            line.content
 
         meta =
             block.meta
