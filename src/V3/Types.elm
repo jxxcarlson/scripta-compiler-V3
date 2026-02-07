@@ -250,6 +250,7 @@ type Msg
     | HighlightId String
     | ExpandImage String
     | FootnoteClick { targetId : String, returnId : String }
+    | CitationClick { targetId : String, returnId : String }
     | NoOp
 
 

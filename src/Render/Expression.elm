@@ -609,7 +609,7 @@ renderCite _ acc args meta =
             Html.a
                 [ HA.id meta.id
                 , HA.href ("#" ++ targetId)
-                , HE.preventDefaultOn "click" (Decode.succeed ( SelectId targetId, True ))
+                , HE.custom "click" (Decode.succeed { message = CitationClick { targetId = targetId, returnId = meta.id }, stopPropagation = True, preventDefault = True })
                 , HA.style "color" "#0066cc"
                 , HA.style "text-decoration" "none"
                 , HA.style "cursor" "pointer"
@@ -666,6 +666,9 @@ renderTerm _ _ args meta =
                     fullText
     in
     Html.em
+        --(Render.Utility.rlSync meta
+        --    ++ [ HA.style "padding-right" "2px" ]
+        --)
         [ HA.style "padding-right" "2px" ]
         [ Html.text displayText ]
 

@@ -1659,6 +1659,7 @@ renderBibitem params acc _ block children =
          , HA.style "display" "flex"
          , HA.style "margin-bottom" "0.5em"
          ]
+            ++ selectedStyle params.selectedId bibitemId params.theme
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span
