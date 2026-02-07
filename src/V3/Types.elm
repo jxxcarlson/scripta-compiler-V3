@@ -78,6 +78,7 @@ type alias BlockMeta =
     { id : String
     , position : Int
     , lineNumber : Int
+    , bodyLineNumber : Int
     , numberOfLines : Int
     , messages : List String
     , sourceText : String

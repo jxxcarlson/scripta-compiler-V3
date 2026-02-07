@@ -114,6 +114,7 @@ renderDefault params acc name block children =
          , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.span [ HA.style "font-weight" "bold", HA.style "color" "blue" ]
             [ Html.text ("[" ++ name ++ "]") ]
@@ -201,6 +202,7 @@ renderSection params acc _ block children =
              , HA.style "margin-bottom" "0.5em"
              ]
                 ++ selectedStyle params.selectedId block.meta.id params.theme
+                ++ Render.Utility.rlBlockSync block.meta
             )
             (Html.text prefix :: renderBody params acc block)
             :: children
@@ -223,7 +225,7 @@ renderSubsection params acc _ block children =
     [ Html.div
         [ HA.id slug ]
         (Html.h3
-            (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme)
+            (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme ++ Render.Utility.rlBlockSync block.meta)
             (renderBody params acc block)
             :: children
         )
@@ -245,7 +247,7 @@ renderSubsubsection params acc _ block children =
     [ Html.div
         [ HA.id slug ]
         (Html.h4
-            (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme)
+            (idAttr block.meta.id :: selectedStyle params.selectedId block.meta.id params.theme ++ Render.Utility.rlBlockSync block.meta)
             (renderBody params acc block)
             :: children
         )
@@ -293,6 +295,7 @@ renderItem params acc _ block children =
          , HA.style "margin-bottom" marginBottom
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span
             [ HA.style "flex-shrink" "0"
@@ -350,6 +353,7 @@ renderNumbered params acc _ block children =
          , HA.style "margin-bottom" marginBottom
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span
             [ HA.style "flex-shrink" "0"
@@ -378,6 +382,7 @@ renderItemList params acc _ block children =
          , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderListItems params acc BulletList block ++ children)
     ]
@@ -400,6 +405,7 @@ renderNumberedList params acc _ block children =
          , HA.style "list-style-type" "decimal"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderListItems params acc NumberedList block ++ children)
     ]
@@ -669,6 +675,7 @@ renderTheorem params acc name block children =
             )
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span
             [ HA.style "font-weight" "600"
@@ -699,6 +706,7 @@ renderProof params acc _ block children =
          , HA.style "margin-bottom" "1em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.span [ HA.style "font-style" "italic", HA.style "margin-right" "0.5em" ]
             [ Html.text "Proof." ]
@@ -727,6 +735,7 @@ renderIndent params acc _ block children =
          , HA.style "margin-bottom" "1em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -752,6 +761,7 @@ renderQuotation params acc _ block children =
          , HA.style "font-style" "italic"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -770,6 +780,7 @@ renderCenter params acc _ block children =
          , HA.style "text-align" "center"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -789,6 +800,7 @@ renderAbstract params acc _ block children =
          , HA.style "font-size" "0.9em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ]
             [ Html.text "Abstract" ]
@@ -1023,6 +1035,7 @@ renderBox params acc _ block children =
          , HA.style "border-radius" "4px"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -1106,6 +1119,7 @@ renderTable params acc _ block _ =
                  , HA.style "padding-left" "24px"
                  ]
                     ++ selectedStyle params.selectedId block.meta.id params.theme
+                    ++ Render.Utility.rlBlockSync block.meta
                 )
                 [ Html.table [ HA.style "border-collapse" "collapse" ]
                     [ Html.tbody [] (List.map (renderTableRow params acc formatList columnWidths) rows) ]
@@ -1199,6 +1213,7 @@ renderDesc params acc _ block children =
          , HA.style "margin-bottom" "0.5em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.dt
             [ HA.style "font-weight" "bold"
@@ -1248,6 +1263,7 @@ renderEndnotes params acc _ block _ =
          , HA.style "border-top" "1px solid #ccc"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.div
             [ HA.style "font-weight" "bold"
@@ -1307,6 +1323,7 @@ renderSubheading params acc _ block children =
          , HA.style "margin-bottom" "0.5em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -1325,6 +1342,7 @@ renderCompact params acc _ block children =
          , HA.style "line-height" "1.2"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -1341,6 +1359,7 @@ renderIdentity params acc _ block children =
     [ Html.div
         (idAttr block.meta.id
             :: selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -1364,6 +1383,7 @@ renderColorBlock color params acc _ block children =
          , HA.style "color" color
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -1385,6 +1405,7 @@ renderQuestion params acc _ block children =
          , HA.style "border-left" "3px solid #4a90d9"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a90d9" ] [ Html.text "Q: " ]
             :: renderBody params acc block
@@ -1409,6 +1430,7 @@ renderAnswer params acc _ block children =
          , HA.style "border-left" "3px solid #4a9"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a9" ] [ Html.text "A: " ]
             :: renderBody params acc block
@@ -1434,6 +1456,7 @@ renderReveal params acc _ block children =
          , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.summary [ HA.style "cursor" "pointer", HA.style "font-weight" "bold" ]
             [ Html.text
@@ -1481,6 +1504,7 @@ renderChapter params acc _ block children =
          , HA.style "margin-bottom" "0.5em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.text chapterLabel :: renderBody params acc block ++ children)
     ]
@@ -1527,6 +1551,7 @@ renderUnnumberedSection params acc _ block children =
          , HA.style "margin-bottom" "0.5em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
     ]
@@ -1586,10 +1611,12 @@ renderBibitem params acc _ block children =
             key ++ ":" ++ String.fromInt number
     in
     [ Html.div
-        [ HA.id bibitemId
-        , HA.style "display" "flex"
-        , HA.style "margin-bottom" "0.5em"
-        ]
+        ([ HA.id bibitemId
+         , HA.style "display" "flex"
+         , HA.style "margin-bottom" "0.5em"
+         ]
+            ++ Render.Utility.rlBlockSync block.meta
+        )
         [ Html.span
             [ HA.style "font-weight" "bold"
             , HA.style "min-width" "40px"
@@ -1628,6 +1655,7 @@ renderEnv params acc _ block children =
          , HA.style "border" "1px solid #ddd"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.div [ HA.style "font-weight" "bold", HA.style "margin-bottom" "0.5em" ]
             [ Html.text (capitalize envName) ]

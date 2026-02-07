@@ -205,11 +205,20 @@ blockFromLine line state =
         headingData =
             getHeadingData line.content
 
+        bodyLineNumber =
+            case headingData.heading of
+                Paragraph ->
+                    line.lineNumber
+
+                _ ->
+                    line.lineNumber + 1
+
         meta : BlockMeta
         meta =
             { id = ""
             , position = line.position
             , lineNumber = line.lineNumber
+            , bodyLineNumber = bodyLineNumber
             , numberOfLines = 1
             , messages = []
             , sourceText = line.content
@@ -792,5 +801,5 @@ mergeContinuationLine line block =
     { block
         | args = mergedArgs
         , properties = mergedProps
-        , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
+        , meta = { meta | numberOfLines = meta.numberOfLines + 1, bodyLineNumber = meta.bodyLineNumber + 1 }
     }

@@ -664,6 +664,7 @@ renderImage params _ _ block _ =
         ([ idAttr block.meta.id ]
             ++ floatStyle
             ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
         )
         [ imageDisplay
         , figureLabel

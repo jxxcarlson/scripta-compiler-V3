@@ -31,6 +31,7 @@ suite =
                                 , messages = []
                                 , sourceText = "Hello [b world]!"
                                 , error = Nothing
+                                , bodyLineNumber = 1
                                 }
                             , style = {}
                             }
@@ -63,6 +64,7 @@ suite =
                                 , messages = []
                                 , sourceText = "$$\na^2 + b^2 = c^2"
                                 , error = Nothing
+                                , bodyLineNumber = 3
                                 }
                             , style = {}
                             }
@@ -95,6 +97,7 @@ suite =
                                 , messages = []
                                 , sourceText = "- First item"
                                 , error = Nothing
+                                , bodyLineNumber = 3
                                 }
                             , style = {}
                             }
@@ -130,6 +133,7 @@ suite =
                                 , messages = []
                                 , sourceText = "Test"
                                 , error = Nothing
+                                , bodyLineNumber = 1
                                 }
                             , style = {}
                             }
