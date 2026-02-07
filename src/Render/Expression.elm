@@ -329,26 +329,24 @@ Colors: yellow (default), blue, green, pink, orange, purple, cyan, gray.
 renderHighlight : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderHighlight params acc args meta =
     let
-        -- Extract color name from [color colorname] if present
-        colorName =
-            args
-                |> filterExpressionsOnName "color"
-                |> List.head
-                |> Maybe.andThen getTextFromExpr
-                |> Maybe.withDefault "yellow"
-                |> String.trim
-
         -- Filter out the color expression from display
         displayArgs =
             filterOutExpressionsOnName "color" args
 
-        -- Map color name to CSS color value
         cssColor =
-            Dict.get colorName highlightColorDict |> Maybe.withDefault "#ffff00"
+            case params.theme of
+                V3.Types.Light ->
+                    "#ffff00"
+
+                V3.Types.Dark ->
+                    "#CC7000"
     in
     Html.span
         (Render.Utility.rlSync meta
-            ++ [ HA.style "background-color" cssColor ]
+            ++ [ HA.style "background-color" cssColor
+               , HA.style "padding-left" "0.25em"
+               , HA.style "padding-right" "0.25em"
+               ]
         )
         (renderList params acc displayArgs)
 

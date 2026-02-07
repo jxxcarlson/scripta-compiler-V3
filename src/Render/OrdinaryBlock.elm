@@ -77,6 +77,9 @@ blockDict =
         -- Footnotes
         , ( "endnotes", renderEndnotes )
 
+        -- New blocks
+        , ( "paragraph", renderParagraph )
+
         -- Additional blocks from V2
         , ( "subheading", renderSubheading )
         , ( "sh", renderSubheading )
@@ -579,7 +582,17 @@ indexToLetter n =
         String.fromChar (Char.fromCode (96 + n))
 
     else
-        indexToLetter ((n - 1) // 26) ++ indexToLetter (modBy 26 n |> (\x -> if x == 0 then 26 else x))
+        indexToLetter ((n - 1) // 26)
+            ++ indexToLetter
+                (modBy 26 n
+                    |> (\x ->
+                            if x == 0 then
+                                26
+
+                            else
+                                x
+                       )
+                )
 
 
 {-| Convert 1-based index to lowercase roman numeral.
@@ -588,9 +601,19 @@ indexToRoman : Int -> String
 indexToRoman n =
     let
         numerals =
-            [ ( 1000, "m" ), ( 900, "cm" ), ( 500, "d" ), ( 400, "cd" )
-            , ( 100, "c" ), ( 90, "xc" ), ( 50, "l" ), ( 40, "xl" )
-            , ( 10, "x" ), ( 9, "ix" ), ( 5, "v" ), ( 4, "iv" ), ( 1, "i" )
+            [ ( 1000, "m" )
+            , ( 900, "cm" )
+            , ( 500, "d" )
+            , ( 400, "cd" )
+            , ( 100, "c" )
+            , ( 90, "xc" )
+            , ( 50, "l" )
+            , ( 40, "xl" )
+            , ( 10, "x" )
+            , ( 9, "ix" )
+            , ( 5, "v" )
+            , ( 4, "iv" )
+            , ( 1, "i" )
             ]
 
         convert num =
@@ -733,6 +756,25 @@ renderIndent params acc _ block children =
         ([ idAttr block.meta.id
          , HA.style "margin-left" "2em"
          , HA.style "margin-bottom" "1em"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
+        )
+        (renderBody params acc block ++ children)
+    ]
+
+
+renderParagraph : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderParagraph params acc _ block children =
+    let
+        paddingRightInEms =
+            (Dict.get "padding-right" block.properties |> Maybe.withDefault "0") ++ "em"
+    in
+    [ Html.div
+        ([ idAttr block.meta.id
+         , HA.style "margin-left" "2em"
+         , HA.style "margin-bottom" "1em"
+         , HA.style "padding-right" paddingRightInEms
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
             ++ Render.Utility.rlBlockSync block.meta
