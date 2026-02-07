@@ -666,9 +666,7 @@ renderTerm _ _ args meta =
                     fullText
     in
     Html.em
-        (Render.Utility.rlSync meta
-            ++ [ HA.style "padding-right" "2px" ]
-        )
+        [ HA.style "padding-right" "2px" ]
         [ Html.text displayText ]
 
 
@@ -1027,7 +1025,7 @@ renderFootnote _ acc args meta =
                     Html.a
                         [ HA.id meta.id
                         , HA.href ("#" ++ textMeta.id ++ "_")
-                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId (textMeta.id ++ "_"), True ))
+                        , HE.preventDefaultOn "click" (Decode.succeed ( FootnoteClick { targetId = textMeta.id ++ "_", returnId = meta.id }, True ))
                         , HA.style "font-weight" "bold"
                         , HA.style "color" "#0000b3"
                         , HA.style "text-decoration" "none"

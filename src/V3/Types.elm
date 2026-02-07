@@ -249,6 +249,7 @@ type Msg
     | SelectId String
     | HighlightId String
     | ExpandImage String
+    | FootnoteClick { targetId : String, returnId : String }
     | NoOp
 
 

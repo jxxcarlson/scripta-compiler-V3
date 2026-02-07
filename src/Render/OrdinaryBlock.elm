@@ -1313,17 +1313,19 @@ renderEndnotes params acc _ block _ =
             , HA.style "margin-bottom" "0.5em"
             ]
             [ Html.text "Endnotes" ]
-            :: List.map renderFootnoteItem endnoteList
+            :: List.map (renderFootnoteItem params) endnoteList
         )
     ]
 
 
-renderFootnoteItem : { label : Int, content : String, id : String } -> Html Msg
-renderFootnoteItem { label, content, id } =
+renderFootnoteItem : CompilerParameters -> { label : Int, content : String, id : String } -> Html Msg
+renderFootnoteItem params { label, content, id } =
     Html.div
-        [ HA.id id
-        , HA.style "margin-bottom" "0.5em"
-        ]
+        ([ HA.id id
+         , HA.style "margin-bottom" "0.5em"
+         ]
+            ++ selectedStyle params.selectedId id params.theme
+        )
         [ Html.span
             [ HA.style "width" "24px"
             , HA.style "display" "inline-block"
