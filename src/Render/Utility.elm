@@ -6,6 +6,7 @@ module Render.Utility exposing (idAttr, rlBlockSync, rlSync, selectedStyle)
 import Html exposing (Attribute)
 import Html.Attributes as HA
 import Html.Events as HE
+import Json.Decode as Decode
 import V3.Types exposing (Theme(..))
 
 
@@ -14,7 +15,7 @@ rlSync meta =
     [ HA.id meta.id
     , HA.attribute "data-begin" (String.fromInt meta.begin)
     , HA.attribute "data-end" (String.fromInt meta.end)
-    , HE.onClick (V3.Types.SendMeta meta)
+    , HE.stopPropagationOn "click" (Decode.succeed ( V3.Types.SendMeta meta, True ))
     ]
 
 
