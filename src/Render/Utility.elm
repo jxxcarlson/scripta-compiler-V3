@@ -15,7 +15,21 @@ rlSync meta =
     [ HA.id meta.id
     , HA.attribute "data-begin" (String.fromInt meta.begin)
     , HA.attribute "data-end" (String.fromInt meta.end)
-    , HE.stopPropagationOn "click" (Decode.succeed ( V3.Types.SendMeta meta, True ))
+    , HE.stopPropagationOn "click"
+        (Decode.field "altKey" Decode.bool
+            |> Decode.andThen
+                (\altKey ->
+                    if altKey then
+                        -- Option held: fire SendMeta (Path A data needed by Path B),
+                        -- but DON'T stop propagation so click reaches container
+                        -- for RequestAnchorOffset (Path B)
+                        Decode.succeed ( V3.Types.SendMeta meta, False )
+
+                    else
+                        -- Plain click: fire SendMeta, stop propagation
+                        Decode.succeed ( V3.Types.SendMeta meta, True )
+                )
+        )
     ]
 
 
@@ -23,7 +37,21 @@ rlBlockSync : V3.Types.BlockMeta -> List (Html.Attribute V3.Types.Msg)
 rlBlockSync blockMeta =
     [ HA.attribute "data-begin" "0"
     , HA.attribute "data-end" "0"
-    , HE.onClick (V3.Types.SendBlockMeta blockMeta)
+    , HE.stopPropagationOn "click"
+        (Decode.field "altKey" Decode.bool
+            |> Decode.andThen
+                (\altKey ->
+                    if altKey then
+                        -- Option held: fire SendBlockMeta so editorData has correct
+                        -- block info for Path B; don't stop propagation so click
+                        -- reaches container for RequestAnchorOffset
+                        Decode.succeed ( V3.Types.SendBlockMeta blockMeta, False )
+
+                    else
+                        -- Plain click: fire SendBlockMeta, stop propagation
+                        Decode.succeed ( V3.Types.SendBlockMeta blockMeta, True )
+                )
+        )
     ]
 
 
