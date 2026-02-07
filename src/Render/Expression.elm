@@ -150,7 +150,8 @@ markupDict =
         , ( "ilink", renderIlink )
         , ( "index", renderIndex )
         , ( "ref", renderRef )
-        , ( "eqref", renderEqRef )
+        , ( "eqref", renderMathRef )
+        , ( "mathRef", renderMathRef )
         , ( "cite", renderCite )
         , ( "sup", renderSup )
         , ( "sub", renderSub )
@@ -554,8 +555,8 @@ renderRef _ acc args meta =
 Displays as "(N)" where N is the equation number, linking to the equation.
 
 -}
-renderEqRef : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderEqRef _ acc args meta =
+renderMathRef : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderMathRef _ acc args meta =
     case args of
         [ Text refId _ ] ->
             let

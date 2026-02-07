@@ -368,6 +368,35 @@ transformBlock acc block =
             in
             { block | properties = Dict.insert "label" label block.properties }
 
+        ( Verbatim "math", args ) ->
+            -- Treat math blocks identically to equation blocks
+            if Dict.member "label" block.properties then
+                let
+                    chapterPart =
+                        if acc.chapterCounter > 0 then
+                            String.fromInt acc.chapterCounter ++ "."
+
+                        else
+                            ""
+
+                    sectionPart =
+                        Vector.toStringWithLevel acc.maxLevel acc.headingIndex
+
+                    punctuation =
+                        if sectionPart /= "" then
+                            "."
+
+                        else
+                            ""
+
+                    equationProp =
+                        chapterPart ++ sectionPart ++ punctuation ++ getCounterAsString "equation" acc.counter
+                in
+                { block | properties = Dict.insert "equation-number" equationProp block.properties }
+
+            else
+                block
+
         ( Verbatim "equation", args ) ->
             -- Only number equations that have a label property
             if Dict.member "label" block.properties then
@@ -526,7 +555,7 @@ chapterPrefix acc =
 -}
 reduceName : String -> String
 reduceName str =
-    if List.member str [ "equation", "aligned" ] then
+    if List.member str [ "equation", "aligned", "math" ] then
         "equation"
 
     else if str == "code" then

@@ -25,6 +25,7 @@ numberedBlockNames =
     , "problem"
     , "example"
     , "equation"
+    , "math"
     , "aligned"
     , "quiver"
     , "image"
