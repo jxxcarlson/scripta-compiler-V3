@@ -282,7 +282,7 @@ reduceRestOfTokens lineNumber tokens =
             reduceTokens lineNumber a ++ reduceRestOfTokens lineNumber b
 
         (S str meta) :: _ ->
-            Text str (boostMeta 0 (Token.indexOf (S str meta)) meta) :: reduceRestOfTokens lineNumber (List.drop 1 tokens)
+            Text str (boostMeta lineNumber (Token.indexOf (S str meta)) meta) :: reduceRestOfTokens lineNumber (List.drop 1 tokens)
 
         token :: _ ->
             case stringTokenToExpr lineNumber token of
