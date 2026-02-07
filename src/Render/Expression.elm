@@ -36,7 +36,7 @@ render params acc expr =
             renderVFun params acc name content meta
 
         ExprList _ exprs meta ->
-            Html.span [ HA.id meta.id ]
+            Html.span (Render.Utility.rlSync meta)
                 (renderList params acc exprs)
 
 
@@ -84,15 +84,15 @@ renderVFun params acc name content meta =
             mathText params.editCount meta.id InlineMathMode ("\\ce{" ++ content ++ "}")
 
         "code" ->
-            Html.code [ HA.id meta.id, HA.style "font-size" "0.9em" ] [ Html.text content ]
+            Html.code (Render.Utility.rlSync meta ++ [ HA.style "font-size" "0.9em" ]) [ Html.text content ]
 
         "`" ->
             -- Backtick code (alias for code)
-            Html.code [ HA.id meta.id, HA.style "font-size" "0.9em" ] [ Html.text content ]
+            Html.code (Render.Utility.rlSync meta ++ [ HA.style "font-size" "0.9em" ]) [ Html.text content ]
 
         _ ->
             -- Default: just show the content
-            Html.span [ HA.id meta.id ] [ Html.text content ]
+            Html.span (Render.Utility.rlSync meta) [ Html.text content ]
 
 
 {-| Transform ETeX notation to LaTeX using ETeX.Transform.evalStr.
@@ -110,7 +110,7 @@ applyMathMacros macroDict content =
 -}
 renderDefaultFun : CompilerParameters -> Accumulator -> String -> List Expression -> ExprMeta -> Html Msg
 renderDefaultFun params acc name args meta =
-    Html.span [ HA.id meta.id ]
+    Html.span (Render.Utility.rlSync meta)
         (Html.span [ HA.style "color" "blue" ] [ Html.text ("[" ++ name ++ " ") ]
             :: renderList params acc args
             ++ [ Html.text "]" ]
@@ -262,7 +262,7 @@ markupDict =
 -}
 renderStrong : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderStrong params acc args meta =
-    Html.span [ HA.id meta.id, HA.style "font-weight" "600" ] (renderList params acc args)
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-weight" "600" ]) (renderList params acc args)
 
 
 {-| Render italic/emphasized text.
@@ -276,7 +276,7 @@ renderStrong params acc args meta =
 -}
 renderItalic : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderItalic params acc args meta =
-    Html.em [ HA.id meta.id ] (renderList params acc args)
+    Html.em (Render.Utility.rlSync meta) (renderList params acc args)
 
 
 {-| Render strikethrough text.
@@ -286,7 +286,7 @@ renderItalic params acc args meta =
 -}
 renderStrike : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderStrike params acc args meta =
-    Html.span [ HA.id meta.id, HA.style "text-decoration" "line-through" ] (renderList params acc args)
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "text-decoration" "line-through" ]) (renderList params acc args)
 
 
 {-| Render underlined text.
@@ -298,7 +298,7 @@ renderStrike params acc args meta =
 -}
 renderUnderline : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderUnderline params acc args meta =
-    Html.span [ HA.id meta.id, HA.style "text-decoration" "underline" ] (renderList params acc args)
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "text-decoration" "underline" ]) (renderList params acc args)
 
 
 {-| Render colored text.
@@ -314,7 +314,7 @@ Available colors: red, blue, green, pink, magenta, violet, gray.
 -}
 renderColor : String -> CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderColor color params acc args meta =
-    Html.span [ HA.id meta.id, HA.style "color" color ] (renderList params acc args)
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "color" color ]) (renderList params acc args)
 
 
 {-| Render highlighted text with background color.
@@ -347,9 +347,9 @@ renderHighlight params acc args meta =
             Dict.get colorName highlightColorDict |> Maybe.withDefault "#ffff00"
     in
     Html.span
-        [ HA.id meta.id
-        , HA.style "background-color" cssColor
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "background-color" cssColor ]
+        )
         (renderList params acc displayArgs)
 
 
@@ -742,10 +742,11 @@ getTextContent expr =
 renderBoldItalic : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderBoldItalic params acc args meta =
     Html.span
-        [ HA.id meta.id
-        , HA.style "font-weight" "bold"
-        , HA.style "font-style" "italic"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "font-weight" "bold"
+               , HA.style "font-style" "italic"
+               ]
+        )
         (renderList params acc args)
 
 
@@ -756,7 +757,7 @@ renderBoldItalic params acc args meta =
 -}
 renderVar : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderVar params acc args meta =
-    Html.span [ HA.id meta.id ] (renderList params acc args)
+    Html.span (Render.Utility.rlSync meta) (renderList params acc args)
 
 
 {-| Render inline title text (32px).
@@ -767,9 +768,9 @@ renderVar params acc args meta =
 renderTitle : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderTitle params acc args meta =
     Html.span
-        [ HA.id meta.id
-        , HA.style "font-size" "32px"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "font-size" "32px" ]
+        )
         (renderList params acc args)
 
 
@@ -782,7 +783,7 @@ renderTitle params acc args meta =
 -}
 renderSubheading : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderSubheading params acc args meta =
-    Html.div [ HA.id meta.id ]
+    Html.div (Render.Utility.rlSync meta)
         [ Html.p
             [ HA.style "font-size" "18px"
             , HA.style "margin-top" "8px"
@@ -801,7 +802,7 @@ renderSubheading params acc args meta =
 -}
 renderSmallSubheading : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderSmallSubheading params acc args meta =
-    Html.div [ HA.id meta.id ]
+    Html.div (Render.Utility.rlSync meta)
         [ Html.p
             [ HA.style "font-size" "16px"
             , HA.style "font-style" "italic"
@@ -820,9 +821,9 @@ renderSmallSubheading params acc args meta =
 renderLarge : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderLarge params acc args meta =
     Html.span
-        [ HA.id meta.id
-        , HA.style "font-size" "1.5em"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "font-size" "1.5em" ]
+        )
         (renderList params acc args)
 
 
@@ -834,9 +835,9 @@ renderLarge params acc args meta =
 renderQed : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderQed _ _ _ meta =
     Html.span
-        [ HA.id meta.id
-        , HA.style "font-weight" "bold"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "font-weight" "bold" ]
+        )
         [ Html.text "Q.E.D." ]
 
 
@@ -848,10 +849,11 @@ renderQed _ _ _ meta =
 renderErrorHighlight : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderErrorHighlight params acc args meta =
     Html.span
-        [ HA.id meta.id
-        , HA.style "background-color" "#ffc8c8"
-        , HA.style "padding" "2px 4px"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "background-color" "#ffc8c8"
+               , HA.style "padding" "2px 4px"
+               ]
+        )
         (renderList params acc args)
 
 
@@ -867,7 +869,7 @@ renderErrorHighlight params acc args meta =
 -}
 renderChar : String -> CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderChar char _ _ _ meta =
-    Html.span [ HA.id meta.id ] [ Html.text char ]
+    Html.span (Render.Utility.rlSync meta) [ Html.text char ]
 
 
 {-| Render content in square brackets.
@@ -877,7 +879,7 @@ renderChar char _ _ _ meta =
 -}
 renderBrackets : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderBrackets params acc args meta =
-    Html.span [ HA.id meta.id ]
+    Html.span (Render.Utility.rlSync meta)
         (Html.text "[" :: renderList params acc args ++ [ Html.text "]" ])
 
 
@@ -888,7 +890,7 @@ renderBrackets params acc args meta =
 -}
 renderBox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderBox _ _ _ meta =
-    Html.span [ HA.id meta.id, HA.style "font-size" "20px" ] [ Html.text "☐" ]
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-size" "20px" ]) [ Html.text "☐" ]
 
 
 {-| Render a checked checkbox ☑.
@@ -898,7 +900,7 @@ renderBox _ _ _ meta =
 -}
 renderCbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderCbox _ _ _ meta =
-    Html.span [ HA.id meta.id, HA.style "font-size" "20px" ] [ Html.text "☑" ]
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-size" "20px" ]) [ Html.text "☑" ]
 
 
 {-| Render a red empty checkbox ☐.
@@ -908,7 +910,7 @@ renderCbox _ _ _ meta =
 -}
 renderRbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderRbox _ _ _ meta =
-    Html.span [ HA.id meta.id, HA.style "font-size" "20px", HA.style "color" "#b30000" ] [ Html.text "☐" ]
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-size" "20px", HA.style "color" "#b30000" ]) [ Html.text "☐" ]
 
 
 {-| Render a red checked checkbox ☑.
@@ -918,7 +920,7 @@ renderRbox _ _ _ meta =
 -}
 renderCrbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderCrbox _ _ _ meta =
-    Html.span [ HA.id meta.id, HA.style "font-size" "20px", HA.style "color" "#b30000" ] [ Html.text "☑" ]
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-size" "20px", HA.style "color" "#b30000" ]) [ Html.text "☑" ]
 
 
 {-| Render a filled box ■.
@@ -928,7 +930,7 @@ renderCrbox _ _ _ meta =
 -}
 renderFbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderFbox _ _ _ meta =
-    Html.span [ HA.id meta.id, HA.style "font-size" "24px" ] [ Html.text "■" ]
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-size" "24px" ]) [ Html.text "■" ]
 
 
 {-| Render a red filled box ■.
@@ -938,7 +940,7 @@ renderFbox _ _ _ meta =
 -}
 renderFrbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderFrbox _ _ _ meta =
-    Html.span [ HA.id meta.id, HA.style "font-size" "24px", HA.style "color" "#b30000" ] [ Html.text "■" ]
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-size" "24px", HA.style "color" "#b30000" ]) [ Html.text "■" ]
 
 
 {-| Render nothing (hidden content).
@@ -979,7 +981,7 @@ renderIndent _ _ _ meta =
 -}
 renderQuote : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderQuote params acc args meta =
-    Html.span [ HA.id meta.id ]
+    Html.span (Render.Utility.rlSync meta)
         (Html.text "“" :: renderList params acc args ++ [ Html.text "”" ])
 
 
@@ -990,7 +992,7 @@ renderQuote params acc args meta =
 -}
 renderAbstract : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderAbstract params acc args meta =
-    Html.span [ HA.id meta.id ]
+    Html.span (Render.Utility.rlSync meta)
         (Html.span [ HA.style "font-size" "18px" ] [ Html.text "Abstract. " ]
             :: renderList params acc args
         )
@@ -1004,9 +1006,9 @@ renderAbstract params acc args meta =
 renderAnchor : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderAnchor params acc args meta =
     Html.span
-        [ HA.id meta.id
-        , HA.style "text-decoration" "underline"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "text-decoration" "underline" ]
+        )
         (renderList params acc args)
 
 
@@ -1182,7 +1184,7 @@ renderBibitem _ _ args meta =
                 |> List.filterMap getTextContent
                 |> String.join " "
     in
-    Html.span [ HA.id meta.id ] [ Html.text ("[" ++ content ++ "]") ]
+    Html.span (Render.Utility.rlSync meta) [ Html.text ("[" ++ content ++ "]") ]
 
 
 
@@ -1307,11 +1309,12 @@ renderScheme _ _ args meta =
             args |> List.filterMap getTextContent |> String.join " "
     in
     Html.code
-        [ HA.id meta.id
-        , HA.style "background-color" "#f5f5f5"
-        , HA.style "padding" "2px 4px"
-        , HA.style "font-family" "monospace"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "background-color" "#f5f5f5"
+               , HA.style "padding" "2px 4px"
+               , HA.style "font-family" "monospace"
+               ]
+        )
         [ Html.text content ]
 
 
@@ -1327,10 +1330,11 @@ renderCompute _ _ args meta =
             args |> List.filterMap getTextContent |> String.join " "
     in
     Html.span
-        [ HA.id meta.id
-        , HA.style "font-family" "monospace"
-        , HA.style "color" "#666"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "font-family" "monospace"
+               , HA.style "color" "#666"
+               ]
+        )
         [ Html.text ("[compute: " ++ content ++ "]") ]
 
 
@@ -1346,10 +1350,11 @@ renderData _ _ args meta =
             args |> List.filterMap getTextContent |> String.join " "
     in
     Html.span
-        [ HA.id meta.id
-        , HA.style "font-family" "monospace"
-        , HA.style "color" "#666"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "font-family" "monospace"
+               , HA.style "color" "#666"
+               ]
+        )
         [ Html.text ("[data: " ++ content ++ "]") ]
 
 
