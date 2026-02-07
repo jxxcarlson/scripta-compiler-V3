@@ -629,7 +629,7 @@ renderCite _ acc args meta =
 -}
 renderSup : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderSup params acc args meta =
-    Html.sup [ HA.id meta.id ] (renderList params acc args)
+    Html.sup (Render.Utility.rlSync meta) (renderList params acc args)
 
 
 {-| Render subscript text.
@@ -639,7 +639,7 @@ renderSup params acc args meta =
 -}
 renderSub : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderSub params acc args meta =
-    Html.sub [ HA.id meta.id ] (renderList params acc args)
+    Html.sub (Render.Utility.rlSync meta) (renderList params acc args)
 
 
 {-| Render a term (italicized, for definitions).
@@ -668,9 +668,9 @@ renderTerm _ _ args meta =
                     fullText
     in
     Html.em
-        [ HA.id meta.id
-        , HA.style "padding-right" "2px"
-        ]
+        (Render.Utility.rlSync meta
+            ++ [ HA.style "padding-right" "2px" ]
+        )
         [ Html.text displayText ]
 
 
