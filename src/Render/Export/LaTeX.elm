@@ -522,6 +522,7 @@ type Status
     = InsideItemizedList
     | InsideNumberedList
     | InsideDescriptionList
+    | InsideBibliography
     | OutsideList
 
 
@@ -574,6 +575,9 @@ nextStep state =
 
                 InsideDescriptionList ->
                     Done (Tree.leaf endDescriptionBlock :: state.output)
+
+                InsideBibliography ->
+                    Done (Tree.leaf endBibliographyBlock :: state.output)
 
                 OutsideList ->
                     Done state.output
@@ -700,6 +704,26 @@ endDescriptionBlock =
             )
 
 
+beginBibliographyBlock : List String -> ExpressionBlock
+beginBibliographyBlock args =
+    let
+        maxWidth =
+            List.head args |> Maybe.withDefault "9"
+    in
+    { emptyExpressionBlock
+        | heading = Ordinary "beginBibliographyBlock"
+        , args = args
+        , body = Right [ Text maxWidth { begin = 0, end = 1, index = 0, id = "begin" } ]
+    }
+
+
+endBibliographyBlock : ExpressionBlock
+endBibliographyBlock =
+    { emptyExpressionBlock
+        | heading = Ordinary "endBibliographyBlock"
+    }
+
+
 nextState : Tree ExpressionBlock -> State -> State
 nextState tree state =
     let
@@ -736,6 +760,20 @@ nextState tree state =
 
         ( InsideDescriptionList, _ ) ->
             { state | status = OutsideList, itemNumber = 0, output = tree :: Tree.leaf endDescriptionBlock :: state.output, input = List.drop 1 state.input }
+
+        -- BIBLIOGRAPHY
+        ( OutsideList, Just "bibliography" ) ->
+            let
+                args =
+                    (Tree.value tree).args
+            in
+            { state | status = InsideBibliography, output = Tree.leaf (beginBibliographyBlock args) :: state.output, input = List.drop 1 state.input }
+
+        ( InsideBibliography, Just "bibitem" ) ->
+            { state | output = tree :: state.output, input = List.drop 1 state.input }
+
+        ( InsideBibliography, _ ) ->
+            { state | status = OutsideList, output = tree :: Tree.leaf endBibliographyBlock :: state.output, input = List.drop 1 state.input }
 
         --- OUTSIDE
         ( OutsideList, _ ) ->
@@ -1155,12 +1193,41 @@ macroDict =
         , ( "bt", \_ -> bt )
         , ( "underscore", \_ -> underscore )
         , ( "tags", dontRender )
+        , ( "cite", \_ -> exportCite )
         ]
 
 
 dontRender : RenderSettings -> List Expression -> String
 dontRender _ _ =
     ""
+
+
+exportCite : List Expression -> String
+exportCite exprs =
+    case exprs of
+        [ Text key _ ] ->
+            "\\cite{" ++ String.trim key ++ "}"
+
+        _ ->
+            ""
+
+
+exportBibliographyBegin : List String -> String
+exportBibliographyBegin args =
+    let
+        maxWidth =
+            List.head args |> Maybe.withDefault "9"
+    in
+    "\\begin{thebibliography}{" ++ maxWidth ++ "}"
+
+
+exportBibitem : List String -> String -> String
+exportBibitem args body =
+    let
+        key =
+            List.head args |> Maybe.withDefault ""
+    in
+    "\\bibitem{" ++ key ++ "}\n" ++ body
 
 
 
@@ -1202,6 +1269,10 @@ blockDict mathMacroDict =
         , ( "endDescriptionBlock", \_ _ _ -> "\\end{description}" )
         , ( "mathmacros", \_ _ body -> body ++ "\nHa ha ha!" )
         , ( "setcounter", \_ _ _ -> "" )
+        , ( "bibliography", \_ _ _ -> "" )
+        , ( "bibitem", \_ args body -> exportBibitem args body )
+        , ( "beginBibliographyBlock", \_ args _ -> exportBibliographyBegin args )
+        , ( "endBibliographyBlock", \_ _ _ -> "\\end{thebibliography}" )
         ]
 
 
