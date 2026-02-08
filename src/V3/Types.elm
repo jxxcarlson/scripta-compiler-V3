@@ -184,10 +184,10 @@ type alias TermLoc2 =
     { begin : Int, end : Int, id : String, mSourceId : Maybe String }
 
 
-{-| A text macro with name and body.
+{-| A text macro with name, variables, and body.
 -}
 type alias Macro =
-    { name : String, body : String }
+    { name : String, vars : List String, body : List Expression }
 
 
 {-| Dictionary of math macros. Re-exported from ETeX.MathMacros.

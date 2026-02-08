@@ -108,14 +108,14 @@ import Either exposing (Either(..))
 import Generic.ASTTools
 import Generic.BlockUtilities
 import Generic.Settings
-import Generic.TextMacro exposing (Macro)
+import Generic.TextMacro
 import Generic.Vector as Vector exposing (Vector)
 import Maybe.Extra
 import Parser exposing ((|.), (|=), Parser)
 import RoseTree.Tree as Tree exposing (Tree)
 import Tools.String
 import Tools.Utility as Utility
-import V3.Types exposing (Accumulator, Expr(..), ExprMeta, Expression, ExpressionBlock, Heading(..), InListState(..), MathMacroDict, TermLoc, TermLoc2)
+import V3.Types exposing (Accumulator, Expr(..), ExprMeta, Expression, ExpressionBlock, Heading(..), InListState(..), Macro, MathMacroDict, TermLoc, TermLoc2)
 
 
 initialData : InitialAccumulatorData

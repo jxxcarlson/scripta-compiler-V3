@@ -1,6 +1,7 @@
 module ETeX.Transform exposing
     ( evalStr
     , makeMacroDict
+    , toLaTeXNewCommands
     , transformETeX
     )
 
