@@ -588,6 +588,12 @@ update msg model =
                     -- Image expansion not implemented in Demo app
                     ( { model | debugClickCount = newClickCount }, Cmd.none )
 
+                V3.Types.FootnoteClick { targetId } ->
+                    ( { model | selectedId = targetId, debugClickCount = newClickCount }, scrollToElement targetId )
+
+                V3.Types.CitationClick { targetId } ->
+                    ( { model | selectedId = targetId, debugClickCount = newClickCount }, scrollToElement targetId )
+
                 V3.Types.NoOp ->
                     ( { model | debugClickCount = newClickCount }, Cmd.none )
 

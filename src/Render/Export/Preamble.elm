@@ -74,8 +74,9 @@ makeArticle blockNames_ expressionNames_ =
 packageList =
     [ ( "quiver", [ "quiver" ] )
     , ( "tikz", [ "tikz" ] )
-    , ( "link", [ "hyperref" ] )
-    , ( "ilink", [ "hyperref" ] )
+
+    --, ( "link", [ "hyperref" ] )
+    --, ( "ilink", [ "hyperref" ] )
     , ( "href", [ "hyperref" ] )
     , ( "textcolor", [ "xcolor" ] )
     , ( "blue", [ "xcolor" ] )
@@ -181,6 +182,13 @@ standardPackages =
 \\usepackage{changepage}  % for the adjustwidth environment
 \\usepackage{graphicx}    % for \\includegraphics
 
+%% Index, hyperref
+\\usepackage[T1]{fontenc}
+\\usepackage{lmodern}
+
+\\usepackage{hyperref}   % load before imakeidx
+\\usepackage{imakeidx}
+
 %% AMS
 \\usepackage{amssymb}
 \\usepackage{amsmath}
@@ -284,8 +292,8 @@ commands =
 
 % Unclassified
 \\newcommand{\\subheading}[1]{{\\bf #1}\\par}
-\\newcommand{\\term}[1]{{\\sl #1}}
-\\newcommand{\\termx}[1]{}
+%\\newcommand{\\term}[1]{{\\index{#1}}}
+%\\newcommand{\\termx}[1]{}
 \\newcommand{\\comment}[1]{}
 \\newcommand{\\innertableofcontents}{}
 

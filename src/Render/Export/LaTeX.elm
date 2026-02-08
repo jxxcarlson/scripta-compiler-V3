@@ -168,6 +168,8 @@ export publicationData settings_ ast =
         ++ tableofcontents properties rawBlockNames
         ++ "\n\n"
         ++ rawExport settings ast
+        ++ "\n\n\\clearpage\n\n"
+        ++ "\\printindex\n\n"
         ++ "\n\n\\end{document}\n"
 
 
@@ -202,8 +204,16 @@ frontMatter publicationData ast =
 
                 Right str ->
                     "\\date{" ++ str ++ "}"
+
+        setupIndex =
+            """\\makeindex[
+                          title=Index,
+                          columns=2,
+                          %% intoc     % include index in the table of contents
+                        ]"""
     in
-    "\\begin{document}"
+    setupIndex
+        :: "\\begin{document}"
         :: title
         :: date
         :: authors
@@ -1158,6 +1168,11 @@ mapChars2 str =
 -- BEGIN DICTIONARIES
 
 
+{-|
+
+    Translate Scripta names to LaTeX names.
+
+-}
 functionDict : Dict String String
 functionDict =
     Dict.fromList
@@ -1167,6 +1182,7 @@ functionDict =
         , ( "b", "textbf" )
         , ( "image", "imagecenter" )
         , ( "contents", "tableofcontents" )
+        , ( "term", "index" )
         ]
 
 
@@ -1249,7 +1265,7 @@ blockDict mathMacroDict =
         , ( "banner", \_ _ _ -> "" )
         , ( "set-key", \_ _ _ -> "" )
         , ( "endnotes", \_ _ _ -> "" )
-        , ( "index", \_ _ _ -> "Index: not implemented" )
+        , ( "index", \_ _ _ -> "" )
 
         --
         , ( "chapter", \settings_ args body -> chapter settings_ args body )
@@ -1280,6 +1296,7 @@ verbatimExprDict =
     Dict.fromList
         [ ( "code", inlineCode )
         , ( "math", inlineMath )
+        , ( "m", inlineMath )
         ]
 
 
