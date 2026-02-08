@@ -1144,6 +1144,7 @@ macroDict =
         , ( "mark", \_ -> markwith )
         , ( "par", \_ -> par )
         , ( "eqref", \_ -> eqref )
+        , ( "mathref", \_ -> eqref )
         , ( "index_", \_ _ -> blindIndex )
         , ( "image", Render.Export.Image.export )
         , ( "vspace", \_ -> vspace )

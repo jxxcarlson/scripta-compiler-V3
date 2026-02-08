@@ -151,7 +151,7 @@ markupDict =
         , ( "index", renderIndex )
         , ( "ref", renderRef )
         , ( "eqref", renderMathRef )
-        , ( "mathRef", renderMathRef )
+        , ( "mathref", renderMathRef )
         , ( "cite", renderCite )
         , ( "sup", renderSup )
         , ( "sub", renderSub )
@@ -530,7 +530,7 @@ renderRef _ acc args meta =
                     Html.a
                         [ HA.id meta.id
                         , HA.href ("#" ++ id)
-                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId id, True ))
+                        , HE.custom "click" (Decode.succeed { message = CitationClick { targetId = id, returnId = meta.id }, stopPropagation = True, preventDefault = True })
                         , HA.style "color" "#0066cc"
                         , HA.style "text-decoration" "none"
                         , HA.style "cursor" "pointer"
@@ -566,7 +566,7 @@ renderMathRef _ acc args meta =
                     Html.a
                         [ HA.id meta.id
                         , HA.href ("#" ++ id)
-                        , HE.preventDefaultOn "click" (Decode.succeed ( SelectId id, True ))
+                        , HE.custom "click" (Decode.succeed { message = CitationClick { targetId = id, returnId = meta.id }, stopPropagation = True, preventDefault = True })
                         , HA.style "color" "#0066cc"
                         , HA.style "text-decoration" "none"
                         , HA.style "cursor" "pointer"
