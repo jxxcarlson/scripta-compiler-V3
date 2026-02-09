@@ -1234,7 +1234,7 @@ exportBibliographyBegin args =
         maxWidth =
             List.head args |> Maybe.withDefault "9"
     in
-    "\\begin{thebibliography}{" ++ maxWidth ++ "}"
+    "\\section{References}\n\\renewcommand{\\refname}{}\\vspace{-1.5em}\n\\begin{thebibliography}{" ++ maxWidth ++ "}"
 
 
 exportBibitem : List String -> String -> String

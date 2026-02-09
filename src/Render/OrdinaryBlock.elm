@@ -101,6 +101,7 @@ blockDict =
         , ( "type", renderNothing )
         , ( "setcounter", renderNothing )
         , ( "shiftandsetcounter", renderNothing )
+        , ( "bibliography", renderBibliography )
         , ( "bibitem", renderBibitem )
         , ( "env", renderEnv )
         ]
@@ -1625,6 +1626,18 @@ renderVisibleBanner _ _ _ block _ =
         ]
         []
     ]
+
+
+renderBibliography : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderBibliography params _ _ block children =
+    [ Html.h2
+        (idAttr block.meta.id
+            :: selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
+        )
+        [ Html.text "References" ]
+    ]
+        ++ children
 
 
 {-| Render a bibliography item.
