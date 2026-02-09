@@ -251,6 +251,7 @@ type Msg
     | ExpandImage String
     | FootnoteClick { targetId : String, returnId : String }
     | CitationClick { targetId : String, returnId : String }
+    | GoToDocument String ExprMeta
     | NoOp
 
 

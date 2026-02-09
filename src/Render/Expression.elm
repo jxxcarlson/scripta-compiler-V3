@@ -485,17 +485,54 @@ Clicking navigates within the document.
 -}
 renderIlink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderIlink params acc args meta =
-    case args of
-        [ Text label _, Text targetId _ ] ->
+    case List.reverse args of
+        (Text targetId _) :: rest ->
             Html.a
                 [ HA.id meta.id
                 , HA.href ("#" ++ targetId)
-                , HE.onClick (SelectId targetId)
+                , HE.custom "click"
+                    (Decode.succeed
+                        { message = GoToDocument targetId meta
+                        , stopPropagation = True
+                        , preventDefault = True
+                        }
+                    )
+                , HA.style "color"
+                    (case params.theme of
+                        V3.Types.Light ->
+                            "#0066cc"
+
+                        V3.Types.Dark ->
+                            "#66b3ff"
+                    )
+                , HA.style "text-decoration" "none"
+                , HA.style "cursor" "pointer"
                 ]
-                [ Html.text label ]
+                [ Html.text (ilinkLabel (List.reverse rest)) ]
 
         _ ->
             Html.span [ HA.id meta.id ] (renderList params acc args)
+
+
+ilinkLabel : List Expression -> String
+ilinkLabel exprs =
+    List.map exprText exprs |> String.join " "
+
+
+exprText : Expression -> String
+exprText expr =
+    case expr of
+        Text s _ ->
+            s
+
+        Fun _ children _ ->
+            ilinkLabel children
+
+        VFun _ content _ ->
+            content
+
+        ExprList _ children _ ->
+            ilinkLabel children
 
 
 {-| Render an index entry (hidden in output).
