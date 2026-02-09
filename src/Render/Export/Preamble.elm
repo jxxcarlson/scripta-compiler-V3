@@ -189,6 +189,11 @@ standardPackages =
 \\usepackage{hyperref}   % load before imakeidx
 \\usepackage{imakeidx}
 
+%%%%
+\\usepackage[normalem]{ulem} % for \\st
+\\usepackage{soul}           % for \\hl and \\sethlcolor
+\\usepackage{wrapfig}        % for wrapfigure
+
 %% AMS
 \\usepackage{amssymb}
 \\usepackage{amsmath}

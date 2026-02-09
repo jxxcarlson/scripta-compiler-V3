@@ -1367,7 +1367,7 @@ getTerms id content_ =
         Right expressionList ->
             let
                 termExprs =
-                    Generic.ASTTools.filterExpressionsOnName_ "term" expressionList
+                    Generic.ASTTools.filterExpressionsOnName_ "index" expressionList
 
                 termHiddenExprs =
                     Generic.ASTTools.filterExpressionsOnName_ "term_" expressionList
@@ -1387,7 +1387,7 @@ getTerms id content_ =
 extract : String -> Expression -> Maybe TermData
 extract id expr =
     case expr of
-        Fun "term" args _ ->
+        Fun "index" args _ ->
             extractTermFromArgs id args
 
         Fun "term_" args _ ->

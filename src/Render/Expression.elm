@@ -148,15 +148,16 @@ markupDict =
         , ( "href", renderHref )
         , ( "image", renderImage )
         , ( "ilink", renderIlink )
-        , ( "index", renderIndex )
+        , ( "index", renderIndex_ )
         , ( "ref", renderRef )
         , ( "eqref", renderMathRef )
         , ( "mathref", renderMathRef )
         , ( "cite", renderCite )
         , ( "sup", renderSup )
         , ( "sub", renderSub )
-        , ( "term", renderTerm )
-        , ( "term_", renderTermHidden )
+
+        --, ( "term", renderIndex_ )
+        --, ( "term_", renderTermHidden )
         , ( "vspace", renderVspace )
         , ( "break", renderVspace )
 
@@ -648,8 +649,8 @@ renderSub params acc args meta =
 The list-as: property is stripped from display (it only affects index listing).
 
 -}
-renderTerm : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderTerm _ _ args meta =
+renderIndex_ : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderIndex_ _ _ args meta =
     let
         -- Get all text content and strip list-as: property
         fullText =
