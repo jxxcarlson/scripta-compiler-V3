@@ -878,6 +878,10 @@ exportBlock mathMacroDict settings block =
                     case name of
                         "math" ->
                             let
+                                maybeLabel : Maybe String
+                                maybeLabel =
+                                    Dict.get "label" block.properties |> Maybe.map (\l -> "\\label{" ++ String.trim l ++ "}")
+
                                 fix_ : String -> String
                                 fix_ str_ =
                                     str_
@@ -886,9 +890,20 @@ exportBlock mathMacroDict settings block =
                                         |> String.join "\n"
                                         |> ETeX.Transform.transformETeX mathMacroDict
                                         |> MiniLaTeX.Util.transformLabel
+
+                                isAlignedBlock =
+                                    String.contains "&" str
                             in
-                            -- TODO: This should be fixed upstream
-                            [ "$$", fix_ str, "$$" ] |> String.join "\n"
+                            if isAlignedBlock then
+                                processAlignedBlock block str mathMacroDict
+
+                            else
+                                case maybeLabel of
+                                    Nothing ->
+                                        [ "\\begin{equation}", fix_ str, "\\end{equation}" ] |> String.join "\n"
+
+                                    Just label ->
+                                        [ "\\begin{equation}", label, fix_ str, "\\end{equation}" ] |> String.join "\n"
 
                         "csvtable" ->
                             let
