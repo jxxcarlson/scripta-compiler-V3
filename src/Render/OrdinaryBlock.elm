@@ -992,14 +992,18 @@ renderIndexBlock _ acc _ block _ =
             let
                 displayText =
                     loc.displayAs |> Maybe.withDefault term
+
+                returnId =
+                    block.meta.id ++ "::idx::" ++ term
             in
             Html.div
-                [ HA.style "margin-left" "1em"
+                [ HA.id returnId
+                , HA.style "margin-left" "1em"
                 , HA.style "margin-bottom" "0.25em"
                 ]
                 [ Html.a
                     [ HA.href ("#" ++ loc.id)
-                    , HE.preventDefaultOn "click" (Decode.succeed ( SelectId loc.id, True ))
+                    , HE.custom "click" (Decode.succeed { message = CitationClick { targetId = loc.id, returnId = returnId }, stopPropagation = True, preventDefault = True })
                     , HA.style "color" "#0066cc"
                     , HA.style "text-decoration" "none"
                     , HA.style "cursor" "pointer"
