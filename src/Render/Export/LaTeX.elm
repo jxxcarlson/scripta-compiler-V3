@@ -1180,6 +1180,12 @@ mapChars2 : String -> String
 mapChars2 str =
     str
         |> String.replace "_" "\\_"
+        |> String.replace "\u{201C}" "``"
+        |> String.replace "\u{201D}" "''"
+        |> String.replace "\u{2018}" "`"
+        |> String.replace "\u{2019}" "'"
+        |> String.replace "\u{2013}" "--"
+        |> String.replace "\u{2014}" "---"
 
 
 
@@ -1284,6 +1290,7 @@ blockDict mathMacroDict =
         , ( "set-key", \_ _ _ -> "" )
         , ( "endnotes", \_ _ _ -> "" )
         , ( "index", \_ _ _ -> "" )
+        , ( "references", \_ _ _ -> "" )
 
         --
         , ( "chapter", \settings_ args body -> chapter settings_ args body )
