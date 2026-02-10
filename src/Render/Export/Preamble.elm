@@ -176,6 +176,8 @@ standardPackages =
     """
 %% Packages
 
+\\usepackage{listings}
+
 %% Standard packages
 \\usepackage{geometry}
 \\geometry{letterpaper}

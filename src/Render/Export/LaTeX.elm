@@ -1342,7 +1342,9 @@ inlineCode str_ =
         str =
             String.replace "\\" "\\\\" str_
     in
-    "\\texttt{" ++ str ++ "}"
+    --"\\texttt{" ++ str ++ "}"
+    -- "\\verb|" ++ str ++ "|"
+    "\\lstinline|" ++ str ++ "|"
 
 
 link : List Expression -> String
@@ -1725,6 +1727,15 @@ aliases =
         , ( "b", "textbf" )
         , ( "bold", "textbf" )
         , ( "large", "large" )
+        , ( "red", "textcolor{red}" )
+        , ( "blue", "textcolor{blue}" )
+        , ( "green", "textcolor{green}" )
+        , ( "pink", "textcolor{pink}" )
+        , ( "magenta", "textcolor{magenta}" )
+        , ( "violet", "textcolor{violet}" )
+        , ( "gray", "textcolor{gray}" )
+        , ( "comment", "textcolor{blue}" )
+        , ( "strike", "sout" )
         ]
 
 
