@@ -1234,6 +1234,13 @@ macroDict =
         , ( "underscore", \_ -> underscore )
         , ( "tags", dontRender )
         , ( "cite", \_ -> exportCite )
+        , ( "box", \_ _ -> "$\\square$" )
+        , ( "cbox", \_ _ -> "$\\boxtimes$" )
+        , ( "rbox", \_ _ -> "\\textcolor{red}{$\\square$}" )
+        , ( "crbox", \_ _ -> "\\textcolor{red}{$\\boxtimes$}" )
+        , ( "fbox", \_ _ -> "$\\blacksquare$" )
+        , ( "frbox", \_ _ -> "\\textcolor{red}{$\\blacksquare$}" )
+        , ( "xbox", \_ _ -> "$\\boxtimes$" )
         ]
 
 

@@ -198,6 +198,7 @@ markupDict =
         , ( "crbox", renderCrbox )
         , ( "fbox", renderFbox )
         , ( "frbox", renderFrbox )
+        , ( "xbox", renderXbox )
 
         -- Hidden/no-op
         , ( "hide", renderHidden )
@@ -982,6 +983,11 @@ renderFbox _ _ _ meta =
 renderFrbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderFrbox _ _ _ meta =
     Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-size" "24px", HA.style "color" "#b30000" ]) [ Html.text "■" ]
+
+
+renderXbox : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderXbox _ _ _ meta =
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-size" "20px" ]) [ Html.text "☒" ]
 
 
 {-| Render nothing (hidden content).
