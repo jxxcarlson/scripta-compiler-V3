@@ -9,6 +9,7 @@ import Either exposing (Either(..))
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events
+import Json.Decode
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Sizing
 import Render.Utility exposing (idAttr, selectedStyle)
@@ -648,7 +649,8 @@ renderImage params _ _ block _ =
             Html.span
                 [ HA.style "cursor" "zoom-in"
                 , HA.style "display" "inline-block"
-                , Html.Events.onClick (ExpandImage src)
+                , Html.Events.stopPropagationOn "click"
+                    (Json.Decode.succeed ( ExpandImage src, True ))
                 ]
                 [ imageElement ]
 
