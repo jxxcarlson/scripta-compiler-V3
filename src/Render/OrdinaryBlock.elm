@@ -203,6 +203,11 @@ renderSection params acc _ block children =
             ([ idAttr block.meta.id
              , HA.style "font-weight" "normal"
              , HA.style "margin-top" "1.5em"
+             , if level > 2 then
+                HA.style "font-style" "italic"
+
+               else
+                HA.style "font-style" "normal"
              , HA.style "margin-bottom" "0.5em"
              ]
                 ++ selectedStyle params.selectedId block.meta.id params.theme
