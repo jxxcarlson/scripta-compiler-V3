@@ -1010,6 +1010,9 @@ exportBlock mathMacroDict settings block =
                         "verse" ->
                             str |> fixChars |> (\s -> "\\begin{verbatim}\n" ++ s ++ "\n\\end{verbatim}")
 
+                        "chem" ->
+                            "\\[\\ce{" ++ str ++ "}\\]"
+
                         "load-files" ->
                             ""
 
@@ -1312,6 +1315,7 @@ verbatimExprDict =
         [ ( "code", inlineCode )
         , ( "math", inlineMath )
         , ( "m", inlineMath )
+        , ( "chem", inlineChem )
         ]
 
 
@@ -1334,6 +1338,11 @@ putPercent str =
 inlineMath : String -> String
 inlineMath str =
     "$" ++ str ++ "$"
+
+
+inlineChem : String -> String
+inlineChem str =
+    "$\\ce{" ++ str ++ "}$"
 
 
 inlineCode : String -> String
