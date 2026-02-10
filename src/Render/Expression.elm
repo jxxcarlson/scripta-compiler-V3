@@ -485,8 +485,17 @@ Clicking navigates within the document.
 -}
 renderIlink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderIlink params acc args meta =
-    case List.reverse args of
-        (Text targetId _) :: rest ->
+    let
+        -- Extract all text content and split into words;
+        -- last word is the targetId, the rest form the label.
+        allText =
+            List.map exprText args |> String.join " "
+
+        words =
+            String.words allText
+    in
+    case List.reverse words of
+        targetId :: labelWords ->
             Html.a
                 [ HA.id meta.id
                 , HA.href ("#" ++ targetId)
@@ -508,15 +517,10 @@ renderIlink params acc args meta =
                 , HA.style "text-decoration" "none"
                 , HA.style "cursor" "pointer"
                 ]
-                [ Html.text (ilinkLabel (List.reverse rest)) ]
+                [ Html.text (String.join " " (List.reverse labelWords)) ]
 
         _ ->
             Html.span [ HA.id meta.id ] (renderList params acc args)
-
-
-ilinkLabel : List Expression -> String
-ilinkLabel exprs =
-    List.map exprText exprs |> String.join " "
 
 
 exprText : Expression -> String
@@ -526,13 +530,13 @@ exprText expr =
             s
 
         Fun _ children _ ->
-            ilinkLabel children
+            List.map exprText children |> String.join " "
 
         VFun _ content _ ->
             content
 
         ExprList _ children _ ->
-            ilinkLabel children
+            List.map exprText children |> String.join " "
 
 
 {-| Render an index entry (hidden in output).
