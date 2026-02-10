@@ -756,6 +756,7 @@ renderIndent params acc _ block children =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin-left" "2em"
+         , HA.style "padding-right" "2em"
          , HA.style "margin-bottom" "1em"
          ]
             ++ selectedStyle params.selectedId block.meta.id params.theme
