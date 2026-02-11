@@ -661,6 +661,30 @@ renderQuiver params _ _ block _ =
 
                 Nothing ->
                     []
+
+        isExpandable =
+            List.member "expandable" block.args
+
+        imageElement =
+            Html.img
+                [ HA.src url
+                , HA.style "max-width" width
+                , HA.style "pointer-events" "none"
+                ]
+                []
+
+        imageDisplay =
+            if isExpandable then
+                Html.span
+                    [ HA.style "cursor" "zoom-in"
+                    , HA.style "display" "inline-block"
+                    , Html.Events.stopPropagationOn "click"
+                        (Json.Decode.succeed ( ExpandImage url, True ))
+                    ]
+                    [ imageElement ]
+
+            else
+                imageElement
     in
     if url == "" then
         [ Html.div
@@ -684,12 +708,7 @@ renderQuiver params _ _ block _ =
                 ++ selectedStyle params.selectedId block.meta.id params.theme
                 ++ Render.Utility.rlBlockSync block.meta
             )
-            (Html.img
-                [ HA.src url
-                , HA.style "max-width" width
-                , HA.style "pointer-events" "none"
-                ]
-                []
+            (imageDisplay
                 :: captionElement
             )
         ]
@@ -755,6 +774,30 @@ renderTikz params _ _ block _ =
 
                 Nothing ->
                     []
+
+        isExpandable =
+            List.member "expandable" block.args
+
+        imageElement =
+            Html.img
+                [ HA.src url
+                , HA.style "max-width" width
+                , HA.style "pointer-events" "none"
+                ]
+                []
+
+        imageDisplay =
+            if isExpandable then
+                Html.span
+                    [ HA.style "cursor" "zoom-in"
+                    , HA.style "display" "inline-block"
+                    , Html.Events.stopPropagationOn "click"
+                        (Json.Decode.succeed ( ExpandImage url, True ))
+                    ]
+                    [ imageElement ]
+
+            else
+                imageElement
     in
     if url == "" then
         [ Html.div
@@ -778,12 +821,7 @@ renderTikz params _ _ block _ =
                 ++ selectedStyle params.selectedId block.meta.id params.theme
                 ++ Render.Utility.rlBlockSync block.meta
             )
-            (Html.img
-                [ HA.src url
-                , HA.style "max-width" width
-                , HA.style "pointer-events" "none"
-                ]
-                []
+            (imageDisplay
                 :: captionElement
             )
         ]
