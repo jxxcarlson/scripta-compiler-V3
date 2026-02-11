@@ -298,6 +298,7 @@ renderCode params _ _ block _ =
                 )
             , HA.style "padding" "1em"
             , HA.style "margin-left" indentation
+            , HA.style "margin-right" indentation
             , HA.style "border-radius" "4px"
             , HA.style "overflow-x" "auto"
             , HA.style "font-family" "monospace"
