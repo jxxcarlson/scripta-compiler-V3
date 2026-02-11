@@ -603,25 +603,105 @@ renderSvg params _ _ block _ =
     ]
 
 
-{-| Render a Quiver commutative diagram (placeholder, requires external integration).
+{-| Render a Quiver commutative diagram.
 
-    | quiver
-    [quiver diagram data]
+The block content has two parts separated by `---`:
+
+  - Part 1: Image URL (first word) displayed in HTML
+  - Part 2: LaTeX/tikzcd code (used only for LaTeX export)
+
+Properties:
+
+  - width: Image width in pixels (default: panel width)
+  - caption: Caption text displayed below the diagram
+
+Example:
+
+    || quiver width:400 caption:Commutative diagram
+    https://example.com/diagram.png
+    ---
+    \[\begin{tikzcd} A \arrow[r] & B \end{tikzcd}\]
 
 -}
 renderQuiver : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderQuiver params _ _ block _ =
-    [ Html.div
-        ([ idAttr block.meta.id
-         , HA.class "quiver-placeholder"
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
-            ++ Render.Utility.rlBlockSync block.meta
-        )
-        [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[Quiver Diagram]" ] ]
-    ]
+    let
+        content =
+            getVerbatimContent block
+
+        imageData =
+            case String.split "---" content of
+                a :: _ ->
+                    String.trim a
+
+                _ ->
+                    ""
+
+        url =
+            String.words imageData |> List.head |> Maybe.withDefault ""
+
+        width =
+            case Dict.get "width" block.properties of
+                Nothing ->
+                    String.fromInt params.width ++ "px"
+
+                Just w ->
+                    case String.toInt w of
+                        Just _ ->
+                            w ++ "px"
+
+                        Nothing ->
+                            String.fromInt params.width ++ "px"
+
+        caption =
+            Dict.get "caption" block.properties
+
+        captionElement =
+            case caption of
+                Just cap ->
+                    [ Html.div
+                        [ HA.style "font-size" "0.9em"
+                        , HA.style "font-style" "italic"
+                        , HA.style "margin-top" "0.5em"
+                        , HA.style "color" "#555"
+                        ]
+                        [ Html.text cap ]
+                    ]
+
+                Nothing ->
+                    []
+    in
+    if url == "" then
+        [ Html.div
+            ([ idAttr block.meta.id
+             , HA.style "margin" "1em 0"
+             , HA.style "cursor" "pointer"
+             ]
+                ++ selectedStyle params.selectedId block.meta.id params.theme
+                ++ Render.Utility.rlBlockSync block.meta
+            )
+            [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[Quiver: no image URL]" ] ]
+        ]
+
+    else
+        [ Html.div
+            ([ idAttr block.meta.id
+             , HA.style "text-align" "center"
+             , HA.style "margin" "1em 0"
+             , HA.style "cursor" "pointer"
+             ]
+                ++ selectedStyle params.selectedId block.meta.id params.theme
+                ++ Render.Utility.rlBlockSync block.meta
+            )
+            (Html.img
+                [ HA.src url
+                , HA.style "max-width" width
+                , HA.style "pointer-events" "none"
+                ]
+                []
+                :: captionElement
+            )
+        ]
 
 
 {-| Render a TikZ diagram (placeholder, requires external integration).
