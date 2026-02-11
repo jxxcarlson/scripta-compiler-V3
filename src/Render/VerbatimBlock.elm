@@ -10,9 +10,11 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events
 import Json.Decode
+import Parser
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Sizing
 import Render.Utility exposing (idAttr, selectedStyle)
+import SyntaxHighlight
 import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, MathMacroDict, Msg(..), Theme(..))
 
 
@@ -254,12 +256,23 @@ applyMathMacros macroDict content =
 -- CODE BLOCKS
 
 
-{-| Render a code block with syntax highlighting style.
+{-| Render a code block with syntax highlighting.
 
-    | code
-    function hello() {
-        console.log("Hello!");
-    }
+    | code python
+    def hello():
+        print("Hello!")
+
+If a supported language is specified as an argument, syntax highlighting
+is applied using elm-syntax-highlight. Supported languages: elm, javascript,
+xml, css, python, sql, json, nix, kotlin, go.
+
+If no language or an unsupported language is given, falls back to plain
+monospace rendering.
+
+Properties:
+
+  - linenumbers: Show line numbers (presence enables, e.g. `linenumbers:yes`)
+  - indent: Left/right margin indentation in em units
 
 -}
 renderCode : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
@@ -278,7 +291,61 @@ renderCode params _ _ block _ =
 
                 Just k ->
                     k ++ "em"
+
+        showLineNumbers =
+            Dict.member "linenumbers" block.properties
+
+        lineNumberStart =
+            if showLineNumbers then
+                Just 1
+
+            else
+                Nothing
+
+        theme =
+            case params.theme of
+                Light ->
+                    SyntaxHighlight.gitHub
+
+                Dark ->
+                    SyntaxHighlight.monokai
     in
+    case languageParser language of
+        Just parser ->
+            case parser content of
+                Ok hcode ->
+                    [ Html.div
+                        ([ idAttr block.meta.id
+                         , HA.style "margin" "1em 0"
+                         , HA.style "cursor" "pointer"
+                         ]
+                            ++ selectedStyle params.selectedId block.meta.id params.theme
+                            ++ Render.Utility.rlBlockSync block.meta
+                        )
+                        [ SyntaxHighlight.useTheme theme
+                        , Html.div
+                            [ HA.style "margin-left" indentation
+                            , HA.style "margin-right" indentation
+                            , HA.style "border-radius" "4px"
+                            , HA.style "overflow-x" "auto"
+                            , HA.style "font-size" (Render.Sizing.codeSize params.sizing)
+                            , HA.style "pointer-events" "none"
+                            ]
+                            [ SyntaxHighlight.toBlockHtml lineNumberStart hcode ]
+                        ]
+                    ]
+
+                Err _ ->
+                    renderCodePlain params block content indentation
+
+        Nothing ->
+            renderCodePlain params block content indentation
+
+
+{-| Plain code rendering fallback for unsupported or missing languages.
+-}
+renderCodePlain : CompilerParameters -> ExpressionBlock -> String -> String -> List (Html Msg)
+renderCodePlain params block content indentation =
     [ Html.div
         ([ idAttr block.meta.id
          , HA.style "margin" "1em 0"
@@ -305,12 +372,57 @@ renderCode params _ _ block _ =
             , HA.style "font-size" (Render.Sizing.codeSize params.sizing)
             , HA.style "pointer-events" "none"
             ]
-            [ Html.code
-                [ HA.class ("language-" ++ language) ]
+            [ Html.code []
                 [ Html.text content ]
             ]
         ]
     ]
+
+
+{-| Map a language name string to its SyntaxHighlight parser function.
+Returns Nothing for unsupported or empty language strings.
+-}
+languageParser : String -> Maybe (String -> Result (List Parser.DeadEnd) SyntaxHighlight.HCode)
+languageParser lang =
+    case String.toLower lang of
+        "elm" ->
+            Just SyntaxHighlight.elm
+
+        "javascript" ->
+            Just SyntaxHighlight.javascript
+
+        "js" ->
+            Just SyntaxHighlight.javascript
+
+        "xml" ->
+            Just SyntaxHighlight.xml
+
+        "html" ->
+            Just SyntaxHighlight.xml
+
+        "css" ->
+            Just SyntaxHighlight.css
+
+        "python" ->
+            Just SyntaxHighlight.python
+
+        "sql" ->
+            Just SyntaxHighlight.sql
+
+        "json" ->
+            Just SyntaxHighlight.json
+
+        "nix" ->
+            Just SyntaxHighlight.nix
+
+        "kotlin" ->
+            Just SyntaxHighlight.kotlin
+
+        "go" ->
+            Just SyntaxHighlight.go
+
+        _ ->
+            Nothing
 
 
 
