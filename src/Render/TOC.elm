@@ -74,7 +74,7 @@ extractSectionsFromTree acc tree =
             Tree.value tree
 
         thisEntry =
-            case Debug.log "@@TOC: heading" block.heading of
+            case block.heading of
                 Ordinary "section" ->
                     [ blockToTocEntry acc block ]
 
