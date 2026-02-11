@@ -9,6 +9,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as Decode
+import Render.Constants
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Utility
 import V3.Types exposing (Accumulator, CompilerParameters, Expr(..), ExprMeta, Expression, MathMacroDict, Msg(..))
@@ -136,7 +137,7 @@ markupDict =
         , ( "underline", renderUnderline )
         , ( "red", renderColor "red" )
         , ( "blue", renderColor "blue" )
-        , ( "green", renderColor "green" )
+        , ( "green", renderColor "#006400" )
         , ( "pink", renderColor "#ff6464" )
         , ( "magenta", renderColor "#ff33c0" )
         , ( "violet", renderColor "#9664ff" )
@@ -264,7 +265,7 @@ markupDict =
 -}
 renderStrong : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderStrong params acc args meta =
-    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-weight" "600" ]) (renderList params acc args)
+    Html.span (Render.Utility.rlSync meta ++ [ HA.style "font-weight" Render.Constants.boldFontWeight ]) (renderList params acc args)
 
 
 {-| Render italic/emphasized text.
