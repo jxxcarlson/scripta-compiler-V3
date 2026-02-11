@@ -423,12 +423,6 @@ languageParser lang =
         "nix" ->
             Just SyntaxHighlight.nix
 
-        "kotlin" ->
-            Just SyntaxHighlight.kotlin
-
-        "go" ->
-            Just SyntaxHighlight.go
-
         _ ->
             Nothing
 

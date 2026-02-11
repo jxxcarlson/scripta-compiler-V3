@@ -986,7 +986,6 @@ renderIndexBlock _ acc _ block _ =
                 [ Html.div
                     [ HA.style "font-weight" "bold"
                     , HA.style "font-size" "1.2em"
-                    , HA.style "border-bottom" "1px solid #ccc"
                     , HA.style "margin-bottom" "0.5em"
                     ]
                     [ Html.text (String.toUpper letter) ]

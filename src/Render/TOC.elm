@@ -74,9 +74,17 @@ extractSectionsFromTree acc tree =
             Tree.value tree
 
         thisEntry =
-            case block.heading of
+            case Debug.log "@@TOC: heading" block.heading of
                 Ordinary "section" ->
                     [ blockToTocEntry acc block ]
+
+                Ordinary "index" ->
+                    [ { id = block.meta.id
+                      , level = 1
+                      , title = "Index"
+                      , sectionNumber = ""
+                      }
+                    ]
 
                 _ ->
                     []
