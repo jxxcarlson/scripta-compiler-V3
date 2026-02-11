@@ -270,6 +270,14 @@ renderCode params _ _ block _ =
 
         content =
             getVerbatimContent block
+
+        indentation =
+            case Dict.get "indent" block.properties of
+                Nothing ->
+                    "0em"
+
+                Just k ->
+                    k ++ "em"
     in
     [ Html.div
         ([ idAttr block.meta.id
@@ -289,6 +297,7 @@ renderCode params _ _ block _ =
                         "#1e1e1e"
                 )
             , HA.style "padding" "1em"
+            , HA.style "margin-left" indentation
             , HA.style "border-radius" "4px"
             , HA.style "overflow-x" "auto"
             , HA.style "font-family" "monospace"
