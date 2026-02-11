@@ -322,17 +322,25 @@ renderCode params _ _ block _ =
                             ++ selectedStyle params.selectedId block.meta.id params.theme
                             ++ Render.Utility.rlBlockSync block.meta
                         )
-                        [ SyntaxHighlight.useTheme theme
-                        , Html.div
-                            [ HA.style "margin-left" indentation
-                            , HA.style "margin-right" indentation
-                            , HA.style "border-radius" "4px"
-                            , HA.style "overflow-x" "auto"
-                            , HA.style "font-size" (Render.Sizing.codeSize params.sizing)
-                            , HA.style "pointer-events" "none"
-                            ]
-                            [ SyntaxHighlight.toBlockHtml lineNumberStart hcode ]
-                        ]
+                        ([ SyntaxHighlight.useTheme theme
+                         ]
+                            ++ (if showLineNumbers then
+                                    [ lineNumberCss ]
+
+                                else
+                                    []
+                               )
+                            ++ [ Html.div
+                                    [ HA.style "margin-left" indentation
+                                    , HA.style "margin-right" indentation
+                                    , HA.style "border-radius" "4px"
+                                    , HA.style "overflow-x" "auto"
+                                    , HA.style "font-size" (Render.Sizing.codeSize params.sizing)
+                                    , HA.style "pointer-events" "none"
+                                    ]
+                                    [ SyntaxHighlight.toBlockHtml lineNumberStart hcode ]
+                               ]
+                        )
                     ]
 
                 Err _ ->
@@ -423,6 +431,32 @@ languageParser lang =
 
         _ ->
             Nothing
+
+
+{-| CSS for displaying line numbers on `.elmsh-line` elements.
+The elm-syntax-highlight library sets `data-elmsh-lc` on each line div
+but does not include the CSS to render it.
+-}
+lineNumberCss : Html msg
+lineNumberCss =
+    Html.node "style"
+        []
+        [ Html.text
+            (String.join "\n"
+                [ ".elmsh-line::before {"
+                , "  content: attr(data-elmsh-lc);"
+                , "  display: inline-block;"
+                , "  text-align: right;"
+                , "  width: 2.5em;"
+                , "  margin-right: 1em;"
+                , "  padding-right: 0.5em;"
+                , "  border-right: 1px solid rgba(128, 128, 128, 0.4);"
+                , "  color: rgba(128, 128, 128, 0.6);"
+                , "  user-select: none;"
+                , "}"
+                ]
+            )
+        ]
 
 
 
