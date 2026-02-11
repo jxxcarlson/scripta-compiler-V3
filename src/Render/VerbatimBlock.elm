@@ -605,20 +605,20 @@ renderSvg params _ _ block _ =
 
 {-| Render a Quiver commutative diagram.
 
-The block content has two parts separated by `---`:
-
-  - Part 1: Image URL (first word) displayed in HTML
-  - Part 2: LaTeX/tikzcd code (used only for LaTeX export)
+The image URL comes from the `image` property (without protocol prefix).
 
 Properties:
 
+  - image: Image path (https:// is prepended automatically)
   - width: Image width in pixels (default: panel width)
   - caption: Caption text displayed below the diagram
 
 Example:
 
-    || quiver width:400 caption:Commutative diagram
-    https://example.com/diagram.png
+    | quiver
+    | image:imagedelivery.net/example/public
+    | width:400
+    | caption:Commutative diagram
     ---
     \[\begin{tikzcd} A \arrow[r] & B \end{tikzcd}\]
 
@@ -626,19 +626,10 @@ Example:
 renderQuiver : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderQuiver params _ _ block _ =
     let
-        content =
-            getVerbatimContent block
-
-        imageData =
-            case String.split "---" content of
-                a :: _ ->
-                    String.trim a
-
-                _ ->
-                    ""
-
         url =
-            String.words imageData |> List.head |> Maybe.withDefault ""
+            Dict.get "image" block.properties
+                |> Maybe.map (\path -> "https://" ++ path)
+                |> Maybe.withDefault ""
 
         width =
             case Dict.get "width" block.properties of
@@ -704,27 +695,98 @@ renderQuiver params _ _ block _ =
         ]
 
 
-{-| Render a TikZ diagram (placeholder, requires external integration).
+{-| Render a TikZ diagram as an image.
+
+The image URL comes from the `image` property (without protocol prefix).
+
+Properties:
+
+  - image: Image path (https:// is prepended automatically)
+  - width: Image width in pixels (default: panel width)
+  - caption: Caption text displayed below the diagram
+
+Example:
 
     | tikz
+    | image:imagedelivery.net/example/public
+    | width:400
+    | caption:A triangle
+    ---
     \begin{tikzpicture}
-    \draw (0,0) -- (1,1);
+    \draw (0,0) -- (1,1) -- (2,0) -- cycle;
     \end{tikzpicture}
 
 -}
 renderTikz : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderTikz params _ _ block _ =
-    [ Html.div
-        ([ idAttr block.meta.id
-         , HA.class "tikz-placeholder"
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
-            ++ Render.Utility.rlBlockSync block.meta
-        )
-        [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[TikZ Diagram]" ] ]
-    ]
+    let
+        url =
+            Dict.get "image" block.properties
+                |> Maybe.map (\path -> "https://" ++ path)
+                |> Maybe.withDefault ""
+
+        width =
+            case Dict.get "width" block.properties of
+                Nothing ->
+                    String.fromInt params.width ++ "px"
+
+                Just w ->
+                    case String.toInt w of
+                        Just _ ->
+                            w ++ "px"
+
+                        Nothing ->
+                            String.fromInt params.width ++ "px"
+
+        caption =
+            Dict.get "caption" block.properties
+
+        captionElement =
+            case caption of
+                Just cap ->
+                    [ Html.div
+                        [ HA.style "font-size" "0.9em"
+                        , HA.style "font-style" "italic"
+                        , HA.style "margin-top" "0.5em"
+                        , HA.style "color" "#555"
+                        ]
+                        [ Html.text cap ]
+                    ]
+
+                Nothing ->
+                    []
+    in
+    if url == "" then
+        [ Html.div
+            ([ idAttr block.meta.id
+             , HA.style "margin" "1em 0"
+             , HA.style "cursor" "pointer"
+             ]
+                ++ selectedStyle params.selectedId block.meta.id params.theme
+                ++ Render.Utility.rlBlockSync block.meta
+            )
+            [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[TikZ: no image URL]" ] ]
+        ]
+
+    else
+        [ Html.div
+            ([ idAttr block.meta.id
+             , HA.style "text-align" "center"
+             , HA.style "margin" "1em 0"
+             , HA.style "cursor" "pointer"
+             ]
+                ++ selectedStyle params.selectedId block.meta.id params.theme
+                ++ Render.Utility.rlBlockSync block.meta
+            )
+            (Html.img
+                [ HA.src url
+                , HA.style "max-width" width
+                , HA.style "pointer-events" "none"
+                ]
+                []
+                :: captionElement
+            )
+        ]
 
 
 
