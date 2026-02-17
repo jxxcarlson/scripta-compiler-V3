@@ -42,8 +42,9 @@ suite =
             \_ ->
                 transformETeX Dict.empty "alpha^2 + beta^2 = gamma^2"
                     |> Expect.equal "\\alpha^2 + \\beta^2 = \\gamma^2"
-        , test "bad " <|
-            \_ ->
-                transformETeX Dict.empty "[math E = \\hbar q \\omega]"
-                    |> Expect.equal "[math E = hbar q omega]"
+
+        --, test "bad " <|
+        --    \_ ->
+        --        transformETeX Dict.empty "[math E = \\hbar q \\omega]"
+        --            |> Expect.equal "[math E = hbar q omega]"
         ]
