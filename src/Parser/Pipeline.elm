@@ -13,6 +13,7 @@ module Parser.Pipeline exposing (toExpressionBlock)
 import Dict
 import Either exposing (Either(..))
 import Parser.Expression as Expression
+import Parser.Table
 import V3.Types exposing (BlockMeta, Expr(..), ExprMeta, Expression, ExpressionBlock, Heading(..), PrimitiveBlock)
 
 
@@ -82,15 +83,10 @@ parseBody block =
             Right (parseLines block.meta.lineNumber block.body)
 
         Verbatim "xtable" ->
-            Right (parseTable block.body)
+            Right (Parser.Table.parseTable 0 block.body)
 
         Verbatim _ ->
             Left (String.join "\n" block.body)
-
-
-parseTable : List String -> List Expression
-parseTable rows =
-    []
 
 
 {-| Parse list items, each becoming an ExprList with its own indent level.
