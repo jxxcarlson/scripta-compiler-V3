@@ -378,11 +378,21 @@ tokenParser_ start index =
     Parser.oneOf
         [ whiteSpaceParser start index
         , textParser start index
+        , backslashTextParser start index
         , leftBracketParser start index
         , rightBracketParser start index
         , mathParser start index
         , codeParser start index
         ]
+
+
+{-| Parse backslash followed by letters as a single text token.
+This ensures `\alpha` in Normal mode becomes `S "\\alpha"` rather than a TokenError.
+-}
+backslashTextParser : Int -> Int -> TokenParser
+backslashTextParser start index =
+    PT.text (\c -> c == '\\') (\c -> Char.isAlpha c)
+        |> Parser.map (\data -> S data.content { begin = start, end = start + data.end - data.begin - 1, index = index })
 
 
 mathParser_ : Int -> Int -> TokenParser

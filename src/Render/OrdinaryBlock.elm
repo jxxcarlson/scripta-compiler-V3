@@ -830,20 +830,55 @@ renderXTable params acc _ block _ =
                 |> Maybe.withDefault ""
                 |> String.toList
                 |> List.map (String.fromChar >> formatToTextAlign)
+
+        captionText =
+            Dict.get "caption" block.properties
+
+        tableNumber =
+            Dict.get "table" block.properties
+
+        captionLine =
+            case ( tableNumber, captionText ) of
+                ( Just n, Just cap ) ->
+                    Just ("Table " ++ n ++ ". " ++ cap)
+
+                ( Just n, Nothing ) ->
+                    Just ("Table " ++ n)
+
+                ( Nothing, Just cap ) ->
+                    Just cap
+
+                ( Nothing, Nothing ) ->
+                    Nothing
     in
     case block.body of
         Right rows ->
             [ Html.div
                 ([ idAttr block.meta.id
                  , HA.style "margin" "1em 0"
-                 , HA.style "padding-left" "24px"
+                 , HA.style "display" "flex"
+                 , HA.style "flex-direction" "column"
+                 , HA.style "align-items" "center"
                  ]
                     ++ selectedStyle params.selectedId block.meta.id params.theme
                     ++ Render.Utility.rlBlockSync block.meta
                 )
-                [ Html.table [ HA.style "border-collapse" "collapse" ]
+                (Html.table [ HA.style "border-collapse" "collapse" ]
                     [ Html.tbody [] (List.map (renderXTableRow params acc columnWidths formats) rows) ]
-                ]
+                    :: (case captionLine of
+                            Just text ->
+                                [ Html.div
+                                    [ HA.style "margin-top" "8px"
+                                    , HA.style "font-style" "italic"
+                                    , HA.style "font-size" "0.9em"
+                                    ]
+                                    [ Html.text text ]
+                                ]
+
+                            Nothing ->
+                                []
+                       )
+                )
             ]
 
         Left data ->
