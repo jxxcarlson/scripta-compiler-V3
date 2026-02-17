@@ -818,22 +818,74 @@ renderQuotation params acc _ block children =
 
 
 renderXTable : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderXTable params acc _ block children =
-    [ Html.blockquote
-        ([ idAttr block.meta.id
-         , HA.style "border-left" "3px solid #ccc"
-         , HA.style "padding-left" "12px"
-         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
-         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
-         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
-         , HA.style "font-style" "italic"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
-            ++ Render.Utility.rlBlockSync block.meta
-        )
-        --(renderBody params acc block ++ children)
-        [ Html.text "XTable" ]
-    ]
+renderXTable params acc _ block _ =
+    let
+        columnWidths =
+            Dict.get "widths" block.properties
+                |> Maybe.withDefault ""
+                |> String.split ","
+                |> List.map String.trim
+                |> List.filterMap String.toInt
+
+        formats =
+            Dict.get "format" block.properties
+                |> Maybe.withDefault ""
+                |> String.toList
+                |> List.map (String.fromChar >> formatToTextAlign)
+    in
+    case block.body of
+        Right rows ->
+            [ Html.div
+                ([ idAttr block.meta.id
+                 , HA.style "margin" "1em 0"
+                 , HA.style "padding-left" "24px"
+                 ]
+                    ++ selectedStyle params.selectedId block.meta.id params.theme
+                    ++ Render.Utility.rlBlockSync block.meta
+                )
+                [ Html.table [ HA.style "border-collapse" "collapse" ]
+                    [ Html.tbody [] (List.map (renderXTableRow params acc columnWidths formats) rows) ]
+                ]
+            ]
+
+        Left data ->
+            [ Html.div [ idAttr block.meta.id ] [ Html.text data ] ]
+
+
+renderXTableRow : CompilerParameters -> Accumulator -> List Int -> List String -> Expression -> Html Msg
+renderXTableRow params acc widths formats row =
+    case row of
+        ExprList _ cells _ ->
+            Html.tr [ HA.style "height" "20px" ]
+                (List.indexedMap (renderXTableCell params acc widths formats) cells)
+
+        _ ->
+            Html.tr [] []
+
+
+renderXTableCell : CompilerParameters -> Accumulator -> List Int -> List String -> Int -> Expression -> Html Msg
+renderXTableCell params acc widths formats index cell =
+    case cell of
+        ExprList _ exprs _ ->
+            let
+                widthStyle =
+                    List.drop index widths
+                        |> List.head
+                        |> Maybe.map (\w -> [ HA.style "width" (String.fromInt w ++ "px") ])
+                        |> Maybe.withDefault []
+
+                alignStyle =
+                    List.drop index formats
+                        |> List.head
+                        |> Maybe.map (\a -> [ HA.style "text-align" a ])
+                        |> Maybe.withDefault []
+            in
+            Html.td
+                ([ HA.style "padding" "4px 8px" ] ++ widthStyle ++ alignStyle)
+                (Render.Expression.renderList params acc exprs)
+
+        _ ->
+            Html.td [] []
 
 
 {-| Render centered content.
