@@ -69,10 +69,8 @@ blockDict =
         , ( "hide", renderComment )
         , ( "document", renderDocument )
         , ( "collection", renderCollection )
-        , ( "xtable", renderXTable )
-
         -- Tables and lists
-        , ( "table", renderTable )
+        , ( "table", renderXTable )
         , ( "desc", renderDesc )
 
         -- Footnotes

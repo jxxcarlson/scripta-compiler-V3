@@ -57,7 +57,6 @@ blockDict =
         -- Arrays/tables
         , ( "array", renderArray )
         , ( "textarray", renderTextArray )
-        , ( "table", renderTextArray )
         , ( "csvtable", renderCsvTable )
 
         -- Raw verbatim
@@ -609,7 +608,7 @@ The image URL comes from the `image` property (without protocol prefix).
 
 Properties:
 
-  - image: Image path (https:// is prepended automatically)
+  - image: Image path (<https://> is prepended automatically)
   - width: Image width in pixels (default: panel width)
   - caption: Caption text displayed below the diagram
 
@@ -720,7 +719,7 @@ The image URL comes from the `image` property (without protocol prefix).
 
 Properties:
 
-  - image: Image path (https:// is prepended automatically)
+  - image: Image path (<https://> is prepended automatically)
   - width: Image width in pixels (default: panel width)
   - caption: Caption text displayed below the diagram
 

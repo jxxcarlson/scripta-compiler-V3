@@ -47,7 +47,7 @@ verbatimNames =
     , "settings"
     , "book"
     , "article"
-    , "xtable"
+    , "table"
     ]
 
 

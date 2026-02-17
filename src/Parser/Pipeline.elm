@@ -38,8 +38,8 @@ toExpressionBlock block =
 
 transformBlockHeading block =
     case block.heading of
-        Verbatim "xtable" ->
-            Ordinary "xtable"
+        Verbatim "table" ->
+            Ordinary "table"
 
         _ ->
             block.heading
@@ -82,7 +82,7 @@ parseBody block =
         Ordinary _ ->
             Right (parseLines block.meta.lineNumber block.body)
 
-        Verbatim "xtable" ->
+        Verbatim "table" ->
             Right (Parser.Table.parseTable 0 block.body)
 
         Verbatim _ ->
