@@ -594,6 +594,9 @@ update msg model =
                 V3.Types.CitationClick { targetId } ->
                     ( { model | selectedId = targetId, debugClickCount = newClickCount }, scrollToElement targetId )
 
+                V3.Types.GoToDocument _ _ ->
+                    ( { model | debugClickCount = newClickCount }, Cmd.none )
+
                 V3.Types.NoOp ->
                     ( { model | debugClickCount = newClickCount }, Cmd.none )
 

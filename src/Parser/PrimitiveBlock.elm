@@ -47,6 +47,7 @@ verbatimNames =
     , "settings"
     , "book"
     , "article"
+    , "xtable"
     ]
 
 
@@ -742,8 +743,10 @@ isBlockWithHeader block =
 
 {-| Check if a line is a continuation line (extends the header with more args/properties).
 A continuation line:
-1. Starts with "| " (pipe + space)
-2. The first word after "| " is NOT a known block name (unless it contains a colon)
+
+1.  Starts with "| " (pipe + space)
+2.  The first word after "| " is NOT a known block name (unless it contains a colon)
+
 -}
 isContinuationLine : String -> Bool
 isContinuationLine line =

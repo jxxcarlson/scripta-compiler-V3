@@ -24,7 +24,7 @@ For all other blocks, the body is parsed into expressions (Right (List Expressio
 -}
 toExpressionBlock : PrimitiveBlock -> ExpressionBlock
 toExpressionBlock block =
-    { heading = block.heading
+    { heading = transformBlockHeading block
     , indent = block.indent
     , args = block.args
     , properties = block.properties |> Dict.insert "id" block.meta.id
@@ -33,6 +33,15 @@ toExpressionBlock block =
     , meta = block.meta
     , style = block.style
     }
+
+
+transformBlockHeading block =
+    case block.heading of
+        Verbatim "xtable" ->
+            Ordinary "xtable"
+
+        _ ->
+            block.heading
 
 
 {-| Parse the body based on block heading type.
@@ -72,8 +81,16 @@ parseBody block =
         Ordinary _ ->
             Right (parseLines block.meta.lineNumber block.body)
 
+        Verbatim "xtable" ->
+            Right (parseTable block.body)
+
         Verbatim _ ->
             Left (String.join "\n" block.body)
+
+
+parseTable : List String -> List Expression
+parseTable rows =
+    []
 
 
 {-| Parse list items, each becoming an ExprList with its own indent level.

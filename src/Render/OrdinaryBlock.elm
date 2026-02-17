@@ -69,6 +69,7 @@ blockDict =
         , ( "hide", renderComment )
         , ( "document", renderDocument )
         , ( "collection", renderCollection )
+        , ( "xtable", renderXTable )
 
         -- Tables and lists
         , ( "table", renderTable )
@@ -813,6 +814,25 @@ renderQuotation params acc _ block children =
             ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
+    ]
+
+
+renderXTable : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
+renderXTable params acc _ block children =
+    [ Html.blockquote
+        ([ idAttr block.meta.id
+         , HA.style "border-left" "3px solid #ccc"
+         , HA.style "padding-left" "12px"
+         , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "margin-right" (Render.Sizing.marginRightWithDeltaPx 1 block.indent params.sizing)
+         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
+         , HA.style "font-style" "italic"
+         ]
+            ++ selectedStyle params.selectedId block.meta.id params.theme
+            ++ Render.Utility.rlBlockSync block.meta
+        )
+        --(renderBody params acc block ++ children)
+        [ Html.text "XTable" ]
     ]
 
 
