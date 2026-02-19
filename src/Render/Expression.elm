@@ -1461,19 +1461,71 @@ Sets element ID for linking.
 -}
 renderMark : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderMark params acc args meta =
-    case args of
-        [ Text str _, Fun "anchor" list _ ] ->
-            Html.span
-                [ HA.id (String.trim str)
-                , HA.style "text-decoration" "underline"
-                ]
-                (renderList params acc list)
+    let
+        withValue =
+            getWithValue args
 
-        [ first ] ->
-            Html.span [ HA.id meta.id ] (renderList params acc [ first ])
+        markId =
+            Maybe.withDefault meta.id withValue
 
-        (Text str _) :: rest ->
-            Html.span [ HA.id str ] (renderList params acc rest)
+        strippedArgs =
+            stripWithProperty args
+
+        highlight =
+            if params.selectedId == "__ALL_MARKS__" && withValue /= Nothing then
+                Render.Utility.highlightStyle params.theme
+
+            else if params.selectedId == markId then
+                Render.Utility.highlightStyle params.theme
+
+            else
+                []
+    in
+    Html.span ([ HA.id markId ] ++ highlight) (renderList params acc strippedArgs)
+
+
+{-| Extract the value from a trailing " with:..." in the last Text node.
+-}
+getWithValue : List Expression -> Maybe String
+getWithValue args =
+    case List.reverse args of
+        (Text str _) :: _ ->
+            case String.indexes " with:" str of
+                [] ->
+                    Nothing
+
+                indices ->
+                    let
+                        lastIndex =
+                            List.foldl max 0 indices
+                    in
+                    Just (String.dropLeft (lastIndex + 6) str |> String.trim)
 
         _ ->
-            Html.span [ HA.id meta.id ] []
+            Nothing
+
+
+{-| Strip trailing " with:..." from the last Text node in an expression list.
+-}
+stripWithProperty : List Expression -> List Expression
+stripWithProperty args =
+    case List.reverse args of
+        (Text str m) :: rest ->
+            List.reverse (Text (stripWithSuffix str) m :: rest)
+
+        _ ->
+            args
+
+
+stripWithSuffix : String -> String
+stripWithSuffix str =
+    case String.indexes " with:" str of
+        [] ->
+            str
+
+        indices ->
+            let
+                lastIndex =
+                    List.foldl max 0 indices
+            in
+            String.left lastIndex str

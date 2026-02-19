@@ -9,3 +9,9 @@ boldFontWeight =
 -}
 highlightColor =
     "rgb(229.5,229.5,255)"
+
+
+{-| Dark mode highlight color for selection highlighting.
+-}
+highlightColorDark =
+    "#2a4a6a"

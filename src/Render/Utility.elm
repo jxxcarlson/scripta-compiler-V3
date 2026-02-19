@@ -1,4 +1,4 @@
-module Render.Utility exposing (getArg, idAttr, rlBlockSync, rlSync, selectedStyle)
+module Render.Utility exposing (getArg, highlightStyle, idAttr, rlBlockSync, rlSync, selectedStyle)
 
 {-| Utility functions for rendering.
 -}
@@ -8,6 +8,7 @@ import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as Decode
 import List.Extra
+import Render.Constants
 import V3.Types exposing (Theme(..))
 
 
@@ -92,10 +93,10 @@ highlightStyle : Theme -> List (Attribute msg)
 highlightStyle theme =
     case theme of
         Light ->
-            [ HA.style "background-color" "#ffffcc" ]
+            [ HA.style "background-color" Render.Constants.highlightColor ]
 
         Dark ->
-            [ HA.style "background-color" "#4a4a00" ]
+            [ HA.style "background-color" Render.Constants.highlightColorDark ]
 
 
 getArg : String -> Int -> List String -> String
