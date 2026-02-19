@@ -1469,5 +1469,11 @@ renderMark params acc args meta =
                 ]
                 (renderList params acc list)
 
+        [ first ] ->
+            Html.span [ HA.id meta.id ] (renderList params acc [ first ])
+
+        (Text str _) :: rest ->
+            Html.span [ HA.id str ] (renderList params acc rest)
+
         _ ->
-            Html.span [ HA.id meta.id ] [ Html.text "Parse error in element mark?" ]
+            Html.span [ HA.id meta.id ] []
