@@ -13,7 +13,7 @@ import Json.Decode
 import Parser
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Sizing
-import Render.Utility exposing (idAttr, selectedStyle)
+import Render.Utility exposing (blockIdAndStyle, idAttr, selectedStyle)
 import SyntaxHighlight
 import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, MathMacroDict, Msg(..), Theme(..))
 
@@ -83,11 +83,10 @@ blockDict =
 renderDefault : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderDefault params _ name block _ =
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span [ HA.style "font-weight" "bold", HA.style "color" "purple", HA.style "pointer-events" "none" ]
@@ -128,12 +127,11 @@ renderMath params acc _ block _ =
                 |> applyMathMacros acc.mathMacroDict
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "text-align" "center"
+               , HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync (.meta block)
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
@@ -174,14 +172,13 @@ renderEquation params acc _ block _ =
             Dict.get "equation-number" block.properties |> Maybe.withDefault ""
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "display" "flex"
-         , HA.style "justify-content" "center"
-         , HA.style "align-items" "center"
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "display" "flex"
+               , HA.style "justify-content" "center"
+               , HA.style "align-items" "center"
+               , HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync (.meta block)
         )
         [ Html.div [ HA.style "flex" "1" ] []
@@ -221,12 +218,11 @@ renderAligned params acc _ block _ =
                 |> wrapInAligned
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "text-align" "center"
+               , HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync (.meta block)
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
@@ -314,11 +310,10 @@ renderCode params _ _ block _ =
             case parser content of
                 Ok hcode ->
                     [ Html.div
-                        ([ idAttr block.meta.id
-                         , HA.style "margin" "1em 0"
-                         , HA.style "cursor" "pointer"
-                         ]
-                            ++ selectedStyle params.selectedId block.meta.id params.theme
+                        (blockIdAndStyle params block
+                            ++ [ HA.style "margin" "1em 0"
+                               , HA.style "cursor" "pointer"
+                               ]
                             ++ Render.Utility.rlBlockSync block.meta
                         )
                         ([ SyntaxHighlight.useTheme theme
@@ -354,11 +349,10 @@ renderCode params _ _ block _ =
 renderCodePlain : CompilerParameters -> ExpressionBlock -> String -> String -> List (Html Msg)
 renderCodePlain params block content indentation =
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.pre
@@ -472,13 +466,12 @@ renderVerse params _ _ block _ =
             getVerbatimContent block
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "margin" "1em 2em"
-         , HA.style "font-style" "italic"
-         , HA.style "white-space" "pre-wrap"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "margin" "1em 2em"
+               , HA.style "font-style" "italic"
+               , HA.style "white-space" "pre-wrap"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text content ] ]
@@ -531,11 +524,10 @@ renderDataTable params _ _ block _ =
             getVerbatimContent block
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.pre [ HA.style "font-family" "monospace", HA.style "pointer-events" "none" ]
@@ -554,14 +546,13 @@ renderDataTable params _ _ block _ =
 renderChart : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderChart params _ _ block _ =
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.class "chart-placeholder"
-         , HA.style "margin" "1em 0"
-         , HA.style "min-height" "200px"
-         , HA.style "border" "1px dashed #ccc"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.class "chart-placeholder"
+               , HA.style "margin" "1em 0"
+               , HA.style "min-height" "200px"
+               , HA.style "border" "1px dashed #ccc"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[Chart]" ] ]
@@ -583,13 +574,12 @@ renderChart params _ _ block _ =
 renderSvg : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSvg params _ _ block _ =
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "margin" "1em 0"
-         , HA.class "svg-container"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "text-align" "center"
+               , HA.style "margin" "1em 0"
+               , HA.class "svg-container"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.pre
@@ -687,11 +677,10 @@ renderQuiver params _ _ block _ =
     in
     if url == "" then
         [ Html.div
-            ([ idAttr block.meta.id
-             , HA.style "margin" "1em 0"
-             , HA.style "cursor" "pointer"
-             ]
-                ++ selectedStyle params.selectedId block.meta.id params.theme
+            (blockIdAndStyle params block
+                ++ [ HA.style "margin" "1em 0"
+                   , HA.style "cursor" "pointer"
+                   ]
                 ++ Render.Utility.rlBlockSync block.meta
             )
             [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[Quiver: no image URL]" ] ]
@@ -699,12 +688,11 @@ renderQuiver params _ _ block _ =
 
     else
         [ Html.div
-            ([ idAttr block.meta.id
-             , HA.style "text-align" "center"
-             , HA.style "margin" "1em 0"
-             , HA.style "cursor" "pointer"
-             ]
-                ++ selectedStyle params.selectedId block.meta.id params.theme
+            (blockIdAndStyle params block
+                ++ [ HA.style "text-align" "center"
+                   , HA.style "margin" "1em 0"
+                   , HA.style "cursor" "pointer"
+                   ]
                 ++ Render.Utility.rlBlockSync block.meta
             )
             (imageDisplay
@@ -800,11 +788,10 @@ renderTikz params _ _ block _ =
     in
     if url == "" then
         [ Html.div
-            ([ idAttr block.meta.id
-             , HA.style "margin" "1em 0"
-             , HA.style "cursor" "pointer"
-             ]
-                ++ selectedStyle params.selectedId block.meta.id params.theme
+            (blockIdAndStyle params block
+                ++ [ HA.style "margin" "1em 0"
+                   , HA.style "cursor" "pointer"
+                   ]
                 ++ Render.Utility.rlBlockSync block.meta
             )
             [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text "[TikZ: no image URL]" ] ]
@@ -812,12 +799,11 @@ renderTikz params _ _ block _ =
 
     else
         [ Html.div
-            ([ idAttr block.meta.id
-             , HA.style "text-align" "center"
-             , HA.style "margin" "1em 0"
-             , HA.style "cursor" "pointer"
-             ]
-                ++ selectedStyle params.selectedId block.meta.id params.theme
+            (blockIdAndStyle params block
+                ++ [ HA.style "text-align" "center"
+                   , HA.style "margin" "1em 0"
+                   , HA.style "cursor" "pointer"
+                   ]
                 ++ Render.Utility.rlBlockSync block.meta
             )
             (imageDisplay
@@ -992,9 +978,8 @@ renderImage params _ _ block _ =
                 imageElement
     in
     [ Html.div
-        ([ idAttr block.meta.id ]
+        (blockIdAndStyle params block
             ++ floatStyle
-            ++ selectedStyle params.selectedId block.meta.id params.theme
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ imageDisplay
@@ -1031,11 +1016,10 @@ renderIframe params _ _ block _ =
                 |> Maybe.withDefault 400
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "margin" "1em 0"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "text-align" "center"
+               , HA.style "margin" "1em 0"
+               ]
         )
         [ Html.iframe
             [ HA.src src
@@ -1082,12 +1066,11 @@ renderChem params acc _ block children =
                 |> applyMathMacros acc.mathMacroDict
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "text-align" "center"
+               , HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
@@ -1126,12 +1109,11 @@ renderArray params acc _ block _ =
             "\\begin{array}{" ++ format ++ "}\n" ++ content ++ "\n\\end{array}"
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "text-align" "center"
+               , HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
@@ -1163,11 +1145,10 @@ renderTextArray params _ _ block _ =
                 |> List.map parseTableRow
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.table
@@ -1235,11 +1216,10 @@ renderCsvTable params _ _ block _ =
             List.drop 1 rows
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
@@ -1318,11 +1298,10 @@ renderVerbatim params _ _ block _ =
             getVerbatimContent block
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "margin" "1em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "margin" "1em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.pre
@@ -1375,12 +1354,11 @@ renderBook params _ _ block _ =
                 []
     in
     [ Html.div
-        ([ idAttr block.meta.id
-         , HA.style "text-align" "center"
-         , HA.style "margin" "2em 0"
-         , HA.style "cursor" "pointer"
-         ]
-            ++ selectedStyle params.selectedId block.meta.id params.theme
+        (blockIdAndStyle params block
+            ++ [ HA.style "text-align" "center"
+               , HA.style "margin" "2em 0"
+               , HA.style "cursor" "pointer"
+               ]
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
