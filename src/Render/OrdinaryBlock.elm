@@ -1389,6 +1389,7 @@ renderEndnotes params acc _ block _ =
                         { label = Dict.get meta.id acc.footnoteNumbers |> Maybe.withDefault 0
                         , content = content
                         , id = meta.id ++ "_"
+                        , mSourceBlockId = meta.mSourceId
                         }
                     )
                 |> List.sortBy .label
@@ -1412,13 +1413,23 @@ renderEndnotes params acc _ block _ =
     ]
 
 
-renderFootnoteItem : CompilerParameters -> { label : Int, content : String, id : String } -> Html Msg
-renderFootnoteItem params { label, content, id } =
+renderFootnoteItem : CompilerParameters -> { label : Int, content : String, id : String, mSourceBlockId : Maybe String } -> Html Msg
+renderFootnoteItem params { label, content, id, mSourceBlockId } =
     Html.div
         ([ HA.id id
          , HA.style "margin-bottom" "0.5em"
+         , HA.style "cursor" "pointer"
          ]
             ++ selectedStyle params.selectedId id params.theme
+            ++ (case mSourceBlockId of
+                    Just sourceBlockId ->
+                        [ HE.preventDefaultOn "click"
+                            (Decode.succeed ( FootnoteClick { targetId = sourceBlockId, returnId = id }, True ))
+                        ]
+
+                    Nothing ->
+                        []
+               )
         )
         [ Html.span
             [ HA.style "width" "24px"

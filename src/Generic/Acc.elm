@@ -1493,10 +1493,10 @@ getFootnotes mBlockId id content_ =
 
 
 extractFootnote : Maybe String -> String -> Expression -> Maybe TermData2
-extractFootnote mSourceId id_ expr =
+extractFootnote _ blockMetaId expr =
     case expr of
         Fun "footnote" [ Text content { begin, end, index, id } ] _ ->
-            Just { term = content, loc = { begin = begin, end = end, id = id, mSourceId = mSourceId } }
+            Just { term = content, loc = { begin = begin, end = end, id = id, mSourceId = Just blockMetaId } }
 
         _ ->
             Nothing
