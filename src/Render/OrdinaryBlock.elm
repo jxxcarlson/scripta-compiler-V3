@@ -1423,7 +1423,7 @@ renderFootnoteItem params { label, content, id, mSourceBlockId } =
             ++ selectedStyle params.selectedId id params.theme
             ++ (case mSourceBlockId of
                     Just sourceBlockId ->
-                        [ HE.preventDefaultOn "click"
+                        [ HE.stopPropagationOn "click"
                             (Decode.succeed ( FootnoteClick { targetId = sourceBlockId, returnId = id }, True ))
                         ]
 
