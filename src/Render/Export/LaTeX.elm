@@ -1180,12 +1180,12 @@ mapChars2 : String -> String
 mapChars2 str =
     str
         |> String.replace "_" "\\_"
-        |> String.replace "\u{201C}" "``"
-        |> String.replace "\u{201D}" "''"
-        |> String.replace "\u{2018}" "`"
-        |> String.replace "\u{2019}" "'"
-        |> String.replace "\u{2013}" "--"
-        |> String.replace "\u{2014}" "---"
+        |> String.replace "“" "``"
+        |> String.replace "”" "''"
+        |> String.replace "‘" "`"
+        |> String.replace "’" "'"
+        |> String.replace "–" "--"
+        |> String.replace "—" "---"
 
 
 
@@ -1453,7 +1453,7 @@ rb _ =
 
 bt : List Expression -> String
 bt _ =
-    "`"
+    "\\verbatim{`}"
 
 
 underscore : List Expression -> String

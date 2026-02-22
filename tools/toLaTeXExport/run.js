@@ -86,13 +86,9 @@ async function main() {
       const errorsPath = path.join(OUTPUT_DIR, basename + "-errors.json");
 
       if (result.hasErrors) {
-        // Fetch the error details
-        const errRes = await httpRequest(
-          PDF_SERVER + "/outbox/" + basename + "-errors.json",
-          { method: "GET" }
-        );
-        fs.writeFileSync(errorsPath, errRes.body);
-        console.log("Errors written to:", errorsPath);
+        // Error data is in the response itself under errorJson
+        fs.writeFileSync(errorsPath, JSON.stringify(result.errorJson, null, 2));
+        console.log("Errors (" + result.errorJson.length + ") written to:", errorsPath);
       } else {
         fs.writeFileSync(errorsPath, JSON.stringify({ hasErrors: false }, null, 2));
         console.log("No errors. Wrote:", errorsPath);
