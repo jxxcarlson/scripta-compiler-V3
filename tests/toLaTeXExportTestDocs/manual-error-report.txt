@@ -1,0 +1,117 @@
+LaTeX Compilation Error Report
+================================
+
+Original Document: jxxcarlson-id-76a8eb0d-2605-47f8-b8e7-8af510faea32.tex
+
+Error Log (with source line annotations):
+========================================
+
+LaTeX Warning: Label `the-scripta-app' multiply defined.
+)
+\openout1 = `jxxcarlson-id-76a8eb0d-2605-47f8-b8e7-8af510faea32.aux'.
+\c@lstlisting=\count347
+! Missing $ inserted.
+<inserted text> 
+                $
+
+l.302 ...lso enclose code in backticks, e.g., ` a^
+[par]
+[scriptaErrorAt 51 >>> Scripta text at line 51 produced the above error (301, 302)]
+
+! Missing $ inserted.
+<inserted text> 
+                $
+
+l.303 
+[par]
+[scriptaErrorAt 51 >>> Scripta text at line 51 produced the above error (303, 303)]
+
+! Undefined control sequence.
+
+l.780 ...se the keyboard shortcuts \errorHighlight
+                                                  {[code]?} ctrl-\errorHighl...
+The control sequence at the end of the top line
+[par]
+[scriptaErrorAt 379 >>> Scripta text at line 379 produced the above error (779, 780)]
+
+! Undefined control sequence.
+
+l.780 ...orHighlight{[code]?} ctrl-\errorHighlight
+                                                  {[ - can't have space afte...
+The control sequence at the end of the top line
+[par]
+[scriptaErrorAt 379 >>> Scripta text at line 379 produced the above error (779, 780)]
+
+! Undefined control sequence.
+
+l.780 ...e space after the bracket}\errorHighlight
+                                                  {extra ]?} and \lstinline|...
+The control sequence at the end of the top line
+[par]
+[scriptaErrorAt 379 >>> Scripta text at line 379 produced the above error (779, 780)]
+
+! Undefined control sequence.
+
+l.780 ...]?} and \lstinline|ctrl-| \errorHighlight
+                                                  {extra ]?} or the buttons ...
+The control sequence at the end of the top line
+[par]
+[scriptaErrorAt 379 >>> Scripta text at line 379 produced the above error (779, 780)]
+
+Package hyperref Warning: Suppressing empty link on input line 879.
+8d0-84ce54929500-6.png Graphic file (type bmp)
+</Users/carlson/dev/elm-work/scripta/pdfServer2/image/f44890b6-e692-458d-a8d0-8
+4ce54929500-6.png>
+! Undefined control sequence.
+<argument> \@listctr 
+                     
+
+l.1092 \bibitem{einstein1905a}
+[par]
+[scriptaErrorAt 605 >>> Scripta text at line 605 produced the above error (1091, 1093)]
+
+l.1092 \bibitem{einstein1905a}
+                              
+I'm forgetting what you said and using zero instead.
+! Undefined control sequence.
+[par]
+[scriptaErrorAt 605 >>> Scripta text at line 605 produced the above error (1091, 1093)]
+
+l.1096 \bibitem{einstein1905b}
+                              
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+[par]
+[scriptaErrorAt 608 >>> Scripta text at line 608 produced the above error (1095, 1097)]
+
+l.1096 \bibitem{einstein1905b}
+                              
+I'm forgetting what you said and using zero instead.
+Overfull \hbox (22.6678pt too wide) in paragraph at lines 1097--1098
+[par]
+[scriptaErrorAt 608 >>> Scripta text at line 608 produced the above error (1095, 1097)]
+
+! Undefined control sequence.
+<argument> \@listctr 
+                     
+
+l.1100 \bibitem{einstein1905c}
+[par]
+[scriptaErrorAt 611 >>> Scripta text at line 611 produced the above error (1099, 1101)]
+
+l.1100 \bibitem{einstein1905c}
+                              
+I'm forgetting what you said and using zero instead.
+[21]
+[par]
+[scriptaErrorAt 611 >>> Scripta text at line 611 produced the above error (1099, 1101)]
+
+runsystem(makeindex jxxcarlson-id-76a8eb0d-2605-47f8-b8e7-8af510faea32.idx)...e
+xecuted safely (allowed).
+(outbox/jxxcarlson-id-76a8eb0d-2605-47f8-b8e7-8af510faea32.ind)
+[22
+LaTeX Warning: There were multiply-defined labels.
+Package rerunfilecheck Info: File `jxxcarlson-id-76a8eb0d-2605-47f8-b8e7-8af510
+faea32.out' has not changed.
+(rerunfilecheck)             Checksum: E3CAF0AC8DDAFC9CFC2D05552D2C9159;4417.
+

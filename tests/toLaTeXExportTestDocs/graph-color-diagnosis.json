@@ -1,0 +1,108 @@
+{
+  "file": "graph-color",
+  "totalErrors": 8,
+  "categories": {
+    "undefined-command": 4,
+    "unclassified": 2,
+    "math-mode": 2
+  },
+  "errors": [
+    {
+      "id": 1,
+      "scriptaLine": 37,
+      "scriptaContext": "\\Gamma = (E \\xrightarrow{s, t} V)\n\nA [index graph] is a functor $G: \\Gamma \\to \\Set$.  Consider, ",
+      "latexLine": 252,
+      "latexContext": "A \\index{graph} is a functor \\(G: \\Gamma \\to \\Set\\).   Consider, \nfor example, the graph in Figure \\ref{abcd-y-graph} below:\n",
+      "category": "undefined-command",
+      "pattern": "undefined-control-sequence",
+      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+    },
+    {
+      "id": 2,
+      "scriptaLine": 58,
+      "scriptaContext": "In this case, $G$ is the functor wiiith \n\n|| aligned",
+      "latexLine": 267,
+      "latexContext": "\\end{align}\n\n%%% Line 62",
+      "category": "unclassified",
+      "pattern": "unknown",
+      "explanation": "Error did not match any known pattern",
+      "fixLocation": "src/Render/Export/LaTeX.elm",
+      "fixHint": "Inspect the latex-text field manually to determine the root cause."
+    },
+    {
+      "id": 3,
+      "scriptaLine": 71,
+      "scriptaContext": "Thus $G(s)(ab) = a$, $G(t)(ab) = b$, etc.\n\nLet $\\op{Graph} = [\\Gamma, \\Set]$ be the (functor) category of directed graphs.  Then a morphism of graphs is a natural",
+      "latexLine": 283,
+      "latexContext": "Let \\(\\op{Graph} = [\\Gamma, \\Set]\\) be the (functor) category of directed graphs.   Then a morphism of graphs is a natural\ntransformation of functors \\(\\eta\\).   Thus, if \\(G\\) and \\(G'\\) are graphs, and \\(\\eta : G \\to G'\\) is a morphism, then \n\\(\\eta_{E} : G(E) \\to G'(E)\\) maps edges of the first graph",
+      "category": "undefined-command",
+      "pattern": "undefined-control-sequence",
+      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+    },
+    {
+      "id": 4,
+      "scriptaLine": 108,
+      "scriptaContext": "$\\eta_{E}(bc) = 23$, etc.\n\n| quiver ",
+      "latexLine": 330,
+      "latexContext": "\\end{tikzcd}\\]\n\n%%% Line 135",
+      "category": "undefined-command",
+      "pattern": "undefined-control-sequence",
+      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+    },
+    {
+      "id": 5,
+      "scriptaLine": 147,
+      "scriptaContext": "with red and green, as indicated in Figure [ref fig-colored-graph].\n\n| quiver expandable",
+      "latexLine": 357,
+      "latexContext": "\\end{tikzcd}\\]\n\n%%% Line 164",
+      "category": "unclassified",
+      "pattern": "unknown",
+      "explanation": "Error did not match any known pattern",
+      "fixLocation": "src/Render/Export/LaTeX.elm",
+      "fixHint": "Inspect the latex-text field manually to determine the root cause."
+    },
+    {
+      "id": 6,
+      "scriptaLine": 164,
+      "scriptaContext": "\n\nLet $C_n : \\op{Graph} \\to \\Set$ be the functor which assigns to a graph the corresponding set of $n$-colorings.",
+      "latexLine": 360,
+      "latexContext": "Let \\(C_n : \\op{Graph} \\to \\Set\\) be the functor which assigns to a graph the corresponding set of \\(n\\)-colorings.\n(To make this statement precise, we assume that colors are \ntaken from a fixed but infinite set of color names.   ",
+      "category": "math-mode",
+      "pattern": "missing-dollar",
+      "explanation": "Math characters (^ or _) appear outside math mode",
+      "fixLocation": "src/Render/Export/LaTeX.elm — mapChars2 (line 1179) or inline code handler",
+      "fixHint": "Either the source text contains math characters that should be in a [code] or [math] element, or mapChars2 needs to escape them."
+    },
+    {
+      "id": 7,
+      "scriptaLine": 172,
+      "scriptaContext": "famous theorem asserts that every planar graph is 4-colorable.\n\nAn $n$-coloring $c$ is a ",
+      "latexLine": 370,
+      "latexContext": "function \\(c: G \\to \\set{1, \\ldots, n}\\).   If \\(\\phi : G' \\to G\\)\nis a morphism, then \\(c \\circ \\phi\\) is an \\(n\\)-coloring of \\(G'\\).\n",
+      "category": "undefined-command",
+      "pattern": "undefined-control-sequence",
+      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+    },
+    {
+      "id": 8,
+      "scriptaLine": 206,
+      "scriptaContext": "\n\nLet $K_n$ be the graph with vertices $\\set{1, \\ldots, n}$",
+      "latexLine": 401,
+      "latexContext": "Let \\(K_n\\) be the graph with vertices \\(\\set{1, \\ldots, n}\\)\nand with edges \\(ij\\), for all \\(i < j\\).   Thus \\(K_4\\) is isomorphic\nto the graph of Figure \\ref{complete-graph-4}. ",
+      "category": "math-mode",
+      "pattern": "missing-dollar",
+      "explanation": "Math characters (^ or _) appear outside math mode",
+      "fixLocation": "src/Render/Export/LaTeX.elm — mapChars2 (line 1179) or inline code handler",
+      "fixHint": "Either the source text contains math characters that should be in a [code] or [math] element, or mapChars2 needs to escape them."
+    }
+  ],
+  "summary": "8 errors across 3 categories. Breakdown: undefined-command (4), unclassified (2), math-mode (2)"
+}

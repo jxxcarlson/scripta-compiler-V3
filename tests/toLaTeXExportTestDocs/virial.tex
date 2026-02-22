@@ -1,0 +1,504 @@
+\documentclass[11pt, oneside]{article}
+\usepackage{xcolor}
+
+
+%% Packages
+
+\usepackage{listings}
+
+%% Standard packages
+\usepackage{geometry}
+\geometry{letterpaper}
+\usepackage{changepage}  % for the adjustwidth environment
+\usepackage{graphicx}    % for \includegraphics
+
+%% Index, hyperref
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\usepackage{hyperref}   % load before imakeidx
+\usepackage{imakeidx}
+
+%%%%
+\usepackage[normalem]{ulem} % for \st
+\usepackage{soul}           % for \hl and \sethlcolor
+\usepackage{wrapfig}        % for wrapfigure
+
+%% AMS
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage{amscd}
+
+\usepackage{fancyvrb} %% for inline verbatim
+
+%% Chemistry
+\usepackage[version=4]{mhchem} % for \ce
+
+
+
+%% Commands
+
+\newcommand{\hang}[1]{%
+  {%
+    \setlength{\leftskip}{1em}%
+    \setlength{\hangindent}{1em}%
+    \hangafter=1 %
+    #1\ \vpace{4}%
+  }%
+}
+
+\renewcommand{\labelitemi}{\scalebox{0.7}{\textbullet}}
+
+% Dot box = 1em, gap = 1em → total = 2em
+\newcommand{\compactItem}[1]{%
+  \par
+\noindent
+  \hangindent=2em \hangafter=1%
+  \makebox[1em][l]{\labelitemi}\hspace{1em}#1\par
+}
+
+\newcommand{\code}[1]{{\tt #1}}
+\newcommand{\ellie}[1]{\href{#1}{Link to Ellie}}
+% \newcommand{\image}[3]{\includegraphics[width=3cm]{#1}}
+
+%% width=4truein,keepaspectratio]
+
+
+% imagecentercaptioned command removed - using standard figure environment instead
+
+\newcommand{\imagecenter}[2]{
+   \medskip
+   \begin{figure}[htp]
+   \centering
+    \includegraphics[width=#2]{#1}
+    \vglue0pt
+    \end{figure}
+    \medskip
+}
+
+\newcommand{\imagefloat}[4]{
+    \begin{wrapfigure}{#4}{#2}
+    \includegraphics[width=#2]{#1}
+    \caption{#3}
+    \end{wrapfigure}
+}
+
+
+\newcommand{\imagefloatright}[3]{
+    \begin{wrapfigure}{R}{0.30\textwidth}
+    \includegraphics[width=0.30\textwidth]{#1}
+    \caption{#2}
+    \end{wrapfigure}
+}
+
+\newcommand{\hide}[1]{}
+
+
+\newcommand{\imagefloatleft}[3]{
+    \begin{wrapfigure}{L}{0.3-\textwidth}
+    \includegraphics[width=0.30\textwidth]{#1}
+    \caption{#2}
+    \end{wrapfigure}
+}
+% Font style
+\newcommand{\italic}[1]{{\sl #1}}
+\newcommand{\strong}[1]{{\bf #1}}
+\newcommand{\strike}[1]{\st{#1}}
+
+% Scripta
+\newcommand{\ilink}[2]{\href{{https://scripta.io/s/#1}}{#2}}
+\newcommand{\markwith}[1]{}
+\newcommand{\anchor}[1]{#1}
+
+% Color
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\violet}[1]{\textcolor{violet}{#1}}
+\newcommand{\highlight}[1]{\hl{#1}}
+\newcommand{\note}[2]{\textcolor{blue}{#1}{\hl{#1}}}
+
+% WTF?
+\newcommand{\remote}[1]{\textcolor{red}{#1}}
+\newcommand{\local}[1]{\textcolor{blue}{#1}}
+
+% Unclassified
+\newcommand{\subheading}[1]{{\bf #1}\par}
+%\newcommand{\term}[1]{{\index{#1}}}
+%\newcommand{\termx}[1]{}
+\newcommand{\comment}[1]{}
+\newcommand{\innertableofcontents}{}
+
+
+% Special character
+\newcommand{\dollarSign}[0]{{\$}}
+\newcommand{\backTick}[0]{\`{}}
+
+%% Theorems
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{axiom}{Axiom}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{exercise}{Exercise}
+\newtheorem{problem}{Problem}
+\newtheorem{exercises}{Exercises}
+\newcommand{\bs}[1]{$\backslash$#1}
+\newcommand{\texarg}[1]{\{#1\}}
+
+
+%% Environments
+\renewenvironment{quotation}
+  {\begin{adjustwidth}{2cm}{} \footnotesize}
+  {\end{adjustwidth}}
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist
+
+\renewenvironment{indent}
+  {\begin{adjustwidth}{0.75cm}{}}
+  {\end{adjustwidth}}
+
+
+%% NEWCOMMAND
+
+% \definecolor{mypink1}{rgb}{0.858, 0.188, 0.478}
+% \definecolor{mypink2}{RGB}{219, 48, 122}
+\newcommand{\fontRGB}[4]{
+    \definecolor{mycolor}{RGB}{#1, #2, #3}
+    \textcolor{mycolor}{#4}
+    }
+
+\newcommand{\highlightRGB}[4]{
+    \definecolor{mycolor}{RGB}{#1, #2, #3}
+    \sethlcolor{mycolor}
+    \hl{#4}
+     \sethlcolor{yellow}
+    }
+
+\newcommand{\gray}[2]{
+\definecolor{mygray}{gray}{#1}
+\textcolor{mygray}{#2}
+}
+
+\newcommand{\white}[1]{\gray{1}[#1]}
+\newcommand{\medgray}[1]{\gray{0.5}[#1]}
+\newcommand{\black}[1]{\gray{0}[#1]}
+
+% Spacing
+\parindent0pt
+\parskip5pt
+
+\makeindex[
+                          title=Index,
+                          columns=2,
+                          %% intoc     % include index in the table of contents
+                        ]
+
+\begin{document}
+
+\title{Untitled}
+
+\date{}
+
+\author{
+test-author
+}
+
+\maketitle
+
+\tableofcontents
+
+%%% Line 14
+\newcommand{\bp}{{\mathop{\mathbf{p}}}}
+\newcommand{\bq}{{\mathop{\mathbf{q}}}}
+\newcommand{\br}{{\mathop{\mathbf{r}}}}
+\newcommand{\bu}{{\mathop{\mathbf{u}}}}
+\newcommand{\bF}{{\mathop{\mathbf{F}}}}
+\newcommand{\ta}[1]{\left< #1 \right>}
+
+
+
+%%% Line 3
+
+
+%%% Line 5
+
+
+%%% Line 14
+
+
+%%% Line 23
+\section{Introduction} \label{introduction}
+
+%%% Line 25
+We are going to discuss the   virial theorem, a result
+which   relates the average kinetic energy \(\ta{K}\) to the average
+potential energy \(\ta{U}\) of a system of particles bound
+together by the force of gravity.   By   "bounded", we mean that the system is neither expanding nor contracting. It is in a dynamic equilibrium where the constituent particles are moving
+while the system as a whole maintains a kind of structural stability, e.g., it neither collapses nor expands and dissipates.
+By "time average," we mean the integral over time on a certain 
+interval:
+
+%%% Line 33
+\begin{equation}
+\ta{Q} = \int_a^b Q(t) dt
+\end{equation}
+
+%%% Line 36
+The virial theorem has a wide variety of applications.   We give just 
+two examples: computing the core temperature of the sun and computing the 
+mass of the Coma cluster of galaxies.   In the first case the particles
+are fully ionized atoms of hydrogen and helium.   In the second case
+they are galaxies.
+
+%%% Line 42
+\section{Derivation} \label{derivation}
+
+%%% Line 44
+To explain the theorem, consider first the \term{moment of inertia} of the syste
+
+%%% Line 46
+\begin{equation}
+\label{moment-of-inertia}
+I = \sum_i m_i \br_i^2
+\end{equation}
+
+%%% Line 49
+Up to a constant, its derivative is
+
+%%% Line 51
+\begin{equation}
+\label{moment-of-inertia-deriv}
+\frac{1}{2} \dot I =  \sum_i m_i \br_i \cdot \dot \br_i =\sum_i \br_i \cdot \bp_i
+\end{equation}
+
+%%% Line 55
+where \(\br_i \cdot \bp_i\) is \(|\br_i|\) times the radial 
+component of the momentum.   The quantity \(\dot I\) is
+therefore a kind of radially weighted average of the
+radial components of the momenta of the particles.
+This quantity is also a function of the time \(t\).
+Thus, if \(\dot I (t) > 0\), the system is expanding, 
+whereas if \(\dot I(t) < 0\), it is contracting. If \(I(t) = 0\), the system is \u{stable} at time \(t\).
+
+%%% Line 63
+Now consider the second derivative of the moment of inertia:
+
+%%% Line 65
+\begin{align}
+\frac{1}{2} \ddot I &=  \sum_i m_i \dot \br_i \cdot \dot \br_i +  \sum_i m_i \br_i \cdot \ddot \br_i\\
+&= 2\sum_i K_i +  \sum_i \br_i \cdot \bF_i\\
+&= 2K -  \sum_i \br_i \cdot GMm_i \frac{\br_i}{ |\br_i|^3}\\
+&= 2K -  \sum_i  \frac{GMm_i}{ |\br_i|}\\
+&= 2K + U
+\end{align}
+
+%%% Line 73
+where we have applied Newton's law of graviation and where \(U\) is the gravaitational potential energy. Taking time averages, we have
+
+%%% Line 75
+\begin{equation}
+\ta{K} + 2\ta{U} = \dot I(b) - \dot I(a)
+\end{equation}
+
+%%% Line 78
+Thus, for a stable system,
+
+%%% Line 80
+\begin{equation}
+2\ta{K} + \ta{U} = 0
+\end{equation}
+
+%%% Line 83
+\section{Applications} \label{applications}
+
+%%% Line 85
+\subsection{Mass of Galactic Clusters} \label{mass-of-galactic-clusters}
+
+%%% Line 87
+Let \(\sigma\) be the velocity dispersion in a cluster of galaxies,
+and let \(M\) be its mass.   Then the average kinetic energy is
+
+%%% Line 90
+\begin{equation}
+\left< K \right> = \frac{M\sigma^2}{ 2}
+\end{equation}
+
+%%% Line 93
+We claim that the average potential energy is
+
+%%% Line 95
+\begin{equation}
+\left< U \right> \approx - \frac{GM^2}{R}
+\end{equation}
+
+%%% Line 98
+where \(R\) is the radius of the cluster.
+Using the virial theorem, we find that the mass of the cluster is
+
+%%% Line 101
+\begin{equation}
+M \approx \frac{R\sigma^2}{ G}
+\end{equation}
+
+%%% Line 105
+Typical values of \(\sigma\) are \(500-1500 \text{ km/sec}\).   This
+implies
+
+%%% Line 108
+\begin{equation}
+M_{\text{cluster}} \sim 10^{14}-10^{15} M_\odot.
+\end{equation}
+
+%%% Line 111
+A cluster typically contains 100 to 1000 galaxies, so the luminosity of the cluster is
+
+%%% Line 113
+\begin{equation}
+L_\text{cluster} \sim 10^{12} L_\odot
+\end{equation}
+
+%%% Line 116
+Thus the mass-to-luminosity ratio of a cluster is about 200 to 500 times same ratio for the sun.   \u{Conclusion:} lots of dark matter!
+
+%%% Line 118
+\subsection{The Potential Energy Term} \label{the-potential-energy-term}
+
+%%% Line 120
+The exact potential energy for a system of particle is
+
+%%% Line 122
+\begin{equation}
+U = - \sum \frac{Gm_im_j}{r_{ij}}
+\end{equation}
+
+%%% Line 125
+In the double summation we replace \(r_{ij}\) by \(R\)
+
+%%% Line 128
+For a large cluster of mass \(M\), one approximates this by
+the typical separation scale \(R\) and \(m_im_j\) by \(m^2\) where
+\(m\) is the average galactic mass.   Let \(n\) be the 
+number of galaxies.   Then sum is approximately
+equal to \((nm)^2 =   M^2\). Up to a scale factor \(\alpha\), we have
+
+%%% Line 134
+\begin{equation}
+U \approx -\alpha \frac{GM^2}{R}
+\end{equation}
+
+%%% Line 137
+For a uniform mass distribution, \(\alpha = 3/5\).   For a more
+centrally concentrated mass distribution, \(\alpha\) is closer to 1.
+
+%%% Line 140
+\subsection{Temperature at the Core of the Sun} \label{temperature-at-the-core-of-the-sun}
+
+%%% Line 142
+The internal energy of the sun viewed as a monoatomic gas is
+
+%%% Line 144
+\begin{equation}
+\ta{K} = \frac{3}{2} NkT
+\end{equation}
+
+%%% Line 147
+where \(N\) is the number of atoms and \(k\) is Boltzmann's constant.
+The Gravitational binding energy is
+
+%%% Line 150
+\begin{equation}
+\ta{U} = -\alpha \frac{GM^2}{R}
+\end{equation}
+
+%%% Line 153
+Apply the virial theorem \(\ta{K} = -\ta{U}/2\) to obtain
+
+%%% Line 155
+\begin{equation}
+\frac{3}{2} NkT = \frac{1}{2} \frac{GM^2}{R}
+\end{equation}
+
+%%% Line 158
+Solve for the temperature:
+
+%%% Line 160
+\begin{equation}
+T = \frac{\alpha GM^2}{ 3NkR}
+\end{equation}
+
+%%% Line 163
+To find the number \(N\), let   \(\mu = 0.6\) be the mean molecular weight (hydrogen-helium mix).
+Let \(m_P\) be the mass of a proton.   Then the number of atoms in the sun
+is 
+
+%%% Line 167
+\begin{equation}
+N = \frac{M}{ \mu m_P}
+\end{equation}
+
+%%% Line 170
+and so finally
+
+%%% Line 172
+\begin{equation}
+T = \frac{\alpha GM \mu m_p}{ 3kR}
+\end{equation}
+
+%%% Line 175
+Now plug in the needed constants
+
+%%% Line 177
+\begin{align}
+G &= 6.67 \times 10^{-11} \text{ SI units}\\
+M_\odot &= 1.99 \times 10^{30} \text{ kg}\\
+R_\odot &= 6.96 \times 10^n \text{ m}\\
+m_P &= 1.67 \times 10^{-27} \text{ kg}\\
+k &= 1.38 \times 10^{-23} \text{ J/K}\\
+\alpha &\approx 3/5 \text{ (uniform sphere)}
+\end{align}
+
+%%% Line 185
+to get
+
+%%% Line 187
+\begin{equation}
+T \approx 2.8 \times 10^6 \text{ K}
+\end{equation}
+
+%%% Line 190
+Very hot!   Enough to have sustained a nuclear fusion reaction 
+for the last four billion years.
+
+%%% Line 193
+\section{Appendix} \label{appendix}
+
+%%% Line 195
+\subsection{Potential Energy} \label{potential-energy}
+
+%%% Line 200
+\section{References} \label{references}
+
+%%% Line 202
+\href{https://en.wikipedia.org/wiki/Virial_mass}{Wkipedia reference}
+
+%%% Line 204
+\href{https://sites.astro.caltech.edu/~george/ay127/Ay127_GalClusters.pdf}{Caltech Slides} << \textcolor{red}{good!}
+
+%%% Line 206
+\href{https://www.astro.umd.edu/~richard/ASTR480/Clusters_lecture2.pdf}{UMD slides}
+
+%%% Line 208
+\href{https://phys.libretexts.org/Bookshelves/Astronomy__Cosmology/Supplemental_Modules_(Astronomy_and_Cosmology)/Cosmology/Astrophysics_(Richmond)/18%3A_Using_the_Virial_Theorem_-_Mass_of_a_Cluster_of_Galaxies#:~:text=The%20right%2Dhand%20side%20depends,of%20bodies%20in%20the%20system.}{Physics Libre Reference}
+
+\clearpage
+
+\printindex
+
+
+
+\end{document}

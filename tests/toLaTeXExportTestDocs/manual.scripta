@@ -1,0 +1,613 @@
+| title
+Manual V2
+
+| title number-to-level:2
+Welcome to Scripta
+
+| center
+[red (( D R A F T ))]
+
+[par ]
+
+| indent
+[i Scripta is now running a draft of the new Scripta compiler. It is a work in progress, so some things might be broken or just not look quite right. The final, polished version is coming soon.]
+
+# What is Scripta?
+
+Scripta is an app for creating, editing, and publishing articles with beautiful things like this
+
+| image figure:1
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/83fdbf6c-79d5-44e7-6ac6-00cdc7785000/public
+
+and this
+
+| equation
+pdd(u,x) + pdd(u,y) + pdd(u,z) = frac(1,c^2) pdd(u,t)
+
+[i The equation above governs the transmission of light from sun to flower to the eye of the beholder as in Figure 1] .
+
+[b What we aim to do.] (1) Provide a tool that makes it easy to write short notes with images and equations — for yourself, your friends and colleagues, or for the class you are teaching. Becuase Scripta.io is a web-based platform, it is easy to "publish" your writing. One way to do this is to provide a link to your document. As an example, the link for this document is
+
+| indent
+https://scripta.io/g/jxxcarlson:welcome-to-scripta.1
+
+Paste it into your browser and you will see that it works. The [code /g/ ] means that anyone using this link is automatically signed in as a guest — a user with limited privileges A guest cannot, for example create documents.
+
+(2) Provide what you need to write longer work: multi-section articles and books.
+
+(3) Any Scripta document can be printed to PDF (see the printer icon) and can be exported to LaTeX. [gray By exporting your document and adding custom style files, you can satisfy the requirements of your publisher.]
+
+[b Example:] Here is the [link PDF file https://pdfserv.app/pdf/jxxcarlson-id-c60a3d8c-ad17-4770-adfd-54080dc5689c.pdf] for this document.
+
+## The Scripta Language
+
+The scripta language consists of just two things, [index elements] and [index blocks] . [footnote Our aim is to design a langauge that is as simple as possible without losing expressive power.]
+
+### Elements
+
+Ordinary text, like "Happy New Year" is an element. So is [code [i Happy New Year] ] . This is an [index italic element] . It renders as [i Happy New Year] . The [index bold element] looks like [code [b Happy New Year] ] . I renders as you would expect, [b Happy New Year] . Thus [code [i [b Happy New Year]] ] yields [i [b Happy New Year]] . You can also do things like [code [red [i Happy New Year]] ] to get [red [i Happy New Year]] .
+
+You can write mathematical formulas, equations, etc. using a [index math element] , e.g., [m a^2 + b^2 = c^2] . Here is what we wrote: [code [math a^2 + b^2 = c^2] ] . The shorthand form [code [m a^2 + b^2 = c^2] ] also works. If you want, you can use TeX/LaTex syntax, [code $a^2 + b^2 = c^2$ ] .
+
+For code, you can use a [index code element] . Thus [code a^2 + b^ = c^2 ] is produced by writing [code [code a^2 + b^ = c^2] ] . You can also enclose code in backticks, e.g., [bt ] a^2 + b^2 = c^2 [bt ] .
+
+### Other elements
+
+Below are some elements of note. There are many more — for a complete list and a fuller explanation, see XXX.
+
+- [code [strike this text] ] [m \to] [strike this text] .
+- [code [highlight this text] ] [m \to] [highlight this text]
+- [code [index atom] ] adds "atom" to the document index. Use an index block to display the index.
+- Use [code [cite einstein1905a] ] to cite the reference einstein1905a in the bibliography. Use a bibref block to make the actual reference. Example: In 1905, Albert Einstein published three ground-breaking papers: [cite einstein1905a] , [cite einstein1905b] , [cite einstein1905c] . The first was instrumental in the development of quantum mechanics, the second in the atomic theory of matter. The third introduce the special theory of relativity and the famous equation [m E = mc^2] .
+
+### Blocks
+
+| image expandable caption:Jellyfish float:left width:70
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/5c12dfcf-0698-4e0b-733b-f9abf2bfff00/public
+
+| paragraph padding-right:3
+The tiny image of jellyfish that you see on your left is put there using an [index image block] . Click on the image to expand it. Click on the expanded image to return the view you ser here. Image blocks have a lot of options. Lets begin with the simplest case, no option at all:
+
+| code
+| image
+https://imagedelivery.net/9U-0Y4s...
+
+It has the form
+
+| code
+HEADER
+BODY
+
+In this case, the header is the single line [code | image ] . The body is the line [code https://imagedelivery.net... ] — the "internet address" of the image.
+
+The image block we used above is a little more complex:
+
+| code
+| image expandable 
+| float:left 
+| width:70 
+| caption:Jellyfish
+https://imagedelivery.net/9U-0Y4s...
+
+In this case the header consists of four lines, each beginning with the pipe symbol "|" followed by a space. The first line of the header is "| image expandable". Here "expandable" is an [index argument] . These are single words that change the behavior of the image block. In the case at hand, it means that if you click on the image it pops to fill a much larger screen. Clicking the expanded image returns it to its normal state. There can be more than one argument, but these always come before the properties.
+
+The next line of the header is the text "float:left". It defines a [index property] of the image block. Properties are defined by text of the form [code key:value ] . In this case the key is "float" and the value associated with that key is "left". A block with this property hugs the left margin of the document and the text below it flows around it. There is also a [code float:right ] property. The properties set by the next two lines define the width in pixels of image displayed and its caption.
+
+### Math Blocks
+  Here is a very simple [index math block] :
+
+| code
+| math
+a^2 + b^2 = c^2
+
+It yields this:
+
+| math
+a^2 + b^2 = c^2
+
+We can add a [index label] property to it:
+
+| code
+| math label:pythag
+a^2 + b^2 = c^2
+
+| math label:pythag
+a^2 + b^2 = c^2
+
+Any math block that has the label property is automatically numbered. The label can be used with the [index mathref] element to refer back to the equation as in the paragraph below:
+
+| indent
+Equation [mathref pythag] is the [i Pythagorean theorem] , where [m a] and [m b] are the lengths of the legs of a right triangle, and [m c] is the length of the hypotenuse.
+
+Click on the reference one to go to equation (1). Press ESC to return to where you were. The mathref element we used here is [code [mathref pythag] ] .
+
+[i For LaTeX users:] As a convenience, Scripta provides [index equation blocks] and [index eqref elements] . These are synomyms for math blocks and mathref elements. They corresond to equation environments and eqref macros in LaTeX.
+
+### Chemistry Blocks
+
+Chemical formulas and reactions can be rendered using [index chem elements] and [index chem blocks] . The formula for methane is [chem CH4 ] . Burning hydrogen in oxygen takes place fia the reaction [chem 2H2 + O2 -> 2H2O + Energy ] .
+
+To produce the text above, we used
+
+| code
+[chem CH4] and [chem 2H2 + O2 -> 2H2O + Energy]
+
+See [link The mhchem bundle by Martin Hensel https://texdoc.org/serve/mhchem/0] for a comprehensive discussion of what you can do with chem elements and blocks. These blocks relie on mhchem.
+
+### Code Blocks
+
+Below is an example of a [index code block]
+
+| code lang:python
+  def is_prime(n):
+      if n < 2:
+          return False
+      for k in range(2, int(n**0.5) + 1):
+          if n % k == 0:
+              return False
+      return True
+  
+  
+  def print_primes_up_to(N):
+      for p in range(2, N + 1):
+          if is_prime(p):
+              print(p)
+  
+  
+  # example usage
+  N = 100
+  print_primes_up_to(N)
+
+XXX: Add discussoin of multilne blocks. XXX
+
+### Other blocks
+
+Below is a list of frequently used blocks. For a complete list or for more details, see XXX.
+
+- theorem and its relatives (lemma, definition, etc.)
+- link [code [link NYT https:nytimes.com] ] [m \to] [link NYT https:nytimes.com] is a link to the New York Times.
+- ilink:
+- quotation
+- table, csvtable
+- index: makes an index of the words or phrases you have marked with [code [index ...] ] .
+- references??
+- cite, bibitem
+- etc.
+
+## The Scripta App
+
+| image expandable float:left width:200
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/f3c5c902-809c-4629-7015-a4327103a000/public
+
+On the left you see a thumbnail preview of the Scripta.io app. This document is being edited. You see the source text on the left, the rendered text on the right. If you click on this image, it will expand to show you a much larger view of the preview. Click on it again to restore the previous view.
+
+Do this now. Do it several times to ingrain it in your muscle memory.
+
+One of the main features of Scripta is that as you type new source text or make edits to the source text, those changes will be rendered almost instantly in the rendered text window. See (XXX VIDEO)
+
+To edit a document, click on the Pen icon which you will see above the rendered text. You can also click on any part of the rendered text. [footnote There are some exceptions, e.g. ilink elements XXX.] Click on the [xbox ] (XXX) to leave the editor.
+
+There is a lot more to the Scripta app. See XXX. You can, for example, export Scripta documents to PDF and then print it (XXX SEE VIDEO). Just click on the printer icon and follow directions. You can also export any Scripta document to LaTeX. [footnote There are some features XXX that are not compatible with LaTeX, so these are not exported. See XXX for a complete list of these.] [gray By adding style files, you can prepare it for publication by a journal that requires submission in LaTeX in a particular format. XXX: to be investigated]
+
+| hide
+We placed both the image and the equation using a new open-source language, [b Scripta Markup], described [ilink below jxxcarlson:welcome-to-scripta.1#73f8dd40-8ed6-4087-b894-b503c7fcd12b]. Scripta Markup can do most of what Tex/LateX
+can, but with a modern, streamlined syntax. 
+[ilink ILINK jxxcarlson:welcome-to-scripta.1#73f8dd40-8ed6-4087-b894-b503c7fcd12b].  Elements 
+can be combined.  
+
+# Dive Right In
+
+[i You don't have to read all of this article or even very much of it to use Scripta. Take a look at this short video (XXX) and then get started writing. The video will show you all you need to know. You can come back to this manual as needed.]
+
+# Features of Scripta.io
+
+- [b No set-up] . Create a new document with the click of a button. Then start typing.
+
+- [b Web-based] . Scripta produces web pages, not PDFs, although you can do that too.
+
+- [b Instant rendering] . As you type, the web pageyou are working on — text, images, equations, cross references, table of contents, etc. — is updated. All in real time.
+
+- [b Modern editor] . Click on a word in the rendered text.It will be highlighted in the source text. Selectsome source text, type ctrl-S. The corresponding rendered text will be highlighted. Type ctrl-1 to remove thehighlight.
+
+- [b Available everywhere, anytime] . Your writing is available to you, your students, and your colleages anywhere there is an internet connection. Readable on smart phones, tablets, laptops, and desktop computers.
+
+- [b No vendor lock-in] . Philosophically, we are opposed to vendor lock-in. It is wrong. Practically, we provide tools for you to export both individual documents and yourentire corpus of documents. See XXX. Additionally,the Scripta compiler, which is open source, is avaiable on [link Github https://github.com/jxxcarlson/scripta-compiler-v2] .
+
+- [b Integrated image uploader] . Click on thecamera icon for placing images in your document. Paste the image into the uploader, then paste the resulting image block in the editor.
+
+| image
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/5111dd45-daa1-4183-315a-7bec8802a700/public
+
+# Examples
+
+- [ilink Graphs and Colorings id-19124175-eb43-4d9d-9f7b-7688f1ee8e1c]
+
+- [ilink Blog jxxcarlson:science-stories.1]
+
+- [ilink Physics Notes jxxcarlson:physics-notebook]
+
+- [ilink Abstract Art jxxcarlson:abstract-art]
+
+See [ilink the discussion below jxxcarlson:welcome-to-scripta.1#2165d672-ed0e-49ad-a345-705f036d1403] for an explanation of the differences between the way mathematics is written in Scripta and the way it is written in LaTeX. Despite these differences, Scripta documents can always be [ilink rendered as PDF jxxcarlson:welcome-to-scripta.1#ecebaadd-7cbb-4bb3-b184-0209bd4af583] , and they can be [ilink exported to LaTeX jxxcarlson:welcome-to-scripta.1#3b122d77-ed3a-4532-81a1-711186ce9168] .
+
+We could have written [code | equation numbered ] if we wanted the equation to be automatically numbered. We could have said [code | equation label:wave-equation ] to label the equation. A labeled equation is numbered:
+
+| equation label:wave-equation
+pdd(u,x) + pdd(u,y) + pdd(u,z) = frac(1,c^2) pdd(u,t)
+  qquad 
+"Wave Equation"
+
+We can refer to it using the element [code [eqref wave-equation] ] :
+
+| indent
+The equation [eqref wave-equation] governs many phenomena, e.g. both sound and light waves.
+
+Blocks in Scripta are the functional equivalent of environments in LaTeX. Because a block is indexinated by an empty line, errors coming from badly indexinated blocks, as in LaTeX, are impossible.
+
+## Blank lines in blocks
+
+If you do need blank lines in a block, just indent the body of the block, like this:
+
+| code
+| code
+  a := 1
+  b := 2
+  
+  c := a + b
+
+The result is this:
+
+| code
+  a := 1
+  b := 2
+  
+  c := a + b
+
+## Ergonomic TeX (ETeX)
+
+[mark 2165d672-ed0e-49ad-a345-705f036d1403[anchor In the equation block, we wrote [code frac(1,c^2) ] instead of [code \frac{1}{c^2} ] as in standard TeX.]] This is ETeX, or [quote Ergonomic TeX] . The idea is to reduce visual noise by eliminating backslashes and curly braces as much as possible. Thus, instead of [code \alpha^2 ] , we write simply [code alpha^2 ] . [footnote Note use of "mark" in this paragraph. This use needs to be documented in the manual (and improved).] The first and second partial derivatives were defined in a [i macro] block:
+
+| code
+| mathmacros
+pd:       frac(partial #1, partial #2)
+pdd:      frac(partial^2 #1, partial #2^2)
+
+The usual LaTeX way is
+
+| code
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ppd}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+
+
+## Exceptional Elements
+
+Some elements have an off-beat syntax. To write code in-line, as in [code a := 2 ] , write
+
+| code
+... as in `a := 2` ....
+
+To write math inline, as in [m (a_1 + a_2)^3] , write
+
+| code
+as in $(a_1 + a_2)^3$, write
+
+## Exceptional Blocks
+
+Some blocks have an off-beat syntax. For sections, subsections, etc., we borrow from Markdownk using hashmarks [code # ] . The skeleton of an article might be
+
+| code
+  | title
+  The Kingdoms of Life
+  
+  # Archaea
+  
+  # Bacteria
+  
+    ## Proteobacteria
+    
+    ## Cyanobacteria
+  
+  # Protista
+  
+  # Fungi
+  
+  # Plantae
+
+Itemized and numbered lists are also exceptional blocks, again inspired by Markdown. Here is an itemized list:
+
+| code
+  - Milk
+  
+  - Cookies
+  
+  - Paper plates
+
+It renders as
+
+- Milk
+
+- Cookies
+
+- Paper plates
+
+Numbered lists are written as
+
+| code
+  . Milk
+  
+  . Cookies
+  
+  . Paper plates
+
+Itrenders like this:
+
+. Milk
+
+. Cookies
+
+. Paper plates
+
+
+# Ergonomic
+
+Scripta is desiged to be ergonomic. When you write mathematical text, for example,
+
+| equation numbered
+frac(sin theta_1, sin theta_2) = frac(v_1, v_2)
+
+you write
+
+| code
+| equation numbered
+frac(sin theta_1, sin theta_2) = frac(v_1, v_2)
+
+instead of the usal TeX:
+
+| code
+| equation
+\frac{\sin\theta_1}{\sin\theta_2} = \frac{v_1}{v_2}
+
+The notation is, for he most part, like the notation in mathematics. Relatively few backslashes and curly braces. If you wish, however, you can use the second, standard LaTeX form. We call streamlined syntax [i ETeX] , for [quote Ergonomic TeX.]
+
+| mathmacros
+pd:       frac(partial #1, partial #2)      
+pdd:      frac(partial^2 #1, partial #2^2)  
+
+# The Scripta App
+
+- [b Saving] . When editing your document, Scripta saves it every 3 seconds.
+
+- [b Navigation] . To navigate back and forth between documents in Scripta, use the keyboard shortcuts [code ctrl-[ ] and [code ctrl-] ] or the buttons [b B] and [b F] .
+
+- [b Search and Replace] . To bring up the search and replace panel in the editor, type command-F (mac). To close it, type ESC.
+
+- [b Experimental mode] . Some features are accessible (for now anyway) only in experimental mode. To enter experimental mode, ....
+
+# The Editor
+
+The quickest way to open the editor is just to click on a paragraph in the document you are looking at. Amazingly, the editor will open with the same paragraph highlighted.
+
+## Auto-closing
+
+When you type `[` , the editor types a following `]` and puts the cursr between the left and right brackes. Similarly for parentheses and curly braces [code {} ]
+
+## Sync
+
+- Click on rendered text to bring the corresponding source text into focus
+
+- Hold the option key down, select some text, release the option key. They text you selected will be highlighted.
+
+- [gray Select source text and press[b ctrl-S] to highlight the corresponding rendered text. — eliminate this item it is not yet reliable.]
+
+- Press ESC to un-highlight
+
+## Commands
+
+Press [b cmd-Z] to undo the last change.
+
+[b Search and replace]
+
+- [b cmd-F] : search (find)
+- [b cmd-G] : find next.
+- [b cmd-H] : replace all.
+- [b ESC] : close editor
+
+[b Move text]
+
+- [b TAB] : indent selection
+- [b shift-TAB] : de-indent selection
+
+[b Move cursor]
+
+- [b ctrl-A] : beginning of line
+- [b ctrl-E] : end of line
+- [b ctrl-UPARROW] : go to top of file
+- [b ctrl-DOWNARROW] : go to end of file
+- [b ctrl-O] : open new line
+
+[b Remove text]
+
+- [b ctrl-D] : erase next character
+- [b ctrl-K] : erase from cursor to end-of-line
+
+# Cooperative Editing
+
+UNDER CONSTRUCTION
+
+# Image Manager
+
+## Uploading
+
+| image expandable float:right width:100 
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ff9cfbc7-2143-4f23-289b-be3c110e7e00/public
+
+To place images in your documents, they need to be
+accessible from somewhere in the cloud, as is the image on the right and what you find  at [link https://images.google.com].  Scripta has an image manager that you can use to make a permanent copy of any image AND host on the cloud so that you can use them in Scripta. The image manager keeps everything that you give it in a searchable library, so that you can go back and retrieve images that you added to it a day or a year ago.  To use the image manager, just click on the camera icon in the toolbar.  It will bring up a screen that looks like this:
+
+
+| image width:300 figure:1
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/f44890b6-e692-458d-a8d0-84ce54929500/public
+
+If your image is on your computer, click the [b Upload] button, navigate to the image, select it, and click [b Open].
+You will see something like the below.  The text "poison dart frog, colors:orange,black,blue" consists of [index tags] 
+that you added yourself.  Tags help you to find images later if you need them.
+
+
+| image width:450 figure:2
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/a8df913f-eca3-4249-c036-1e3207e26000/public
+
+Now click on [b Save].  The popup will disappear and a reference for you image will be copied to the clipboard.
+Paste it in the document you are working on.  In the editor  will see text something like
+
+| code format:center
+| image
+https://imagedelivery.net/9U-0Y...
+
+In the rendered text, you will see this:
+
+| image figure:3
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/8aac1f6f-62bc-4dab-282f-1858ac62f800/public
+
+
+There is another way of uploading an image.  In many web sites, e.g., Google Images you can control-click on an image and then copy it. Or if you have an image in front of you
+just do control-5 (Mac) or XXX (PC), then go to the image manager and press control-V to paste it.  Add the tags, click [b Save] and proceed as before.
+
+
+
+
+## Image library
+
+When you upload an image or paste it as above, it is stored in your Scripta [index Image library]. To see the image library, option click on the camera icon. When you do, you will see something like this:
+
+| image
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ec0f60c8-57e0-4bbe-02e9-c9dde6a0ab00/public
+
+You can scroll through this library.  If you find an image you need, click on it.  A reference to it will be copied into the clipboard, as before, If you option-click information about the
+image will be displayed.
+
+Notice text "Filter images" at ehte ,  Type "frog" there.  The image library changes to
+
+
+| image
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/dcc6f608-3f9d-42bc-080e-45794bae1e00/public
+
+Now put "frog poison" in the search field.  You see this:
+
+| image
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/7ccc8cfd-74ea-4e5f-969a-86f1c8b79500/public
+
+Notice that the images which appear are tagged with both "frog" and "poison."  In general, the filter supports boolean search:
+
+  - flower — find images containing "flower"
+  - flower tree — find images containing both "flower" AND "tree"
+  - flower -tree — find images containing "flower" but NOT "tree"
+  - @before:7/1/2025 — find images before a date
+
+
+
+
+# Links
+
+Make a link to, say, the New York Times with `[link NYT http://nytimes.com]`.  This text renders as [link NYT http://nytimes.com].
+
+## Internal Links
+
+Link to another document in Scripta with an `ilink` element.
+
+| indent
+[ilink Formal Systems jxxcarlson:formal-systems] or [ilink Abstract Art jxxcarlson:abstract-art]
+
+The first ilink was written using an [code ilink ] (internal link) block:
+
+| code
+[ilink Formal Systems jxxcarlson:formal-systems]
+
+
+You can also link to a specific part of a document, provided that it is suitably marked.  We mark the phrase "first partial derivation is stuck" in the Formal Systems document like this:
+
+| code
+The [mark first partial derivation is stuck with:stuck]: 
+it cannot be continued. 
+
+The "mark" for this element is the word "stuck".  We can
+link to it from this document by writing
+
+| code
+[ilink stuck derivation jxxcarlson:formal-systems#stuck]
+
+Then the source text 
+
+| code
+Here is an example of a [ilink stuck derivation 
+jxxcarlson:formal-systems#stuck]  in a formal system.
+
+yields this:
+
+| indent
+Here is an example of a [ilink stuck derivation jxxcarlson:formal-systems#stuck]  in a formal system.
+
+Try clicking on [violet stuck derivation] above.  You will be 
+transported to the Formal Systems document with the 
+marked element highlighted.  To unhighlight, press ESC.  To see
+all marked elements, type [b ctrl-opt-=].
+
+
+[vspace 30]
+[hrule]
+[vspace 30]
+
+
+You can make (for example)
+
+- a home page
+
+- a web page with class notes, problem sets, and solutions thereto
+
+Fill these pages with [code ilinks ] to other Scripta documents, e.g., the problem sets.
+
+## Public Links
+
+Use the [u link icon] in the tool strip to copy a link to the current document. This only works if the document is public. Below is the link to this document. You can send it to a friend, colleague or student by email or text so they can look at it. They will be signed in as guest, so they don't need to have a Scripta account. You can also post the link on social media or any substack or web page you have.
+
+| code
+https://scripta.io/g/jxxcarlson:welcome-to-scripta
+
+
+# Export
+
+## PDF
+
+[mark ecebaadd-7cbb-4bb3-b184-0209bd4af583[anchor Note the printer icon. Click on it to produce a PDF version of the current document]] .
+
+## LaTeX
+
+[mark 3b122d77-ed3a-4532-81a1-711186ce9168[anchor Sometimes you need a LaTeX version of a Scripta document, e.g., to submit to a mathematics or physics journal]] . Just click on XXXX.
+
+## Scripata
+
+# Reporting Bugs and Suggestions
+
+Note the [quote bullhorn] icon on the right-hand edge of this page. Click on it to submit a bug report (issue) or suggestion.
+
+
+| hide
+| image caption:Hummingbird
+https://www.realsimple.com/thmb/7xn0oIF6a9eJ-y_4OO5vN0lJhCg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/humming-bird-flowers-GettyImages-1271839175-b515cb4f06a34e66b084ba617995f00a.jpg
+
+| endnotes
+
+
+| index
+
+
+| references
+
+
+| bibitem einstein1905a
+Albert Einstein, “Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt” Annalen der Physik, 17 (1905), pp. 132–148 (On a Heuristic Point of View Concerning the Production and Transformation of Light)
+
+| bibitem einstein1905b
+“Über die von der molekularkinetischen Theorie der Wärme geforderte Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen” Annalen der Physik, 17 (1905), pp. 549–560 ( On the Motion of Small Particles Suspended in Stationary Liquids as Required by the Molecular-Kinetic Theory of Heat)
+
+| bibitem einstein1905c
+“Zur Elektrodynamik bewegter Körper” Annalen der Physik, 17 (1905), pp. 891–921 (On the Electrodynamics of Moving Bodies)

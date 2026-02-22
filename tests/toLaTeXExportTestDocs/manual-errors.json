@@ -1,0 +1,37 @@
+[
+  {
+    "latex-begin": 301,
+    "latex-end": 302,
+    "latex-line": 302,
+    "latex-text": "(1) For code, you can use a \\index{code element} . Thus \\lstinline|a^2 + b^ = c^2| is produced by writing \\lstinline|[code a^2 + b^ = c^2]| . You can also enclose code in backticks, e.g., ` a^2 + b^2 = c^2 ` .; (2) ",
+    "scripta-line": 51
+  },
+  {
+    "latex-begin": 779,
+    "latex-end": 780,
+    "latex-line": 780,
+    "latex-text": "(1) \\item \\textbf{Navigation} . To navigate back and forth between documents in Scripta, use the keyboard shortcuts \\errorHighlight{[code]?} ctrl-\\errorHighlight{[ - can't have space after the bracket}\\errorHighlight{extra ]?} and \\lstinline|ctrl-| \\errorHighlight{extra ]?} or the buttons \\textbf{B} and \\textbf{F} .; (2) \\item \\textbf{Navigation} . To navigate back and forth between documents in Scripta, use the keyboard shortcuts \\errorHighlight{[code]?} ctrl-\\errorHighlight{[ - can't have space after the bracket}\\errorHighlight{extra ]?} and \\lstinline|ctrl-| \\errorHighlight{extra ]?} or the buttons \\textbf{B} and \\textbf{F} .; (3) \\item \\textbf{Navigation} . To navigate back and forth between documents in Scripta, use the keyboard shortcuts \\errorHighlight{[code]?} ctrl-\\errorHighlight{[ - can't have space after the bracket}\\errorHighlight{extra ]?} and \\lstinline|ctrl-| \\errorHighlight{extra ]?} or the buttons \\textbf{B} and \\textbf{F} .; (4) \\item \\textbf{Navigation} . To navigate back and forth between documents in Scripta, use the keyboard shortcuts \\errorHighlight{[code]?} ctrl-\\errorHighlight{[ - can't have space after the bracket}\\errorHighlight{extra ]?} and \\lstinline|ctrl-| \\errorHighlight{extra ]?} or the buttons \\textbf{B} and \\textbf{F} .",
+    "scripta-line": 379
+  },
+  {
+    "latex-begin": 1091,
+    "latex-end": 1093,
+    "latex-line": 1092,
+    "latex-text": "(1) \\bibitem{einstein1905a}; (2) \\bibitem{einstein1905a}",
+    "scripta-line": 605
+  },
+  {
+    "latex-begin": 1095,
+    "latex-end": 1097,
+    "latex-line": 1096,
+    "latex-text": "(1) \\bibitem{einstein1905b}; (2) \\bibitem{einstein1905b}",
+    "scripta-line": 608
+  },
+  {
+    "latex-begin": 1099,
+    "latex-end": 1101,
+    "latex-line": 1100,
+    "latex-text": "(1) \\bibitem{einstein1905c}; (2) \\bibitem{einstein1905c}",
+    "scripta-line": 611
+  }
+]

@@ -1,0 +1,402 @@
+| title number-to-level:2
+Welcome to Scripta
+
+| center
+[red (( D R A F T ))]
+
+[par]
+
+| indent
+[i Scripta is now running a draft of the new Scripta compiler.  It is a work in progress, so some things might be broken or just not look quite right. The final, polished 
+version is coming soon.]
+
+# What is Scripta?
+
+Scripta.io is an app for creating, editing, and publishing
+articles with beautiful things like this
+
+| image expandable
+| figure:1
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/83fdbf6c-79d5-44e7-6ac6-00cdc7785000/public
+
+and this
+
+| equation
+pdd(u,x) + pdd(u,y) + pdd(u,z) = frac(1,c^2) pdd(u,t)
+
+
+[i The equation above governs the transmission of light from sun to flower to the eye of the beholder as in Figure 1].
+
+
+
+[par][hrule][par]
+
+Scripta maked it easy to write short notes with images and equations — for yourself, your friends and colleagues, or for the class you are teaching.  Here are some examples 
+of what you can write:
+
+
+ [ilink Graphs and Colorings id-19124175-eb43-4d9d-9f7b-7688f1ee8e1c] 
+ | [ilink Tikz Example id-e54f26b8-4f13-472e-b4ca-68a07879a7cd]
+ | [ilink Blog jxxcarlson:science-stories.1] 
+ | [ilink Physics Notes jxxcarlson:physics-notebook]
+ | [ilink Abstract Art jxxcarlson:abstract-art]
+
+
+[i Sharing.] Send a link to a friend or to your students. Or just be retro: writhe link on the blackboard. Another is put the link on your own website.  As an example, the link for this document is
+
+| indent
+https://scripta.io/g/jxxcarlson:welcome-to-scripta.1
+
+For more information on the many features of Scripta, take a look at the [ilink Scripta Manual id-329ef2b3-321f-4ce8-a830-395724a6daab] or take a look at these videos:
+
+
+| indent
+Video 1 | Video 2 | Video 3 | Video 1 4 Video 5 
+
+
+
+
+
+
+# The Scripta Markup Language
+
+The Scripta markup language  consists of just two things, [index elements] and [index blocks].[footnote Our aim is to design a langauge that is as simple as possible without losing
+expressive power.]
+
+## Elements
+
+Ordinary text, like "Happy New Year" is an element.   So are [index named elements], which have the form `[NAME BODY]`.
+Below are some examples: font-style elements, math elements, chemistry elements, and code elements.  There are many more. See XXX
+
+[italic [u Font styles.]]   `[i Happy New Year]` is an 
+[index italic  element].  It renders as [i Happy New Year]. 
+`[b Happy New Year]` is a [index bold element].
+It renders as [b Happy New Year]. 
+Elements [index compose] so `[i [b Happy New Year]]` yields [i [b Happy New Year]].  
+
+It may seem awkward to type ` [ ` then the text of the block, then ` ] `.  But the Scripta editor helps you: as soon as you type ` [ ` it types ` ] ` and puts the cursor between the 
+left and right braces, so you just continue typing.  When you finish typing the body of the element, type `]` again and keep going.  Once you learn to do this, you are a speed demon.
+
+[italic [u Math.]] Write mathematical formulas, equations, etc. with a [index math element], e.g., [math a^2 + b^2 = c^2].
+
+| indent
+`[math a^2 + b^2 = c^2]` $quad \to quad$ [math a^2 + b^2 = c^2]
+
+The shorthand form `[m a^2 + b^2 = c^2]` also works.  If you
+want, you can use TeX/LaTex syntax, `$a^2 + b^2 = c^2$`.
+
+[italic [u Chemistry.]] Write chemical formulas using a 
+[italic chem element]:
+
+| indent
+Methane is `[chem CH4]` $\to$ Methane is [chem CH4]
+
+[italic [u Code].] Write code using a [index code element]. 
+
+| indent
+`[code a^2 + b^ = c^2]` $\to$ [code a^2 + b^ = c^2]
+
+You can also enclose
+code in backticks, e.g., [bt]like this[bt].
+
+
+
+## Blocks
+
+A [index block] consists of a bunch of contiguous lines of text with an empty line above and below.  Like this:
+
+
+| code indent:4
+  -------------
+  -------------
+  -- block 1 --
+  -------------
+  -------------
+  
+  -------------
+  -------------
+  -- block 2 --
+  -------------
+  -------------
+    
+  -------------
+  -------------
+  -- block 3 --
+  -------------
+  -------------
+
+
+A paragraph, like the one below, is a kind of block.
+Note the mixture of ordinary text and elements like
+`[red Erik ...]`
+
+| code
+[red Erik the Red (Old Norse: Eiríkr rauði)] 
+was a Norse mexplorer and settler, best known 
+for founding the first Norse colonies in Greenland 
+in the late 10th century. We do not know the 
+origin of the nickname "Red."  Perhaps the
+color of his hair, perhaps is fiery temperament.
+(He was exiled from Norway for violence, later
+from [blue Iceland] for murder.  
+He died in [b [green Greenland.]])
+
+Our paragraph renders like this:
+
+| indent
+[red Erik the Red (Old Norse: Eiríkr rauði)] 
+was a Norse explorer and settler, best known 
+for founding the first Norse colonies in Greenland 
+in the late 10th century. We do not know the 
+origin of the nickname "Red."  Perhaps the
+color of his hair, perhaps is fiery temperament.
+(He was exiled from Norway for violence, later
+from [blue Iceland] for murder.  He died in [b [green Greenland.]])
+
+Scripta also has [index named blocks].  We give four examples:
+image blocks, math blocks, chemistry blocks, and code 
+blocks.  There are many more, e.g., theorem blocks.  See XXX.
+
+
+
+### Image Blocks
+
+| image expandable 
+| float:left 
+| width:70 
+| caption:Jellyfish
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/5c12dfcf-0698-4e0b-733b-f9abf2bfff00/public
+
+| paragraph padding-right:3
+The tiny image of jellyfish that you see on your 
+left is put there using an [index image block].  Click on the image to expand it.  Click on the expanded image to return the view you ser here.  Image blocks have a lot of options.  Lets begin with the simplest case, no option at all:
+
+| code
+| image
+https://imagedelivery.net/9U-0Y4s...
+
+It has the form
+
+| code
+HEADER
+BODY
+
+
+In this case, the header is the single line `| image`.  The body
+is the line `https://imagedelivery.net...` — the "internet address" of the image.
+
+The image block we used above for the tiny jellyfish is a little more complex:
+
+| code
+| image expandable 
+| float:left 
+| width:70 
+| caption:Jellyfish
+https://imagedelivery.net/9U-0Y4s...
+
+In this case the header consists of four lines, each beginning
+with the pipe symbol "|" followed by a space. The first line
+of the header is "| image expandable".  Here "expandable" 
+is an [index argument].  These are single words that
+change the behavior of the image block.  In the case
+at hand, it means that if you click on the image it pops to
+fill a much larger screen.  Clicking the expanded image returns it to its normal state. There can be more than one argument, but these always come before the properties.
+
+The next line of the header is the text "float:left". It defines
+a [index property]  of the image block.  Properties alwyas
+have the form ========================================-------------------------------------------------------------------------------------------------------------------------------------------- `key:value`.  In this case the key
+is "float" and the value associated with that key is "left".
+A block with this property hugs the left margin of the 
+document and the text below it flows around it.  There is also a `float:right` property. The properties set by the next two lines define the width in pixels of image displayed and its caption. 
+
+###  Math Blocks
+
+ Here is a simple [index math block]:
+
+| code
+| math
+a^2 + b^2 = c^2
+
+It yields this:
+
+| math
+a^2 + b^2 = c^2
+
+We can add a [index label] property to it:
+
+| code
+| math label:pythag
+a^2 + b^2 = c^2
+
+
+| math label:pythag
+a^2 + b^2 = c^2
+
+Any math block that has the label property is automatically
+numbered.  The label can be used with the [index mathref]
+element to refer back to the equation as in the paragraph
+below:
+
+| indent
+Equation [mathref pythag] is the [i Pythagorean theorem], 
+where $a$ and $b$ are the lengths of the legs of
+a right triangle, and $c$ is the length of the
+hypotenuse.
+
+Click on the reference "(1)" to go to equation [mathref pythag].  Press
+ESC to return to where you were. We made the live reference
+(1) by writing `[mathref pythag]`.  
+
+[i For LaTeX users:] As a convenience, Scripta provides [index equation blocks] and [index eqref elements].  These are 
+synomyms for math blocks and mathref elements. They corresond to equation environments and eqref macros in LaTeX.
+
+
+
+### Chemistry Blocks
+
+Chemical formulas and reactions can be rendered using [index chem blocks].  Burning hydrogen in oxygen takes place via the reaction 
+
+| chem 
+2H2 + O2 -> 2H2O + Energy
+
+To produce the text above, we used
+
+| code  
+  | chem 
+  2H2 + O2 -> 2H2O + Energy  
+
+See Martin Hensel's [link mhchem bundle https://texdoc.org/serve/mhchem/0] for a comprehensive discussion of what you can do with chem elements and blocks.
+
+### Code Blocks
+
+Below is an example of a [index code block].  Click on it
+to reveal it in the editor.  The header of the block is
+
+| code indent:8
+| code python linenumbers:yes
+
+Because of the argument `python`, the rendered text 
+is shown with Python syntax highlighting. The property
+`linenumbers:yes` tells Scripta to format the code
+with line numbers.
+
+
+| code python linenumbers:yes
+  def is_prime(n):
+      if n < 2:
+          return False
+      for k in range(2, int(n**0.5) + 1):
+          if n % k == 0:
+              return False
+      return True
+  
+  
+  def print_primes_up_to(N):
+      for p in range(2, N + 1):
+          if is_prime(p):
+              print(p)
+  
+  
+  # example usage
+  N = 100
+  print_primes_up_to(N)
+
+
+
+
+
+  
+
+
+Because the text of the code block consists of several
+paragraphs, we indent it by selecting it all and pressing TAB.
+The empty lines become short lines consisting of 
+two spaces.  There are no empty lines. 
+
+Click anywhere in the rendered code block to reveal it 
+in the editor. There you can see the indentation structure
+Because the block has empty lines, the entire block is indented by spaces. XXX(Clarity of text???)
+
+Tip: XXX
+
+# The Scripta App
+
+| image expandable float:left width:200
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/f3c5c902-809c-4629-7015-a4327103a000/public
+
+On the left you see a thumbnail preview of the Scripta.io
+app.  This document is being edited.  You see the source
+text on the left, the rendered text on the right. 
+Click on this image to make it expand.  Click on it again to restore the previous view.  Do this now.  Do it several times to ingrain it in your muscle memory.
+
+One of the main features of Scripta is that as you type new source text or make edits to the source text, those changes
+will be rendered almost instantly in the rendered text window. See (XXX VIDEO)
+
+
+To edit a document, click on the Pen icon which you will see above the rendered text. You can also click on any part of the rendered text.[footnote There are some exceptions, e.g. ilink elements XXX.] Click on the [xbox] to leave the editor.
+
+There is a lot more to the Scripta app. See XXX. You can, for example, export Scripta documents to PDF and then print it (XXX SEE VIDEO). Just click on the printer icon and follow directions. You can also export any Scripta document to LaTeX.[footnote There are some features XXX that
+are not compatible with LaTeX, so these are not exported.  See XXX for a complete list of these.]
+[gray By adding style files, you can prepare it for publication by
+a journal that requires submission in LaTeX in a particular format. XXX: to be investigated]
+ 
+ 
+
+
+| hide
+We placed both the image and the equation using a new open-source language, [b Scripta Markup], described [ilink below jxxcarlson:welcome-to-scripta.1#73f8dd40-8ed6-4087-b894-b503c7fcd12b]. Scripta Markup can do most of what Tex/LateX
+can, but with a modern, streamlined syntax. 
+[ilink ILINK jxxcarlson:welcome-to-scripta.1#73f8dd40-8ed6-4087-b894-b503c7fcd12b].  Elements 
+can be combined.  
+
+# Your First Document
+
+  
+[i  Take
+a look at this short video (XXX). It will show you
+how to create your first document, write equations,
+and place images, and more.]
+
+
+
+# Features
+
+- [b No set-up].  Create a new document with the click of a button. Then start typing.
+
+- [b Web-based]. Scripta produces web pages, not PDFs, although you can do that too. 
+
+- [b Instant rendering]. As you type, the web pageyou are working on — text, images, equations, cross references, table of contents, etc. — is updated.  All in real time.
+
+- [b Modern editor].  Click on a word in the rendered text.It will be highlighted in the source text. Selectsome source text, type ctrl-S. The corresponding rendered text will be highlighted. Type ctrl-1 to remove thehighlight.
+
+
+- [b Available everywhere, anytime]. Your writing is available to you, your students, and your colleages anywhere there is an internet connection.  Readable on smart phones, tablets, laptops, and desktop computers.  
+
+- [b No vendor lock-in].  Philosophically, we are opposed to vendor lock-in.  It is wrong. Practically, we provide tools for you to export both individual documents and yourentire corpus of documents.  See XXX.  Additionally,the Scripta compiler, which is open source, is avaiable on [link Github https://github.com/jxxcarlson/scripta-compiler-v2].
+
+- [b Integrated image uploader]. Click on the camera icon for placing images in your document. Paste the image into the uploader, then paste the resulting image block in the editor.
+
+| image expandable
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/5111dd45-daa1-4183-315a-7bec8802a700/public
+
+
+
+| mathmacros
+pd:       frac(partial #1, partial #2)      
+pdd:      frac(partial^2 #1, partial #2^2)  
+
+[par][hrule]
+
+[i Below is the "Endnotes" section.  This is where the footnote text is displayed.  To place a footnote after
+some text, just write `[footnote Blah blah blah]`][footnote Blah blah blah].
+
+| endnotes
+
+[par][hrule]
+
+[i Below you will find an index of terms mentioned in this documentt.  Click on a word or phrase in the index. The app will scroll up to where that term is mentioned and highlight the paragraph in which it appears.  Press ESC to clear the highlight.  Press option-ESC (alt-ESC) to return to the index.]
+
+| index
+
+
+

@@ -1,0 +1,590 @@
+[
+  {
+    "latex-begin": 294,
+    "latex-end": 298,
+    "latex-line": 297,
+    "latex-text": "(1) the tangent line \\(AB\\) to the graph drawn through a point \\(P = (x,f(x))\\). The slope of the tangent line is its \\term{rise} divided; (2) by its \\term{run}.   You can read these numbers off from the triangle \\(PQR\\):",
+    "scripta-line": 63
+  },
+  {
+    "latex-begin": 311,
+    "latex-end": 317,
+    "latex-line": 314,
+    "latex-text": "  \\includegraphics[width=0.5833333333333334\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/fa46a52c-79cc-4679-d90f-8006c8eb2b00/public}",
+    "scripta-line": 77
+  },
+  {
+    "latex-begin": 319,
+    "latex-end": 322,
+    "latex-line": 322,
+    "latex-text": "to get such formulas in the next chapter.   There we will learn, for example, that the derivative of the quadratic function \\(f(x) = ax^2 + \\bx + x\\) is the function \\(f'(x) = 2ax + b\\). ",
+    "scripta-line": 79
+  },
+  {
+    "latex-begin": 330,
+    "latex-end": 333,
+    "latex-line": 332,
+    "latex-text": "\\includegraphics[width=0.5833333333333334\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/183e307c-10c7-4333-37d2-d0c1e283cd00/public}",
+    "scripta-line": 87
+  },
+  {
+    "latex-begin": 338,
+    "latex-end": 343,
+    "latex-line": 339,
+    "latex-text": "A function is \\term{differentiable} if its derivative exists for all",
+    "scripta-line": 92
+  },
+  {
+    "latex-begin": 345,
+    "latex-end": 348,
+    "latex-line": 347,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/a2167390-f701-4fae-e3cc-62abe1036200/public}",
+    "scripta-line": 100
+  },
+  {
+    "latex-begin": 364,
+    "latex-end": 367,
+    "latex-line": 366,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/24ff5ec6-e668-418b-2138-c9231bb7a400/public}",
+    "scripta-line": 119
+  },
+  {
+    "latex-begin": 369,
+    "latex-end": 373,
+    "latex-line": 371,
+    "latex-text": "(1) use in these notes are \\term{twice differentiable}.   That means that the derivative of \\(f\\) exists; (2) at every point where \\(f\\) is defined, and so does the derivative of the derivative, the so-called \\term{second derivative} \\(f''(x)\\).   All polynomials, exponentials, and products of exponentials   are twice differentiable.   In fact, they are \\term{infinitely differentiable}: you can calculate the derivative, the; (3) at every point where \\(f\\) is defined, and so does the derivative of the derivative, the so-called \\term{second derivative} \\(f''(x)\\).   All polynomials, exponentials, and products of exponentials   are twice differentiable.   In fact, they are \\term{infinitely differentiable}: you can calculate the derivative, the",
+    "scripta-line": 122
+  },
+  {
+    "latex-begin": 375,
+    "latex-end": 379,
+    "latex-line": 377,
+    "latex-text": "Consider the quadratic function \\(f(x) = ax^2 + \\bx + c\\).   Its",
+    "scripta-line": 128
+  },
+  {
+    "latex-begin": 406,
+    "latex-end": 408,
+    "latex-line": 408,
+    "latex-text": "its \\term{sign} tells us whether the function is increasing or decreasing:",
+    "scripta-line": 155
+  },
+  {
+    "latex-begin": 430,
+    "latex-end": 443,
+    "latex-line": 438,
+    "latex-text": "(1)  value is an \\term{absolute minimum}: it is the smallest; (2)  the ifrst one is an absolute minimum, the second is a \\term{local minimum}: it is the smallest of all nearby values.   In (c); (3)  there is an \\term{inflection point}.   At an infection point a function turns from increasing to decreasing (or \\textit{vice versa}.); (4)  At all these so-called \\term{critical points}, the derivative vanishes.   \\textit{Geometrically,",
+    "scripta-line": 177
+  },
+  {
+    "latex-begin": 445,
+    "latex-end": 448,
+    "latex-line": 447,
+    "latex-text": "\\includegraphics[width=1\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/b1ce5ac8-7ce6-4db1-80b8-6a38af9f2200/public}",
+    "scripta-line": 192
+  },
+  {
+    "latex-begin": 480,
+    "latex-end": 484,
+    "latex-line": 483,
+    "latex-text": "of the derivative, or \\term{second derivative}, the second derivative",
+    "scripta-line": 221
+  },
+  {
+    "latex-begin": 493,
+    "latex-end": 496,
+    "latex-line": 495,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/35feb608-562e-492b-f51c-be8533740000/public}",
+    "scripta-line": 232
+  },
+  {
+    "latex-begin": 498,
+    "latex-end": 501,
+    "latex-line": 499,
+    "latex-text": "(1) Function with positive second derivative are \\term{convex} or (very roughly) \"bowl-shaped.\"   The technical defintion is that the line drawn between; (2) as in the figure below.   The line joining \\(A\\) to \\(B\\) is the \\term{secant line}.   The term comes from the Latin \\textit{secare}, \"to cut.\"",
+    "scripta-line": 236
+  },
+  {
+    "latex-begin": 503,
+    "latex-end": 505,
+    "latex-line": 505,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/212555fa-12d0-4616-3613-6aef577f8900/public}",
+    "scripta-line": 240
+  },
+  {
+    "latex-begin": 523,
+    "latex-end": 534,
+    "latex-line": 525,
+    "latex-text": "(1) is \\term{optimization}: finding the minimum (or maximum) values of functions.   According; (2) find good \\term{approximations} of the minima without having to solve equations for them.",
+    "scripta-line": 255
+  },
+  {
+    "latex-begin": 536,
+    "latex-end": 546,
+    "latex-line": 537,
+    "latex-text": "(1) The method is called \\term{gradient descent}.   The idea is as follows.   Start; (2) the \\term{learning rate}, and set ",
+    "scripta-line": 267
+  },
+  {
+    "latex-begin": 600,
+    "latex-end": 606,
+    "latex-line": 603,
+    "latex-text": "  \\includegraphics[width=1\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/0e486899-d6c7-40a6-25df-46d48af11800/public}",
+    "scripta-line": 326
+  },
+  {
+    "latex-begin": 710,
+    "latex-end": 713,
+    "latex-line": 712,
+    "latex-text": "\\includegraphics[width=0.5833333333333334\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/34f1934a-ab11-484e-edd0-36215c010f00/public}",
+    "scripta-line": 409
+  },
+  {
+    "latex-begin": 744,
+    "latex-end": 746,
+    "latex-line": 745,
+    "latex-text": "For the integral, look at Figure 2.   The \\term{definite integral} of \\(f\\) from \\(a\\) to \\(b\\) is the area of the region \\(R\\). We can decode",
+    "scripta-line": 434
+  },
+  {
+    "latex-begin": 748,
+    "latex-end": 751,
+    "latex-line": 750,
+    "latex-text": "R  = \\sett{(x,y)}{a \\le x \\le b,\\quad 0 \\le y \\le f(x)}",
+    "scripta-line": 437
+  },
+  {
+    "latex-begin": 778,
+    "latex-end": 784,
+    "latex-line": 781,
+    "latex-text": "  \\includegraphics[width=0.5833333333333334\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/eea257c6-10f9-4db9-20cb-f93a7d727a00/public}",
+    "scripta-line": 460
+  },
+  {
+    "latex-begin": 786,
+    "latex-end": 796,
+    "latex-line": 792,
+    "latex-text": "say that the true integral is the \\textbf{\\term{ limit}} of the approximate",
+    "scripta-line": 462
+  },
+  {
+    "latex-begin": 811,
+    "latex-end": 820,
+    "latex-line": 818,
+    "latex-text": "(1) these deviations follow a so-called \\term{normal} or \\term{Gaussian}; (2) these deviations follow a so-called \\term{normal} or \\term{Gaussian}; (3) called a \\term{probability distribution}.   It is a positive (non-negative) function satisfying",
+    "scripta-line": 481
+  },
+  {
+    "latex-begin": 835,
+    "latex-end": 838,
+    "latex-line": 837,
+    "latex-text": "(1) \\includegraphics[width=0.5\\textwidth]{media.geeksforgeeks.org/wp-content/uploads/20230828135632/Probability-Density-Function.png}; (2) \\includegraphics[width=0.5\\textwidth]{media.geeksforgeeks.org/wp-content/uploads/20230828135632/Probability-Density-Function.png}",
+    "scripta-line": 500
+  },
+  {
+    "latex-begin": 849,
+    "latex-end": 853,
+    "latex-line": 850,
+    "latex-text": "(1) Here \\(\\exp(x)\\) is \\(e^x\\), \\(\\mu\\) is the \\term{mean} of the distribution and \\(\\sigma\\) is; (2) the \\term{standard deviation}.   The mean tells us where the distribution ; (3) is centered.   The standard deviation tells us to what extent the distribution is spread out. This formula just gven defines the \\term{standard} or \\term{normal} distribution. It is one the most commonly; (4) is centered.   The standard deviation tells us to what extent the distribution is spread out. This formula just gven defines the \\term{standard} or \\term{normal} distribution. It is one the most commonly",
+    "scripta-line": 509
+  },
+  {
+    "latex-begin": 855,
+    "latex-end": 858,
+    "latex-line": 857,
+    "latex-text": "(1) \\includegraphics[width=0.6666666666666666\\textwidth]{upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/640px-Standard_deviation_diagram.svg.png}; (2) \\includegraphics[width=0.6666666666666666\\textwidth]{upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/640px-Standard_deviation_diagram.svg.png}",
+    "scripta-line": 515
+  },
+  {
+    "latex-begin": 879,
+    "latex-end": 882,
+    "latex-line": 881,
+    "latex-text": "\\bv = (v_1, v_2, \\ldots ,v_n)",
+    "scripta-line": 535
+  },
+  {
+    "latex-begin": 884,
+    "latex-end": 886,
+    "latex-line": 886,
+    "latex-text": "over the real numbers \\(\\reals\\) is written",
+    "scripta-line": 538
+  },
+  {
+    "latex-begin": 888,
+    "latex-end": 891,
+    "latex-line": 890,
+    "latex-text": "(1) \\reals^n = \\sett{ (v_1, v_2, \\ldots ,v_n) }{ v_i \\in \\reals }; (2) \\reals^n = \\sett{ (v_1, v_2, \\ldots ,v_n) }{ v_i \\in \\reals }; (3) \\reals^n = \\sett{ (v_1, v_2, \\ldots ,v_n) }{ v_i \\in \\reals }",
+    "scripta-line": 541
+  },
+  {
+    "latex-begin": 893,
+    "latex-end": 898,
+    "latex-line": 898,
+    "latex-text": "(1) we think of \\(\\bx = (x_1, x_2)\\) as a \\term{position vector}.; (2) we think of \\(\\bx = (x_1, x_2)\\) as a \\term{position vector}.",
+    "scripta-line": 544
+  },
+  {
+    "latex-begin": 900,
+    "latex-end": 903,
+    "latex-line": 902,
+    "latex-text": "\\includegraphics[width=0.6333333333333333\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ccdf9c04-5e8f-4a57-9291-d3fdb0133b00/public}",
+    "scripta-line": 551
+  },
+  {
+    "latex-begin": 910,
+    "latex-end": 913,
+    "latex-line": 912,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/386570a0-e841-4dc9-e74d-2d4eaaa0dc00/public}",
+    "scripta-line": 562
+  },
+  {
+    "latex-begin": 925,
+    "latex-end": 927,
+    "latex-line": 926,
+    "latex-text": "Let's begin with lengthg. The length of a vector \\(\\bx = (x_1, x_2)\\)",
+    "scripta-line": 574
+  },
+  {
+    "latex-begin": 934,
+    "latex-end": 937,
+    "latex-line": 936,
+    "latex-text": "(1) the length or \\term{norm} if the vector \\(\\bx = (3,4)\\) is ; (2) the length or \\term{norm} if the vector \\(\\bx = (3,4)\\) is ; (3) \\(|| \\bx || = 5\\).   ",
+    "scripta-line": 580
+  },
+  {
+    "latex-begin": 939,
+    "latex-end": 942,
+    "latex-line": 941,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/133cef76-ec21-4325-577a-b90437823600/public}",
+    "scripta-line": 584
+  },
+  {
+    "latex-begin": 953,
+    "latex-end": 955,
+    "latex-line": 954,
+    "latex-text": "(1) The numbers \\(x_i\\) are called the \\term{components} or ; (2) \\term{coordinates} of the vector. ",
+    "scripta-line": 593
+  },
+  {
+    "latex-begin": 960,
+    "latex-end": 963,
+    "latex-line": 962,
+    "latex-text": "(1) of \\term{distance}.   Suppose \\(P\\) and \\(Q\\), as in the figure; (2) below, are points in 2-space with position vectors \\(\\bx = (x_1, x_2)\\) and \\(\\by = (y_1, y_2)\\).   The distance from \\(P\\) to \\(Q\\) is; (3) below, are points in 2-space with position vectors \\(\\bx = (x_1, x_2)\\) and \\(\\by = (y_1, y_2)\\).   The distance from \\(P\\) to \\(Q\\) is",
+    "scripta-line": 600
+  },
+  {
+    "latex-begin": 970,
+    "latex-end": 973,
+    "latex-line": 972,
+    "latex-text": "\\includegraphics[width=1\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/232f19d6-44fc-4ed4-edc5-a579b0d1cb00/public}",
+    "scripta-line": 607
+  },
+  {
+    "latex-begin": 983,
+    "latex-end": 986,
+    "latex-line": 986,
+    "latex-text": "\\term{difference} of vectors like this:",
+    "scripta-line": 614
+  },
+  {
+    "latex-begin": 988,
+    "latex-end": 991,
+    "latex-line": 990,
+    "latex-text": "(1) \\by - \\bx = (y_1 - x_1, y_2 - x_2, \\ldots , y_n - x_n); (2) \\by - \\bx = (y_1 - x_1, y_2 - x_2, \\ldots , y_n - x_n)",
+    "scripta-line": 618
+  },
+  {
+    "latex-begin": 996,
+    "latex-end": 999,
+    "latex-line": 998,
+    "latex-text": "(1) d(P,Q) = || \\bx - \\by ||; (2) d(P,Q) = || \\bx - \\by ||",
+    "scripta-line": 623
+  },
+  {
+    "latex-begin": 1001,
+    "latex-end": 1005,
+    "latex-line": 1004,
+    "latex-text": "(1) \\((\\by - \\bx)_i = y_i - x_i\\). In the same way we define the ; (2) \\((\\by - \\bx)_i = y_i - x_i\\). In the same way we define the ",
+    "scripta-line": 626
+  },
+  {
+    "latex-begin": 1007,
+    "latex-end": 1010,
+    "latex-line": 1009,
+    "latex-text": "(1) \\by + \\bx = (y_1 + x_1, y_2 + x_2, \\ldots , y_n + x_n); (2) \\by + \\bx = (y_1 + x_1, y_2 + x_2, \\ldots , y_n + x_n)",
+    "scripta-line": 631
+  },
+  {
+    "latex-begin": 1015,
+    "latex-end": 1018,
+    "latex-line": 1017,
+    "latex-text": "let's do angle.   For this we need   the \\term{dot product} of",
+    "scripta-line": 636
+  },
+  {
+    "latex-begin": 1020,
+    "latex-end": 1023,
+    "latex-line": 1022,
+    "latex-text": "(1) \\bx \\cdot \\by = x_1y_1 + x_2y_2 + \\cdots + x_ny_n; (2) \\bx \\cdot \\by = x_1y_1 + x_2y_2 + \\cdots + x_ny_n",
+    "scripta-line": 640
+  },
+  {
+    "latex-begin": 1025,
+    "latex-end": 1027,
+    "latex-line": 1027,
+    "latex-text": "rather a \\term{scalar}, that is, a number.   ",
+    "scripta-line": 643
+  },
+  {
+    "latex-begin": 1029,
+    "latex-end": 1035,
+    "latex-line": 1030,
+    "latex-text": "(1) Consider now two vectors \\(\\bx\\) and \\(\\by\\), as in the figure; (2) Consider now two vectors \\(\\bx\\) and \\(\\by\\), as in the figure; (3) third side is the vector \\(\\by - \\bx\\)   (or rather that vector; (4) third side is the vector \\(\\by - \\bx\\)   (or rather that vector; (5) moved parallel to itself so that its tail rests on the head of \\(\\bx\\)).   Let's compute the length of the \"opposite side:\"",
+    "scripta-line": 647
+  },
+  {
+    "latex-begin": 1037,
+    "latex-end": 1041,
+    "latex-line": 1041,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}",
+    "scripta-line": 655
+  },
+  {
+    "latex-begin": 1043,
+    "latex-end": 1046,
+    "latex-line": 1045,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/3941e24d-bfc8-4c7f-26e3-c1393e647800/public}",
+    "scripta-line": 660
+  },
+  {
+    "latex-begin": 1048,
+    "latex-end": 1050,
+    "latex-line": 1050,
+    "latex-text": "side in another way, using the \\term{Law of Cosines}:",
+    "scripta-line": 663
+  },
+  {
+    "latex-begin": 1052,
+    "latex-end": 1055,
+    "latex-line": 1054,
+    "latex-text": "(1) || \\by - \\bx ||^2 = ||\\by||^2 + ||\\bx||^2- 2||\\by||\\cdot ||\\bx|| \\cos\\theta; (2) || \\by - \\bx ||^2 = ||\\by||^2 + ||\\bx||^2- 2||\\by||\\cdot ||\\bx|| \\cos\\theta; (3) || \\by - \\bx ||^2 = ||\\by||^2 + ||\\bx||^2- 2||\\by||\\cdot ||\\bx|| \\cos\\theta; (4) || \\by - \\bx ||^2 = ||\\by||^2 + ||\\bx||^2- 2||\\by||\\cdot ||\\bx|| \\cos\\theta; (5) || \\by - \\bx ||^2 = ||\\by||^2 + ||\\bx||^2- 2||\\by||\\cdot ||\\bx|| \\cos\\theta; (6) || \\by - \\bx ||^2 = ||\\by||^2 + ||\\bx||^2- 2||\\by||\\cdot ||\\bx|| \\cos\\theta",
+    "scripta-line": 666
+  },
+  {
+    "latex-begin": 1060,
+    "latex-end": 1063,
+    "latex-line": 1062,
+    "latex-text": "(1) \\cos\\theta = \\frac{\\bx \\cdot \\by}{||\\bx|| \\cdot ||\\by||}; (2) \\cos\\theta = \\frac{\\bx \\cdot \\by}{||\\bx|| \\cdot ||\\by||}; (3) \\cos\\theta = \\frac{\\bx \\cdot \\by}{||\\bx|| \\cdot ||\\by||}; (4) \\cos\\theta = \\frac{\\bx \\cdot \\by}{||\\bx|| \\cdot ||\\by||}",
+    "scripta-line": 672
+  },
+  {
+    "latex-begin": 1084,
+    "latex-end": 1086,
+    "latex-line": 1085,
+    "latex-text": "(1) Let \\(c\\) be a scalar and \\(\\bx = (x_1, x_2, \\ldots, x_n)\\); (2) a vector.   Their \\term{scalar product}   is the vector ",
+    "scripta-line": 690
+  },
+  {
+    "latex-begin": 1088,
+    "latex-end": 1091,
+    "latex-line": 1090,
+    "latex-text": "c\\bx = (cx_1, cx_2, \\ldots, cx_n)",
+    "scripta-line": 693
+  },
+  {
+    "latex-begin": 1093,
+    "latex-end": 1098,
+    "latex-line": 1095,
+    "latex-text": "(1) is the \\(c\\) times the \\(i\\)-th compoent of \\(\\bx\\).   In equations,; (2) \\((c\\bx)_i = c\\bx_i\\).   The effect of multiplying a vector; (3) \\((c\\bx)_i = c\\bx_i\\).   The effect of multiplying a vector",
+    "scripta-line": 696
+  },
+  {
+    "latex-begin": 1100,
+    "latex-end": 1105,
+    "latex-line": 1102,
+    "latex-text": "(1) Let \\(\\bx = (2,4)\\). On graph paper, plot the vectors; (2) \\(\\bx\\), \\(2\\bx\\),   \\(0.5\\bx\\), and \\((-1)\\bx\\).   In each case,; (3) \\(\\bx\\), \\(2\\bx\\),   \\(0.5\\bx\\), and \\((-1)\\bx\\).   In each case,; (4) \\(\\bx\\), \\(2\\bx\\),   \\(0.5\\bx\\), and \\((-1)\\bx\\).   In each case,; (5) \\(\\bx\\), \\(2\\bx\\),   \\(0.5\\bx\\), and \\((-1)\\bx\\).   In each case,",
+    "scripta-line": 704
+  },
+  {
+    "latex-begin": 1107,
+    "latex-end": 1110,
+    "latex-line": 1109,
+    "latex-text": "(1) Show that \\(|| c\\bx ||= |c|\\cdot ||\\bx||\\); (2) Show that \\(|| c\\bx ||= |c|\\cdot ||\\bx||\\)",
+    "scripta-line": 709
+  },
+  {
+    "latex-begin": 1112,
+    "latex-end": 1114,
+    "latex-line": 1113,
+    "latex-text": "(1) A \\term{unit vector} is a vector of unit length.   Given; (2) any nonzero vector \\(\\bx\\), there is a unique unit vector \\(\\hat{\\bx}\\) that points in the same direction as \\(\\bx\\):; (3) any nonzero vector \\(\\bx\\), there is a unique unit vector \\(\\hat{\\bx}\\) that points in the same direction as \\(\\bx\\):; (4) any nonzero vector \\(\\bx\\), there is a unique unit vector \\(\\hat{\\bx}\\) that points in the same direction as \\(\\bx\\):; (5) any nonzero vector \\(\\bx\\), there is a unique unit vector \\(\\hat{\\bx}\\) that points in the same direction as \\(\\bx\\):",
+    "scripta-line": 713
+  },
+  {
+    "latex-begin": 1116,
+    "latex-end": 1119,
+    "latex-line": 1118,
+    "latex-text": "(1) \\hat{\\bx} = \\frac{\\bx}{|| \\bx ||}; (2) \\hat{\\bx} = \\frac{\\bx}{|| \\bx ||}; (3) \\hat{\\bx} = \\frac{\\bx}{|| \\bx ||}; (4) \\hat{\\bx} = \\frac{\\bx}{|| \\bx ||}",
+    "scripta-line": 716
+  },
+  {
+    "latex-begin": 1121,
+    "latex-end": 1122,
+    "latex-line": 1122,
+    "latex-text": "(1) That is, \\(\\hat{\\bx}\\) is the scalar product of \\(\\bx\\) and the scalar \\(1/||x||\\).; (2) That is, \\(\\hat{\\bx}\\) is the scalar product of \\(\\bx\\) and the scalar \\(1/||x||\\).; (3) That is, \\(\\hat{\\bx}\\) is the scalar product of \\(\\bx\\) and the scalar \\(1/||x||\\).",
+    "scripta-line": 719
+  },
+  {
+    "latex-begin": 1124,
+    "latex-end": 1128,
+    "latex-line": 1127,
+    "latex-text": "(1) (a) \\(\\bx = (3,4)\\), (b) \\(\\bx = (1, 1)\\), (c) \\(\\bx = (1,2,3,4)\\).; (2) (a) \\(\\bx = (3,4)\\), (b) \\(\\bx = (1, 1)\\), (c) \\(\\bx = (1,2,3,4)\\).; (3) (a) \\(\\bx = (3,4)\\), (b) \\(\\bx = (1, 1)\\), (c) \\(\\bx = (1,2,3,4)\\).",
+    "scripta-line": 721
+  },
+  {
+    "latex-begin": 1133,
+    "latex-end": 1149,
+    "latex-line": 1140,
+    "latex-text": "(1) \\(\\reals^{10}\\).   Suppose that we have test results from; (2) a cloud of 100 points in \\(\\reals^{10}\\) ---   a so-called \\term{point cloud}.   Suppose further that; (3) a cloud of 100 points in \\(\\reals^{10}\\) ---   a so-called \\term{point cloud}.   Suppose further that",
+    "scripta-line": 729
+  },
+  {
+    "latex-begin": 1151,
+    "latex-end": 1154,
+    "latex-line": 1153,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/61fa5b5c-1109-4692-d353-ae559b183800/public}",
+    "scripta-line": 747
+  },
+  {
+    "latex-begin": 1196,
+    "latex-end": 1199,
+    "latex-line": 1198,
+    "latex-text": "\\includegraphics[width=1\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/9b4737fc-472b-4492-71b9-461a6412cc00/public}",
+    "scripta-line": 782
+  },
+  {
+    "latex-begin": 1204,
+    "latex-end": 1212,
+    "latex-line": 1209,
+    "latex-text": "(1) projection \\(p: \\reals^n \\to \\reals^2\\) given by; (2) projection \\(p: \\reals^n \\to \\reals^2\\) given by",
+    "scripta-line": 788
+  },
+  {
+    "latex-begin": 1225,
+    "latex-end": 1229,
+    "latex-line": 1226,
+    "latex-text": "(1) They define a function \\(p: \\reals^n \\to \\reals^m\\).; (2) They define a function \\(p: \\reals^n \\to \\reals^m\\).; (3) in a rectangular table, a so-called \\term{matrix}:",
+    "scripta-line": 805
+  },
+  {
+    "latex-begin": 1241,
+    "latex-end": 1243,
+    "latex-line": 1243,
+    "latex-text": "each consisting of an \\(n\\)-dimensional \\term{row vector}",
+    "scripta-line": 818
+  },
+  {
+    "latex-begin": 1250,
+    "latex-end": 1253,
+    "latex-line": 1253,
+    "latex-text": "(1) \\(\\by = p(\\bx)\\); (2) \\(\\by = p(\\bx)\\)",
+    "scripta-line": 825
+  },
+  {
+    "latex-begin": 1255,
+    "latex-end": 1257,
+    "latex-line": 1256,
+    "latex-text": "(1) There is something else to notice: The components of the output vector \\(\\by\\) are dot products; (2) of the row vectors \\(\\ba_i\\) with input vector \\(\\bx\\):; (3) of the row vectors \\(\\ba_i\\) with input vector \\(\\bx\\):",
+    "scripta-line": 831
+  },
+  {
+    "latex-begin": 1259,
+    "latex-end": 1262,
+    "latex-line": 1261,
+    "latex-text": "(1) \\by_i = \\ba_i \\cdot \\bx; (2) \\by_i = \\ba_i \\cdot \\bx; (3) \\by_i = \\ba_i \\cdot \\bx",
+    "scripta-line": 834
+  },
+  {
+    "latex-begin": 1279,
+    "latex-end": 1288,
+    "latex-line": 1283,
+    "latex-text": "(1) we know this? Let \\(\\bu\\) and \\(\\bv\\) be the first and; (2) we know this? Let \\(\\bu\\) and \\(\\bv\\) be the first and; (3) second rows of the matrix \\(A\\).   Then \\(\\bu\\cdot\\bu = 1\\), ; (4) second rows of the matrix \\(A\\).   Then \\(\\bu\\cdot\\bu = 1\\), ; (5) so \\(||\\bu||   = 1\\).   A vector of unit length is called a; (6) \\term{unit vector}.   Note also that \\(\\bu \\cdot \\bv = 0\\).; (7) \\term{unit vector}.   Note also that \\(\\bu \\cdot \\bv = 0\\).; (8) \\term{unit vector}.   Note also that \\(\\bu \\cdot \\bv = 0\\).; (9) that the angle between \\(\\bu\\) and \\(\\bv\\) is either \\(\\pi/2\\) or \\(3\\pi/2\\).   In either case, they meet at a right angle.; (10) that the angle between \\(\\bu\\) and \\(\\bv\\) is either \\(\\pi/2\\) or \\(3\\pi/2\\).   In either case, they meet at a right angle.",
+    "scripta-line": 850
+  },
+  {
+    "latex-begin": 1308,
+    "latex-end": 1310,
+    "latex-line": 1310,
+    "latex-text": "\\(\\bu = (\\cos\\theta, \\sin\\theta)\\) is a unit vector, so",
+    "scripta-line": 874
+  },
+  {
+    "latex-begin": 1312,
+    "latex-end": 1315,
+    "latex-line": 1314,
+    "latex-text": "(1) q(\\bx) = \\bx\\cdot \\bu; (2) q(\\bx) = \\bx\\cdot \\bu; (3) q(\\bx) = \\bx\\cdot \\bu",
+    "scripta-line": 878
+  },
+  {
+    "latex-begin": 1320,
+    "latex-end": 1323,
+    "latex-line": 1322,
+    "latex-text": "\\includegraphics[width=0.5\\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/2c91b93a-ab13-43a9-34c2-97eca7d41600/public}",
+    "scripta-line": 884
+  },
+  {
+    "latex-begin": 1350,
+    "latex-end": 1351,
+    "latex-line": 1351,
+    "latex-text": "Consider also the \\term{column vector}",
+    "scripta-line": 906
+  },
+  {
+    "latex-begin": 1353,
+    "latex-end": 1361,
+    "latex-line": 1355,
+    "latex-text": "\\bx = \\begin{pmatrix}",
+    "scripta-line": 908
+  },
+  {
+    "latex-begin": 1363,
+    "latex-end": 1365,
+    "latex-line": 1364,
+    "latex-text": "(1) Let \\(\\by\\) be the column vector whose components are the; (2) dot products of the rows of \\(A\\) with \\(\\bx\\):",
+    "scripta-line": 916
+  },
+  {
+    "latex-begin": 1367,
+    "latex-end": 1377,
+    "latex-line": 1369,
+    "latex-text": "(1) \\by = \\begin{pmatrix}; (2)   {\\ba}_1\\cdot \\bx \\\\; (3)   {\\ba}_1\\cdot \\bx \\\\; (4)   {\\ba}_2\\cdot \\bx; (5)   {\\ba}_2\\cdot \\bx",
+    "scripta-line": 919
+  },
+  {
+    "latex-begin": 1379,
+    "latex-end": 1380,
+    "latex-line": 1380,
+    "latex-text": "We can write this more compactly as the \\term{matrix product}",
+    "scripta-line": 929
+  },
+  {
+    "latex-begin": 1382,
+    "latex-end": 1385,
+    "latex-line": 1384,
+    "latex-text": "(1) \\by = A\\bx; (2) \\by = A\\bx",
+    "scripta-line": 931
+  },
+  {
+    "latex-begin": 1387,
+    "latex-end": 1388,
+    "latex-line": 1388,
+    "latex-text": "The product is defined by defining the components of \\(A\\bx\\):",
+    "scripta-line": 934
+  },
+  {
+    "latex-begin": 1390,
+    "latex-end": 1393,
+    "latex-line": 1392,
+    "latex-text": "(A\\bx)_i = \\ba_i \\cdot \\bx",
+    "scripta-line": 936
+  }
+]
