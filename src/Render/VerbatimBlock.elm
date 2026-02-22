@@ -155,13 +155,20 @@ Supports alignment with & for multi-line equations:
 renderEquation : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderEquation params acc _ block _ =
     let
-        rawContent =
+        raw =
             getVerbatimContent block
-                |> applyMathMacros acc.mathMacroDict
+
+        -- If content contains &, process line-by-line to preserve alignment
+        rawContent =
+            if String.contains "&" raw then
+                processAlignedLines acc.mathMacroDict raw
+
+            else
+                applyMathMacros acc.mathMacroDict raw
 
         -- If content contains &, wrap in aligned environment for KaTeX
         content =
-            if String.contains "&" rawContent then
+            if String.contains "&" raw then
                 wrapInAligned rawContent
 
             else
@@ -214,7 +221,7 @@ renderAligned params acc _ block _ =
     let
         content =
             getVerbatimContent block
-                |> applyMathMacros acc.mathMacroDict
+                |> processAlignedLines acc.mathMacroDict
                 |> wrapInAligned
     in
     [ Html.div
@@ -234,6 +241,43 @@ renderAligned params acc _ block _ =
 wrapInAligned : String -> String
 wrapInAligned content =
     "\\begin{aligned}\n" ++ content ++ "\n\\end{aligned}"
+
+
+{-| Process aligned math content line-by-line.
+
+Splits into lines, strips trailing backslashes, applies ETeX transformation
+to each line individually, then rejoins with `\\\\` separators.
+This avoids two problems with processing the whole string at once:
+
+1.  Line breaks are lost when evalStr concatenates parsed results
+2.  Trailing `\\\\` causes the ETeX parser to fail
+
+-}
+processAlignedLines : MathMacroDict -> String -> String
+processAlignedLines macroDict content =
+    let
+        stripTrailingBackslashes line =
+            if String.endsWith "\\\\" line then
+                String.dropRight 2 line |> String.trimRight
+
+            else
+                line
+
+        lines =
+            content
+                |> String.lines
+                |> List.map String.trim
+                |> List.filter (not << String.isEmpty)
+                |> List.map (stripTrailingBackslashes >> applyMathMacros macroDict)
+    in
+    case List.reverse lines of
+        [] ->
+            ""
+
+        lastLine :: restReversed ->
+            (List.reverse restReversed |> List.map (\line -> line ++ " \\\\"))
+                ++ [ lastLine ]
+                |> String.join "\n"
 
 
 {-| Transform ETeX notation to LaTeX using ETeX.Transform.evalStr.
