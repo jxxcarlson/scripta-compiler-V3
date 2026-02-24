@@ -1,1149 +1,358 @@
 [
   {
-    "latex-begin": 238,
-    "latex-end": 242,
-    "latex-line": 242,
+    "latex-begin": 217,
+    "latex-end": 257,
+    "latex-line": 218,
+    "latex-text": "(1) \\newcommand{\\set}[1]}{\\{\\ #1 \\ \\}}; (2) \\newcommand{\\set}[1]}{\\{\\ #1 \\ \\}}; (3) \\newcommand{\\set}[1]}{\\{\\ #1 \\ \\}}; (4) \\newcommand{\\set}[1]}{\\{\\ #1 \\ \\}}; (5) \\newcommand{\\nat}{\\mathbb{N}}; (6) \\newcommand{\\rec}{\\mathop{\\mathsf{rec}}}; (7) \\newcommand{\\or}{\\mathop{\\mathsf{or}}}; (8) \\newcommand{\\lemma}{\\mathop{\\mathsf{lemma}}}",
+    "scripta-line": 6
+  },
+  {
+    "latex-begin": 277,
+    "latex-end": 281,
+    "latex-line": 281,
     "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
     "scripta-line": 57
   },
   {
-    "latex-begin": 252,
-    "latex-end": 253,
-    "latex-line": 253,
+    "latex-begin": 291,
+    "latex-end": 292,
+    "latex-line": 292,
     "latex-text": "Assertions like \\(2\\heartsuit \\in A\\) or \\(7\\spadesuit \\in A\\) are \\term{propositions}: they are capable of being true or false.   True in the first case, but false in the second.",
     "scripta-line": 67
   },
   {
-    "latex-begin": 261,
-    "latex-end": 265,
-    "latex-line": 263,
+    "latex-begin": 300,
+    "latex-end": 304,
+    "latex-line": 302,
     "latex-text": "(1) the empty set \\(\\set{}\\).; (2) Encode one as \\(\\set{\\set{}}\\).   Encode two as ; (3) Encode one as \\(\\set{\\set{}}\\).   Encode two as ; (4) \\(\\set{ \\set{}, \\set{\\set{}}}\\), etc. Introduce aliases for these numbers:; (5) \\(\\set{ \\set{}, \\set{\\set{}}}\\), etc. Introduce aliases for these numbers:; (6) \\(\\set{ \\set{}, \\set{\\set{}}}\\), etc. Introduce aliases for these numbers:; (7) \\(\\set{ \\set{}, \\set{\\set{}}}\\), etc. Introduce aliases for these numbers:",
     "scripta-line": 73
   },
   {
-    "latex-begin": 267,
-    "latex-end": 273,
-    "latex-line": 273,
+    "latex-begin": 306,
+    "latex-end": 312,
+    "latex-line": 312,
     "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}",
     "scripta-line": 78
   },
   {
-    "latex-begin": 279,
-    "latex-end": 281,
-    "latex-line": 280,
-    "latex-text": "(1) We can gather these numbers into sets in various ways: the set of all natural numbers,   \\(\\nat = \\set{0, 1, 2, \\ldots}{}\\), the subsets of \\(\\tt{Even}\\) and \\(\\tt{Odd}\\) numbers, respectively.   The latter is described using a predicate --- a function like \\(\\text{isOdd}\\) that returns true or false according to whether the argument of the; (2) We can gather these numbers into sets in various ways: the set of all natural numbers,   \\(\\nat = \\set{0, 1, 2, \\ldots}{}\\), the subsets of \\(\\tt{Even}\\) and \\(\\tt{Odd}\\) numbers, respectively.   The latter is described using a predicate --- a function like \\(\\text{isOdd}\\) that returns true or false according to whether the argument of the",
+    "latex-begin": 318,
+    "latex-end": 320,
+    "latex-line": 319,
+    "latex-text": "We can gather these numbers into sets in various ways: the set of all natural numbers,   \\(\\nat = \\set{0, 1, 2, \\ldots}{}\\), the subsets of \\(\\tt{Even}\\) and \\(\\tt{Odd}\\) numbers, respectively.   The latter is described using a predicate --- a function like \\(\\text{isOdd}\\) that returns true or false according to whether the argument of the",
     "scripta-line": 87
   },
   {
-    "latex-begin": 283,
-    "latex-end": 286,
-    "latex-line": 285,
-    "latex-text": "(1) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (2) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (3) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (4) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (5) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (6) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}",
+    "latex-begin": 322,
+    "latex-end": 325,
+    "latex-line": 324,
+    "latex-text": "(1) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (2) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (3) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (4) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (5) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (6) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (7) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (8) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (9) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (10) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (11) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (12) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (13) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (14) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (15) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (16) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (17) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (18) \\end{equation}; (19) \\end{equation}; (20) \\end{equation}; (21) \\end{equation}; (22) \\end{equation}; (23) \\end{equation}; (24) \\end{equation}; (25) \\end{equation}; (26) \\end{equation}; (27) \\end{equation}; (28) \\end{equation}; (29) \\end{equation}; (30) \\end{equation}; (31) \\end{equation}; (32) \\end{equation}; (33) \\end{equation}; (34) \\end{equation}; (35) \\end{equation}; (36) \\end{equation}; (37) \\end{equation}; (38) \\end{equation}; (39) \\end{equation}; (40) \\end{equation}; (41) \\end{equation}; (42) \\end{equation}; (43) \\end{equation}",
     "scripta-line": 90
   },
   {
-    "latex-begin": 291,
-    "latex-end": 294,
-    "latex-line": 293,
-    "latex-text": "R = \\sett{x}{x \\not\\in x}",
-    "scripta-line": 95
-  },
-  {
-    "latex-begin": 296,
-    "latex-end": 301,
-    "latex-line": 299,
-    "latex-text": "are the sets \\(\\nat\\), \\(\\tt{Odd}\\), and \\(\\tt{Even}\\).   But now ask if \\(R\\) is an element of itself.   If \\(R \\in R\\), we conclude from the definition of \\(R\\), that \\(R \\not \\in R\\).   If \\(R \\in R\\), we conclude",
-    "scripta-line": 98
-  },
-  {
-    "latex-begin": 306,
-    "latex-end": 311,
-    "latex-line": 308,
+    "latex-begin": 345,
+    "latex-end": 350,
+    "latex-line": 347,
     "latex-text": "(1) of which are \\term{judgments} and \\term{inference rules}.   Judgments; (2) of which are \\term{judgments} and \\term{inference rules}.   Judgments",
     "scripta-line": 108
   },
   {
-    "latex-begin": 363,
-    "latex-end": 364,
-    "latex-line": 364,
-    "latex-text": "\\item \\(\\Gamma \\ctx\\) --- \\(\\Gamma\\) is a well-formed context, that is, a sequence of variable declarations like \\(x_1 : A_1, \\ldots x_n : A_n\\), where latter types \\(A_i\\) may depend on earlier variables. Something like \\(x: A, y: B\\) where \\(A\\) depends on \\(y\\) is not well formed, nor is \\(A, B, C\\). In general, well-formed means \\quote{formed according to the rules.}",
-    "scripta-line": 156
-  },
-  {
-    "latex-begin": 366,
-    "latex-end": 367,
-    "latex-line": 367,
-    "latex-text": "\\item \\(\\Gamma \\vdash A\\ \\type\\) --- under the assumptions of \\(\\Gamma\\), \\(A\\) is a type",
-    "scripta-line": 159
-  },
-  {
-    "latex-begin": 372,
-    "latex-end": 373,
-    "latex-line": 373,
-    "latex-text": "\\item \\(\\Gamma \\vdash A \\equiv B\\ \\type\\) --- under the assumptions of \\(\\Gamma\\), \\(A\\) and \\(B\\) are equal types",
-    "scripta-line": 163
-  },
-  {
-    "latex-begin": 380,
-    "latex-end": 381,
-    "latex-line": 381,
+    "latex-begin": 419,
+    "latex-end": 420,
+    "latex-line": 420,
     "latex-text": "(1) In the last two judgment forms, equality is \\term{definitional equality} or \\term{judgmental equality}, i.e., equality according to the rules of computation and definition of the theory.; (2) In the last two judgment forms, equality is \\term{definitional equality} or \\term{judgmental equality}, i.e., equality according to the rules of computation and definition of the theory.",
     "scripta-line": 169
   },
   {
-    "latex-begin": 386,
-    "latex-end": 389,
-    "latex-line": 388,
-    "latex-text": "(1) \\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2; (2) \\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2; (3) \\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2; (4) \\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2; (5) \\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2; (6) \\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2; (7) \\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2; (8) \\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2",
-    "scripta-line": 173
-  },
-  {
-    "latex-begin": 391,
-    "latex-end": 394,
-    "latex-line": 392,
-    "latex-text": "(1) The first rule is the formation rule for the natural numbers.   It does nothing more than announce that \\(\\nat\\) is a type in the context \\(\\Gamma\\).   The second two rules are introduction rules.   The first of these says that \\(\\zero\\) is a term of \\(\\nat\\) in context \\(\\Gamma\\).   ; (2) The first rule is the formation rule for the natural numbers.   It does nothing more than announce that \\(\\nat\\) is a type in the context \\(\\Gamma\\).   The second two rules are introduction rules.   The first of these says that \\(\\zero\\) is a term of \\(\\nat\\) in context \\(\\Gamma\\).   ; (3) The first rule is the formation rule for the natural numbers.   It does nothing more than announce that \\(\\nat\\) is a type in the context \\(\\Gamma\\).   The second two rules are introduction rules.   The first of these says that \\(\\zero\\) is a term of \\(\\nat\\) in context \\(\\Gamma\\).   ; (4) The other says that if \\(k\\) is a term of \\(\\nat\\) in context \\(\\Gamma\\),; (5) then so is \\(\\suc k\\). ",
-    "scripta-line": 181
-  },
-  {
-    "latex-begin": 396,
-    "latex-end": 398,
-    "latex-line": 398,
-    "latex-text": "(1) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (2) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (3) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (4) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (5) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (6) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (7) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (8) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (9) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.; (10) application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.",
+    "latex-begin": 435,
+    "latex-end": 437,
+    "latex-line": 437,
+    "latex-text": "application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.",
     "scripta-line": 185
   },
   {
-    "latex-begin": 400,
-    "latex-end": 404,
-    "latex-line": 402,
+    "latex-begin": 439,
+    "latex-end": 443,
+    "latex-line": 441,
     "latex-text": "The empty type, written \\(\\bot\\), is a type with no introduction",
     "scripta-line": 190
   },
   {
-    "latex-begin": 408,
-    "latex-end": 412,
-    "latex-line": 410,
-    "latex-text": "(1) \\label{rules-without-\\gamma}\\frac{}{\\   \\nat\\  }\\ f\\qquad\\frac{}{\\zero : \\nat}\\ i_1\\qquad\\qquad\\frac{  k : \\nat}{ \\suc k : \\nat}\\ i_2; (2) \\label{rules-without-\\gamma}\\frac{}{\\   \\nat\\  }\\ f\\qquad\\frac{}{\\zero : \\nat}\\ i_1\\qquad\\qquad\\frac{  k : \\nat}{ \\suc k : \\nat}\\ i_2; (3) \\label{rules-without-\\gamma}\\frac{}{\\   \\nat\\  }\\ f\\qquad\\frac{}{\\zero : \\nat}\\ i_1\\qquad\\qquad\\frac{  k : \\nat}{ \\suc k : \\nat}\\ i_2; (4) \\label{rules-without-\\gamma}\\frac{}{\\   \\nat\\  }\\ f\\qquad\\frac{}{\\zero : \\nat}\\ i_1\\qquad\\qquad\\frac{  k : \\nat}{ \\suc k : \\nat}\\ i_2; (5) \\label{rules-without-\\gamma}\\frac{}{\\   \\nat\\  }\\ f\\qquad\\frac{}{\\zero : \\nat}\\ i_1\\qquad\\qquad\\frac{  k : \\nat}{ \\suc k : \\nat}\\ i_2; (6) \\label{rules-without-\\gamma}\\frac{}{\\   \\nat\\  }\\ f\\qquad\\frac{}{\\zero : \\nat}\\ i_1\\qquad\\qquad\\frac{  k : \\nat}{ \\suc k : \\nat}\\ i_2",
-    "scripta-line": 197
-  },
-  {
-    "latex-begin": 417,
-    "latex-end": 418,
-    "latex-line": 418,
-    "latex-text": "Let us continue with our discussion of the natural numbers.   Just as with the Cherry-Banana Calculus, judgments \\(n : \\nat\\) are given by derivations, e.g.,",
-    "scripta-line": 208
-  },
-  {
-    "latex-begin": 420,
-    "latex-end": 423,
-    "latex-line": 422,
-    "latex-text": "(1) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2; (2) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2; (3) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2; (4) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2; (5) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2; (6) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2; (7) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2; (8) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2; (9) \\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2",
-    "scripta-line": 210
-  },
-  {
-    "latex-begin": 428,
-    "latex-end": 431,
-    "latex-line": 430,
-    "latex-text": "(1) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (2) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (3) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (4) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (5) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (6) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (7) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (8) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (9) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (10) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat; (11) \\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat",
-    "scripta-line": 215
-  },
-  {
-    "latex-begin": 433,
-    "latex-end": 439,
-    "latex-line": 435,
-    "latex-text": "(1) \\(\\suc\\ (\\suc\\ \\zero)\\), so we can make definitions; (2) \\(\\suc\\ (\\suc\\ \\zero)\\), so we can make definitions; (3) \\(\\suc\\ (\\suc\\ \\zero)\\), so we can make definitions; (4) like \\(0 :≡ \\zero\\), \\(1   :≡ \\suc \\zero\\), \\(2 :≡ \\suc\\ (\\suc \\zero)\\), ; (5) like \\(0 :≡ \\zero\\), \\(1   :≡ \\suc \\zero\\), \\(2 :≡ \\suc\\ (\\suc \\zero)\\), ; (6) like \\(0 :≡ \\zero\\), \\(1   :≡ \\suc \\zero\\), \\(2 :≡ \\suc\\ (\\suc \\zero)\\), ; (7) like \\(0 :≡ \\zero\\), \\(1   :≡ \\suc \\zero\\), \\(2 :≡ \\suc\\ (\\suc \\zero)\\), ; (8) like \\(0 :≡ \\zero\\), \\(1   :≡ \\suc \\zero\\), \\(2 :≡ \\suc\\ (\\suc \\zero)\\), ; (9) like \\(0 :≡ \\zero\\), \\(1   :≡ \\suc \\zero\\), \\(2 :≡ \\suc\\ (\\suc \\zero)\\), ; (10) etc.   Then it makes perfect sense to say that   \\(3 ≡ \\suc 2\\).; (11) This is a \\term{definitional} or \\term{judgmental} equality.   Later we will study the far more sophisticated notion of; (12) This is a \\term{definitional} or \\term{judgmental} equality.   Later we will study the far more sophisticated notion of; (13) \\term{propositional equality}.",
+    "latex-begin": 472,
+    "latex-end": 478,
+    "latex-line": 477,
+    "latex-text": "(1) This is a \\term{definitional} or \\term{judgmental} equality.   Later we will study the far more sophisticated notion of; (2) This is a \\term{definitional} or \\term{judgmental} equality.   Later we will study the far more sophisticated notion of; (3) \\term{propositional equality}.",
     "scripta-line": 219
   },
   {
-    "latex-begin": 441,
-    "latex-end": 472,
-    "latex-line": 443,
-    "latex-text": "(1) Consider the assertion \\(\\suc x : \\nat\\).   This is meaningless without the; (2) Consider the assertion \\(\\suc x : \\nat\\).   This is meaningless without the; (3) Consider the assertion \\(\\suc x : \\nat\\).   This is meaningless without the; (4)    assumption \\(x : \\nat\\).   Thus we write \\(x : \\nat \\vdash \\suc \\nat\\).   ; (5)    assumption \\(x : \\nat\\).   Thus we write \\(x : \\nat \\vdash \\suc \\nat\\).   ; (6)    assumption \\(x : \\nat\\).   Thus we write \\(x : \\nat \\vdash \\suc \\nat\\).   ; (7)    assumption \\(x : \\nat\\).   Thus we write \\(x : \\nat \\vdash \\suc \\nat\\).   ; (8)    The context is \\(x : \\nat\\).; (9) Contexts are also needed to enforce theory-wide rules that demand that judgments be stable under \\term{substitution} and \\term{weakening}, i.e., if a term is well-typed in one context, it remains well-typed when new assumptions are added (weakening), or substitutions of variables are made.; (10) Contexts are also needed to enforce theory-wide rules that demand that judgments be stable under \\term{substitution} and \\term{weakening}, i.e., if a term is well-typed in one context, it remains well-typed when new assumptions are added (weakening), or substitutions of variables are made.; (11) \\textbf{Substitution.} Let's look at an example, then give the formal               rule.   Suppose that \\(3 : \\nat\\) and ; (12) \\(x : \\nat \\vdash \\suc x :\\nat\\).; (13) \\(x : \\nat \\vdash \\suc x :\\nat\\).; (14) \\(x : \\nat \\vdash \\suc x :\\nat\\).; (15) Then by the subsitution rule, \\(\\vdash \\suc 3 : \\nat\\)   ; (16) Then by the subsitution rule, \\(\\vdash \\suc 3 : \\nat\\)   ; (17) then it holds if you add more assumptions, even if they are unused. The rule is that if \\(\\Gamma \\vdash J\\) and \\(\\Gamma\\vdash   A   \\type\\)",
+    "latex-begin": 480,
+    "latex-end": 511,
+    "latex-line": 482,
+    "latex-text": "(1) Consider the assertion \\(\\suc x : \\nat\\).   This is meaningless without the; (2) Contexts are also needed to enforce theory-wide rules that demand that judgments be stable under \\term{substitution} and \\term{weakening}, i.e., if a term is well-typed in one context, it remains well-typed when new assumptions are added (weakening), or substitutions of variables are made.; (3) Contexts are also needed to enforce theory-wide rules that demand that judgments be stable under \\term{substitution} and \\term{weakening}, i.e., if a term is well-typed in one context, it remains well-typed when new assumptions are added (weakening), or substitutions of variables are made.",
     "scripta-line": 227
   },
   {
-    "latex-begin": 496,
-    "latex-end": 498,
-    "latex-line": 497,
+    "latex-begin": 535,
+    "latex-end": 537,
+    "latex-line": 536,
     "latex-text": "To give meaning to the lambda calculus, we define the operation of \\term{beta-reduction}.   It defines what happens when an abstraction ",
     "scripta-line": 275
   },
   {
-    "latex-begin": 541,
-    "latex-end": 544,
-    "latex-line": 543,
-    "latex-text": "(1) \\dfrac{A \\type \\qquad B \\type}{(A \\to B) \\type}; (2) \\dfrac{A \\type \\qquad B \\type}{(A \\to B) \\type}; (3) \\dfrac{A \\type \\qquad B \\type}{(A \\to B) \\type}",
-    "scripta-line": 310
-  },
-  {
-    "latex-begin": 589,
-    "latex-end": 592,
-    "latex-line": 592,
+    "latex-begin": 628,
+    "latex-end": 631,
+    "latex-line": 631,
     "latex-text": "we can apply \\(f(a)\\) to \\(b\\), obtaining \\(f(a)(b) : C\\). This is how we evaluate \\(f\\).   We say that \\(f(a)\\), which is a function, is the result of \\term{partial evaluation}.",
     "scripta-line": 348
   },
   {
-    "latex-begin": 603,
-    "latex-end": 606,
-    "latex-line": 605,
-    "latex-text": "(1) \\dfrac{}{\\boolean \\type}\\qquad\\dfrac{}{\\true : \\boolean}\\qquad\\dfrac{}{\\false : \\boolean}; (2) \\dfrac{}{\\boolean \\type}\\qquad\\dfrac{}{\\true : \\boolean}\\qquad\\dfrac{}{\\false : \\boolean}; (3) \\dfrac{}{\\boolean \\type}\\qquad\\dfrac{}{\\true : \\boolean}\\qquad\\dfrac{}{\\false : \\boolean}; (4) \\dfrac{}{\\boolean \\type}\\qquad\\dfrac{}{\\true : \\boolean}\\qquad\\dfrac{}{\\false : \\boolean}; (5) \\dfrac{}{\\boolean \\type}\\qquad\\dfrac{}{\\true : \\boolean}\\qquad\\dfrac{}{\\false : \\boolean}; (6) \\dfrac{}{\\boolean \\type}\\qquad\\dfrac{}{\\true : \\boolean}\\qquad\\dfrac{}{\\false : \\boolean}",
-    "scripta-line": 360
-  },
-  {
-    "latex-begin": 608,
-    "latex-end": 613,
-    "latex-line": 609,
-    "latex-text": "(1) To define a function \\(f : \\boolean \\to C\\), we need the; (2) elimination rule.   It defines a function called the \\term{recursor}.; (3) inputs, it produces a function \\(f : \\boolean \\to C\\) as output, namely ",
+    "latex-begin": 647,
+    "latex-end": 652,
+    "latex-line": 650,
+    "latex-text": "elimination rule.   It defines a function called the \\term{recursor}.",
     "scripta-line": 367
   },
   {
-    "latex-begin": 615,
-    "latex-end": 618,
-    "latex-line": 617,
-    "latex-text": "(1) f\\, b = \\rec_\\boolean(t, f, b); (2) f\\, b = \\rec_\\boolean(t, f, b)",
-    "scripta-line": 373
-  },
-  {
-    "latex-begin": 620,
-    "latex-end": 623,
-    "latex-line": 622,
-    "latex-text": "(1) \\dfrac{C \\type \\quad t : C \\quad f : C \\quad b : \\boolean}{\\rec_\\boolean(t, f, b): C}; (2) \\dfrac{C \\type \\quad t : C \\quad f : C \\quad b : \\boolean}{\\rec_\\boolean(t, f, b): C}; (3) \\dfrac{C \\type \\quad t : C \\quad f : C \\quad b : \\boolean}{\\rec_\\boolean(t, f, b): C}; (4) \\dfrac{C \\type \\quad t : C \\quad f : C \\quad b : \\boolean}{\\rec_\\boolean(t, f, b): C}",
-    "scripta-line": 376
-  },
-  {
-    "latex-begin": 628,
-    "latex-end": 631,
-    "latex-line": 630,
-    "latex-text": "(1) \\dfrac{t : C\\qquad f : C}{{\\rec_\\boolean(t, f, \\true) = t : C}}; (2) \\dfrac{t : C\\qquad f : C}{{\\rec_\\boolean(t, f, \\true) = t : C}}; (3) \\dfrac{t : C\\qquad f : C}{{\\rec_\\boolean(t, f, \\true) = t : C}}",
-    "scripta-line": 382
-  },
-  {
-    "latex-begin": 633,
-    "latex-end": 636,
-    "latex-line": 635,
-    "latex-text": "(1) \\dfrac{t : C\\qquad f : C}{{\\rec_\\boolean(t, f, \\false) = f : C}}; (2) \\dfrac{t : C\\qquad f : C}{{\\rec_\\boolean(t, f, \\false) = f : C}}; (3) \\dfrac{t : C\\qquad f : C}{{\\rec_\\boolean(t, f, \\false) = f : C}}",
-    "scripta-line": 386
-  },
-  {
-    "latex-begin": 638,
-    "latex-end": 641,
-    "latex-line": 639,
-    "latex-text": "(1) The first computation rule says that if the last argument of \\(\\rec\\); (2) is \\(\\true\\), the return value is \\(t: C\\).   If it is false, the return value is \\(f : C\\).   Let us use what we have learned to define the function \\(\\nott : \\boolean \\to \\boolean\\) which negates its; (3) is \\(\\true\\), the return value is \\(t: C\\).   If it is false, the return value is \\(f : C\\).   Let us use what we have learned to define the function \\(\\nott : \\boolean \\to \\boolean\\) which negates its; (4) is \\(\\true\\), the return value is \\(t: C\\).   If it is false, the return value is \\(f : C\\).   Let us use what we have learned to define the function \\(\\nott : \\boolean \\to \\boolean\\) which negates its; (5) is \\(\\true\\), the return value is \\(t: C\\).   If it is false, the return value is \\(f : C\\).   Let us use what we have learned to define the function \\(\\nott : \\boolean \\to \\boolean\\) which negates its",
-    "scripta-line": 390
-  },
-  {
-    "latex-begin": 643,
-    "latex-end": 646,
-    "latex-line": 645,
-    "latex-text": "(1) \\nott\\, b = \\rec_{\\boolean}(\\false,\\true, b); (2) \\nott\\, b = \\rec_{\\boolean}(\\false,\\true, b); (3) \\nott\\, b = \\rec_{\\boolean}(\\false,\\true, b); (4) \\nott\\, b = \\rec_{\\boolean}(\\false,\\true, b); (5) \\nott\\, b = \\rec_{\\boolean}(\\false,\\true, b)",
-    "scripta-line": 394
-  },
-  {
-    "latex-begin": 648,
-    "latex-end": 649,
-    "latex-line": 649,
-    "latex-text": "(1) Exercise: show that \\(\\nott \\true ≡ \\false\\) and \\(\\nott \\false ≡ \\true\\).; (2) Exercise: show that \\(\\nott \\true ≡ \\false\\) and \\(\\nott \\false ≡ \\true\\).; (3) Exercise: show that \\(\\nott \\true ≡ \\false\\) and \\(\\nott \\false ≡ \\true\\).; (4) Exercise: show that \\(\\nott \\true ≡ \\false\\) and \\(\\nott \\false ≡ \\true\\).; (5) Exercise: show that \\(\\nott \\true ≡ \\false\\) and \\(\\nott \\false ≡ \\true\\).; (6) Exercise: show that \\(\\nott \\true ≡ \\false\\) and \\(\\nott \\false ≡ \\true\\).",
-    "scripta-line": 397
-  },
-  {
-    "latex-begin": 651,
-    "latex-end": 652,
-    "latex-line": 652,
-    "latex-text": "\\textbf{Pattern matching.} We can also define \\(\\nott\\) by pattern-matching:",
-    "scripta-line": 399
-  },
-  {
-    "latex-begin": 654,
-    "latex-end": 659,
-    "latex-line": 659,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}",
-    "scripta-line": 401
-  },
-  {
-    "latex-begin": 672,
-    "latex-end": 679,
-    "latex-line": 679,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}; (27) \\end{align}; (28) \\end{align}; (29) \\end{align}; (30) \\end{align}",
-    "scripta-line": 414
-  },
-  {
-    "latex-begin": 684,
-    "latex-end": 689,
-    "latex-line": 689,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
-    "scripta-line": 423
-  },
-  {
-    "latex-begin": 702,
-    "latex-end": 705,
-    "latex-line": 704,
-    "latex-text": "(1) \\label{\\rec-def-of-adn}\\and = \\lambda b_1 . \\lambda b_2 . \\rec_\\boolean(b_2, \\false, b_1); (2) \\label{\\rec-def-of-adn}\\and = \\lambda b_1 . \\lambda b_2 . \\rec_\\boolean(b_2, \\false, b_1); (3) \\label{\\rec-def-of-adn}\\and = \\lambda b_1 . \\lambda b_2 . \\rec_\\boolean(b_2, \\false, b_1); (4) \\end{equation}",
-    "scripta-line": 438
-  },
-  {
-    "latex-begin": 716,
-    "latex-end": 719,
-    "latex-line": 718,
+    "latex-begin": 755,
+    "latex-end": 758,
+    "latex-line": 757,
     "latex-text": "Define the logical function \\(\\or\\) by (1) equations, (2) the eliminator.",
     "scripta-line": 448
   },
   {
-    "latex-begin": 725,
-    "latex-end": 732,
-    "latex-line": 732,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}; (27) \\end{align}; (28) \\end{align}",
+    "latex-begin": 764,
+    "latex-end": 771,
+    "latex-line": 771,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}",
     "scripta-line": 454
   },
   {
-    "latex-begin": 734,
-    "latex-end": 736,
-    "latex-line": 735,
-    "latex-text": "(1) Each line \\eqref{bool-reductions} is a term of \\(\\boolean\\).   However,; (2) the last term is special: it cannot be further reduced.   Such a term is said to be in \\term{normal form}.   Moreover, one can assert judgments like the below.   See the item (5) in section \\ref{mltt-as-a-formal-system}.",
+    "latex-begin": 773,
+    "latex-end": 775,
+    "latex-line": 775,
+    "latex-text": "the last term is special: it cannot be further reduced.   Such a term is said to be in \\term{normal form}.   Moreover, one can assert judgments like the below.   See the item (5) in section \\ref{mltt-as-a-formal-system}.",
     "scripta-line": 461
   },
   {
-    "latex-begin": 738,
-    "latex-end": 741,
-    "latex-line": 740,
-    "latex-text": "(1) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (2) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (3) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (4) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (5) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (6) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (7) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (8) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (9) \\end{equation}",
+    "latex-begin": 777,
+    "latex-end": 780,
+    "latex-line": 779,
+    "latex-text": "(1) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (2) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean",
     "scripta-line": 464
   },
   {
-    "latex-begin": 751,
-    "latex-end": 760,
-    "latex-line": 757,
-    "latex-text": "(1) numbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type; (2) numbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type; (3) numbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type; (4) numbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type",
+    "latex-begin": 790,
+    "latex-end": 799,
+    "latex-line": 796,
+    "latex-text": "(1) numbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type; (2) numbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type; (3) numbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type",
     "scripta-line": 479
   },
   {
-    "latex-begin": 772,
-    "latex-end": 780,
-    "latex-line": 773,
-    "latex-text": "(1) In 1902, Bertrand Russell wrote a letter to Gotlob Frege pointing out an error in Frege's work on the foundations of logic an mathematics.   Russell's letter introduced the set \\(R = \\sett{ x }{x \\not\\in x}\\); (2) considered in section \\ref{sets}.   The resulting problem --- \\term{Russell's paradox} --- meant that there was a flaw in Frege's work on the foundations",
+    "latex-begin": 811,
+    "latex-end": 819,
+    "latex-line": 813,
+    "latex-text": "considered in section \\ref{sets}.   The resulting problem --- \\term{Russell's paradox} --- meant that there was a flaw in Frege's work on the foundations",
     "scripta-line": 503
   },
   {
-    "latex-begin": 806,
-    "latex-end": 807,
-    "latex-line": 807,
-    "latex-text": "A universe \\(\\cU\\) is a type: one has ",
-    "scripta-line": 528
-  },
-  {
-    "latex-begin": 809,
-    "latex-end": 812,
-    "latex-line": 811,
-    "latex-text": "(1) \\cU \\type; (2) \\cU \\type",
-    "scripta-line": 530
-  },
-  {
-    "latex-begin": 814,
-    "latex-end": 818,
-    "latex-line": 815,
-    "latex-text": "(1) The terms of \\(\\cU\\) are themselves types. If; (2) \\(A : \\cU\\), then \\(A \\type\\). This setup ; (3) \\(A : \\cU\\), then \\(A \\type\\). This setup ",
-    "scripta-line": 534
-  },
-  {
-    "latex-begin": 820,
-    "latex-end": 823,
-    "latex-line": 822,
-    "latex-text": "(1) \\cU_0 : \\cU_1 : \\cU_2 : \\ldots; (2) \\cU_0 : \\cU_1 : \\cU_2 : \\ldots; (3) \\cU_0 : \\cU_1 : \\cU_2 : \\ldots",
-    "scripta-line": 539
-  },
-  {
-    "latex-begin": 825,
-    "latex-end": 828,
-    "latex-line": 826,
-    "latex-text": "(1) Each universe \\(\\cU_n\\) is a term of the next universe \\(\\cU_{n+1}\\).; (2) Each universe \\(\\cU_n\\) is a term of the next universe \\(\\cU_{n+1}\\).; (3)  Types in \\(\\cU_n\\) are also in \\(\\cU_{n+1}\\), hence the hierarchy is ; (4)  Types in \\(\\cU_n\\) are also in \\(\\cU_{n+1}\\), hence the hierarchy is ",
-    "scripta-line": 543
-  },
-  {
-    "latex-begin": 830,
-    "latex-end": 833,
-    "latex-line": 831,
-    "latex-text": "(1) We say that \\(\\cU_n\\) is a universe of \\term{level} \\(n\\) and that; (2) We say that \\(\\cU_n\\) is a universe of \\term{level} \\(n\\) and that; (3) \\(\\cU_0\\) is the \\term{universe of small types}. The type of natural numbers; (4) \\(\\cU_0\\) is the \\term{universe of small types}. The type of natural numbers; (5) is small, as is the type of functions \\(\\nat \\to \\nat\\). As we shall see below, there are \\quote{large} types.; (6) is small, as is the type of functions \\(\\nat \\to \\nat\\). As we shall see below, there are \\quote{large} types.",
+    "latex-begin": 869,
+    "latex-end": 872,
+    "latex-line": 870,
+    "latex-text": "(1) We say that \\(\\cU_n\\) is a universe of \\term{level} \\(n\\) and that; (2) \\(\\cU_0\\) is the \\term{universe of small types}. The type of natural numbers",
     "scripta-line": 547
   },
   {
-    "latex-begin": 840,
-    "latex-end": 843,
-    "latex-line": 842,
-    "latex-text": "(1) \\label{U-formation}\\dfrac{}{\\nat : \\cU_0}\\qquad\\dfrac{A : \\cU_n \\qquad B : \\cU_n}{A \\to B : \\cU_n}; (2) \\label{U-formation}\\dfrac{}{\\nat : \\cU_0}\\qquad\\dfrac{A : \\cU_n \\qquad B : \\cU_n}{A \\to B : \\cU_n}; (3) \\label{U-formation}\\dfrac{}{\\nat : \\cU_0}\\qquad\\dfrac{A : \\cU_n \\qquad B : \\cU_n}{A \\to B : \\cU_n}; (4) \\label{U-formation}\\dfrac{}{\\nat : \\cU_0}\\qquad\\dfrac{A : \\cU_n \\qquad B : \\cU_n}{A \\to B : \\cU_n}; (5) \\label{U-formation}\\dfrac{}{\\nat : \\cU_0}\\qquad\\dfrac{A : \\cU_n \\qquad B : \\cU_n}{A \\to B : \\cU_n}",
-    "scripta-line": 555
-  },
-  {
-    "latex-begin": 845,
-    "latex-end": 847,
-    "latex-line": 847,
-    "latex-text": "of \\(\\cU_n\\), then so is \\(A \\to B\\). ",
-    "scripta-line": 561
-  },
-  {
-    "latex-begin": 852,
-    "latex-end": 854,
-    "latex-line": 853,
-    "latex-text": "(1) Consider a function \\(f : A \\to \\cU_0\\) where \\(A : \\cU_0\\).   A first ; (2) Consider a function \\(f : A \\to \\cU_0\\) where \\(A : \\cU_0\\).   A first ",
-    "scripta-line": 567
-  },
-  {
-    "latex-begin": 856,
-    "latex-end": 859,
-    "latex-line": 858,
-    "latex-text": "(1) \\label{draft-large-\\type}\\dfrac{A: \\cU_0 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,??}; (2) \\label{draft-large-\\type}\\dfrac{A: \\cU_0 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,??}; (3) \\label{draft-large-\\type}\\dfrac{A: \\cU_0 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,??}; (4) \\label{draft-large-\\type}\\dfrac{A: \\cU_0 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,??}; (5) \\end{equation}",
-    "scripta-line": 570
-  },
-  {
-    "latex-begin": 861,
-    "latex-end": 865,
-    "latex-line": 863,
-    "latex-text": "(1) specified above.   But cumulativity saves the day: \\(\\cU_0 : \\cU_1\\); (2) specified above.   But cumulativity saves the day: \\(\\cU_0 : \\cU_1\\); (3) and if \\(A : \\cU_0\\), so \\(A :\\cU_1\\).   Then \\eqref{draft-large-type}; (4) and if \\(A : \\cU_0\\), so \\(A :\\cU_1\\).   Then \\eqref{draft-large-type}",
-    "scripta-line": 574
-  },
-  {
-    "latex-begin": 867,
-    "latex-end": 870,
-    "latex-line": 869,
-    "latex-text": "(1) \\dfrac{A: \\cU_1 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,\\cU_1}; (2) \\dfrac{A: \\cU_1 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,\\cU_1}; (3) \\dfrac{A: \\cU_1 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,\\cU_1}; (4) \\dfrac{A: \\cU_1 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,\\cU_1}; (5) \\dfrac{A: \\cU_1 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,\\cU_1}",
-    "scripta-line": 579
-  },
-  {
-    "latex-begin": 872,
-    "latex-end": 875,
-    "latex-line": 873,
-    "latex-text": "(1) We conclude that \\(f\\) is a term of a type that lives in \\(\\cU_1\\),; (2) namely \\(A \\to \\cU_0\\).   Note that in this case the construction",
-    "scripta-line": 582
-  },
-  {
-    "latex-begin": 877,
-    "latex-end": 880,
-    "latex-line": 879,
+    "latex-begin": 916,
+    "latex-end": 919,
+    "latex-line": 918,
     "latex-text": "(1) Jumping ahead a bit, the \\textbf{\\term{ Identiy type}} is formed via ; (2) Jumping ahead a bit, the \\textbf{\\term{ Identiy type}} is formed via ",
     "scripta-line": 586
   },
   {
-    "latex-begin": 887,
-    "latex-end": 890,
-    "latex-line": 889,
-    "latex-text": "\\dfrac{a : A}{\\refl_a : a =_A a}",
-    "scripta-line": 595
-  },
-  {
-    "latex-begin": 891,
-    "latex-end": 904,
-    "latex-line": 892,
-    "latex-text": "(1)    We say that \\(a\\) and \\(b\\) are \\textbf{\\term{ propositionally equal}}; (2) if \\(a =_A b\\) is \\textbf{\\term{ inhabited}}, meaning that there; (3) \\(\\refl_a\\).   Therefore the former type is inhabited.   Therefore; (4) Now consider the function \\(f : \\nat \\to \\cU_0\\) given ; (5) Now consider the function \\(f : \\nat \\to \\cU_0\\) given ; (6) by \\(f\\, n :\\equiv (0 =_\\nat n)\\).   Then \\(f\\) is a term ; (7) in the large type \\(\\nat \\to \\cU_0\\).; (8) in the large type \\(\\nat \\to \\cU_0\\).",
+    "latex-begin": 930,
+    "latex-end": 943,
+    "latex-line": 931,
+    "latex-text": "(1)    We say that \\(a\\) and \\(b\\) are \\textbf{\\term{ propositionally equal}}; (2) if \\(a =_A b\\) is \\textbf{\\term{ inhabited}}, meaning that there",
     "scripta-line": 598
   },
   {
-    "latex-begin": 909,
-    "latex-end": 917,
-    "latex-line": 912,
+    "latex-begin": 948,
+    "latex-end": 956,
+    "latex-line": 951,
     "latex-text": "scheme called \\term{primitive recursion}.   Such functions",
     "scripta-line": 617
   },
   {
-    "latex-begin": 919,
-    "latex-end": 924,
-    "latex-line": 924,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}",
-    "scripta-line": 627
-  },
-  {
-    "latex-begin": 926,
-    "latex-end": 936,
-    "latex-line": 928,
-    "latex-text": "(1) constructor of \\(\\nat\\).   The second equation defines   \\(\\fact\\); (2) constructor of \\(\\nat\\).   The second equation defines   \\(\\fact\\); (3) \\(\\fact\\; (\\suc n)\\) is defined in terms of \\(\\fact n\\). The; (4) \\(\\fact\\; (\\suc n)\\) is defined in terms of \\(\\fact n\\). The; (5) \\(\\fact\\; (\\suc n)\\) is defined in terms of \\(\\fact n\\). The; (6) argument of \\(\\fact\\) on the right is less than the argument; (7) of \\(\\fact\\) on the right.   Because there is a quantity which",
-    "scripta-line": 632
-  },
-  {
-    "latex-begin": 941,
-    "latex-end": 951,
-    "latex-line": 951,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}",
-    "scripta-line": 645
-  },
-  {
-    "latex-begin": 957,
-    "latex-end": 962,
-    "latex-line": 962,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}",
-    "scripta-line": 658
-  },
-  {
-    "latex-begin": 967,
-    "latex-end": 970,
-    "latex-line": 969,
-    "latex-text": "(1) f \\zero = \\base; (2) f \\zero = \\base",
-    "scripta-line": 665
-  },
-  {
-    "latex-begin": 975,
-    "latex-end": 978,
-    "latex-line": 977,
-    "latex-text": "(1) f (\\suc n) = \\step\\; n\\; (f\\; n); (2) f (\\suc n) = \\step\\; n\\; (f\\; n)",
-    "scripta-line": 670
-  },
-  {
-    "latex-begin": 983,
-    "latex-end": 986,
-    "latex-line": 985,
-    "latex-text": "(1) \\step n\\; v = (\\suc n) * v; (2) \\step n\\; v = (\\suc n) * v",
-    "scripta-line": 675
-  },
-  {
-    "latex-begin": 988,
-    "latex-end": 991,
-    "latex-line": 989,
-    "latex-text": "(1) Notice that the type of \\(\\step\\) is \\(\\nat \\to \\nat \\to \\nat\\).; (2) Notice that the type of \\(\\step\\) is \\(\\nat \\to \\nat \\to \\nat\\).; (3) Notice that the type of \\(\\step\\) is \\(\\nat \\to \\nat \\to \\nat\\).; (4) Notice that the type of \\(\\step\\) is \\(\\nat \\to \\nat \\to \\nat\\).; (5) The recursion scheme for \\(\\fact\\) is the general recursion; (6) scheme displayed below, where \\(C = \\nat\\):",
-    "scripta-line": 678
-  },
-  {
-    "latex-begin": 995,
-    "latex-end": 995,
-    "latex-line": 995,
+    "latex-begin": 1034,
+    "latex-end": 1034,
+    "latex-line": 1034,
     "latex-text": "",
     "scripta-line": 682
   },
   {
-    "latex-begin": 996,
-    "latex-end": 997,
-    "latex-line": 997,
-    "latex-text": "   Functions \\(f : \\nat \\to C\\), are defined by the equations",
-    "scripta-line": 684
-  },
-  {
-    "latex-begin": 998,
-    "latex-end": 1002,
-    "latex-line": 1002,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}",
-    "scripta-line": 686
-  },
-  {
-    "latex-begin": 1005,
-    "latex-end": 1010,
-    "latex-line": 1009,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
-    "scripta-line": 692
-  },
-  {
-    "latex-begin": 1012,
-    "latex-end": 1014,
-    "latex-line": 1013,
+    "latex-begin": 1051,
+    "latex-end": 1053,
+    "latex-line": 1052,
     "latex-text": "This scheme is what is called \\term{primitive recursion}. Functions",
     "scripta-line": 696
   },
   {
-    "latex-begin": 1019,
-    "latex-end": 1022,
-    "latex-line": 1022,
-    "latex-text": "non-dependent types.   Consider the problem of defining a function \\(f : \\nat \\to C \\to C\\).   The data required to do this are",
-    "scripta-line": 706
-  },
-  {
-    "latex-begin": 1024,
-    "latex-end": 1031,
-    "latex-line": 1026,
-    "latex-text": "(1) (i) a type \\(C : \\cU\\); (2) (ii) a term \\(\\base : C\\); (3) (iii) a function \\(\\step : \\nat \\to C \\to C\\); (4) (iii) a function \\(\\step : \\nat \\to C \\to C\\)",
-    "scripta-line": 710
-  },
-  {
-    "latex-begin": 1033,
-    "latex-end": 1036,
-    "latex-line": 1034,
-    "latex-text": "(1) Let us make up a type for a function \\(\\rec_\\nat\\) --- the recursor ---; (2) Let us make up a type for a function \\(\\rec_\\nat\\) --- the recursor ---; (3) Let us make up a type for a function \\(\\rec_\\nat\\) --- the recursor ---; (4) Let us make up a type for a function \\(\\rec_\\nat\\) --- the recursor ---; (5) \\(\\nat \\to C\\) as output.   This straightforward:",
-    "scripta-line": 717
-  },
-  {
-    "latex-begin": 1038,
-    "latex-end": 1041,
-    "latex-line": 1040,
-    "latex-text": "(1) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C); (2) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C); (3) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C); (4) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C); (5) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C)",
-    "scripta-line": 721
-  },
-  {
-    "latex-begin": 1046,
-    "latex-end": 1049,
-    "latex-line": 1048,
-    "latex-text": "(1) f\\; n = \\rec_\\nat\\; C\\; \\base\\;  \\step\\;  n; (2) f\\; n = \\rec_\\nat\\; C\\; \\base\\;  \\step\\;  n; (3) f\\; n = \\rec_\\nat\\; C\\; \\base\\;  \\step\\;  n; (4) f\\; n = \\rec_\\nat\\; C\\; \\base\\;  \\step\\;  n; (5) f\\; n = \\rec_\\nat\\; C\\; \\base\\;  \\step\\;  n; (6) \\end{equation}; (7) \\end{equation}",
-    "scripta-line": 726
-  },
-  {
-    "latex-begin": 1054,
-    "latex-end": 1058,
-    "latex-line": 1058,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}; (27) \\end{align}; (28) \\end{align}; (29) \\end{align}; (30) \\end{align}; (31) \\end{align}; (32) \\end{align}; (33) \\end{align}; (34) \\end{align}; (35) \\end{align}; (36) \\end{align}; (37) \\end{align}; (38) \\end{align}; (39) \\end{align}; (40) \\end{align}; (41) \\end{align}; (42) \\end{align}",
-    "scripta-line": 731
-  },
-  {
-    "latex-begin": 1063,
-    "latex-end": 1066,
-    "latex-line": 1065,
-    "latex-text": "(1) \\fact = \\rec_\\nat\\; \\nat\\; \\zero\\; (\\lambda\\; n\\; v \\to (\\suc n) * v); (2) \\fact = \\rec_\\nat\\; \\nat\\; \\zero\\; (\\lambda\\; n\\; v \\to (\\suc n) * v); (3) \\fact = \\rec_\\nat\\; \\nat\\; \\zero\\; (\\lambda\\; n\\; v \\to (\\suc n) * v); (4) \\fact = \\rec_\\nat\\; \\nat\\; \\zero\\; (\\lambda\\; n\\; v \\to (\\suc n) * v); (5) \\fact = \\rec_\\nat\\; \\nat\\; \\zero\\; (\\lambda\\; n\\; v \\to (\\suc n) * v); (6) \\fact = \\rec_\\nat\\; \\nat\\; \\zero\\; (\\lambda\\; n\\; v \\to (\\suc n) * v); (7) \\fact = \\rec_\\nat\\; \\nat\\; \\zero\\; (\\lambda\\; n\\; v \\to (\\suc n) * v); (8) \\end{equation}; (9) \\end{equation}",
-    "scripta-line": 737
-  },
-  {
-    "latex-begin": 1074,
-    "latex-end": 1079,
-    "latex-line": 1079,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}",
-    "scripta-line": 745
-  },
-  {
-    "latex-begin": 1081,
-    "latex-end": 1086,
-    "latex-line": 1082,
-    "latex-text": "(1) The type of \\(\\add\\) is \\(\\nat \\to \\nat \\to \\nat\\), which we; (2) The type of \\(\\add\\) is \\(\\nat \\to \\nat \\to \\nat\\), which we; (3) The type of \\(\\add\\) is \\(\\nat \\to \\nat \\to \\nat\\), which we; (4) The type of \\(\\add\\) is \\(\\nat \\to \\nat \\to \\nat\\), which we; (5) parenthesize as \\(\\nat \\to (\\nat \\to \\nat)\\) and then; (6) parenthesize as \\(\\nat \\to (\\nat \\to \\nat)\\) and then; (7) parenthesize as \\(\\nat \\to (\\nat \\to \\nat)\\) and then; (8) write as \\(\\nat \\to C\\) where \\(C = \\nat \\to \\nat\\).   Notice that the value ; (9) write as \\(\\nat \\to C\\) where \\(C = \\nat \\to \\nat\\).   Notice that the value ; (10) write as \\(\\nat \\to C\\) where \\(C = \\nat \\to \\nat\\).   Notice that the value ; (11) of \\(\\add m\\) is of type \\(C\\), and that \\(\\add 0\\) is the identity function.; (12) of \\(\\add m\\) is of type \\(C\\), and that \\(\\add 0\\) is the identity function.",
-    "scripta-line": 750
-  },
-  {
-    "latex-begin": 1088,
-    "latex-end": 1091,
-    "latex-line": 1090,
-    "latex-text": "(1) \\add = \\rec_\\nat\\; C\\; (\\lambda n.n)\\;\\; ??; (2) \\add = \\rec_\\nat\\; C\\; (\\lambda n.n)\\;\\; ??; (3) \\add = \\rec_\\nat\\; C\\; (\\lambda n.n)\\;\\; ??; (4) \\add = \\rec_\\nat\\; C\\; (\\lambda n.n)\\;\\; ??; (5) \\end{equation}; (6) \\end{equation}",
-    "scripta-line": 756
-  },
-  {
-    "latex-begin": 1093,
-    "latex-end": 1095,
-    "latex-line": 1094,
-    "latex-text": "(1) where \\(??\\) is the function \\(\\step\\).   Let us now find that function, keeping in mind that \\(\\step\\) maps \\(\\add\\; m\\) as a function of \\(n\\) to ; (2) where \\(??\\) is the function \\(\\step\\).   Let us now find that function, keeping in mind that \\(\\step\\) maps \\(\\add\\; m\\) as a function of \\(n\\) to ; (3) where \\(??\\) is the function \\(\\step\\).   Let us now find that function, keeping in mind that \\(\\step\\) maps \\(\\add\\; m\\) as a function of \\(n\\) to ; (4) \\(\\add\\; (\\suc\\; m)\\) as a function of \\(n\\):; (5) \\(\\add\\; (\\suc\\; m)\\) as a function of \\(n\\):",
-    "scripta-line": 759
-  },
-  {
-    "latex-begin": 1097,
-    "latex-end": 1100,
-    "latex-line": 1099,
-    "latex-text": "(1) \\step n\\; (f\\; n) = f\\; (\\suc\\; n); (2) \\step n\\; (f\\; n) = f\\; (\\suc\\; n)",
-    "scripta-line": 762
-  },
-  {
-    "latex-begin": 1102,
-    "latex-end": 1105,
-    "latex-line": 1104,
-    "latex-text": "the recursion equation defining \\(\\add\\), then abstract with respect to ",
-    "scripta-line": 768
-  },
-  {
-    "latex-begin": 1107,
-    "latex-end": 1111,
-    "latex-line": 1111,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}",
-    "scripta-line": 772
-  },
-  {
-    "latex-begin": 1113,
-    "latex-end": 1114,
-    "latex-line": 1114,
-    "latex-text": "(1) n) = \\lambda n.(\\suc\\; (\\add\\; m\\; n)); (2) n) = \\lambda n.(\\suc\\; (\\add\\; m\\; n)); (3) n) = \\lambda n.(\\suc\\; (\\add\\; m\\; n)); (4) ; (5) ; (6) ",
+    "latex-begin": 1152,
+    "latex-end": 1153,
+    "latex-line": 1153,
+    "latex-text": "(1) n) = \\lambda n.(\\suc\\; (\\add\\; m\\; n)); (2) ; (3) ; (4) ",
     "scripta-line": 776
   },
   {
-    "latex-begin": 1119,
-    "latex-end": 1124,
-    "latex-line": 1124,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}",
-    "scripta-line": 780
-  },
-  {
-    "latex-begin": 1143,
-    "latex-end": 1144,
-    "latex-line": 1144,
-    "latex-text": "(1) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (2) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (3) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (4) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\)",
+    "latex-begin": 1182,
+    "latex-end": 1183,
+    "latex-line": 1183,
+    "latex-text": "(1) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (2) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (3) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (4) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (5) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (6) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (7) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (8) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (9) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (10) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (11) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (12) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (13) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (14) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (15) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (16) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (17) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (18) \\end{itemize}; (19) \\end{itemize}; (20) \\end{itemize}; (21) \\end{itemize}; (22) \\end{itemize}; (23) \\end{itemize}; (24) \\end{itemize}; (25) \\end{itemize}; (26) \\end{itemize}; (27) \\end{itemize}; (28) \\end{itemize}; (29) \\end{itemize}; (30) \\end{itemize}; (31) \\end{itemize}; (32) \\end{itemize}; (33) \\end{itemize}; (34) \\end{itemize}; (35) \\end{itemize}; (36) \\end{itemize}; (37) \\end{itemize}; (38) \\end{itemize}; (39) \\end{itemize}; (40) \\end{itemize}",
     "scripta-line": 795
   },
   {
-    "latex-begin": 1164,
-    "latex-end": 1167,
-    "latex-line": 1167,
+    "latex-begin": 1203,
+    "latex-end": 1206,
+    "latex-line": 1206,
     "latex-text": "\\(P \\implies Q\\), there is a witness \\(f : P \\to Q\\).   By the elimination rule for functions, \\(f\\; p : Q\\).   Therefore we know \\(Q\\). \\qed{}",
     "scripta-line": 807
   },
   {
-    "latex-begin": 1169,
-    "latex-end": 1171,
-    "latex-line": 1171,
+    "latex-begin": 1208,
+    "latex-end": 1210,
+    "latex-line": 1210,
     "latex-text": "has an easy formulation and proof in MLTT.   The principle states that if \\(P \\implies Q\\), then \\(\\neg Q \\implies \\neg P\\). For the proof, supoose that \\(f : P \\to Q\\) and \\(nq : Q \\to \\bot\\). Then \\(nq \\circ f : P \\to \\bot\\). \\qed{}",
     "scripta-line": 811
   },
   {
-    "latex-begin": 1188,
-    "latex-end": 1192,
-    "latex-line": 1189,
+    "latex-begin": 1227,
+    "latex-end": 1231,
+    "latex-line": 1228,
     "latex-text": "The logic thus defined is a \\term{constructive logic}. Such logics",
     "scripta-line": 839
   },
   {
-    "latex-begin": 1219,
-    "latex-end": 1231,
-    "latex-line": 1231,
+    "latex-begin": 1258,
+    "latex-end": 1270,
+    "latex-line": 1270,
     "latex-text": "\\qed{}",
     "scripta-line": 867
   },
   {
-    "latex-begin": 1250,
-    "latex-end": 1253,
-    "latex-line": 1252,
-    "latex-text": "(1) A \\to (A \\to \\emptyt) \\to \\emptyt; (2) A \\to (A \\to \\emptyt) \\to \\emptyt",
-    "scripta-line": 895
-  },
-  {
-    "latex-begin": 1255,
-    "latex-end": 1262,
-    "latex-line": 1256,
-    "latex-text": "(1) \\textit{First Proof:} Given \\(a : A\\) and \\(f : A \\to \\emptyt\\), we have \\(f(a) : \\emptyt\\). Thus we; (2) \\textit{First Proof:} Given \\(a : A\\) and \\(f : A \\to \\emptyt\\), we have \\(f(a) : \\emptyt\\). Thus we; (3) have a term of type \\(A \\to (A \\to \\emptyt) \\to \\emptyt\\), as required. (2) Alternatively, consider; (4) have a term of type \\(A \\to (A \\to \\emptyt) \\to \\emptyt\\), as required. (2) Alternatively, consider; (5) the \\(\\lambda\\)-term \\(t = \\lambda (a:A).\\lambda (f:A \\to \\emptyt).f\\,a\\). Then \\(t : A \\to (A \\to \\emptyt) \\to \\emptyt\\),; (6) the \\(\\lambda\\)-term \\(t = \\lambda (a:A).\\lambda (f:A \\to \\emptyt).f\\,a\\). Then \\(t : A \\to (A \\to \\emptyt) \\to \\emptyt\\),; (7) the \\(\\lambda\\)-term \\(t = \\lambda (a:A).\\lambda (f:A \\to \\emptyt).f\\,a\\). Then \\(t : A \\to (A \\to \\emptyt) \\to \\emptyt\\),",
-    "scripta-line": 898
-  },
-  {
-    "latex-begin": 1286,
-    "latex-end": 1291,
-    "latex-line": 1288,
-    "latex-text": "(1) (i) \\(\\zero + n \\equiv n\\); (2) (ii) \\(n + \\zero \\equiv n\\)",
-    "scripta-line": 924
-  },
-  {
-    "latex-begin": 1293,
-    "latex-end": 1298,
-    "latex-line": 1294,
-    "latex-text": "(1) The first is true: the normal form the left-hand side is \\(\\zero\\); (2) if \\(n\\) is not \\(\\zero\\), there are no rules to reduce the left-hand side.; (3) is given to us by the \\term{identity type}:",
+    "latex-begin": 1332,
+    "latex-end": 1337,
+    "latex-line": 1337,
+    "latex-text": "is given to us by the \\term{identity type}:",
     "scripta-line": 930
   },
   {
-    "latex-begin": 1300,
-    "latex-end": 1303,
-    "latex-line": 1302,
-    "latex-text": "(1) \\frac{A: \\cU \\quad a : A \\quad b :A}{a =_A b: \\cU}; (2) \\frac{A: \\cU \\quad a : A \\quad b :A}{a =_A b: \\cU}",
-    "scripta-line": 936
-  },
-  {
-    "latex-begin": 1305,
-    "latex-end": 1308,
-    "latex-line": 1306,
+    "latex-begin": 1344,
+    "latex-end": 1347,
+    "latex-line": 1345,
     "latex-text": "The identity type is a \\term{dependent} type: its definition depends",
     "scripta-line": 939
   },
   {
-    "latex-begin": 1310,
-    "latex-end": 1313,
-    "latex-line": 1312,
-    "latex-text": "(1) \\frac{A : \\cU \\qquad a : A}{\\refl_a : a = a}; (2) \\frac{A : \\cU \\qquad a : A}{\\refl_a : a = a}",
-    "scripta-line": 943
-  },
-  {
-    "latex-begin": 1315,
-    "latex-end": 1317,
-    "latex-line": 1316,
-    "latex-text": "(1) If the identity type \\(a = b\\) is \\term{inhabited}, that is, if thre is a term \\(p : a = b\\) then we say that \\(a\\) and \\(b\\) are \\term{propositionally equal}.   We claim, and will soon prove, that proposiional equality is ; (2) If the identity type \\(a = b\\) is \\term{inhabited}, that is, if thre is a term \\(p : a = b\\) then we say that \\(a\\) and \\(b\\) are \\term{propositionally equal}.   We claim, and will soon prove, that proposiional equality is ; (3) an equivalance relation.   It is, moreover, a \\term{congruence}: if \\(f : A \\to B\\), there is a function \\(\\congg f : x =_A y \\to f\\; x =_B f\\;   y\\).   Thus, if \\(p : x =_A y\\), then \\(\\congg f\\;      p : f\\; x =_B f\\;   y\\),; (4) an equivalance relation.   It is, moreover, a \\term{congruence}: if \\(f : A \\to B\\), there is a function \\(\\congg f : x =_A y \\to f\\; x =_B f\\;   y\\).   Thus, if \\(p : x =_A y\\), then \\(\\congg f\\;      p : f\\; x =_B f\\;   y\\),; (5) an equivalance relation.   It is, moreover, a \\term{congruence}: if \\(f : A \\to B\\), there is a function \\(\\congg f : x =_A y \\to f\\; x =_B f\\;   y\\).   Thus, if \\(p : x =_A y\\), then \\(\\congg f\\;      p : f\\; x =_B f\\;   y\\),",
+    "latex-begin": 1354,
+    "latex-end": 1356,
+    "latex-line": 1355,
+    "latex-text": "(1) If the identity type \\(a = b\\) is \\term{inhabited}, that is, if thre is a term \\(p : a = b\\) then we say that \\(a\\) and \\(b\\) are \\term{propositionally equal}.   We claim, and will soon prove, that proposiional equality is ; (2) If the identity type \\(a = b\\) is \\term{inhabited}, that is, if thre is a term \\(p : a = b\\) then we say that \\(a\\) and \\(b\\) are \\term{propositionally equal}.   We claim, and will soon prove, that proposiional equality is ; (3) an equivalance relation.   It is, moreover, a \\term{congruence}: if \\(f : A \\to B\\), there is a function \\(\\congg f : x =_A y \\to f\\; x =_B f\\;   y\\).   Thus, if \\(p : x =_A y\\), then \\(\\congg f\\;      p : f\\; x =_B f\\;   y\\),",
     "scripta-line": 946
   },
   {
-    "latex-begin": 1319,
-    "latex-end": 1322,
-    "latex-line": 1321,
-    "latex-text": "The the types \\(a = b\\) and \\(a = a\\) are definitionally equal. The latter type is inhabited by \\(\\refl_a\\). The former type, which is equal to \\(a = a\\),",
-    "scripta-line": 949
-  },
-  {
-    "latex-begin": 1329,
-    "latex-end": 1332,
-    "latex-line": 1330,
-    "latex-text": "(1) Consider now the type family \\(\\isRightIdentity n = n + \\zero =_\\nat n\\). ; (2) Consider now the type family \\(\\isRightIdentity n = n + \\zero =_\\nat n\\). ; (3) Consider now the type family \\(\\isRightIdentity n = n + \\zero =_\\nat n\\). ; (4) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (5) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (6) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (7) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (8) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (9) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (10) \\((n : \\nat) \\to \\isRightIdentity n\\) is inhabited.   If that is so, we have proved that ; (11) \\((n : \\nat) \\to \\isRightIdentity n\\) is inhabited.   If that is so, we have proved that ",
+    "latex-begin": 1368,
+    "latex-end": 1371,
+    "latex-line": 1370,
+    "latex-text": "(1) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (2) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (3) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (4) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (5) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ",
     "scripta-line": 956
   },
   {
-    "latex-begin": 1334,
-    "latex-end": 1337,
-    "latex-line": 1336,
-    "latex-text": "(1) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (2) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (3) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (4) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (5) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (6) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (7) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (8) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (9) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (10) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (11) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (12) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (13) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (14) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (15) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (16) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (17) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (18) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (19) \\end{equation}; (20) \\end{equation}; (21) \\end{equation}; (22) \\end{equation}; (23) \\end{equation}; (24) \\end{equation}; (25) \\end{equation}; (26) \\end{equation}; (27) \\end{equation}; (28) \\end{equation}; (29) \\end{equation}; (30) \\end{equation}; (31) \\end{equation}; (32) \\end{equation}; (33) \\end{equation}; (34) \\end{equation}; (35) \\end{equation}; (36) \\end{equation}; (37) \\end{equation}; (38) \\end{equation}; (39) \\end{equation}; (40) \\end{equation}; (41) \\end{equation}; (42) \\end{equation}; (43) \\end{equation}; (44) \\end{equation}",
+    "latex-begin": 1373,
+    "latex-end": 1376,
+    "latex-line": 1375,
+    "latex-text": "(1) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (2) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (3) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (4) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (5) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (6) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (7) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (8) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (9) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (10) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (11) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (12) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (13) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (14) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (15) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (16) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (17) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (18) \\end{equation}; (19) \\end{equation}; (20) \\end{equation}; (21) \\end{equation}; (22) \\end{equation}; (23) \\end{equation}; (24) \\end{equation}; (25) \\end{equation}; (26) \\end{equation}; (27) \\end{equation}; (28) \\end{equation}; (29) \\end{equation}; (30) \\end{equation}; (31) \\end{equation}; (32) \\end{equation}; (33) \\end{equation}; (34) \\end{equation}; (35) \\end{equation}; (36) \\end{equation}; (37) \\end{equation}; (38) \\end{equation}; (39) \\end{equation}; (40) \\end{equation}; (41) \\end{equation}; (42) \\end{equation}; (43) \\end{equation}",
     "scripta-line": 960
   },
   {
-    "latex-begin": 1339,
-    "latex-end": 1342,
-    "latex-line": 1340,
-    "latex-text": "(1) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (2) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (3) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (4) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (5) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (6) is inhabited by \\(\\refl_0\\).   Assume as inductive hypothesis that; (7) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (8) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (9) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (10) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have",
+    "latex-begin": 1378,
+    "latex-end": 1381,
+    "latex-line": 1379,
+    "latex-text": "(1) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (2) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (3) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (4) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (5) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (6) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (7) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (8) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have",
     "scripta-line": 963
   },
   {
-    "latex-begin": 1344,
-    "latex-end": 1349,
-    "latex-line": 1349,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}; (27) \\end{align}; (28) \\end{align}; (29) \\end{align}; (30) \\end{align}; (31) \\end{align}; (32) \\end{align}; (33) \\end{align}; (34) \\end{align}; (35) \\end{align}; (36) \\end{align}; (37) \\end{align}; (38) \\end{align}; (39) \\end{align}; (40) \\end{align}; (41) \\end{align}; (42) \\end{align}; (43) \\end{align}; (44) \\end{align}; (45) \\end{align}; (46) \\end{align}; (47) \\end{align}; (48) \\end{align}; (49) \\end{align}; (50) \\end{align}; (51) \\end{align}; (52) \\end{align}; (53) \\end{align}; (54) \\end{align}; (55) \\end{align}; (56) \\end{align}; (57) \\end{align}; (58) \\end{align}; (59) \\end{align}; (60) \\end{align}; (61) \\end{align}; (62) \\end{align}",
+    "latex-begin": 1383,
+    "latex-end": 1388,
+    "latex-line": 1388,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}; (27) \\end{align}; (28) \\end{align}; (29) \\end{align}; (30) \\end{align}; (31) \\end{align}; (32) \\end{align}; (33) \\end{align}; (34) \\end{align}; (35) \\end{align}; (36) \\end{align}; (37) \\end{align}; (38) \\end{align}; (39) \\end{align}; (40) \\end{align}; (41) \\end{align}; (42) \\end{align}; (43) \\end{align}; (44) \\end{align}; (45) \\end{align}; (46) \\end{align}; (47) \\end{align}; (48) \\end{align}",
     "scripta-line": 967
   },
   {
-    "latex-begin": 1354,
-    "latex-end": 1357,
-    "latex-line": 1356,
-    "latex-text": "(1) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (2) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (3) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (4) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (5) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (6) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (7) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (8) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (9) \\end{equation}; (10) \\end{equation}; (11) \\end{equation}; (12) \\end{equation}; (13) \\end{equation}",
+    "latex-begin": 1393,
+    "latex-end": 1396,
+    "latex-line": 1395,
+    "latex-text": "(1) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (2) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (3) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (4) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (5) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (6) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (7) \\end{equation}; (8) \\end{equation}; (9) \\end{equation}",
     "scripta-line": 974
   },
   {
-    "latex-begin": 1359,
-    "latex-end": 1360,
-    "latex-line": 1360,
+    "latex-begin": 1398,
+    "latex-end": 1399,
+    "latex-line": 1399,
     "latex-text": "(1) Consequently \\(\\lemma n\\) is proved for all \\(n\\).   ; (2) Consequently \\(\\lemma n\\) is proved for all \\(n\\).   ; (3) Consequently \\(\\lemma n\\) is proved for all \\(n\\).   ; (4) Consequently \\(\\lemma n\\) is proved for all \\(n\\).   ",
     "scripta-line": 977
   },
   {
-    "latex-begin": 1366,
-    "latex-end": 1369,
-    "latex-line": 1367,
-    "latex-text": "(1) \\begin{indent}; (2) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (3) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (4) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (5) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (6) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (7) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (8) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}",
+    "latex-begin": 1405,
+    "latex-end": 1408,
+    "latex-line": 1406,
+    "latex-text": "(1) \\begin{indent}; (2) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (3) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (4) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (5) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}",
     "scripta-line": 982
   },
   {
-    "latex-begin": 1371,
-    "latex-end": 1381,
-    "latex-line": 1375,
-    "latex-text": "(1) is not \\(\\refl_x\\) for some \\(x\\), but rather; (2) some function applied to \\(\\refl_0\\).   That is why; (3) both of the following hold: (1) \\quote{the identity type is freely generated by\\(\\refl\\)} and (2) \\(n + 0\\) is propositionally equal to \\(n\\)",
-    "scripta-line": 985
-  },
-  {
-    "latex-begin": 1389,
-    "latex-end": 1392,
-    "latex-line": 1391,
-    "latex-text": "\\congg : (f : A \\to B) \\to (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y",
-    "scripta-line": 1003
-  },
-  {
-    "latex-begin": 1394,
-    "latex-end": 1395,
-    "latex-line": 1395,
-    "latex-text": "If we apply \\(\\congg\\) to \\(f\\), we have",
-    "scripta-line": 1006
-  },
-  {
-    "latex-begin": 1397,
-    "latex-end": 1400,
-    "latex-line": 1399,
-    "latex-text": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y",
-    "scripta-line": 1008
-  },
-  {
-    "latex-begin": 1405,
-    "latex-end": 1408,
-    "latex-line": 1407,
-    "latex-text": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to C\\; x\\; y\\; p",
-    "scripta-line": 1014
-  },
-  {
-    "latex-begin": 1418,
-    "latex-end": 1419,
-    "latex-line": 1419,
-    "latex-text": "In this case there is no dependence on \\(p\\). Thus constructing the function \\(\\congg\\) is a special case of constructing functions",
-    "scripta-line": 1022
-  },
-  {
-    "latex-begin": 1430,
-    "latex-end": 1431,
-    "latex-line": 1431,
+    "latex-begin": 1469,
+    "latex-end": 1470,
+    "latex-line": 1470,
     "latex-text": "\\begin{enumerate}",
     "scripta-line": 1027
   },
   {
-    "latex-begin": 1433,
-    "latex-end": 1434,
-    "latex-line": 1434,
-    "latex-text": "\\item The type family \\(C : (x, y : A) \\to (x =_A y) \\to \\cU\\)",
-    "scripta-line": 1031
-  },
-  {
-    "latex-begin": 1436,
-    "latex-end": 1437,
-    "latex-line": 1437,
-    "latex-text": "\\item A function \\(c : (x : A) \\to C(x,x,\\refl_x)\\)",
-    "scripta-line": 1033
-  },
-  {
-    "latex-begin": 1441,
-    "latex-end": 1447,
-    "latex-line": 1444,
-    "latex-text": "(1) \\(\\refl_x : x =_A x\\) a term of type \\(C(x,x,\\refl_x)\\).; (2) \\(\\refl_x : x =_A x\\) a term of type \\(C(x,x,\\refl_x)\\).",
-    "scripta-line": 1035
-  },
-  {
-    "latex-begin": 1449,
-    "latex-end": 1452,
-    "latex-line": 1451,
-    "latex-text": "f(x,x,\\refl_x) :\\equiv c(x)",
-    "scripta-line": 1042
-  },
-  {
-    "latex-begin": 1457,
-    "latex-end": 1458,
-    "latex-line": 1458,
-    "latex-text": "Consider the hypothetical function \\(\\congg f\\):",
-    "scripta-line": 1047
-  },
-  {
-    "latex-begin": 1460,
-    "latex-end": 1463,
-    "latex-line": 1462,
-    "latex-text": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y",
-    "scripta-line": 1049
-  },
-  {
-    "latex-begin": 1469,
-    "latex-end": 1472,
-    "latex-line": 1471,
-    "latex-text": "c\\; x = \\refl_{(f\\, x)} : C\\; x\\; x",
-    "scripta-line": 1056
-  },
-  {
-    "latex-begin": 1480,
-    "latex-end": 1483,
-    "latex-line": 1482,
-    "latex-text": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y",
-    "scripta-line": 1063
-  },
-  {
-    "latex-begin": 1485,
-    "latex-end": 1487,
-    "latex-line": 1487,
-    "latex-text": "and \\(p = \\refl_x\\).   Then we have",
-    "scripta-line": 1066
-  },
-  {
-    "latex-begin": 1489,
-    "latex-end": 1492,
-    "latex-line": 1491,
-    "latex-text": "\\congg f : (x\\; x : A) \\to (p : x =_A x) \\to f\\; x =_B f\\; x",
-    "scripta-line": 1069
-  },
-  {
-    "latex-begin": 1497,
-    "latex-end": 1500,
-    "latex-line": 1499,
-    "latex-text": "(1) \\congg f : x\\; \\refl_x = \\refl_{(f x)}; (2) \\congg f : x\\; \\refl_x = \\refl_{(f x)}; (3) \\congg f : x\\; \\refl_x = \\refl_{(f x)}",
-    "scripta-line": 1074
-  },
-  {
-    "latex-begin": 1509,
-    "latex-end": 1512,
-    "latex-line": 1511,
-    "latex-text": "\\sym : (x : A) \\to (y : A) \\to (x =_A y) \\to (y =_A x)",
-    "scripta-line": 1083
-  },
-  {
-    "latex-begin": 1517,
-    "latex-end": 1520,
-    "latex-line": 1519,
-    "latex-text": "\\sym : (x : A) \\to (x : A) \\to (x =_A x) \\to (x =_A x)",
-    "scripta-line": 1088
-  },
-  {
-    "latex-begin": 1525,
-    "latex-end": 1528,
-    "latex-line": 1527,
-    "latex-text": "(1) \\sym\\;x\\; x\\; \\refl_x = \\refl_x; (2) \\sym\\;x\\; x\\; \\refl_x = \\refl_x; (3) \\sym\\;x\\; x\\; \\refl_x = \\refl_x",
-    "scripta-line": 1093
-  },
-  {
-    "latex-begin": 1530,
-    "latex-end": 1532,
-    "latex-line": 1531,
-    "latex-text": "Then \\(\\sym\\) is defined when \\(x = y\\) and therefore defined for all \\(x\\)",
-    "scripta-line": 1096
-  },
-  {
-    "latex-begin": 1537,
-    "latex-end": 1540,
-    "latex-line": 1539,
-    "latex-text": "\\trans : (x : A) \\to (y : A)\\to (z : A)\\to (x =_A y) \\to (y =_A z) \\to (x =_A z)",
-    "scripta-line": 1101
-  },
-  {
-    "latex-begin": 1542,
-    "latex-end": 1546,
-    "latex-line": 1543,
-    "latex-text": "(1) Take \\(y = x\\), \\(p = \\refl_x\\) and substitute, letting; (2) \\(f\\; z\\; q = \\trans\\, x\\; x\\; z\\; \\refl_x q\\) where; (3) \\(f\\; z\\; q = \\trans\\, x\\; x\\; z\\; \\refl_x q\\) where; (4) by \\(\\refl_x\\).   Set ",
-    "scripta-line": 1104
-  },
-  {
-    "latex-begin": 1548,
-    "latex-end": 1551,
-    "latex-line": 1550,
-    "latex-text": "(1) f\\; x \\refl_x = \\refl_x; (2) f\\; x \\refl_x = \\refl_x",
-    "scripta-line": 1109
-  },
-  {
-    "latex-begin": 1556,
-    "latex-end": 1559,
-    "latex-line": 1558,
-    "latex-text": "(1) \\trans\\; x\\; x\\; x\\; \\refl_x \\;\\refl_x = \\refl_x; (2) \\trans\\; x\\; x\\; x\\; \\refl_x \\;\\refl_x = \\refl_x; (3) \\trans\\; x\\; x\\; x\\; \\refl_x \\;\\refl_x = \\refl_x; (4) \\trans\\; x\\; x\\; x\\; \\refl_x \\;\\refl_x = \\refl_x",
-    "scripta-line": 1114
-  },
-  {
-    "latex-begin": 1561,
-    "latex-end": 1562,
-    "latex-line": 1562,
-    "latex-text": "(1) \\section{Induction Principle for \\(\\nat\\)} \\label{induction-principle-for-nat}; (2) \\section{Induction Principle for \\(\\nat\\)} \\label{induction-principle-for-nat}; (3) \\section{Induction Principle for \\(\\nat\\)} \\label{induction-principle-for-nat}",
-    "scripta-line": 1118
-  },
-  {
-    "latex-begin": 1564,
-    "latex-end": 1566,
-    "latex-line": 1565,
-    "latex-text": "Recall that to define a function \\(f : \\nat \\to C\\), where \\(C\\)",
-    "scripta-line": 1120
-  },
-  {
-    "latex-begin": 1568,
-    "latex-end": 1571,
-    "latex-line": 1570,
-    "latex-text": "(1) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C); (2) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C); (3) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C); (4) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C); (5) \\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C)",
-    "scripta-line": 1124
-  },
-  {
-    "latex-begin": 1573,
-    "latex-end": 1575,
-    "latex-line": 1575,
-    "latex-text": "(1) we need the elimination rule in its full power, namely where \\(C: \\nat \\to \\cU\\) is ia type family. The   output of the rule is a dependent function ; (2) we need the elimination rule in its full power, namely where \\(C: \\nat \\to \\cU\\) is ia type family. The   output of the rule is a dependent function ",
-    "scripta-line": 1127
-  },
-  {
-    "latex-begin": 1577,
-    "latex-end": 1580,
-    "latex-line": 1579,
-    "latex-text": "f : (n : \\nat) \\to C\\; n",
-    "scripta-line": 1130
-  },
-  {
-    "latex-begin": 1587,
-    "latex-end": 1588,
-    "latex-line": 1588,
-    "latex-text": "(1) \\item a type family \\(C : \\nat \\to \\cU\\); (2) \\item a type family \\(C : \\nat \\to \\cU\\)",
-    "scripta-line": 1135
-  },
-  {
-    "latex-begin": 1590,
-    "latex-end": 1591,
-    "latex-line": 1591,
-    "latex-text": "(1) \\item a term \\(\\base: C\\; \\zero\\); (2) \\item a term \\(\\base: C\\; \\zero\\)",
-    "scripta-line": 1137
-  },
-  {
-    "latex-begin": 1593,
-    "latex-end": 1594,
-    "latex-line": 1594,
-    "latex-text": "(1) \\item a function \\(\\step : (n : \\nat) \\to C\\; n \\to C (\\suc\\; n\\)); (2) \\item a function \\(\\step : (n : \\nat) \\to C\\; n \\to C (\\suc\\; n\\)); (3) \\item a function \\(\\step : (n : \\nat) \\to C\\; n \\to C (\\suc\\; n\\))",
-    "scripta-line": 1139
-  },
-  {
-    "latex-begin": 1602,
-    "latex-end": 1605,
-    "latex-line": 1604,
-    "latex-text": "(1) \\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C); (2) \\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C); (3) \\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C); (4) \\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C); (5) \\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C); (6) \\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C); (7) \\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C); (8) \\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C)",
-    "scripta-line": 1144
-  },
-  {
-    "latex-begin": 1610,
-    "latex-end": 1614,
-    "latex-line": 1614,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}; (27) \\end{align}; (28) \\end{align}; (29) \\end{align}; (30) \\end{align}; (31) \\end{align}; (32) \\end{align}; (33) \\end{align}; (34) \\end{align}; (35) \\end{align}; (36) \\end{align}; (37) \\end{align}; (38) \\end{align}; (39) \\end{align}; (40) \\end{align}; (41) \\end{align}; (42) \\end{align}",
-    "scripta-line": 1149
-  },
-  {
-    "latex-begin": 1646,
-    "latex-end": 1651,
-    "latex-line": 1651,
+    "latex-begin": 1685,
+    "latex-end": 1690,
+    "latex-line": 1690,
     "latex-text": "is a type.   In addition, there are two \\term{typing rules}:",
     "scripta-line": 1177
   },
   {
-    "latex-begin": 1675,
-    "latex-end": 1677,
-    "latex-line": 1676,
-    "latex-text": "(1) Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\); (2) Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\); (3) Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\); (4) Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\); (5) Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\); (6) Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\); (7) Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\); (8) Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\); (9) and (2) \\(\\double\\; (\\isEven 3)\\) are typeable. The tree for typeing the first of these is; (10) and (2) \\(\\double\\; (\\isEven 3)\\) are typeable. The tree for typeing the first of these is",
-    "scripta-line": 1200
-  },
-  {
-    "latex-begin": 1679,
-    "latex-end": 1682,
-    "latex-line": 1681,
-    "latex-text": "(1) \\dfrac{\\nat \\to \\boolean \\qquad \\dfrac{\\nat \\to \\nat \\quad \\nat}{\\nat}}{\\boolean}; (2) \\dfrac{\\nat \\to \\boolean \\qquad \\dfrac{\\nat \\to \\nat \\quad \\nat}{\\nat}}{\\boolean}; (3) \\dfrac{\\nat \\to \\boolean \\qquad \\dfrac{\\nat \\to \\nat \\quad \\nat}{\\nat}}{\\boolean}; (4) \\dfrac{\\nat \\to \\boolean \\qquad \\dfrac{\\nat \\to \\nat \\quad \\nat}{\\nat}}{\\boolean}; (5) \\dfrac{\\nat \\to \\boolean \\qquad \\dfrac{\\nat \\to \\nat \\quad \\nat}{\\nat}}{\\boolean}; (6) \\dfrac{\\nat \\to \\boolean \\qquad \\dfrac{\\nat \\to \\nat \\quad \\nat}{\\nat}}{\\boolean}; (7) \\dfrac{\\nat \\to \\boolean \\qquad \\dfrac{\\nat \\to \\nat \\quad \\nat}{\\nat}}{\\boolean}",
-    "scripta-line": 1203
-  },
-  {
-    "latex-begin": 1687,
-    "latex-end": 1690,
-    "latex-line": 1689,
-    "latex-text": "(1) \\dfrac{\\nat \\to \\nat \\qquad \\dfrac{\\nat \\to \\boolean \\quad \\nat}{\\boolean}}{\\text{Stuck!}}; (2) \\dfrac{\\nat \\to \\nat \\qquad \\dfrac{\\nat \\to \\boolean \\quad \\nat}{\\boolean}}{\\text{Stuck!}}; (3) \\dfrac{\\nat \\to \\nat \\qquad \\dfrac{\\nat \\to \\boolean \\quad \\nat}{\\boolean}}{\\text{Stuck!}}; (4) \\dfrac{\\nat \\to \\nat \\qquad \\dfrac{\\nat \\to \\boolean \\quad \\nat}{\\boolean}}{\\text{Stuck!}}; (5) \\dfrac{\\nat \\to \\nat \\qquad \\dfrac{\\nat \\to \\boolean \\quad \\nat}{\\boolean}}{\\text{Stuck!}}; (6) \\dfrac{\\nat \\to \\nat \\qquad \\dfrac{\\nat \\to \\boolean \\quad \\nat}{\\boolean}}{\\text{Stuck!}}",
-    "scripta-line": 1208
-  },
-  {
-    "latex-begin": 1692,
-    "latex-end": 1695,
-    "latex-line": 1693,
-    "latex-text": "(1) In the second case, for \\(\\double\\; (\\isEven 3)\\), we reach a stage in computing the tree of types (from the leaves of the tree to the root); (2) In the second case, for \\(\\double\\; (\\isEven 3)\\), we reach a stage in computing the tree of types (from the leaves of the tree to the root)",
-    "scripta-line": 1211
-  },
-  {
-    "latex-begin": 1700,
-    "latex-end": 1702,
-    "latex-line": 1701,
+    "latex-begin": 1739,
+    "latex-end": 1741,
+    "latex-line": 1740,
     "latex-text": "We say that a formal system satisfies \\term{strong normalization} if every well-typed term reduces to normal form in finitely many steps. Both MLTT",
     "scripta-line": 1217
   },
   {
-    "latex-begin": 1707,
-    "latex-end": 1711,
-    "latex-line": 1711,
+    "latex-begin": 1746,
+    "latex-end": 1750,
+    "latex-line": 1750,
     "latex-text": "pair of reductions of \\(t\\), we say that the system is \\term{confluent} (or satisfies the Church-Rosser property).   MLTT and SLTC are both confluent.   This means that normal forms are unique ",
     "scripta-line": 1223
   },
   {
-    "latex-begin": 1741,
-    "latex-end": 1742,
-    "latex-line": 1742,
-    "latex-text": "(1) \\item \\textbf{\\term{ Disjontness.}}   If a type has multiple constructors, e.g. \\(\\zero\\) and \\(\\suc\\), their outputs cannot be equal, eg. \\(\\zero \\ne \\suc n\\) for any \\(n\\); (2) \\item \\textbf{\\term{ Disjontness.}}   If a type has multiple constructors, e.g. \\(\\zero\\) and \\(\\suc\\), their outputs cannot be equal, eg. \\(\\zero \\ne \\suc n\\) for any \\(n\\); (3) \\item \\textbf{\\term{ Disjontness.}}   If a type has multiple constructors, e.g. \\(\\zero\\) and \\(\\suc\\), their outputs cannot be equal, eg. \\(\\zero \\ne \\suc n\\) for any \\(n\\); (4) \\item \\textbf{\\term{ Disjontness.}}   If a type has multiple constructors, e.g. \\(\\zero\\) and \\(\\suc\\), their outputs cannot be equal, eg. \\(\\zero \\ne \\suc n\\) for any \\(n\\); (5) \\item \\textbf{\\term{ Disjontness.}}   If a type has multiple constructors, e.g. \\(\\zero\\) and \\(\\suc\\), their outputs cannot be equal, eg. \\(\\zero \\ne \\suc n\\) for any \\(n\\)",
+    "latex-begin": 1780,
+    "latex-end": 1781,
+    "latex-line": 1781,
+    "latex-text": "\\item \\textbf{\\term{ Disjontness.}}   If a type has multiple constructors, e.g. \\(\\zero\\) and \\(\\suc\\), their outputs cannot be equal, eg. \\(\\zero \\ne \\suc n\\) for any \\(n\\)",
     "scripta-line": 1250
   },
   {
-    "latex-begin": 1769,
-    "latex-end": 1770,
-    "latex-line": 1770,
-    "latex-text": "(1) \\item Totality.   Consdier the (Haskell) function \\(f\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } f ( n - 1)\\). It is \\textbf{\\term{ total}} over \\(\\nat\\): it terminates and is defined for all \\(n : \\nat\\). Now consider \\(g\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } g\\, n\\). This function is not total: it loops forever on input \\(n > 0\\).   In MLTT,   functions are total by design. The type checker will exclude functions with missing cases or which loop forever.   Thus non-total functions are not definable in Elm.; (2) \\item Totality.   Consdier the (Haskell) function \\(f\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } f ( n - 1)\\). It is \\textbf{\\term{ total}} over \\(\\nat\\): it terminates and is defined for all \\(n : \\nat\\). Now consider \\(g\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } g\\, n\\). This function is not total: it loops forever on input \\(n > 0\\).   In MLTT,   functions are total by design. The type checker will exclude functions with missing cases or which loop forever.   Thus non-total functions are not definable in Elm.; (3) \\item Totality.   Consdier the (Haskell) function \\(f\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } f ( n - 1)\\). It is \\textbf{\\term{ total}} over \\(\\nat\\): it terminates and is defined for all \\(n : \\nat\\). Now consider \\(g\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } g\\, n\\). This function is not total: it loops forever on input \\(n > 0\\).   In MLTT,   functions are total by design. The type checker will exclude functions with missing cases or which loop forever.   Thus non-total functions are not definable in Elm.",
+    "latex-begin": 1808,
+    "latex-end": 1809,
+    "latex-line": 1809,
+    "latex-text": "\\item Totality.   Consdier the (Haskell) function \\(f\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } f ( n - 1)\\). It is \\textbf{\\term{ total}} over \\(\\nat\\): it terminates and is defined for all \\(n : \\nat\\). Now consider \\(g\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } g\\, n\\). This function is not total: it loops forever on input \\(n > 0\\).   In MLTT,   functions are total by design. The type checker will exclude functions with missing cases or which loop forever.   Thus non-total functions are not definable in Elm.",
     "scripta-line": 1269
   },
   {
-    "latex-begin": 1777,
-    "latex-end": 1780,
-    "latex-line": 1778,
-    "latex-text": "(1) A model \\(\\cM\\) of a formal system \\(\\cF\\) is a structure-preserving ; (2) A model \\(\\cM\\) of a formal system \\(\\cF\\) is a structure-preserving ; (3) map \\(\\nu : \\cF \\to \\cA\\) where \\(\\cA\\) is some kind of algebraic object ; (4) map \\(\\nu : \\cF \\to \\cA\\) where \\(\\cA\\) is some kind of algebraic object ; (5) map \\(\\nu : \\cF \\to \\cA\\) where \\(\\cA\\) is some kind of algebraic object ",
-    "scripta-line": 1276
-  },
-  {
-    "latex-begin": 1784,
-    "latex-end": 1785,
-    "latex-line": 1785,
-    "latex-text": "\\item \\textbf{Consistency.} \\(\\cF\\) has at least one model.",
-    "scripta-line": 1280
-  },
-  {
-    "latex-begin": 1809,
-    "latex-end": 1811,
-    "latex-line": 1810,
-    "latex-text": "(1) Let \\(\\cA\\) the Heyting algebra of open sets of a topological space \\(X\\).   The   operations are union, intersection, and Heyting complement: If \\(U\\) is an open set, then \\(\\neg U\\) is the interior of the complement of the set-theoretic complement of \\(U\\).   A Heying model of a propositional calculus \\(\\cP\\) is a map \\(\\cO : \\cP \\to \\cA\\) that sends propositions to open sets; (2) Let \\(\\cA\\) the Heyting algebra of open sets of a topological space \\(X\\).   The   operations are union, intersection, and Heyting complement: If \\(U\\) is an open set, then \\(\\neg U\\) is the interior of the complement of the set-theoretic complement of \\(U\\).   A Heying model of a propositional calculus \\(\\cP\\) is a map \\(\\cO : \\cP \\to \\cA\\) that sends propositions to open sets; (3) Let \\(\\cA\\) the Heyting algebra of open sets of a topological space \\(X\\).   The   operations are union, intersection, and Heyting complement: If \\(U\\) is an open set, then \\(\\neg U\\) is the interior of the complement of the set-theoretic complement of \\(U\\).   A Heying model of a propositional calculus \\(\\cP\\) is a map \\(\\cO : \\cP \\to \\cA\\) that sends propositions to open sets; (4) Let \\(\\cA\\) the Heyting algebra of open sets of a topological space \\(X\\).   The   operations are union, intersection, and Heyting complement: If \\(U\\) is an open set, then \\(\\neg U\\) is the interior of the complement of the set-theoretic complement of \\(U\\).   A Heying model of a propositional calculus \\(\\cP\\) is a map \\(\\cO : \\cP \\to \\cA\\) that sends propositions to open sets; (5) Let \\(\\cA\\) the Heyting algebra of open sets of a topological space \\(X\\).   The   operations are union, intersection, and Heyting complement: If \\(U\\) is an open set, then \\(\\neg U\\) is the interior of the complement of the set-theoretic complement of \\(U\\).   A Heying model of a propositional calculus \\(\\cP\\) is a map \\(\\cO : \\cP \\to \\cA\\) that sends propositions to open sets; (6) and respects logical connectives on the left and union, intersection, and Heyting complement on the right.   One has \\(\\cO(T) = X\\) and \\(\\cO(F) = \\empty\\).   Moreover, axioms map to \\(\\cO(T)\\), and inference rules preserve truth: if the premises map to \\(\\cO(T)\\), then so does the conclusion.; (7) and respects logical connectives on the left and union, intersection, and Heyting complement on the right.   One has \\(\\cO(T) = X\\) and \\(\\cO(F) = \\empty\\).   Moreover, axioms map to \\(\\cO(T)\\), and inference rules preserve truth: if the premises map to \\(\\cO(T)\\), then so does the conclusion.; (8) and respects logical connectives on the left and union, intersection, and Heyting complement on the right.   One has \\(\\cO(T) = X\\) and \\(\\cO(F) = \\empty\\).   Moreover, axioms map to \\(\\cO(T)\\), and inference rules preserve truth: if the premises map to \\(\\cO(T)\\), then so does the conclusion.; (9) and respects logical connectives on the left and union, intersection, and Heyting complement on the right.   One has \\(\\cO(T) = X\\) and \\(\\cO(F) = \\empty\\).   Moreover, axioms map to \\(\\cO(T)\\), and inference rules preserve truth: if the premises map to \\(\\cO(T)\\), then so does the conclusion.",
-    "scripta-line": 1303
-  },
-  {
-    "latex-begin": 1813,
-    "latex-end": 1814,
-    "latex-line": 1814,
-    "latex-text": "(1) Consider the law of the excluded middle (LEM). It says that for all propositions \\(P\\), \\(P \\lor \\neg P\\) holds.   In such a system, \\(\\cO(P) \\cup \\neg \\cO(P) = X\\).   ; (2) Consider the law of the excluded middle (LEM). It says that for all propositions \\(P\\), \\(P \\lor \\neg P\\) holds.   In such a system, \\(\\cO(P) \\cup \\neg \\cO(P) = X\\).   ",
-    "scripta-line": 1306
-  },
-  {
-    "latex-begin": 1824,
-    "latex-end": 1827,
-    "latex-line": 1826,
-    "latex-text": "(1) \\cO (\\neg P) \\cup (P) = \\sett{x \\in \\bR}{ x < 0} \\cup \\sett{x \\in \\bR}{ x >  0} = \\sett{x \\in \\bR}{ x \\ne 0}; (2) \\cO (\\neg P) \\cup (P) = \\sett{x \\in \\bR}{ x < 0} \\cup \\sett{x \\in \\bR}{ x >  0} = \\sett{x \\in \\bR}{ x \\ne 0}; (3) \\cO (\\neg P) \\cup (P) = \\sett{x \\in \\bR}{ x < 0} \\cup \\sett{x \\in \\bR}{ x >  0} = \\sett{x \\in \\bR}{ x \\ne 0}; (4) \\cO (\\neg P) \\cup (P) = \\sett{x \\in \\bR}{ x < 0} \\cup \\sett{x \\in \\bR}{ x >  0} = \\sett{x \\in \\bR}{ x \\ne 0}; (5) \\cO (\\neg P) \\cup (P) = \\sett{x \\in \\bR}{ x < 0} \\cup \\sett{x \\in \\bR}{ x >  0} = \\sett{x \\in \\bR}{ x \\ne 0}; (6) \\cO (\\neg P) \\cup (P) = \\sett{x \\in \\bR}{ x < 0} \\cup \\sett{x \\in \\bR}{ x >  0} = \\sett{x \\in \\bR}{ x \\ne 0}; (7) \\cO (\\neg P) \\cup (P) = \\sett{x \\in \\bR}{ x < 0} \\cup \\sett{x \\in \\bR}{ x >  0} = \\sett{x \\in \\bR}{ x \\ne 0}",
-    "scripta-line": 1315
-  },
-  {
-    "latex-begin": 1895,
-    "latex-end": 1896,
-    "latex-line": 1896,
+    "latex-begin": 1934,
+    "latex-end": 1935,
+    "latex-line": 1935,
     "latex-text": "\\end{document}",
     "scripta-line": 1365
   }

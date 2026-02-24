@@ -9,7 +9,7 @@
 \newcommand{\bu}{\mathbf u}
 \newcommand{\bv}{\mathbf v}
 \newcommand{\bw}{\mathbf w}
-\newcommand{\bx}{\mathbf x}
+\newcommand{\bfx}{\mathbf x}
 \newcommand{\by}{\mathbf y}
 \newcommand{\sett}[2]{\{\  {#1} \ |\ {#2} \ \}}
 
@@ -75,8 +75,9 @@ the figure below, $f(x)$ increases as $x$ increases.  If the derivative
 is negative, $f(x)$ decreases as $x$ increases.
 
 
-| image
-https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/fa46a52c-79cc-4679-d90f-8006c8eb2b00/public Figure 1. Derivative as slope width:350]
+| image caption: Figure 1. Derivative as slope width:350
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/fa46a52c-79cc-4679-d90f-8006c8eb2b00/public
+
 
 If we have a formula for a function, it is natural
 to ask for a formula for its derivative. We will see how
@@ -86,7 +87,8 @@ to get such formulas in the next chapter.  There we will learn, for example, tha
 Consider the graph of a function $f(x)$ below.  Calculate
 the derivative of $f$ at  $x = 4, 6, 8$.  Do this by drawing little triangles and measuring the rise and run, as in the example above. (If you want, click on the image to open it in a new tab, then print it).
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/183e307c-10c7-4333-37d2-d0c1e283cd00/public width:350]
+| image caption: Figure 1. Derivative as slope width:350
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/183e307c-10c7-4333-37d2-d0c1e283cd00/public
 
 
 ## Differentiable functions
@@ -99,7 +101,8 @@ in the next chapter, when we give a rigorous definition of the derivative.
 
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/a2167390-f701-4fae-e3cc-62abe1036200/public width:300]
+| image caption: Figure 2. Non-differentiable function width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/a2167390-f701-4fae-e3cc-62abe1036200/public
 
 
 
@@ -118,7 +121,8 @@ For what values of $x$ is the function pictured below not differentiable?
 On which intervals is it convex?
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/24ff5ec6-e668-418b-2138-c9231bb7a400/public width:300]
+| image  width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/24ff5ec6-e668-418b-2138-c9231bb7a400/public
 
 
 Unless otherwise specified, we will assume that all the functions we
@@ -191,7 +195,8 @@ three possibilities, all illustrated in the figure below:
  thai means that the tangent line is horizontal.]
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/b1ce5ac8-7ce6-4db1-80b8-6a38af9f2200/public]
+| image
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/b1ce5ac8-7ce6-4db1-80b8-6a38af9f2200/public
 
 There is something else that we can read from these graphs.
 In (a), the case of an absolute minimum, the graph is convex
@@ -231,7 +236,8 @@ first derivative is increasing is to say that the slope of the tangent line
 is increasing as we travel from left to right.  That is, it is turning up.  Therefore graph is curved upwards, as in the figure below. (Notice how the slope of tangent line 2 is bigger than the slope of tangent line 1, and
 he slope of tangent line 3 is bigger than the slope of tangent line 2.)
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/35feb608-562e-492b-f51c-be8533740000/public width:300]
+| image width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/35feb608-562e-492b-f51c-be8533740000/public
 
 
 
@@ -239,7 +245,8 @@ Function with positive second derivative are [index convex] or (very roughly) "b
 points $A$ and $B$ of the graph lies above the graph between $A$ and $B$,
 as in the figure below.  The line joining $A$ to $B$ is the [index secant line].  The term comes from the Latin [i secare], "to cut."
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/212555fa-12d0-4616-3613-6aef577f8900/public width:300]
+| image width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/212555fa-12d0-4616-3613-6aef577f8900/public
 
  Our example suggests (but does not prove) the following result:
 
@@ -325,7 +332,8 @@ the left panel the red dots sliding down from $(2.0, 4.0)$
 give the values $(x_n, f(x_n))$.  In the right panel you see $x_n$
 plotted against $n$.
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/0e486899-d6c7-40a6-25df-46d48af11800/public  Gradient Descent]
+| image caption:Gradient Descent
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/0e486899-d6c7-40a6-25df-46d48af11800/public
 
 Here is the Python program that produced the table  Run it from the command line with `python gradient-descent-simplest.py`.
 
@@ -408,7 +416,8 @@ the better the approximation.  This is also the idea behind
 the formal definition of the derivative.
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/34f1934a-ab11-484e-edd0-36215c010f00/public width:350]
+| image width:350]
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/34f1934a-ab11-484e-edd0-36215c010f00/public
 
 | remark
 We are at the very beginning of our mathematiics + data science
@@ -459,7 +468,8 @@ $R$ satisfying $2 \le x \le 3$ is therefore $3.1$ We do this for the rest of $R$
 || equation
 \int_a^b f(x)dx \approx 20.7.
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/eea257c6-10f9-4db9-20cb-f93a7d727a00/public Figure 2. Integral as area width:350]
+| image caption:Figure 2. Integral as area width:350
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/eea257c6-10f9-4db9-20cb-f93a7d727a00/public
 
 | remark
 You might ask: can we get more accurate answers? One way to do
@@ -499,7 +509,8 @@ The probability that the error $\Delta \theta$ is less than $b$ but greater than
 P(a \le \Delta\theta_x \le b) = \int_a^b p(\theta) d\theta
 
 
-[image https://media.geeksforgeeks.org/wp-content/uploads/20230828135632/Probability-Density-Function.png width:300]
+| image caption:Figure 1. Probability distribution width:350
+https://media.geeksforgeeks.org/wp-content/uploads/20230828135632/Probability-Density-Function.png
 
 The German mathematician Carl Friederich Gauss discovered the
 probability distribution which governs these angular errors.  This distribtuion has the general form
@@ -514,7 +525,8 @@ is centered.  The standard deviation tells us to what extent the distribution is
 used distribitions, but beware: it does not apply to everything.
 
 
-[image https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/640px-Standard_deviation_diagram.svg.png width:400]
+| image caption:Standard deviation diagram width:400
+https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/640px-Standard_deviation_diagram.svg.png
 
 
 ## Summary
@@ -547,10 +559,11 @@ When $n = 2$, $n$-space is the Cartesian plane, as
 in the figure below.  The vector $(x_1, x_2) = (4,2)$
 corresponds to the point $P$: it is four units to the
 right of the origin $O$ and is two units up.  Here
-we think of $\bx = (x_1, x_2)$ as a [index position vector].
+we think of $\bfx = (x_1, x_2)$ as a [index position vector].
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ccdf9c04-5e8f-4a57-9291-d3fdb0133b00/public width:380]
+| image caption:Position vector in 2-space width:380
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ccdf9c04-5e8f-4a57-9291-d3fdb0133b00/public
 
 
 
@@ -561,7 +574,8 @@ set up three perpendicular axes, and use them to locate
 a point by giving three numbers, one for each axis.  See the figure below.
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/386570a0-e841-4dc9-e74d-2d4eaaa0dc00/public width:300]
+| image caption:Position vector in 3-space width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/386570a0-e841-4dc9-e74d-2d4eaaa0dc00/public
 
 
 The typical problem in data science involves
@@ -573,17 +587,18 @@ like distance and angle in 2-space and 3-space, for object,
 like lines and planes, circles and spheres. Because these formulas
 work in $n$-space, so do the notions just described.
 
-Let's begin with lengthg. The length of a vector $\bx = (x_1, x_2)$
+Let's begin with length. The length of a vector $\bfx = (x_1, x_2)$
 in 2-space is given by
 
 || equation
 || x || = \sqrt{ x_1^2 + x_2^2 }
 
 This is the Pythagorean theorem.  In the figure, we see that
-the length or [index norm] if the vector $\bx = (3,4)$ is
-$|| \bx || = 5$.
+the length or [index norm] if the vector $\bfx = (3,4)$ is
+$|| \bfx || = 5$.
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/133cef76-ec21-4325-577a-b90437823600/public width:300]
+| image caption:Position vector in 2-space width:380
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ccdf9c04-5e8f-4a57-9291-d3fdb0133b00/public
 
 The length of a vector in $n$-space is
 defined in the same way:
@@ -601,12 +616,13 @@ The numbers $x_i$ are called the [index components] or
 
 Once we have a notion of length, we have a notion
 of [index distance].  Suppose $P$ and $Q$, as in the figure
-below, are points in 2-space with position vectors $\bx = (x_1, x_2)$ and $\by = (y_1, y_2)$.  The distance from $P$ to $Q$ is
+below, are points in 2-space with position vectors $\bfx = (x_1, x_2)$ and $\by = (y_1, y_2)$.  The distance from $P$ to $Q$ is
 
 || equation
 d(P,Q) = \sqrt{(y_1 - x_1)^2 + (y_2 - x_2)^2}
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/232f19d6-44fc-4ed4-edc5-a579b0d1cb00/public]
+| image caption:Distance between two points in 2-space width:380
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/232f19d6-44fc-4ed4-edc5-a579b0d1cb00/public
 
 Once again, the formula makes sense for vectors in $n$-space:
 
@@ -618,20 +634,20 @@ the components of a vector.  Indeed, we can define the
 [index difference] of vectors like this:
 
 || equation
-\by - \bx = (y_1 - x_1, y_2 - x_2, \ldots , y_n - x_n)
+\by - \bfx = (y_1 - x_1, y_2 - x_2, \ldots , y_n - x_n)
 
 Then
 
 || equation
-d(P,Q) = || \bx - \by ||
+d(P,Q) = || \bfx - \by ||
 
 The difference of two vectors in $n$-space is the vector whose
 components are differences of corresponding components:
-$(\by - \bx)_i = y_i - x_i$. In the same way we define the
+$(\by - \bfx)_i = y_i - x_i$. In the same way we define the
 sum of vectors by adding their components:
 
 || equation
-\by + \bx = (y_1 + x_1, y_2 + x_2, \ldots , y_n + x_n)
+\by + \bfx = (y_1 + x_1, y_2 + x_2, \ldots , y_n + x_n)
 
 ## Dot Product and Angle
 
@@ -640,39 +656,40 @@ let's do angle.  For this we need  the [index dot product] of
 vectors,
 
 || equation
-\bx \cdot \by = x_1y_1 + x_2y_2 + \cdots + x_ny_n
+\bfx \cdot \by = x_1y_1 + x_2y_2 + \cdots + x_ny_n
 
 The dot product of vectors is not a vector, but
 rather a [index scalar], that is, a number.
 
 
-Consider now two vectors $\bx$ and $\by$, as in the figure
+Consider now two vectors $\bfx$ and $\by$, as in the figure
 below.  They enclose an angle $\theta$.  The two vectors
 are sides a triangle, where the third side runs from the
 head of one of the arrows to the head of the other.  The
-third side is the vector $\by - \bx$  (or rather that vector
-moved parallel to itself so that its tail rests on the head of $\bx$).  Let's compute the length of the "opposite side:"
+third side is the vector $\by - \bfx$  (or rather that vector
+moved parallel to itself so that its tail rests on the head of $\bfx$).  Let's compute the length of the "opposite side:"
 
 
 || aligned
-||\by - \bx ||^2 &= (\by - \bx) \cdot (\by -\bx ) \\
-  &= ||\by||^2 + ||\bx||^2 - 2(\by\cdot \bx)
+||\by - \bfx ||^2 &= (\by - \bfx) \cdot (\by -\bfx ) \\
+  &= ||\by||^2 + ||\bfx||^2 - 2(\by\cdot \bfx)
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/3941e24d-bfc8-4c7f-26e3-c1393e647800/public width:300]
+| image caption:Distance between two points in 2-space width:380
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/232f19d6-44fc-4ed4-edc5-a579b0d1cb00/public
 
 
 In the case $n = 2$ we can compute the length of the opposite
 side in another way, using the [index Law of Cosines]:
 
 || equation
-|| \by - \bx ||^2 = ||\by||^2 + ||\bx||^2
-  - 2||\by||\cdot ||\bx|| \cos\theta
+|| \by - \bfx ||^2 = ||\by||^2 + ||\bfx||^2
+  - 2||\by||\cdot ||\bfx|| \cos\theta
 
 Comparing the last two equations, we find that
 
 || equation
-\cos\theta = \frac{\bx \cdot \by}{||\bx|| \cdot ||\by||}
+\cos\theta = \frac{\bfx \cdot \by}{||\bfx|| \cdot ||\by||}
 
 
 
@@ -689,40 +706,40 @@ Perpendicular vectors are also said to be [b orthogonal]
 
 ## Scalar product and unit vectors
 
-Let $c$ be a scalar and $\bx = (x_1, x_2, \ldots, x_n)$
+Let $c$ be a scalar and $\bfx = (x_1, x_2, \ldots, x_n)$
 a vector.  Their [index scalar product]  is the vector
 
 || equation
-c\bx = (cx_1, cx_2, \ldots, cx_n)
+c\bfx = (cx_1, cx_2, \ldots, cx_n)
 
 That is, the $i$-th component of the scalar product
-is the $c$ times the $i$-th compoent of $\bx$.  In equations,
-$(c\bx)_i = c\bx_i$.  The effect of multiplying a vector
+is the $c$ times the $i$-th compoent of $\bfx$.  In equations,
+$(c\bfx)_i = c\bfx_i$.  The effect of multiplying a vector
 by a scalar is to stretch it or shrink it, or to do one
 of those things and also reverse its direction (if $c$ is negative).
 
 
 
 | problem
-Let $\bx = (2,4)$. On graph paper, plot the vectors
-$\bx$, $2\bx$,  $0.5\bx$, and $(-1)\bx$.  In each case,
+Let $\bfx = (2,4)$. On graph paper, plot the vectors
+$\bfx$, $2\bfx$,  $0.5\bfx$, and $(-1)\bfx$.  In each case,
 indicate whether scalar product is bigger, smaller, or reversed.
 
 | problem
-Show that $ || c\bx ||
-  = |c|\cdot ||\bx||$
+Show that $ || c\bfx ||
+  = |c|\cdot ||\bfx||$
 
 A [index unit vector] is a vector of unit length.  Given
-any nonzero vector $\bx$, there is a unique unit vector $\hat{\bx}$ that points in the same direction as $\bx$:
+any nonzero vector $\bfx$, there is a unique unit vector $\hat{\bfx}$ that points in the same direction as $\bfx$:
 
 || equation
-\hat{\bx} = \frac{\bx}{|| \bx ||}
+\hat{\bfx} = \frac{\bfx}{|| \bfx ||}
 
-That is, $\hat{\bx}$ is the scalar product of $\bx$ and the scalar $1/||x||$.
+That is, $\hat{\bfx}$ is the scalar product of $\bfx$ and the scalar $1/||x||$.
 
 | problem
 Find the unit vectors associated to the following vectors:
-(a) $\bx = (3,4)$, (b) $\bx = (1, 1)$, (c) $\bx = (1,2,3,4)$.
+(a) $\bfx = (3,4)$, (b) $\bfx = (1, 1)$, (c) $\bfx = (1,2,3,4)$.
 
 
 
@@ -746,7 +763,9 @@ we might find that the data consisted of two clusters of points —
 the big point cloud is really two smaller clouds as in the figure below.
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/61fa5b5c-1109-4692-d353-ae559b183800/public width:300]
+
+| image caption:Two clusters of points in 10-space width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/61fa5b5c-1109-4692-d353-ae559b183800/public
 
 How might we decribe this clustering if it exists? In the figure, we see that the points cluster inside two circles.  The first cluster is described by the inequality
 
@@ -781,7 +800,8 @@ The the output of this algorithm was fed in to another algorithm which finds a g
 so that it can be visualized.  This phase uses PCA (principal component analysis), something we will study later. The projected data was plotted using matplotlib.
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/9b4737fc-472b-4492-71b9-461a6412cc00/public]
+| image caption:Projected data from 5-space to 2-space width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/9b4737fc-472b-4492-71b9-461a6412cc00/public
 
 
 
@@ -826,15 +846,15 @@ a_i = (a_{i1}, a_{i2}, \ldots a_{in})
 
 The matrix $A$
 contains everthing that you need to know to compute the projection
-$\by = p(\bx)$
+$\by = p(\bfx)$
 
 
 
 There is something else to notice: The components of the output vector $\by$ are dot products
-of the row vectors $\ba_i$ with input vector $\bx$:
+of the row vectors $\ba_i$ with input vector $\bfx$:
 
 || equation
-\by_i = \ba_i \cdot \bx
+\by_i = \ba_i \cdot \bfx
 
 To put this in context, think again about the"coordinate projections" $p_{ij}$.
 They fit into this scheme as follows.  Let $e_i$ be the vector
@@ -878,12 +898,13 @@ $\bu = (\cos\theta, \sin\theta)$ is a unit vector, so
 
 
 || equation
-q(\bx) = \bx\cdot \bu
+q(\bfx) = \bfx\cdot \bu
 
 fits the general pattern.
 
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/2c91b93a-ab13-43a9-34c2-97eca7d41600/public  width:300]
+| image caption:Projection of points in 2-space width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/2c91b93a-ab13-43a9-34c2-97eca7d41600/public
 
 The big question, of course, is how do we find
 these good projections.  That is what the Principal
@@ -908,7 +929,7 @@ A = \begin{pmatrix}
 Consider also the [index column vector]
 
 || equation
-\bx = \begin{pmatrix}
+\bfx = \begin{pmatrix}
  1 \\
  1 \\
  1 \\
@@ -916,12 +937,12 @@ Consider also the [index column vector]
  \end{pmatrix}
 
 Let $\by$ be the column vector whose components are the
-dot products of the rows of $A$ with $\bx$:
+dot products of the rows of $A$ with $\bfx$:
 
 || equation
 \by = \begin{pmatrix}
-  {\ba}_1\cdot \bx \\
-  {\ba}_2\cdot \bx
+  {\ba}_1\cdot \bfx \\
+  {\ba}_2\cdot \bfx
 \end{pmatrix}
 = \begin{pmatrix}
   2 \ \\
@@ -931,12 +952,12 @@ dot products of the rows of $A$ with $\bx$:
 We can write this more compactly as the [index matrix product]
 
 || equation
-\by = A\bx
+\by = A\bfx
 
-The product is defined by defining the components of $A\bx$:
+The product is defined by defining the components of $A\bfx$:
 
 || equation
-(A\bx)_i = \ba_i \cdot \bx
+(A\bfx)_i = \ba_i \cdot \bfx
 
 
 ## Coordinate Changes
@@ -979,7 +1000,8 @@ is represented by a 15-dimensional vector.  The data itself
 is given by a matrix with 175 rows and 15 columns — one row
 for each tooth.
 
-[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/7abcafac-fe48-468a-9631-ad43c58f5400/public width:300]
+| image caption:175 fossil teeth in 15-space width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/7abcafac-fe48-468a-9631-ad43c58f5400/public
 
 A data set such as the one at hand can be thought of as
 a cloud of points in a 175-dimensional space. If it were

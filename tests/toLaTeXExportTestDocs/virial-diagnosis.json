@@ -10,7 +10,7 @@
       "scriptaLine": 44,
       "scriptaContext": "# Derivation\n\nTo explain the theorem, consider first the [term moment of inertia] of the syste",
       "latexLine": 264,
-      "latexContext": "To explain the theorem, consider first the \\term{moment of inertia} of the syste\n\n%%% Line 46",
+      "latexContext": "%%% Line 44\nTo explain the theorem, consider first the \\term{moment of inertia} of the syste\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
       "explanation": "Undefined control sequence(s): \\term",

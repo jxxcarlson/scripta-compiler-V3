@@ -876,12 +876,19 @@ toLaTeXNewCommands input =
 
 
 
--- Convert a single simple macro line to LaTeX newcommand
+-- Convert a single macro line to LaTeX newcommand.
+-- Handles both legacy LaTeX-style (\newcommand{...}{...})
+-- and new ETeX-style (name : body) definitions.
 
 
 simpleMacroToLaTeX : String -> String
 simpleMacroToLaTeX line =
-    if String.contains ":" line then
+    if String.startsWith "\\newcommand" line || String.startsWith "\\renewcommand" line then
+        -- Legacy LaTeX-style: pass through verbatim
+        line
+
+    else if String.contains ":" line then
+        -- New ETeX-style: name : body
         case parseSimpleMacroWithContext [] line of
             Just ( name, MacroBody arity _ ) ->
                 let

@@ -1316,7 +1316,7 @@ blockDict mathMacroDict =
         , ( "endNumberedBlock", \_ _ _ -> "\\end{enumerate}" )
         , ( "beginDescriptionBlock", \_ _ _ -> "\\begin{description}" )
         , ( "endDescriptionBlock", \_ _ _ -> "\\end{description}" )
-        , ( "mathmacros", \_ _ body -> body ++ "\nHa ha ha!" )
+        , ( "mathmacros", \_ _ body -> body |> ETeX.Transform.toLaTeXNewCommands )
         , ( "setcounter", \_ _ _ -> "" )
         , ( "bibliography", \_ _ _ -> "" )
         , ( "bibitem", \_ args body -> exportBibitem args body )

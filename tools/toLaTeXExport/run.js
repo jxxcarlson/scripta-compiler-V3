@@ -72,7 +72,7 @@ async function main() {
     });
 
     try {
-      const res = await httpRequest(PDF_SERVER + "/pdf", {
+      const res = await httpRequest(PDF_SERVER + "/tex", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,6 +82,13 @@ async function main() {
 
       console.log("PDF server responded:", res.status);
       const result = JSON.parse(res.body);
+
+      // Write the server's final LaTeX (after PDF pipeline) as FILE-2.tex
+      if (result.tex) {
+        const tex2Path = path.join(OUTPUT_DIR, basename + "-2.tex");
+        fs.writeFileSync(tex2Path, result.tex);
+        console.log("Wrote pipeline LaTeX:", tex2Path);
+      }
 
       const errorsPath = path.join(OUTPUT_DIR, basename + "-errors.json");
 

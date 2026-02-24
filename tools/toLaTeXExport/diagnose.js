@@ -6,6 +6,114 @@ const path = require("path");
 const DOCS_DIR = path.join(__dirname, "..", "..", "tests", "toLaTeXExportTestDocs");
 
 // ---------------------------------------------------------------------------
+// Known commands — sourced from src/ETeX/KaTeX.elm (513 commands)
+// plus standard LaTeX text-mode commands used by the exporter
+// ---------------------------------------------------------------------------
+
+// From ETeX.KaTeX: greekLetters, binaryOperators, relationSymbols, arrows,
+// delimiters, bigOperators, mathFunctions, accents, fonts, spacing,
+// logicAndSetTheory, miscSymbols, fractions, binomials, roots, textOperators
+const KATEX_COMMANDS = [
+  // Greek letters (lowercase)
+  "alpha","beta","gamma","delta","epsilon","varepsilon","zeta","eta","theta",
+  "vartheta","iota","kappa","varkappa","lambda","mu","nu","xi","pi","varpi",
+  "rho","varrho","sigma","varsigma","tau","upsilon","phi","varphi","chi","psi","omega",
+  // Greek letters (uppercase)
+  "Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Upsilon","Phi","Psi","Omega",
+  "digamma","varGamma","varDelta","varTheta","varLambda","varXi","varPi",
+  "varSigma","varUpsilon","varPhi","varPsi","varOmega",
+  // Binary operators
+  "pm","mp","times","div","cdot","ast","star","circ","bullet","oplus","ominus",
+  "otimes","oslash","odot","dagger","ddagger","vee","lor","wedge","land","cap",
+  "cup","setminus","smallsetminus","triangleleft","triangleright","bigtriangleup",
+  "bigtriangledown","lhd","rhd","unlhd","unrhd","amalg","uplus","sqcap","sqcup",
+  "boxplus","boxminus","boxtimes","boxdot","leftthreetimes","rightthreetimes",
+  "curlyvee","curlywedge","dotplus","divideontimes","doublebarwedge",
+  // Relation symbols
+  "leq","le","geq","ge","neq","ne","sim","simeq","approx","cong","equiv","prec",
+  "succ","preceq","succeq","ll","gg","subset","supset","subseteq","supseteq",
+  "nsubseteq","nsupseteq","sqsubset","sqsupset","sqsubseteq","sqsupseteq","in",
+  "ni","notin","notni","propto","varpropto","perp","parallel","nparallel","smile",
+  "frown","doteq","vdash","vDash","Vdash","models",
+  // Arrows
+  "leftarrow","gets","rightarrow","to","leftrightarrow","Leftarrow","Rightarrow",
+  "Leftrightarrow","iff","uparrow","downarrow","updownarrow","Uparrow","Downarrow",
+  "Updownarrow","mapsto","hookleftarrow","hookrightarrow","leftharpoonup",
+  "rightharpoonup","leftharpoondown","rightharpoondown","rightleftharpoons",
+  "longleftarrow","longrightarrow","longleftrightarrow","Longleftarrow","impliedby",
+  "Longrightarrow","implies","Longleftrightarrow","longmapsto","nearrow","searrow",
+  "swarrow","nwarrow","xrightarrow","xleftarrow",
+  // Delimiters
+  "lbrace","rbrace","lbrack","rbrack","langle","rangle","vert","Vert","lvert",
+  "rvert","lVert","rVert","lfloor","rfloor","lceil","rceil",
+  // Big operators
+  "sum","prod","coprod","bigcup","bigcap","bigvee","bigwedge","bigoplus",
+  "bigotimes","bigodot","biguplus","bigsqcup","int","oint","iint","iiint",
+  // Math functions
+  "sin","cos","tan","cot","sec","csc","sinh","cosh","tanh","coth","sech","csch",
+  "arcsin","arccos","arctan","ln","log","lg","exp","deg","det","dim","hom","ker",
+  "lim","liminf","limsup","max","min","sup","inf","Pr","gcd","lcm","arg","mod",
+  "bmod","pmod",
+  // Accents
+  "hat","widehat","check","widecheck","tilde","widetilde","acute","grave","dot",
+  "ddot","breve","bar","vec","mathring","overline","underline",
+  // Fonts
+  "mathrm","mathit","mathbf","boldsymbol","pmb","mathbb","Bbb","mathcal","cal",
+  "mathscr","scr","mathfrak","frak","mathsf","sf","mathtt","tt","mathnormal",
+  "text","textbf","textit","textrm","textsf","texttt","textnormal","operatorname",
+  // Spacing
+  "quad","qquad","space","thinspace","medspace","thickspace","enspace",
+  "phantom","hphantom","vphantom","kern","hskip","hspace","mkern","mskip",
+  // Logic and set theory
+  "forall","exists","nexists","complement","mid","nmid","emptyset","varnothing",
+  "neg","lnot",
+  // Misc symbols
+  "infty","aleph","partial","nabla","Box","square","triangle","angle","prime",
+  "degree","top","bot","clubsuit","diamondsuit","heartsuit","spadesuit","ldots",
+  "cdots","ddots","vdots",
+  // Fractions, binomials, roots
+  "frac","dfrac","tfrac","cfrac","over","binom","dbinom","tbinom","sqrt",
+  // Text operators
+  "not","cancel","bcancel","xcancel","sout","overset","underset","stackrel","substack",
+  // Environments (appear after \begin/\end)
+  "pmatrix","bmatrix","vmatrix","Vmatrix","cases",
+];
+
+// Standard LaTeX text-mode commands used by the exporter
+const LATEX_TEXT_COMMANDS = [
+  "textbf","textit","emph","lstinline","item","bibitem","index","label","ref",
+  "eqref","section","subsection","subsubsection","chapter","begin","end","href",
+  "url","cite","includegraphics","centering","caption","footnote","par","newline",
+  "clearpage","newpage","tableofcontents","maketitle","makeindex","printindex",
+  "textcolor","scalebox","usepackage","documentclass","title","author","date",
+  "textwidth","linewidth","columnwidth","paperwidth",
+  "vspace","hfill","noindent","bigskip","medskip","smallskip",
+  "errorHighlight", // parser error marker — handled by parse-error-passthrough rule
+  "markwith","anchor","ilink","strong","italic","strike","hide",
+  "hang","compactItem","code","ellie","imagecenter","imagefloat",
+  "red","blue","violet","green","gray","magenta","cyan","orange","pink","black",
+  "u","st",
+];
+
+const KNOWN_COMMANDS = new Set(
+  [...KATEX_COMMANDS, ...LATEX_TEXT_COMMANDS].map((c) => "\\" + c)
+);
+
+// Extract user-defined macro names from a .scripta file's mathmacros block
+function extractUserMacros(scriptaPath) {
+  const fs = require("fs");
+  if (!fs.existsSync(scriptaPath)) return new Set();
+  const src = fs.readFileSync(scriptaPath, "utf-8");
+  const macros = new Set();
+  const re = /\\newcommand\{\\([a-zA-Z]+)\}/g;
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    macros.add("\\" + m[1]);
+  }
+  return macros;
+}
+
+// ---------------------------------------------------------------------------
 // Error classification rules
 // ---------------------------------------------------------------------------
 
@@ -45,7 +153,14 @@ const RULES = [
   {
     category: "math-mode",
     pattern: "missing-dollar",
-    test: (latexText) => /[_^]/.test(latexText) && !latexText.includes("\\lstinline") && !latexText.includes("$"),
+    test: (latexText) => /[_^]/.test(latexText)
+      && !latexText.includes("\\lstinline")
+      && !latexText.includes("$")
+      && !latexText.includes("\\(")
+      && !latexText.includes("\\begin{equation}")
+      && !latexText.includes("\\begin{align}")
+      && !latexText.includes("\\begin{pmatrix}")
+      && !latexText.includes("\\begin{bmatrix}"),
     explanation: "Math characters (^ or _) appear outside math mode",
     fixLocation: "src/Render/Export/LaTeX.elm — mapChars2 (line 1179) or inline code handler",
     fixHint:
@@ -71,19 +186,12 @@ const RULES = [
   {
     category: "undefined-command",
     pattern: "undefined-control-sequence",
-    test: (latexText) => {
-      // Catch unknown commands that aren't standard LaTeX
+    // This rule receives userMacros as a third argument via classify()
+    test: (latexText, _scriptaText, userMacros) => {
       const unknowns = latexText.match(/\\[a-zA-Z]+/g) || [];
-      const known = new Set([
-        "\\textbf", "\\textit", "\\emph", "\\lstinline", "\\item",
-        "\\bibitem", "\\index", "\\label", "\\ref", "\\eqref",
-        "\\section", "\\subsection", "\\subsubsection", "\\chapter",
-        "\\begin", "\\end", "\\href", "\\url", "\\cite",
-        "\\includegraphics", "\\centering", "\\caption",
-        "\\footnote", "\\par", "\\newline", "\\\\",
-        "\\errorHighlight", // handled by parse-error-passthrough rule
-      ]);
-      const found = [...new Set(unknowns.filter((cmd) => !known.has(cmd)))];
+      const found = [...new Set(unknowns.filter((cmd) =>
+        !KNOWN_COMMANDS.has(cmd) && !(userMacros && userMacros.has(cmd))
+      ))];
       return found.length > 0 ? found : false;
     },
     explanation: "LaTeX output contains a control sequence not in the standard set",
@@ -99,7 +207,7 @@ const RULES = [
 // Classification
 // ---------------------------------------------------------------------------
 
-function classify(errorEntry, scriptaLines, latexLines) {
+function classify(errorEntry, scriptaLines, latexLines, userMacros) {
   const latexText = errorEntry["latex-text"] || "";
   const scriptaLine = errorEntry["scripta-line"];
   const latexLine = errorEntry["latex-line"];
@@ -112,7 +220,7 @@ function classify(errorEntry, scriptaLines, latexLines) {
   // A rule's test() returns truthy on match. For undefined-command it returns
   // the array of unknown commands; for others it returns true/false.
   for (const rule of RULES) {
-    const result = rule.test(latexText);
+    const result = rule.test(latexText, null, userMacros);
     if (result) {
       const entry = {
         scriptaLine,
@@ -203,7 +311,7 @@ function runSummary() {
 function runDiagnosis(basename) {
   const errorsPath = path.join(DOCS_DIR, basename + "-errors.json");
   const scriptaPath = path.join(DOCS_DIR, basename + ".scripta");
-  const texPath = path.join(DOCS_DIR, basename + ".tex");
+  const texPath = path.join(DOCS_DIR, basename + "-2.tex");
   const outputPath = path.join(DOCS_DIR, basename + "-diagnosis.json");
 
   // Check required files exist
@@ -242,10 +350,13 @@ function runDiagnosis(basename) {
     ? fs.readFileSync(texPath, "utf-8").split("\n")
     : [];
 
+  // Extract user-defined macros from the .scripta file to avoid false positives
+  const userMacros = extractUserMacros(scriptaPath);
+
   // Classify each error
   const diagnosed = errorsRaw.map((entry, i) => ({
     id: i + 1,
-    ...classify(entry, scriptaLines, latexLines),
+    ...classify(entry, scriptaLines, latexLines, userMacros),
   }));
 
   // Aggregate categories

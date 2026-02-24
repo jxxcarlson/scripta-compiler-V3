@@ -10,7 +10,7 @@
       "scriptaLine": 108,
       "scriptaContext": "\n\n| code indent:4",
       "latexLine": 378,
-      "latexContext": "\n%%% Line 128\nA paragraph, like the one below, is a kind of block.",
+      "latexContext": "  -------------\n\\end{verbatim}\n",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",

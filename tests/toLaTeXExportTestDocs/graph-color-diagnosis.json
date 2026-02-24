@@ -1,35 +1,17 @@
 {
   "file": "graph-color",
-  "totalErrors": 8,
+  "totalErrors": 5,
   "categories": {
-    "undefined-command": 4,
     "unclassified": 2,
-    "math-mode": 2
+    "undefined-command": 3
   },
   "errors": [
     {
       "id": 1,
-      "scriptaLine": 37,
-      "scriptaContext": "\\Gamma = (E \\xrightarrow{s, t} V)\n\nA [index graph] is a functor $G: \\Gamma \\to \\Set$.  Consider, ",
-      "latexLine": 253,
-      "latexContext": "A \\index{graph}\\textit{graph} is a functor \\(G: \\Gamma \\to \\Set\\).   Consider, \nfor example, the graph in Figure \\ref{abcd-y-graph} below:\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\Gamma, \\to, \\Set",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\Gamma",
-        "\\to",
-        "\\Set"
-      ]
-    },
-    {
-      "id": 2,
       "scriptaLine": 58,
       "scriptaContext": "In this case, $G$ is the functor wiiith \n\n|| aligned",
-      "latexLine": 268,
-      "latexContext": "\\end{align}\n\n%%% Line 62",
+      "latexLine": 271,
+      "latexContext": "G(E) &= \\set{ab, bc, bd}\n\\end{align}\n",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",
@@ -37,28 +19,11 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 3,
-      "scriptaLine": 71,
-      "scriptaContext": "Thus $G(s)(ab) = a$, $G(t)(ab) = b$, etc.\n\nLet $\\op{Graph} = [\\Gamma, \\Set]$ be the (functor) category of directed graphs.  Then a morphism of graphs is a natural",
-      "latexLine": 284,
-      "latexContext": "Let \\(\\op{Graph} = [\\Gamma, \\Set]\\) be the (functor) category of directed graphs.   Then a morphism of graphs is a natural\ntransformation of functors \\(\\eta\\).   Thus, if \\(G\\) and \\(G'\\) are graphs, and \\(\\eta : G \\to G'\\) is a morphism, then \n\\(\\eta_{E} : G(E) \\to G'(E)\\) maps edges of the first graph",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\op, \\Gamma, \\Set",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\op",
-        "\\Gamma",
-        "\\Set"
-      ]
-    },
-    {
-      "id": 4,
+      "id": 2,
       "scriptaLine": 108,
       "scriptaContext": "$\\eta_{E}(bc) = 23$, etc.\n\n| quiver ",
-      "latexLine": 331,
-      "latexContext": "\\end{tikzcd}\\]\n\n%%% Line 135",
+      "latexLine": 334,
+      "latexContext": "\\end{tikzcd}\n\\end{tikzcd}\\]\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
       "explanation": "Undefined control sequence(s): \\arrow",
@@ -69,11 +34,11 @@
       ]
     },
     {
-      "id": 5,
+      "id": 3,
       "scriptaLine": 147,
       "scriptaContext": "with red and green, as indicated in Figure [ref fig-colored-graph].\n\n| quiver expandable",
-      "latexLine": 358,
-      "latexContext": "\\end{tikzcd}\\]\n\n%%% Line 164",
+      "latexLine": 361,
+      "latexContext": "\t\\arrow[from=2-3, to=3-5]\n\\end{tikzcd}\\]\n",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",
@@ -81,47 +46,35 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 6,
-      "scriptaLine": 164,
-      "scriptaContext": "\n\nLet $C_n : \\op{Graph} \\to \\Set$ be the functor which assigns to a graph the corresponding set of $n$-colorings.",
-      "latexLine": 361,
-      "latexContext": "Let \\(C_n : \\op{Graph} \\to \\Set\\) be the functor which assigns to a graph the corresponding set of \\(n\\)-colorings.\n(To make this statement precise, we assume that colors are \ntaken from a fixed but infinite set of color names.   ",
-      "category": "math-mode",
-      "pattern": "missing-dollar",
-      "explanation": "Math characters (^ or _) appear outside math mode",
-      "fixLocation": "src/Render/Export/LaTeX.elm — mapChars2 (line 1179) or inline code handler",
-      "fixHint": "Either the source text contains math characters that should be in a [code] or [math] element, or mapChars2 needs to escape them."
-    },
-    {
-      "id": 7,
+      "id": 4,
       "scriptaLine": 172,
       "scriptaContext": "famous theorem asserts that every planar graph is 4-colorable.\n\nAn $n$-coloring $c$ is a ",
-      "latexLine": 371,
-      "latexContext": "function \\(c: G \\to \\set{1, \\ldots, n}\\).   If \\(\\phi : G' \\to G\\)\nis a morphism, then \\(c \\circ \\phi\\) is an \\(n\\)-coloring of \\(G'\\).\n",
+      "latexLine": 374,
+      "latexContext": "An \\(n\\)-coloring \\(c\\) is a \nfunction \\(c: G \\to \\set{1, \\ldots, n}\\).   If \\(\\phi : G' \\to G\\)\nis a morphism, then \\(c \\circ \\phi\\) is an \\(n\\)-coloring of \\(G'\\).",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\to, \\set, \\ldots, \\phi",
+      "explanation": "Undefined control sequence(s): \\set",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
       "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
       "unknownCommands": [
-        "\\to",
-        "\\set",
-        "\\ldots",
-        "\\phi"
+        "\\set"
       ]
     },
     {
-      "id": 8,
+      "id": 5,
       "scriptaLine": 206,
       "scriptaContext": "\n\nLet $K_n$ be the graph with vertices $\\set{1, \\ldots, n}$",
-      "latexLine": 402,
-      "latexContext": "Let \\(K_n\\) be the graph with vertices \\(\\set{1, \\ldots, n}\\)\nand with edges \\(ij\\), for all \\(i < j\\).   Thus \\(K_4\\) is isomorphic\nto the graph of Figure \\ref{complete-graph-4}. ",
-      "category": "math-mode",
-      "pattern": "missing-dollar",
-      "explanation": "Math characters (^ or _) appear outside math mode",
-      "fixLocation": "src/Render/Export/LaTeX.elm — mapChars2 (line 1179) or inline code handler",
-      "fixHint": "Either the source text contains math characters that should be in a [code] or [math] element, or mapChars2 needs to escape them."
+      "latexLine": 405,
+      "latexContext": "%%% Line 206\nLet \\(K_n\\) be the graph with vertices \\(\\set{1, \\ldots, n}\\)\nand with edges \\(ij\\), for all \\(i < j\\).   Thus \\(K_4\\) is isomorphic",
+      "category": "undefined-command",
+      "pattern": "undefined-control-sequence",
+      "explanation": "Undefined control sequence(s): \\set",
+      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\set"
+      ]
     }
   ],
-  "summary": "8 errors across 3 categories. Breakdown: undefined-command (4), unclassified (2), math-mode (2)"
+  "summary": "5 errors across 2 categories. Breakdown: undefined-command (3), unclassified (2)"
 }
