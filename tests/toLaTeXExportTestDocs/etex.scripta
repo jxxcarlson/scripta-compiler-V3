@@ -1,0 +1,8 @@
+| title
+ETeX Test
+
+| mathmacros
+brac: langle #1 | #2 rangle
+
+| equation
+frac(1,2) ne brac(4,5)

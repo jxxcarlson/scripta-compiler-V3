@@ -203,6 +203,7 @@ standardPackages =
 \\usepackage{amscd}
 
 \\usepackage{fancyvrb} %% for inline verbatim
+\\usepackage{makeidx}
 
 %% Chemistry
 \\usepackage[version=4]{mhchem} % for \\ce

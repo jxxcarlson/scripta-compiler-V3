@@ -1,0 +1,50 @@
+| title
+Index Test
+
+| image expandable caption:Jellyfish float:left width:70
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/5c12dfcf-0698-4e0b-733b-f9abf2bfff00/public
+
+| paragraph padding-right:3
+The tiny image of jellyfish that you see on your left is put there using an [index image block] . Click on the
+image to expand it. Click on the expanded image to return the view you ser here. Image blocks have a lot of
+options. Lets begin with the simplest case, no option at all:
+
+| code
+| image
+https://imagedelivery.net/9U-0Y4s...
+
+It has the form
+
+| code
+HEADER
+BODY
+
+"have  things like this: $4\\heartsuit, 5\\diamondsuit, 6\\clubsuit, 2\\spadesuit$. We can gather them in to
+various collections
+
+
+### Blocks
+
+| image expandable caption:Jellyfish float:left width:70
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/5c12dfcf-0698-4e0b-733b-f9abf2bfff00/public
+
+| paragraph padding-right:3
+The tiny image of jellyfish that you see on your left is put
+there using an [index image block] . Click on the image to
+expand it. Click on the expanded image to return the view you
+ser here. Image blocks have a lot of options. Lets begin with
+the simplest case, no option at all:
+
+| code
+| image
+https://imagedelivery.net/9U-0Y4s...
+
+It has the form
+
+| code
+HEADER
+BODY
+
+In this case, the header is the single line [code | image ] .
+| The body is the line [code https://imagedelivery.net... ]
+| the "internet address" of the image.

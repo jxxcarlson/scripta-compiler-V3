@@ -1223,6 +1223,7 @@ macroDict =
         , ( "par", \_ -> par )
         , ( "eqref", \_ -> eqref )
         , ( "mathref", \_ -> eqref )
+        , ( "index", \_ -> index )
         , ( "index_", \_ _ -> blindIndex )
         , ( "image", Render.Export.Image.export )
         , ( "vspace", \_ -> vspace )
@@ -1415,6 +1416,15 @@ markwith exprs =
             Render.Export.Util.getOneArg exprs
     in
     [ "\\markwith{", arg, "}" ] |> String.join ""
+
+
+index : List Expression -> String
+index exprs =
+    let
+        args =
+            Render.Export.Util.getArgs exprs |> String.join " "
+    in
+    [ "\\index{", args, "}", "\\textit{", args, "}" ] |> String.join ""
 
 
 ilink : List Expression -> String

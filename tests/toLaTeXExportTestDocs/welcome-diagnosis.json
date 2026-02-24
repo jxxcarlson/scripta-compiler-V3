@@ -1,7 +1,22 @@
 {
   "file": "welcome",
-  "totalErrors": 0,
-  "categories": {},
-  "errors": [],
-  "summary": "No errors."
+  "totalErrors": 1,
+  "categories": {
+    "unclassified": 1
+  },
+  "errors": [
+    {
+      "id": 1,
+      "scriptaLine": 108,
+      "scriptaContext": "\n\n| code indent:4",
+      "latexLine": 378,
+      "latexContext": "\n%%% Line 128\nA paragraph, like the one below, is a kind of block.",
+      "category": "unclassified",
+      "pattern": "unknown",
+      "explanation": "Error did not match any known pattern",
+      "fixLocation": "src/Render/Export/LaTeX.elm",
+      "fixHint": "Inspect the latex-text field manually to determine the root cause."
+    }
+  ],
+  "summary": "1 errors across 1 categories. Breakdown: unclassified (1)"
 }

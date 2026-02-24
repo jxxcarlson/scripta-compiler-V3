@@ -211,142 +211,18 @@ test-author
 
 \maketitle
 
-\tableofcontents
+%%% Line 3
+\newcommand{\brac}[2]{\langle #1 | #2 \rangle}
 
 
 
 %%% Line 3
 
 
-%%% Line 7
-
-
-%%% Line 16
-\par\vspace{7.5pt}
-
-%%% Line 18
-\textit{Discussion from Weinberg, Introduction to Modern Physics, p. 125}
-
-%%% Line 20
-De Broglie thought that if an electromagnetic wave can sometimes
-be interpreted as a stream of particles --- photons --- then a particle
-like the electron might also be viewed as a wave.   Recall that
-the energy of a photon is given by \(E = \hbar\omega\) and that
-that its momentum is given by \(\mathbf{p} = \hbar \mathbf{k}\).
-These are the Planck-Einstein and de Broglie relations, respectively.   
-
-%%% Line 27
-\section{Electron waves} \label{electron-waves}
-
-%%% Line 29
-De Broglie suggested that an electron consists of a wave packet
-built of plane waves 
-
-%%% Line 32
+%%% Line 6
 \begin{equation}
-\label{electron-wave}
-\psi_{\mathbf{p}} \propto \exp [i\mathbf{p}\cdot\mathbf{x}/\hbar - iE(\mathbf{p})t/\hbar ]
+\frac{1}{2} \ne \brac{4}{5}
 \end{equation}
-
-%%% Line 35
-where
-
-%%% Line 37
-\begin{equation}
-\label{energy-formula}
-E(\mathbf{p})  = \sqrt{m_e^2c^4 + \mathbf{p}^2c^2}
-\end{equation}
-
-%%% Line 41
-The wave packet is given by the Fourier integral
-
-%%% Line 43
-\begin{equation}
-\psi(\mathbf{x},t) = \int d^3p\, g(\mathbf{p}) \psi_\mathbf{p}(\mathbf{x}, t)
-\end{equation}
-
-%%% Line 46
-Consider the Taylor series for \(E(\mathbf{p})\) expanded around
-a value \(\mathbf{P}\) around which the momementum is concentrated:
-
-%%% Line 49
-\begin{equation}
-E(\mathbf{p}) = E(\mathbf{P}) + \mathbf{V}\cdot(\mathbf{p} - \mathbf{P}) + \cdots
-\end{equation}
-
-%%% Line 52
-Here 
-
-%%% Line 54
-\begin{equation}
-\mathbf{V}_i = \frac{\partial{E}(\mathbf{p})}{\partial p_i}\Big\vert_{\mathbf{p} = \mathbf{P}}
-\end{equation}
-
-%%% Line 58
-Differentiating \eqref{energy-formula} with respect to \(p_i\)
-we obtain
-
-%%% Line 61
-\begin{align}
-\frac{\partial{E}(\mathbf{p})}{\partial p_i}\Big\vert_{\mathbf{p} = \mathbf{P}} &= (1/2)(m_e^2c^4 + (\mathbf{p}^2c^2)^{-1/2}(2p_ic^2 )\\
-&= \frac{p_ic^2}{E(\mathbf{P})}
-\end{align}
-
-%%% Line 66
-From the proportionality relations 
-\(\mathbf{p}(v) = m\gamma\mathbf{v}\)
-and \(E(\mathbf{v}) = mc^2\gamma\), it follows that
-
-%%% Line 70
-\begin{equation}
-\mathbf{V_i} = \frac{\partial{E}(\mathbf{p})}{\partial p_i}\Big\vert_{\mathbf{p} = \mathbf{P}}= v_i
-\end{equation}
-
-%%% Line 74
-so the group velocity of the wave packet representing the particle
-and the classical velocity of the particle are the same.
-
-%%% Line 79
-\section{The Bohr Atom} \label{the-bohr-atom}
-
-%%% Line 81
-Suppose that the electron wave is confined to a circular orbit
-around the proton.   The requirement of continuity is the requirement
-that the orbit consists of a whole number of wavelengths, so that 
-\(2\pi r = n\lambda\).   According to \eqref{electron-wave}, 
-\(\lambda = h/p\), so we have
-
-%%% Line 87
-\begin{equation}
-\label{momentum-quantization}
-pr = n\hbar
-\end{equation}
-
-%%% Line 90
-For non-relativistic electrons, \(p = m_ev\), so 
-\eqref{momentum-quantization} gives Bohr's result,
-\(m_ev_nr_n = n\hbar\).
-This result, combined with the classical relations
-
-%%% Line 95
-\begin{align}
-\label{balance-e}
-\frac{Ze^2}{r_n^2} &= \frac{m_ev_n^2}{r_n}\\
-E_n &= \frac{1}{2} m_e v_n^2 - \frac{Ze^2}{r_n}
-\end{align}
-
-%%% Line 100
-yield Bohr's formula
-
-%%% Line 102
-\begin{equation}
-\label{electron-E-quantized}
-E_n = -\frac{1}{2} \frac{Z^2e^4m_e}{n^2\hbar^2}
-\end{equation}
-
-%%% Line 105
-While nothing new is found, Bohr's formula now rests
-upon more fundamental assumptions.
 
 \clearpage
 

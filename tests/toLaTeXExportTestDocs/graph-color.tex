@@ -31,6 +31,7 @@
 \usepackage{amscd}
 
 \usepackage{fancyvrb} %% for inline verbatim
+\usepackage{makeidx}
 
 %% Chemistry
 \usepackage[version=4]{mhchem} % for \ce
@@ -248,7 +249,7 @@ target (head):
 \end{equation}
 
 %%% Line 37
-A \index{graph} is a functor \(G: \Gamma \to \Set\).   Consider, 
+A \index{graph}\textit{graph} is a functor \(G: \Gamma \to \Set\).   Consider, 
 for example, the graph in Figure \ref{abcd-y-graph} below:
 
 %%% Line 41
@@ -332,7 +333,7 @@ Then \(\eta_V(b) = 2\), \(\eta_V(c) = 3\),
 \section{Colorings} \label{colorings}
 
 %%% Line 138
-A \index{coloring} of a graph is a function \(c\) from its vertices to a set \(C\), the set of colors, such that vertices 
+A \index{coloring}\textit{coloring} of a graph is a function \(c\) from its vertices to a set \(C\), the set of colors, such that vertices 
 connected by an edge have different colors:
 
 %%% Line 141
@@ -361,7 +362,7 @@ Let \(C_n : \op{Graph} \to \Set\) be the functor which assigns to a graph the co
 taken from a fixed but infinite set of color names.   
 The 
 set \(\bN\) of natural numbers will do.) We say that a graph
-\(G\) is \index{n-colorable} if \(C_n(G)\) is non-empty.   A
+\(G\) is \index{n-colorable}\textit{n-colorable} if \(C_n(G)\) is non-empty.   A
 famous theorem asserts that every planar graph is 4-colorable.
 
 %%% Line 172
@@ -413,7 +414,7 @@ C_n(G) \to \text{Hom}(G, K_n)
 
 %%% Line 218
 so that \(C_n(-)\) and \(\text{Hom}(-, K_n)\) are naturally isomorphic 
-functors. It follows that \(C_n\) is a \index{representable functor}.
+functors. It follows that \(C_n\) is a \index{representable functor}\textit{representable functor}.
 
 \clearpage
 

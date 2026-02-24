@@ -35,6 +35,7 @@
 \usepackage{amscd}
 
 \usepackage{fancyvrb} %% for inline verbatim
+\usepackage{makeidx}
 
 %% Chemistry
 \usepackage[version=4]{mhchem} % for \ce
@@ -228,7 +229,7 @@ test-author
 
 
 %%% Line 17
-\textit{The word dimension stems from the Latin word dīmensiō. It is derived from dīmetīrī, meaning ``to measure out.'' 
+\textit{The word dimension stems from the Latin word dīmensiō. It is derived from dīmetīrī, meaning ``to measure out.''
 In data science, a vector in\(n\)-space is typically an ordered list of measurements \((v_1, v_2, \ldots, v_n)\).}
 
 %%% Line 20
@@ -239,7 +240,6 @@ The goal of this chapter is to introduce the basic notions
 of calculus and linear algebra, developing just enough
 vocabulary to show some applications to data science and prepare
 the way for more advanced work.   Among these applications are:
- 
 
 \begin{itemize}
 
@@ -260,7 +260,7 @@ Clustering algorithms are used to find patterns in data, resolving
 "clouds" of data points into subclouds of points that are related
 to eachother. PCA is used to reduce
 the dimension of large data sets so that computation with them becomes
-feasible and 
+feasible and
 also to visualize them by projecting
 data from \(n\) dimensions to two or three.   PCA can also help to find
 meaningful ways of describing the data.
@@ -290,10 +290,10 @@ f'(x) = \text{slope of the tangent line  at $(x,f(x))$}
 \end{equation}
 
 %%% Line 63
-To understand this, look at the graph of 
-the function \(f(x)\) in Figure 1 below. There you see 
-the tangent line \(AB\) to the graph drawn through a point \(P = (x,f(x))\). The slope of the tangent line is its \term{rise} divided
-by its \term{run}.   You can read these numbers off from the triangle \(PQR\):
+To understand this, look at the graph of
+the function \(f(x)\) in Figure 1 below. There you see
+the tangent line \(AB\) to the graph drawn through a point \(P = (x,f(x))\). The slope of the tangent line is its \index{rise}\textit{rise} divided
+by its \index{run}\textit{run}.   You can read these numbers off from the triangle \(PQR\):
 
 %%% Line 68
 \begin{equation}
@@ -307,232 +307,229 @@ the figure below, \(f(x)\) increases as \(x\) increases.   If the derivative
 is negative, \(f(x)\) decreases as \(x\) increases.
 
 %%% Line 77
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.5833333333333334\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/fa46a52c-79cc-4679-d90f-8006c8eb2b00/public}
-  \caption{ Figure 1. Derivative as slope}
-  \label{fig:figure1}
-\end{figure}
+\begin{center}
+\includegraphics[width=0.51\textwidth]{https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/fa46a52c-79cc-4679-d90f-8006c8eb2b00/public Figure 1. Derivative as slope width:350]}
+\end{center}
 
-%%% Line 79
+%%% Line 80
 If we have a formula for a function, it is natural
 to ask for a formula for its derivative. We will see how
-to get such formulas in the next chapter.   There we will learn, for example, that the derivative of the quadratic function \(f(x) = ax^2 + \bx + x\) is the function \(f'(x) = 2ax + b\). 
+to get such formulas in the next chapter.   There we will learn, for example, that the derivative of the quadratic function \(f(x) = ax^2 + \bx + x\) is the function \(f'(x) = 2ax + b\).
 
-%%% Line 83
+%%% Line 84
 \begin{problem}
 Consider the graph of a function \(f(x)\) below.   Calculate
 the derivative of \(f\) at   \(x = 4, 6, 8\).   Do this by drawing little triangles and measuring the rise and run, as in the example above. (If you want, click on the image to open it in a new tab, then print it).
 \end{problem}
 
-%%% Line 87
+%%% Line 88
 \begin{center}
 \includegraphics[width=0.5833333333333334\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/183e307c-10c7-4333-37d2-d0c1e283cd00/public}
 \end{center}
 
-%%% Line 90
+%%% Line 91
 \subsection{Differentiable functions} \label{differentiable-functions}
 
-%%% Line 92
-A function is \term{differentiable} if its derivative exists for all
+%%% Line 93
+A function is \index{differentiable}\textit{differentiable} if its derivative exists for all
 \(x\) for which \(f\) is defined.   The function pictured in Figure 1 above is differentiable, as is any polynomial function, e.g.,   \(f(x) = x^2 + 2x +5\). On the other hand, the function whoe graph you see in the figure below
 is not differentable at \(x = 0\), the "point of the vee." The function
 is the absolute value function \(f(x) = |x|\). We will come back to it
 in the next chapter, when we give a rigorous definition of the derivative.
 
-%%% Line 100
+%%% Line 101
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/a2167390-f701-4fae-e3cc-62abe1036200/public}
 \end{center}
 
-%%% Line 104
+%%% Line 105
 The slope of the graph above is \(-1\) for \(x < 0\) and is \(+1\) for \(x > 0\).
-The abrupt change in the slope at \(x = 0\) what makes the function non-differentiable there. 
+The abrupt change in the slope at \(x = 0\) what makes the function non-differentiable there.
 
-%%% Line 110
-A twice differentiable function has the nice property that 
+%%% Line 111
+A twice differentiable function has the nice property that
 as we move along its graph, its tangent line turns with no sudden jumps.
 
-%%% Line 114
+%%% Line 115
 \begin{problem}
 For what values of \(x\) is the function pictured below not differentiable?
 On which intervals is it convex?
 \end{problem}
 
-%%% Line 119
+%%% Line 120
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/24ff5ec6-e668-418b-2138-c9231bb7a400/public}
 \end{center}
 
-%%% Line 122
+%%% Line 123
 Unless otherwise specified, we will assume that all the functions we
-use in these notes are \term{twice differentiable}.   That means that the derivative of \(f\) exists
-at every point where \(f\) is defined, and so does the derivative of the derivative, the so-called \term{second derivative} \(f''(x)\).   All polynomials, exponentials, and products of exponentials   are twice differentiable.   In fact, they are \term{infinitely differentiable}: you can calculate the derivative, the
+use in these notes are \index{twice differentiable}\textit{twice differentiable}.   That means that the derivative of \(f\) exists
+at every point where \(f\) is defined, and so does the derivative of the derivative, the so-called \index{second derivative}\textit{second derivative} \(f''(x)\).   All polynomials, exponentials, and products of exponentials   are twice differentiable.   In fact, they are \index{infinitely differentiable}\textit{infinitely differentiable}: you can calculate the derivative, the
 derivative of the derivative, the derivative of the derivative of the derivative, and so on.
 
-%%% Line 128
+%%% Line 129
 \begin{problem}
 Consider the quadratic function \(f(x) = ax^2 + \bx + c\).   Its
 derivative is \(f'(x) = 2ax + b\).   What is its second derivative \(f''(x)\)?
 \end{problem}
 
-%%% Line 133
+%%% Line 134
 \subsection{Increasing functions} \label{increasing-functions}
 
-%%% Line 135
-We all have an intuitive 
+%%% Line 136
+We all have an intuitive
 idea of what it means for a function to be increasing. For example, in Figure 1, the function \(f\) is increasing on the interval \(x > 3\) and is decreasing
-on the interval \(x < 3\).   
+on the interval \(x < 3\).
 An intuitive understanding is good, indeed valuable.   But we also need a formal definition:
 
-%%% Line 140
+%%% Line 141
 \begin{definition}
 A function \(f\) is increasing on an interval \(a < x < b\)
 if for all \(x\) and \(x'\) in the interval
  such that \(x < x'\), we have \(f(x) < f(x')\).
 \end{definition}
 
-%%% Line 146
-Loosely speaking, we say that \(f\) is increasing on the interval when                                                                                                         
+%%% Line 147
+Loosely speaking, we say that \(f\) is increasing on the interval when
 
-%%% Line 148
+%%% Line 149
 \begin{indent}
 \textit{\(x'\) is bigger than \(x\) implies that \(f(x')\) is bigger than
 \(f(x)\).}
 \end{indent}
 
-%%% Line 155
+%%% Line 156
 One of the most useful properties of the derivative is that
-its \term{sign} tells us whether the function is increasing or decreasing:
+its \index{sign}\textit{sign} tells us whether the function is increasing or decreasing:
 
-%%% Line 158
+%%% Line 159
 \begin{theorem}
 If \(f\) is a   twice differentiable function and if \(f'(a) > 0\),
 then \(f(x)\) is increasing for all \(x\)   suffciently near to \(x = a\).
 \end{theorem}
 
-%%% Line 163
+%%% Line 164
 Mathematicians' favorite name for a "small quantity" is the
-Greek letter \(\epsilon\), pronounced \textit{epsilon}.   
+Greek letter \(\epsilon\), pronounced \textit{epsilon}.
 "Sufficiently near" means that there is some number \(\epsilon > 0\) which
  such that \(f(x)\) is increasing on the
 interval \(a - \epsilon < x < a + \epsilon\). The whole point of this
-epsilon business is that without more information, we can't say 
-more about how big epsilon is.   In the case of the function of 
+epsilon business is that without more information, we can't say
+more about how big epsilon is.   In the case of the function of
 Figure 1, we do have more inforamation, so we can take \(\epsilon = 2.5\).   The function
 is increasing on the interval \(3 < x < 8\).
 
-%%% Line 175
+%%% Line 176
 \subsection{Minima and Maxima} \label{minima-and-maxima}
 
-%%% Line 177
+%%% Line 178
 In the last section we saw that if the derivative
 of a twice differentiable function is positive at \(x = a\)
 then it is increasing near \(a\) and that if the derivative
-is negative, then the function is decreasing near \(x = a\). 
-What happens if the derivative is zero?   There are 
+is negative, then the function is decreasing near \(x = a\).
+What happens if the derivative is zero?   There are
 three possibilities, all illustrated in the figure below:
  minimum,   maximum, or inflection point. In (a), the minimum
- value is an \term{absolute minimum}: it is the smallest
+ value is an \index{absolute minimum}\textit{absolute minimum}: it is the smallest
  of all values of the function.   In (b), there are two minima.
- the ifrst one is an absolute minimum, the second is a \term{local minimum}: it is the smallest of all nearby values.   In (c)
- there is an \term{inflection point}.   At an infection point a function turns from increasing to decreasing (or \textit{vice versa}.)
- At all these so-called \term{critical points}, the derivative vanishes.   \textit{Geometrically,
+ the ifrst one is an absolute minimum, the second is a \index{local minimum}\textit{local minimum}: it is the smallest of all nearby values.   In (c)
+ there is an \index{inflection point}\textit{inflection point}.   At an infection point a function turns from increasing to decreasing (or \textit{vice versa}.)
+ At all these so-called \index{critical points}\textit{critical points}, the derivative vanishes.   \textit{Geometrically,
  thai means that the tangent line is horizontal.}
 
-%%% Line 192
+%%% Line 193
 \begin{center}
 \includegraphics[width=1\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/b1ce5ac8-7ce6-4db1-80b8-6a38af9f2200/public}
 \end{center}
 
-%%% Line 194
+%%% Line 195
 There is something else that we can read from these graphs.
-In (a), the case of an absolute minimum, the graph is convex 
+In (a), the case of an absolute minimum, the graph is convex
 and the second derivative is positive.   In (b) the fuction is
 convex near the two local minima.   In (c) the second derivative
-is zero at the inflection point.   What can you say about the 
+is zero at the inflection point.   What can you say about the
 graph of (b) at the maxiumum?
 
-%%% Line 201
+%%% Line 202
 \textbf{Example Problem}
 
-%%% Line 203
+%%% Line 204
 Let's do an example.
 Suppose that you have a piece of wire \(L\)
 units long.   You want to bend it into a rectangle that
 encloses the largest possible area.   A rectangle has
-a width \(w\) and and a height \(h\).   We know that 
+a width \(w\) and and a height \(h\).   We know that
 \(L = 2w + 2h\) and that the area is \(A = wh\).   It looks
 like we have a minimization problem for a function \(A(w,h)\)
 of two variables.   But we can solve for one of the
 variables in terms of the other using the first equation:
-\(h = L/2 - w\). Substituting into the formula for the 
+\(h = L/2 - w\). Substituting into the formula for the
 area, we obtain \(A = wL/2 - w^2\).   To find the maximum
 area, we compute the derivative and set it to zero.   Using the
-formula for the derivative of a quadratic function (section \ref{derivatives}), we have \(A'(w) = L/2 - 2w\). Solving the equation 
+formula for the derivative of a quadratic function (section \ref{derivatives}), we have \(A'(w) = L/2 - 2w\). Solving the equation
 \(A'(w) = 0\), we obtain \(w = L/4\).   Therefore \(h = L/4\), as well, and the shape in question is a square.
 
-%%% Line 219
+%%% Line 220
 \subsection{Second derivative} \label{second-derivative}
 
-%%% Line 221
+%%% Line 222
 Remember that we are working in the context of functions that are twice differentiable:
 wherever the function \(f(x)\) is defined, so is its derivative, and also the derivative
-of the derivative, or \term{second derivative}, the second derivative
-as \(f''(x)\).   
+of the derivative, or \index{second derivative}\textit{second derivative}, the second derivative
+as \(f''(x)\).
 
-%%% Line 226
-What does the second derivative tell us? Consider a function such that \(f''(x)\) is positive for all \(x\) in 
+%%% Line 227
+What does the second derivative tell us? Consider a function such that \(f''(x)\) is positive for all \(x\) in
 an interval \(a \le x \le b\). According to the discussion of section \ref{increasing-functions}, this means the first derivative is increasing.   To say that the
 first derivative is increasing is to say that the slope of the tangent line
-is increasing as we travel from left to right.   That is, it is turning up.   Therefore graph is curved upwards, as in the figure below. (Notice how the slope of tangent line 2 is bigger than the slope of tangent line 1, and   
+is increasing as we travel from left to right.   That is, it is turning up.   Therefore graph is curved upwards, as in the figure below. (Notice how the slope of tangent line 2 is bigger than the slope of tangent line 1, and
 he slope of tangent line 3 is bigger than the slope of tangent line 2.)
 
-%%% Line 232
+%%% Line 233
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/35feb608-562e-492b-f51c-be8533740000/public}
 \end{center}
 
-%%% Line 236
-Function with positive second derivative are \term{convex} or (very roughly) "bowl-shaped."   The technical defintion is that the line drawn between
+%%% Line 237
+Function with positive second derivative are \index{convex}\textit{convex} or (very roughly) "bowl-shaped."   The technical defintion is that the line drawn between
 points \(A\) and \(B\) of the graph lies above the graph between \(A\) and \(B\),
-as in the figure below.   The line joining \(A\) to \(B\) is the \term{secant line}.   The term comes from the Latin \textit{secare}, "to cut."
+as in the figure below.   The line joining \(A\) to \(B\) is the \index{secant line}\textit{secant line}.   The term comes from the Latin \textit{secare}, "to cut."
 
-%%% Line 240
+%%% Line 241
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/212555fa-12d0-4616-3613-6aef577f8900/public}
-%%% Line 242
+%%% Line 243
  Our example suggests (but does not prove) the following result:
 \end{center}
 
-%%% Line 244
+%%% Line 245
 \begin{theorem}
 A twice-differentiable function for which the second derivative is positive on an interval \(a < x < b\) is convex on that interval.
 \end{theorem}
 
-%%% Line 248
+%%% Line 249
 Consider once again a quadratic function \(f(x) = ax^2 + b + c\).   Its derivative
-is \(f'(x) = 2ax + b\) and its second derivative is   \(f''(x) = 2a\).   Thererfore 
+is \(f'(x) = 2ax + b\) and its second derivative is   \(f''(x) = 2a\).   Thererfore
 \(f(x)\) is a convex function if and only if \(a > 0\).
 
-%%% Line 253
+%%% Line 254
 \subsection{Gradient descent} \label{gradient-descent}
 
-%%% Line 255
+%%% Line 256
 One of the main uses of the derivative in data science
-is \term{optimization}: finding the minimum (or maximum) values of functions.   According
+is \index{optimization}\textit{optimization}: finding the minimum (or maximum) values of functions.   According
 to our discussion of minima and maxima in section \ref{minima-and-maxima},
 one way to do this is to solve the equation \(f'(x) = 0\).   Unfortunately,
 being able to compute the derivative doesn't mean it is easy to solve
 the equation \(f'(x) = 0\).   It gets worse for functions of more than one variable where we need to solve systems of equations to find
-the critical points.   What is needed instead is a way to 
-find good \term{approximations} of the minima without having to solve equations for them.
+the critical points.   What is needed instead is a way to
+find good \index{approximations}\textit{approximations} of the minima without having to solve equations for them.
 We will describe such a method here for functions of one variable. As we shall see in the next chapter, the
 method works perfectly well for functions
-of many variables. 
+of many variables.
 
-%%% Line 267
-The method is called \term{gradient descent}.   The idea is as follows.   Start
+%%% Line 268
+The method is called \index{gradient descent}\textit{gradient descent}.   The idea is as follows.   Start
 at some point \(x_0\) where the function has value \(y_0 = f(x_0)\).   Think of
 \(x_0\) as giving the location of an approximate minimum value \(y_0\).   Our immediate
 goal is to find a somewhat better approximation by moving a certain distance
@@ -540,43 +537,43 @@ to the left or right.   But which direction to choose?   The derivative \(f'(x_0
 will tell us which way.   We move to the
 left if \(f'(x_0)\) is positive and move to the right if \(f'(x_0)\) is negative. If we do that, the value of \(f\) decreases, decreasing
 the distance to the minimum.
-We also need to decide how far to move.   For this we choose a number \(\eta > 0\), 
-the \term{learning rate}, and set 
+We also need to decide how far to move.   For this we choose a number \(\eta > 0\),
+the \index{learning rate}\textit{learning rate}, and set
 
-%%% Line 278
+%%% Line 279
 \begin{equation}
 x_1 = x_0 - \eta f'(x_0)
 \end{equation}
 
-%%% Line 281
-Read this equation as: \textit{compute\(x_1\) by moving an amount \(dx = \eta|f'(x_0)|\) from 
+%%% Line 282
+Read this equation as: \textit{compute\(x_1\) by moving an amount \(dx = \eta|f'(x_0)|\) from
 \(x_0\) in the direction in which \(f\) is decreasing.} Given an approximation to the location of the minimum \(x_n\), we can always improve it by computing
 
-%%% Line 284
+%%% Line 285
 \begin{equation}
 x_{n+1} = x_n - \eta f'(x_n)
 \end{equation}
 
-%%% Line 287
+%%% Line 288
 Very good!   We know how to improve the approximation, but
 how do we know when to stop? One answer is to stop when successive approximations
 differ by less than some prescribed tolerance \(\epsilon > 0\):
 
-%%% Line 291
+%%% Line 292
 \begin{indent}
 Stop if \(|x_{n+1} - x_n| < \epsilon\)
 \end{indent}
 
-%%% Line 294
-But it may happen that the quantity \(|x_{n+1} - x_n|\) never gets small enough, or it may happen that we simply run out patience.   
+%%% Line 295
+But it may happen that the quantity \(|x_{n+1} - x_n|\) never gets small enough, or it may happen that we simply run out patience.
 Therefore we amend the rule:
 
-%%% Line 297
+%%% Line 298
 \begin{indent}
 Stop if \(|x_{n+1} - x_n| < \epsilon\) or if \(n > \text{max\_iterations}\)
 \end{indent}
 
-%%% Line 300
+%%% Line 301
 To see how this works, let's compute the sequence \(x_0, x_1, x_2, \ldots\) either by hand, or (better) using
 a computer program. We will do this for the function \(f(x) = x^2\).
 Of course, we already know the answer: the minimum value is \(y = 0\),
@@ -586,16 +583,16 @@ of iterations \(n\) to be 1000, with a tolerance of \(0.003\).
 Below is   the result of running   a small Python program (see below) to do the computation.      The last column
 displays the change in \(x\), \(\Delta x = x_{n+1} - x_n\):
 
-%%% Line 309
+%%% Line 310
 %%% export of this block is unimplemented
 
-%%% Line 321
-Below is a visual representation of what is going on.   In 
+%%% Line 322
+Below is a visual representation of what is going on.   In
 the left panel the red dots sliding down from \((2.0, 4.0)\)
 give the values \((x_n, f(x_n))\).   In the right panel you see \(x_n\)
 plotted against \(n\).
 
-%%% Line 326
+%%% Line 327
 \begin{figure}[h]
   \centering
   \includegraphics[width=1\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/0e486899-d6c7-40a6-25df-46d48af11800/public}
@@ -603,68 +600,68 @@ plotted against \(n\).
   \label{fig:gradientdescent}
 \end{figure}
 
-%%% Line 328
+%%% Line 329
 Here is the Python program that produced the table   Run it from the command line with \lstinline|python gradient-descent-simplest.py|.
 
-%%% Line 330
+%%% Line 331
 \par\vspace{3.75pt}
 
-%%% Line 332
+%%% Line 333
 \begin{verbatim}
   # file: gradient-descent-simplest.py
-  
-  import numpy as np
-  
-  def f(x):
-      """The function we want to minimize: f(x) = x^2"""
-      return x**2
-  
-  def df(x):
-      """The derivative of f(x): f'(x) = 2x"""
-      return 2*x
-  
-  # Initial conditions
-  x = 2.0              # Starting point
-  learning_rate = 0.1  # Step size
-  n_iterations = 20    # Number of iterations
-  
-  # Print header
-  print("n      x_n    f(x_n)   Δx_n")
-  print("-" * 25)
-  
-  x_prev = x
-  print(f"0   \{x:.3f\}        ---")
-  
-  # Gradient descent
-  for n in range(1, n_iterations + 1):
-      x_new = x - learning_rate * df(x)
-      delta = x_new - x
-      print(f"\{n:2d\}   \{x_new:.3f\}   \{f(x_new):.3f\}   \{delta:.3f\}")
-      x = x_new
+%%% Line 336
+   import numpy as np
+%%% Line 338
+   def f(x):
+          """The function we want to minimize: f(x) = x^2"""
+          return x**2
+%%% Line 342
+   def df(x):
+          """The derivative of f(x): f'(x) = 2x"""
+          return 2*x
+%%% Line 346
+\section{Initial conditions
+x = 2.0                                                                                                         # Starting point
+learning\\_rate = 0.1   # Step size
+n\\_iterations = 20          # Number of iterations} \label{initial-conditions-x--20--starting-point-learningrate--01--step-size-niterations--20--number-of-iterations}
+%%% Line 351
+\section{Print header
+print("n                     x\\_n          f(x\\_n)      Δx\\_n")
+print("-" * 25)} \label{print-header-printn-xn-fxn-xn-print---25}
+%%% Line 355
+   x\_prev = x
+print(f"0      {x:.3f}                                    ---")
+%%% Line 358
+\section{Gradient descent
+for n in range(1, n\\_iterations + 1):
+          x\\_new = x - learning\\_rate * df(x)
+          delta = x\\_new - x
+          print(f"{n:2d}      {x\\_new:.3f}      {f(x\\_new):.3f}      {delta:.3f}")
+          x = x\\_new} \label{gradient-descent-for-n-in-range1-niterations--1-xnew--x---learningrate--dfx-delta--xnew---x-printfn2d-xnew3f-fxnew3f-delta3f-x--xnew}
 \end{verbatim}
 
-%%% Line 364
+%%% Line 365
 \par\vspace{5pt}
 
-%%% Line 366
+%%% Line 367
 \begin{problem}
-Try a few steps of the gradient descent method with 
+Try a few steps of the gradient descent method with
 \(f(x) = x^2 + x\).   Is it producing a sequence \(\{ x_n \}\)
 that converges rapidly to the minimum?
 \end{problem}
 
-%%% Line 371
+%%% Line 372
 The gradient descent method does not always work.   There are, however, theorems
 that give conditions under which it does. Here is one:
 
-%%% Line 374
+%%% Line 375
 \begin{theorem}
-Suppose that the function   \(f\)   is convex and twice continuously differentiable.   Suppose also that \(m < f''(x) < L\), where \(m > 0\). 
+Suppose that the function   \(f\)   is convex and twice continuously differentiable.   Suppose also that \(m < f''(x) < L\), where \(m > 0\).
 Then gradient descent with step size
 satisfying \(0 < \alpha < 2/L\) converges to the unique global minimum of \(f\).
 \end{theorem}
 
-%%% Line 379
+%%% Line 380
 \begin{remark}
 Often times we work with functions for which the derivative
 is difficult to or impossible to compute.   In those cases
@@ -672,45 +669,45 @@ we can use an approximate derivative.   Consider the secant line
 \(AB\) in the figure below.   Its rise is
 \end{remark}
 
-%%% Line 385
+%%% Line 386
 \begin{equation}
 \Delta f(x) = f(x + h/2) - f(x -h/2)
 \end{equation}
 
-%%% Line 388
+%%% Line 389
 and its run in \(h\).   Therefore its slope is
 
-%%% Line 390
+%%% Line 391
 \begin{equation}
 \text{slope of secant $AB$} = \frac{\Delta f(x)}{h} = \frac{f(x + h/2) - f(x -h/2)}{h}
 \end{equation}
 
-%%% Line 393
+%%% Line 394
 Consider also the tangent line to the graph a \(C\).   Then
 
-%%% Line 395
+%%% Line 396
 \begin{equation}
 f'(x) = \text{slope of the tangent line at $C$.}
 \end{equation}
 
-%%% Line 398
+%%% Line 399
 From the graph, it appears that the slope of the secant line \(AB\)
 differs only a little from the slope of the tangent line at \(C\)
 
-%%% Line 401
-The idea   is this.   If we can compute values of \(f\), we 
+%%% Line 402
+The idea   is this.   If we can compute values of \(f\), we
 can also compute \(\Delta f(x)\).   Now look at the figure below.
 \(\Delta f(x)\) is the slope of the secant line \(AB\).   When \(h\)
 is small, the slope of the secant line is a good approximation to the   slope of that tangent line at \(C\).   The smaller \(h\) is,
 the better the approximation.   This is also the idea behind
 the formal definition of the derivative.
 
-%%% Line 409
+%%% Line 410
 \begin{center}
 \includegraphics[width=0.5833333333333334\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/34f1934a-ab11-484e-edd0-36215c010f00/public}
 \end{center}
 
-%%% Line 411
+%%% Line 412
 \begin{remark}
 We are at the very beginning of our mathematiics + data science
 journey.   But here is something to note: even though you
@@ -723,57 +720,57 @@ in code.
 Onward!
 \end{remark}
 
-%%% Line 422
+%%% Line 423
 \subsection{Integrals} \label{integrals}
 
-%%% Line 424
+%%% Line 425
 In a word, \textit{integral is area}.   To be precise, consider a
 function \(f(x)\) that takes positive values,
-as in the Figure below.   Consider the region \(R\) which you see 
-there.   It is defined by two inequalities.   A point \((x,y)\) 
+as in the Figure below.   Consider the region \(R\) which you see
+there.   It is defined by two inequalities.   A point \((x,y)\)
 is in \(R\) if
 
-%%% Line 430
+%%% Line 431
 \begin{align}
 0 \le\ & x \le b\\
 0 \le\ & y \le f(x)
 \end{align}
 
-%%% Line 434
-For the integral, look at Figure 2.   The \term{definite integral} of \(f\) from \(a\) to \(b\) is the area of the region \(R\). We can decode
+%%% Line 435
+For the integral, look at Figure 2.   The \index{definite integral}\textit{definite integral} of \(f\) from \(a\) to \(b\) is the area of the region \(R\). We can decode
 what we see in the figure by a pair of inequalities:
 
-%%% Line 437
+%%% Line 438
 \begin{equation}
 R  = \sett{(x,y)}{a \le x \le b,\quad 0 \le y \le f(x)}
 \end{equation}
 
-%%% Line 440
+%%% Line 441
 Like the derivative, the integral has a special notation:
 
-%%% Line 442
+%%% Line 443
 \begin{equation}
 \text{area}(R) = \int_a^b f(x) dx
 \end{equation}
 
-%%% Line 446
+%%% Line 447
 We don't yet have the tools for computing integrals of functions
 given to us by a formula, but we can make do with a graphical
 method for the moment, just as we did for the derivative.   Assuming that we have arranged our graph so that each little square is one unit by one unit
-of measure, we can count squares and estimate partial squares in order to estimate the area. 
+of measure, we can count squares and estimate partial squares in order to estimate the area.
 
-%%% Line 452
+%%% Line 453
 For example, just to the right of the line \(x = a\), we
 see that there are three squares which lie entirely in \(R\) and just a small
-part --- maybe one tenth --- of a fourth square.   Our estimate for the area of the part of 
-\(R\) satisfying \(2 \le x \le 3\) is therefore \(3.1\) We do this for the rest of \(R\) and add up the reults to get 
+part --- maybe one tenth --- of a fourth square.   Our estimate for the area of the part of
+\(R\) satisfying \(2 \le x \le 3\) is therefore \(3.1\) We do this for the rest of \(R\) and add up the reults to get
 
-%%% Line 457
+%%% Line 458
 \begin{equation}
 \int_a^b f(x)dx \approx 20.7.
 \end{equation}
 
-%%% Line 460
+%%% Line 461
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.5833333333333334\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/eea257c6-10f9-4db9-20cb-f93a7d727a00/public}
@@ -781,354 +778,354 @@ part --- maybe one tenth --- of a fourth square.   Our estimate for the area of 
   \label{fig:figure2}
 \end{figure}
 
-%%% Line 462
+%%% Line 463
 \begin{remark}
-You might ask: can we get more accurate answers? One way to do 
-counter squares and partial squares as beforem but to use 
+You might ask: can we get more accurate answers? One way to do
+counter squares and partial squares as beforem but to use
 a smaller grid of squares.   As the squares get smaller
 and smaller, the approximation gets better and better.   We
-say that the true integral is the \textbf{\term{ limit}} of the approximate
+say that the true integral is the \textbf{\index{limit}\textit{limit}} of the approximate
 integrals as the grid size gets smaller and smaller.   Let
 \(R_n\) be region made of grid squares and partial squares.
 Suppose the maximum size of a square is \(1/n\). Then
 \end{remark}
 
-%%% Line 472
+%%% Line 473
 \begin{equation}
 \int_a^b f(x) dx = \lim_{n \to 0} \text{area}(R_n)
 \end{equation}
 
-%%% Line 475
+%%% Line 476
 This idea of appromation and limit occurs throughout calculus.
-We will use it in the next chapter both to define the 
+We will use it in the next chapter both to define the
 derivative and to define definite integrals.
 
-%%% Line 479
+%%% Line 480
 \subsection{Probability distributions} \label{probability-distributions}
 
-%%% Line 481
-One of the main uses of the integral in data science is in probability 
+%%% Line 482
+One of the main uses of the integral in data science is in probability
 theory. We will talk abou this much later, but for now consider the following problem.   An astronomer observes a star which for which the expected
 position at a given time, date, and place can be calculated. But the star
 always appears displaced from the expected position by an angle \(\Delta \theta_x\)
 along the horizontal axis and \(\Delta \theta_y\) along the vertical axis.   Lerge
 deviations from what is expected are less common than small ones.   In fact,
-these deviations follow a so-called \term{normal} or \term{Gaussian}
+these deviations follow a so-called \index{normal}\textit{normal} or \index{Gaussian}\textit{Gaussian}
 distribution.   Here is what this means.   There is a function \(p(\theta)\)
-called a \term{probability distribution}.   It is a positive (non-negative) function satisfying
+called a \index{probability distribution}\textit{probability distribution}.   It is a positive (non-negative) function satisfying
 
-%%% Line 491
+%%% Line 492
 \begin{equation}
 \int_{-\infty}^\infty p(\theta) d\theta = 1
 \end{equation}
 
-%%% Line 494
+%%% Line 495
 The probability that the error \(\Delta \theta\) is less than \(b\) but greater than \(a\) is the integral of the probability distribution on this interval:
 
-%%% Line 496
+%%% Line 497
 \begin{equation}
 P(a \le \Delta\theta_x \le b) = \int_a^b p(\theta) d\theta
 \end{equation}
 
-%%% Line 500
+%%% Line 501
 \begin{center}
 \includegraphics[width=0.5\textwidth]{media.geeksforgeeks.org/wp-content/uploads/20230828135632/Probability-Density-Function.png}
 \end{center}
 
-%%% Line 502
-The German mathematician Carl Friederich Gauss discovered the 
+%%% Line 503
+The German mathematician Carl Friederich Gauss discovered the
 probability distribution which governs these angular errors.   This distribtuion has the general form
 
-%%% Line 505
+%%% Line 506
 \begin{equation}
 p(x) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
 \end{equation}
 
-%%% Line 509
-Here \(\exp(x)\) is \(e^x\), \(\mu\) is the \term{mean} of the distribution and \(\sigma\) is
-the \term{standard deviation}.   The mean tells us where the distribution 
-is centered.   The standard deviation tells us to what extent the distribution is spread out. This formula just gven defines the \term{standard} or \term{normal} distribution. It is one the most commonly
+%%% Line 510
+Here \(\exp(x)\) is \(e^x\), \(\mu\) is the \index{mean}\textit{mean} of the distribution and \(\sigma\) is
+the \index{standard deviation}\textit{standard deviation}.   The mean tells us where the distribution
+is centered.   The standard deviation tells us to what extent the distribution is spread out. This formula just gven defines the \index{standard}\textit{standard} or \index{normal}\textit{normal} distribution. It is one the most commonly
 used distribitions, but beware: it does not apply to everything.
 
-%%% Line 515
+%%% Line 516
 \begin{center}
 \includegraphics[width=0.6666666666666666\textwidth]{upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/640px-Standard_deviation_diagram.svg.png}
 \end{center}
 
-%%% Line 518
+%%% Line 519
 \subsection{Summary} \label{summary}
 
-%%% Line 520
+%%% Line 521
 Derivative is slope.
 
-%%% Line 522
+%%% Line 523
 Integral is area.
 
-%%% Line 525
+%%% Line 526
 \section{Linear Algebra} \label{linear-algebra}
 
-%%% Line 528
+%%% Line 529
 \subsection{Vectors} \label{vectors}
 
-%%% Line 532
-The fundamental notions of linear algebra are \textit{vector} and 
+%%% Line 533
+The fundamental notions of linear algebra are \textit{vector} and
 \textit{matrix}.   An \(n\)-dimensional vector is a   list of real numbers:
 
-%%% Line 535
+%%% Line 536
 \begin{equation}
 \bv = (v_1, v_2, \ldots ,v_n)
 \end{equation}
 
-%%% Line 538
+%%% Line 539
 The set of all such vectors, where the \(v_i\) range
 over the real numbers \(\reals\) is written
 
-%%% Line 541
+%%% Line 542
 \begin{equation}
 \reals^n = \sett{ (v_1, v_2, \ldots ,v_n) }{ v_i \in \reals }
 \end{equation}
 
-%%% Line 544
+%%% Line 545
 When \(n = 2\), \(n\)-space is the Cartesian plane, as
 in the figure below.   The vector \((x_1, x_2) = (4,2)\)
-corresponds to the point \(P\): it is four units to the 
+corresponds to the point \(P\): it is four units to the
 right of the origin \(O\) and is two units up.   Here
-we think of \(\bx = (x_1, x_2)\) as a \term{position vector}.
+we think of \(\bx = (x_1, x_2)\) as a \index{position vector}\textit{position vector}.
 
-%%% Line 551
+%%% Line 552
 \begin{center}
 \includegraphics[width=0.6333333333333333\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ccdf9c04-5e8f-4a57-9291-d3fdb0133b00/public}
 \end{center}
 
-%%% Line 557
+%%% Line 558
 We can visualize position vectors in 3-space in the same way:
 set up three perpendicular axes, and use them to locate
 a point by giving three numbers, one for each axis.   See the figure below.
 
-%%% Line 562
+%%% Line 563
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/386570a0-e841-4dc9-e74d-2d4eaaa0dc00/public}
 \end{center}
 
-%%% Line 565
-The typical problem in data science involves 
+%%% Line 566
+The typical problem in data science involves
 vectors in \(n\)-space where the number of dimensions
-(things \textit{measured}) is much larger --- ten, a thousand, maybe 
+(things \textit{measured}) is much larger --- ten, a thousand, maybe
 more. In dimension greater than three, our vision fails us,
 so we proceed by analogy. There are vector formulas for notions
 like distance and angle in 2-space and 3-space, for object,
 like lines and planes, circles and spheres. Because these formulas
 work in \(n\)-space, so do the notions just described.
 
-%%% Line 574
+%%% Line 575
 Let's begin with lengthg. The length of a vector \(\bx = (x_1, x_2)\)
 in 2-space is given by
 
-%%% Line 577
+%%% Line 578
 \begin{equation}
 || x || = \sqrt{ x_1^2 + x_2^2 }
 \end{equation}
 
-%%% Line 580
+%%% Line 581
 This is the Pythagorean theorem.   In the figure, we see that
-the length or \term{norm} if the vector \(\bx = (3,4)\) is 
-\(|| \bx || = 5\).   
+the length or \index{norm}\textit{norm} if the vector \(\bx = (3,4)\) is
+\(|| \bx || = 5\).
 
-%%% Line 584
+%%% Line 585
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/133cef76-ec21-4325-577a-b90437823600/public}
 \end{center}
 
-%%% Line 586
+%%% Line 587
 The length of a vector in \(n\)-space is
 defined in the same way:
 
-%%% Line 589
+%%% Line 590
 \begin{equation}
 || x || = \sqrt{ x_1^2 + x_2^2  + \cdots + x_n^2}
 \end{equation}
 
-%%% Line 593
-The numbers \(x_i\) are called the \term{components} or 
-\term{coordinates} of the vector. 
+%%% Line 594
+The numbers \(x_i\) are called the \index{components}\textit{components} or
+\index{coordinates}\textit{coordinates} of the vector.
 
-%%% Line 597
+%%% Line 598
 \subsection{Distance, sum and difference} \label{distance-sum-and-difference}
 
-%%% Line 600
-Once we have a notion of length, we have a notion 
-of \term{distance}.   Suppose \(P\) and \(Q\), as in the figure
+%%% Line 601
+Once we have a notion of length, we have a notion
+of \index{distance}\textit{distance}.   Suppose \(P\) and \(Q\), as in the figure
 below, are points in 2-space with position vectors \(\bx = (x_1, x_2)\) and \(\by = (y_1, y_2)\).   The distance from \(P\) to \(Q\) is
 
-%%% Line 604
+%%% Line 605
 \begin{equation}
 d(P,Q) = \sqrt{(y_1 - x_1)^2 + (y_2 - x_2)^2}
 \end{equation}
 
-%%% Line 607
+%%% Line 608
 \begin{center}
 \includegraphics[width=1\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/232f19d6-44fc-4ed4-edc5-a579b0d1cb00/public}
 \end{center}
 
-%%% Line 609
+%%% Line 610
 Once again, the formula makes sense for vectors in \(n\)-space:
 
-%%% Line 611
+%%% Line 612
 \begin{equation}
 d(P,Q) = \sqrt{(y_1 - x_1)^2 + (y_2 - x_2)^2 + \cdots + (y_n - x_n)^2}
 \end{equation}
 
-%%% Line 614
+%%% Line 615
 Notice that the terms of appearing in this formula look like
-the components of a vector.   Indeed, we can define the 
-\term{difference} of vectors like this:
+the components of a vector.   Indeed, we can define the
+\index{difference}\textit{difference} of vectors like this:
 
-%%% Line 618
+%%% Line 619
 \begin{equation}
 \by - \bx = (y_1 - x_1, y_2 - x_2, \ldots , y_n - x_n)
 \end{equation}
 
-%%% Line 621
-Then 
+%%% Line 622
+Then
 
-%%% Line 623
+%%% Line 624
 \begin{equation}
 d(P,Q) = || \bx - \by ||
 \end{equation}
 
-%%% Line 626
+%%% Line 627
 The difference of two vectors in \(n\)-space is the vector whose
-components are differences of corresponding components: 
-\((\by - \bx)_i = y_i - x_i\). In the same way we define the 
+components are differences of corresponding components:
+\((\by - \bx)_i = y_i - x_i\). In the same way we define the
 sum of vectors by adding their components:
 
-%%% Line 631
+%%% Line 632
 \begin{equation}
 \by + \bx = (y_1 + x_1, y_2 + x_2, \ldots , y_n + x_n)
 \end{equation}
 
-%%% Line 634
+%%% Line 635
 \subsection{Dot Product and Angle} \label{dot-product-and-angle}
 
-%%% Line 636
+%%% Line 637
 So far we have defined length and distance in \(n\)-space.   Next,
-let's do angle.   For this we need   the \term{dot product} of
+let's do angle.   For this we need   the \index{dot product}\textit{dot product} of
 vectors,
 
-%%% Line 640
+%%% Line 641
 \begin{equation}
 \bx \cdot \by = x_1y_1 + x_2y_2 + \cdots + x_ny_n
 \end{equation}
 
-%%% Line 643
+%%% Line 644
 The dot product of vectors is not a vector, but
-rather a \term{scalar}, that is, a number.   
+rather a \index{scalar}\textit{scalar}, that is, a number.
 
-%%% Line 647
+%%% Line 648
 Consider now two vectors \(\bx\) and \(\by\), as in the figure
 below.   They enclose an angle \(\theta\).   The two vectors
-are sides a triangle, where the third side runs from the 
+are sides a triangle, where the third side runs from the
 head of one of the arrows to the head of the other.   The
 third side is the vector \(\by - \bx\)   (or rather that vector
 moved parallel to itself so that its tail rests on the head of \(\bx\)).   Let's compute the length of the "opposite side:"
 
-%%% Line 655
+%%% Line 656
 \begin{align}
 ||\by - \bx ||^2 &= (\by - \bx) \cdot (\by -\bx )\\
 &= ||\by||^2 + ||\bx||^2 - 2(\by\cdot \bx)
 \end{align}
 
-%%% Line 660
+%%% Line 661
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/3941e24d-bfc8-4c7f-26e3-c1393e647800/public}
 \end{center}
 
-%%% Line 663
+%%% Line 664
 In the case \(n = 2\) we can compute the length of the opposite
-side in another way, using the \term{Law of Cosines}:
+side in another way, using the \index{Law of Cosines}\textit{Law of Cosines}:
 
-%%% Line 666
+%%% Line 667
 \begin{equation}
 || \by - \bx ||^2 = ||\by||^2 + ||\bx||^2- 2||\by||\cdot ||\bx|| \cos\theta
 \end{equation}
 
-%%% Line 670
+%%% Line 671
 Comparing the last two equations, we find that
 
-%%% Line 672
+%%% Line 673
 \begin{equation}
 \cos\theta = \frac{\bx \cdot \by}{||\bx|| \cdot ||\by||}
 \end{equation}
 
-%%% Line 677
+%%% Line 678
 Once again, this formula makes sense not just for \(2\)-space,
 But for \(n\)-space.   We take it as the deinition of angle
 in higher-dimensional spaces.   (Remark, Appendix:   Cauchy-Schwarz inequality).
 
-%%% Line 681
+%%% Line 682
 An immediate consequence of this last formula is that
 
-%%% Line 683
+%%% Line 684
 \begin{proposition}
 If \(\ a.b = 0\), then \(a\) and \(b\) are perpendicular.
 \end{proposition}
 
-%%% Line 686
+%%% Line 687
 Perpendicular vectors are also said to be \textbf{orthogonal}
 
-%%% Line 688
+%%% Line 689
 \subsection{Scalar product and unit vectors} \label{scalar-product-and-unit-vectors}
 
-%%% Line 690
+%%% Line 691
 Let \(c\) be a scalar and \(\bx = (x_1, x_2, \ldots, x_n)\)
-a vector.   Their \term{scalar product}   is the vector 
+a vector.   Their \index{scalar product}\textit{scalar product}   is the vector
 
-%%% Line 693
+%%% Line 694
 \begin{equation}
 c\bx = (cx_1, cx_2, \ldots, cx_n)
 \end{equation}
 
-%%% Line 696
+%%% Line 697
 That is, the \(i\)-th component of the scalar product
 is the \(c\) times the \(i\)-th compoent of \(\bx\).   In equations,
 \((c\bx)_i = c\bx_i\).   The effect of multiplying a vector
-by a scalar is to stretch it or shrink it, or to do one 
+by a scalar is to stretch it or shrink it, or to do one
 of those things and also reverse its direction (if \(c\) is negative).
 
-%%% Line 704
+%%% Line 705
 \begin{problem}
 Let \(\bx = (2,4)\). On graph paper, plot the vectors
 \(\bx\), \(2\bx\),   \(0.5\bx\), and \((-1)\bx\).   In each case,
 indicate whether scalar product is bigger, smaller, or reversed.
 \end{problem}
 
-%%% Line 709
+%%% Line 710
 \begin{problem}
 Show that \(|| c\bx ||= |c|\cdot ||\bx||\)
 \end{problem}
 
-%%% Line 713
-A \term{unit vector} is a vector of unit length.   Given
+%%% Line 714
+A \index{unit vector}\textit{unit vector} is a vector of unit length.   Given
 any nonzero vector \(\bx\), there is a unique unit vector \(\hat{\bx}\) that points in the same direction as \(\bx\):
 
-%%% Line 716
+%%% Line 717
 \begin{equation}
 \hat{\bx} = \frac{\bx}{|| \bx ||}
 \end{equation}
 
-%%% Line 719
+%%% Line 720
 That is, \(\hat{\bx}\) is the scalar product of \(\bx\) and the scalar \(1/||x||\).
 
-%%% Line 721
+%%% Line 722
 \begin{problem}
 Find the unit vectors associated to the following vectors:
 (a) \(\bx = (3,4)\), (b) \(\bx = (1, 1)\), (c) \(\bx = (1,2,3,4)\).
 \end{problem}
 
-%%% Line 727
+%%% Line 728
 \subsection{Point Clouds and Clusters} \label{point-clouds-and-clusters}
 
-%%% Line 729
+%%% Line 730
 Let us now consider an example of the kind of problem
 that comes up routinely in data science. A team of
 medical scientists is searching for a rapid diagnostic test
@@ -1137,7 +1134,7 @@ concentrations of then chemical substances in the blood
 of a group of test subjects. This data is a point   \((x_1, \ldots x_{10})\) in 10-dimensional space
 \(\reals^{10}\).   Suppose that we have test results from
 100 hundred subjects.   They form
-a cloud of 100 points in \(\reals^{10}\) ---   a so-called \term{point cloud}.   Suppose further that
+a cloud of 100 points in \(\reals^{10}\) ---   a so-called \index{point cloud}\textit{point cloud}.   Suppose further that
 there are two kinds of people in the test group: healthy people
 chosen at random, and a random selection of people with a
 certain disease.   The aim of the study is to see if the test
@@ -1146,22 +1143,22 @@ If it were possible to see the data with 10-dimensional eyes,
 we might find that the data consisted of two clusters of points ---
 the big point cloud is really two smaller clouds as in the figure below.
 
-%%% Line 747
+%%% Line 748
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/61fa5b5c-1109-4692-d353-ae559b183800/public}
 \end{center}
 
-%%% Line 749
+%%% Line 750
 How might we decribe this clustering if it exists? In the figure, we see that the points cluster inside two circles.   The first cluster is described by the inequality
 
-%%% Line 751
+%%% Line 752
 \begin{equation}
 d(x, A) < r_A
 \end{equation}
 
-%%% Line 754
-where \(d(x,A)\) is the distance from \(x\) to center \(A\) 
-of the first circle, where   \(r_A\) is the 
+%%% Line 755
+where \(d(x,A)\) is the distance from \(x\) to center \(A\)
+of the first circle, where   \(r_A\) is the
 radius.   The same logic applies to 3-space, except
 that we have spheres instead of circles.   Is there a way of doing something like this in \(n\)-space? While we do not yet have
 an algorithm for finding clusters, we have one of the
@@ -1170,49 +1167,49 @@ distance.   We could, for example, begin like this:
 
 \begin{enumerate}
 
-%%% Line 762
+%%% Line 763
 \item Choose a point \(p\) at random. If there are at least 5 points in the cloud withn a distace 1.5 of \(p\), declare these points to be the seed of a cluster. If not, choose another point at random and begin this process again.
 
-%%% Line 767
+%%% Line 768
 \item Continue adding points to the seed cluster if they are are with 1.5 units of the seed cluster.   When there are no more such points, go back to (1) and start a new cluster
 
 \end{enumerate}
 
-%%% Line 769
+%%% Line 770
 This is simplified outline of the DBSCAN algorithm. See
 the Algorithms chapter for a full description.
 Below is an example that uses DBSCAN.   A Python program was used to generate
 300 points in 5-space with 3 clusters --- thus an artificial
 point cloud
-represented by a 300x5 matrix. Then the DBSCAN algorithm 
+represented by a 300x5 matrix. Then the DBSCAN algorithm
 from the Python scikit-learn library was run to find the clusters.
 
-%%% Line 778
+%%% Line 779
 The the output of this algorithm was fed in to another algorithm which finds a good projection of the data from 5-space to 2-space
 so that it can be visualized.   This phase uses PCA (principal component analysis), something we will study later. The projected data was plotted using matplotlib.
 
-%%% Line 782
+%%% Line 783
 \begin{center}
 \includegraphics[width=1\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/9b4737fc-472b-4492-71b9-461a6412cc00/public}
 \end{center}
 
-%%% Line 786
+%%% Line 787
 \subsection{Projections, PCA, and dimension reduction} \label{projections-pca-and-dimension-reduction}
 
-%%% Line 788
+%%% Line 789
 We have already talked about projections as a way of reducing
 the dimension of our data so that we can visualize and perhaps
 detect patterns in it.   So far, however, our projections
-were very limited in nature.   We use, for example, the 
+were very limited in nature.   We use, for example, the
 projection \(p: \reals^n \to \reals^2\) given by
 the formula \(p(x_1, x_2, \ldots, x_n) = (x_1, x_2)\).   Let \(p_{ij}(x_1, x_2, \ldots, x_n) = (x_i, x_j)\) be the projection onto the
-\(x_i\) and \(x_j\) axes, in that order.   This gives \(n(n-1)\) possible projections: \(n\) choices for \(i\) and \(n-1\) for \(j\). However, there are 
+\(x_i\) and \(x_j\) axes, in that order.   This gives \(n(n-1)\) possible projections: \(n\) choices for \(i\) and \(n-1\) for \(j\). However, there are
 actually infinitely many choices, some better than others.
 
-%%% Line 797
+%%% Line 798
 To describe the other projections, consider the equations
 
-%%% Line 799
+%%% Line 800
 \begin{align}
 y_1 &= a_{11}x_1 + a_{12}x_2  + \cdots + a_{1n}x_n\\
 y_2 &= a_{21}x_1 + a_{22}x_2  + \cdots + a_{2n}x_n\\
@@ -1220,13 +1217,13 @@ y_2 &= a_{21}x_1 + a_{22}x_2  + \cdots + a_{2n}x_n\\
 y_m &= a_{m1}x_1 + a_{m2}x_2  + \cdots + a_{mn}x_n
 \end{align}
 
-%%% Line 805
+%%% Line 806
 They define a function \(p: \reals^n \to \reals^m\).
 This is our first draft of a projection.   Note that it is
 determined by the numbers \(a_{ij}\).   We can assemble them
-in a rectangular table, a so-called \term{matrix}:
+in a rectangular table, a so-called \index{matrix}\textit{matrix}:
 
-%%% Line 810
+%%% Line 811
 \begin{align}
 A = \begin{pmatrix}\\
 a_{11} & a_{12} & \ldots & a_{1n}\\
@@ -1236,37 +1233,37 @@ a_{m1} & a_{m2} & \ldots & a_{mn}\\
 \end{pmatrix}
 \end{align}
 
-%%% Line 818
+%%% Line 819
 This is an   \(m\times n\) matrix: it has \(m\) rows,
-each consisting of an \(n\)-dimensional \term{row vector}
+each consisting of an \(n\)-dimensional \index{row vector}\textit{row vector}
 
-%%% Line 821
+%%% Line 822
 \begin{equation}
 a_i = (a_{i1}, a_{i2}, \ldots a_{\in})
 \end{equation}
 
-%%% Line 825
+%%% Line 826
 The matrix \(A\)
 contains everthing that you need to know to compute the projection
 \(\by = p(\bx)\)
 
-%%% Line 831
+%%% Line 832
 There is something else to notice: The components of the output vector \(\by\) are dot products
 of the row vectors \(\ba_i\) with input vector \(\bx\):
 
-%%% Line 834
+%%% Line 835
 \begin{equation}
 \by_i = \ba_i \cdot \bx
 \end{equation}
 
-%%% Line 837
+%%% Line 838
 To put this in context, think again about the"coordinate projections" \(p_{ij}\).
 They fit into this scheme as follows.   Let \(e_i\) be the vector
 with a 1 at position \(i\) and 0 in the other positions. This
 is a vector of unit length pointing along the \(x_i\) axis.
 The matrix \(A\) corresponding to our projection ihas two rows and \(n\) columns.   All of its entries are 0, except for a 1 in column \(i\) of the first row and a 1 in column \(j\) of the second row.   Here is the matrix corresponding to the projection \(p_{24}\):
 
-%%% Line 844
+%%% Line 845
 \begin{align}
 A_{24} = \begin{pmatrix}\\
 0 & 1 & 0 & 0 & 0\\
@@ -1274,70 +1271,70 @@ A_{24} = \begin{pmatrix}\\
 \end{pmatrix}
 \end{align}
 
-%%% Line 850
+%%% Line 851
 What is important about this matrix is not the 1's and 0's
 but rather that its two rows are
-vectors of   unit length that meet at right angles. How do 
+vectors of   unit length that meet at right angles. How do
 we know this? Let \(\bu\) and \(\bv\) be the first and
-second rows of the matrix \(A\).   Then \(\bu\cdot\bu = 1\), 
+second rows of the matrix \(A\).   Then \(\bu\cdot\bu = 1\),
 so \(||\bu||   = 1\).   A vector of unit length is called a
-\term{unit vector}.   Note also that \(\bu \cdot \bv = 0\).
+\index{unit vector}\textit{unit vector}.   Note also that \(\bu \cdot \bv = 0\).
 Therefore the cosine af the angle is zero.   This means
 that the angle between \(\bu\) and \(\bv\) is either \(\pi/2\) or \(3\pi/2\).   In either case, they meet at a right angle.
 
-%%% Line 860
+%%% Line 861
 Let's give very simple example to show how this freedom
 to choose projections can help us.   Below is a point cloud
 consisting of 2D data plotted in the usual \(x_1, x_2\) coordinates.
 Each axis corresponds to a measurement of some definite kind.
 
-%%% Line 865
+%%% Line 866
 We see a small point cloud with two kinds of points --- red and
 green.   If we project onto the \(OA\) axis, the two point clouds
 are not resolved: one is inside the other. However, let's rotate
 to the OC, OD axes, then project onto the OC axis. This time
 the two point clouds are cleanly to the left, the greens to the right.   An exercise in trigonometry tells us that this projection is defined by the function
 
-%%% Line 871
+%%% Line 872
 \begin{equation}
 q(x_1, x_2) = x_1\cos\theta  + x_2 \sin\theta
 \end{equation}
 
-%%% Line 874
+%%% Line 875
 where \(\theta\) is the angle from \(OA\) to \(OC\).   Note that
 \(\bu = (\cos\theta, \sin\theta)\) is a unit vector, so
 
-%%% Line 878
+%%% Line 879
 \begin{equation}
 q(\bx) = \bx\cdot \bu
 \end{equation}
 
-%%% Line 881
+%%% Line 882
 fits the general pattern.
 
-%%% Line 884
+%%% Line 885
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/2c91b93a-ab13-43a9-34c2-97eca7d41600/public}
 \end{center}
 
-%%% Line 886
+%%% Line 887
 The big question, of course, is how do we find
-these good projections.   That is what the Principal 
+these good projections.   That is what the Principal
 Component Algorithm (PCA) is for. The theoretical
 requirements for it are the notions of eigenvectors
 and eigenvalues of a symmetric matrix, something we will study in XX. The projection matrix given to us by PCA will
 always be a matrix whose rows are orthogonal unit vectors.
 
-%%% Line 893
+%%% Line 894
 \subsection{Matrices} \label{matrices}
 
-%%% Line 895
+%%% Line 896
 The notion of matrix arose naturally in the previous section
 as a way to summarize the data needed to define a projection.
 Let's talk a more about these objects.   Consider by way of
-example the matrix 
+example the matrix
 
-%%% Line 900
+%%% Line 901
 \begin{align}
 A = \begin{pmatrix}\\
 1 &-2 &\phantom{-}0 &3\\
@@ -1345,10 +1342,10 @@ A = \begin{pmatrix}\\
 \end{pmatrix}
 \end{align}
 
-%%% Line 906
-Consider also the \term{column vector}
+%%% Line 907
+Consider also the \index{column vector}\textit{column vector}
 
-%%% Line 908
+%%% Line 909
 \begin{equation}
 \bx = \begin{pmatrix}
  1 \\
@@ -1358,45 +1355,45 @@ Consider also the \term{column vector}
  \end{pmatrix}
 \end{equation}
 
-%%% Line 916
+%%% Line 917
 Let \(\by\) be the column vector whose components are the
 dot products of the rows of \(A\) with \(\bx\):
 
-%%% Line 919
+%%% Line 920
 \begin{equation}
 \by = \begin{pmatrix}
   {\ba}_1\cdot \bx \\
   {\ba}_2\cdot \bx
-\end{pmatrix} 
+\end{pmatrix}
 = \begin{pmatrix}
   2 \ \\
   1
-\end{pmatrix} 
+\end{pmatrix}
 \end{equation}
 
-%%% Line 929
-We can write this more compactly as the \term{matrix product}
+%%% Line 930
+We can write this more compactly as the \index{matrix product}\textit{matrix product}
 
-%%% Line 931
+%%% Line 932
 \begin{equation}
 \by = A\bx
 \end{equation}
 
-%%% Line 934
+%%% Line 935
 The product is defined by defining the components of \(A\bx\):
 
-%%% Line 936
+%%% Line 937
 \begin{equation}
 (A\bx)_i = \ba_i \cdot \bx
 \end{equation}
 
-%%% Line 940
+%%% Line 941
 \subsection{Coordinate Changes} \label{coordinate-changes}
 
-%%% Line 943
+%%% Line 944
 (( under construction ))
 
-%%% Line 945
+%%% Line 946
 \begin{align}
 \begin{pmatrix}\\
 x_1'\\
@@ -1413,104 +1410,104 @@ x_2\\
 \end{pmatrix}
 \end{align}
 
-%%% Line 961
+%%% Line 962
 \subsection{Good projections: a case study} \label{good-projections-a-case-study}
 
-%%% Line 963
+%%% Line 964
 We said above that problems in data science
-are naturally posed in the context of 
+are naturally posed in the context of
 higher-dimensional spaces.   Let's look at an example
-from biology.   The data consists measuremnt of 
+from biology.   The data consists measuremnt of
 sharks teeth, both from living and fossil specimens.
 In the case of fossil sharks, their teeth are often their
 only remnant.
-The aim of the study is categorize the teeth at the 
+The aim of the study is categorize the teeth at the
 level of species and genus and to find phylogenetic connections between those "taxa." For example, we humans are \textit{Homo sapiens} --- genus \textit{Homo} and species \textit{sapiens}, whereas Neanderthal man is \textit{Homo neanderthalenis}.   We share
-a common ancestor from roughly 600,000 to 800,000 years ago.   That is our \term{phylogenetic relation} --- our relationship in the tree of life.
+a common ancestor from roughly 600,000 to 800,000 years ago.   That is our \index{phylogenetic relation}\textit{phylogenetic relation} --- our relationship in the tree of life.
 
-%%% Line 974
-The measuremnt data in the shark study are lengths and 
-angles of a collection of 175 fossil teeth, as illustrated by the figure below. There are fifteen of these, so each tooth 
+%%% Line 975
+The measuremnt data in the shark study are lengths and
+angles of a collection of 175 fossil teeth, as illustrated by the figure below. There are fifteen of these, so each tooth
 is represented by a 15-dimensional vector.   The data itself
 is given by a matrix with 175 rows and 15 columns --- one row
-for each tooth.   
+for each tooth.
 
-%%% Line 980
+%%% Line 981
 \begin{center}
 \includegraphics[width=0.5\textwidth]{imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/7abcafac-fe48-468a-9631-ad43c58f5400/public}
 \end{center}
 
-%%% Line 982
+%%% Line 983
 A data set such as the one at hand can be thought of as
 a cloud of points in a 175-dimensional space. If it were
 a cloud of points in a 2 or 3-dimensional space, we might
 be able to "just look at it"   and
-pick out several clusters of points, Our data is what it is, 
+pick out several clusters of points, Our data is what it is,
 
-%%% Line 989
-but recall that we can project our data from 
+%%% Line 990
+but recall that we can project our data from
 
-%%% Line 993
+%%% Line 994
 perhaps there is not just one cloud, but several, along
 with a random sprinkling of a few points not belonging to any
 of the easily distinguished clouds.   That is, perhaps the
 2-D data looks like this:
 
-%%% Line 998
+%%% Line 999
 FIGURE
 
-%%% Line 1003
+%%% Line 1004
 Alas, it could also look like this, with no obvious clustering:
 
-%%% Line 1005
+%%% Line 1006
 FIGURE
 
-%%% Line 1010
+%%% Line 1011
 \section{Glossary} \label{glossary}
 
-%%% Line 1012
+%%% Line 1013
 
 
-%%% Line 1014
+%%% Line 1015
 \section{Appendix: Mathematical Addenda} \label{appendix-mathematical-addenda}
 
-%%% Line 1017
+%%% Line 1018
 \subsection{Gradient Descent} \label{gradient-descent}
 
-%%% Line 1019
+%%% Line 1020
 (( To be read add at your own risk :-))
 
-%%% Line 1021
-Let \(\nabla f\) be the \term{gradient} of \(f\), that is, the column vector of first partial
-derivatives.   Let \(\nabla^2f\) be the \term{Hessian matrix} of \(f\), that is, the matrix
+%%% Line 1022
+Let \(\nabla f\) be the \index{gradient}\textit{gradient} of \(f\), that is, the column vector of first partial
+derivatives.   Let \(\nabla^2f\) be the \index{Hessian matrix}\textit{Hessian matrix} of \(f\), that is, the matrix
 of second partial derivatives.
 
-%%% Line 1025
+%%% Line 1026
 \begin{theorem}
 If the function   \(f:\reals^n \rightarrow \reals\)   is convex and differentiable, and its gradient   \(\nabla f\)   is Lipschitz continuous with Lipschitz constant   \(L > 0\), then gradient descent with a fixed step size   \(\alpha \in (0, \frac{2}{L})\)   converges to a global minimum of   \(f\).
 \end{theorem}
 
-%%% Line 1030
+%%% Line 1031
 \begin{theorem}
-Suppose that the function   \(f:\reals^n \rightarrow \reals\)   is convex and twice continuously differentiable.   Suppose also that there are constants \(m > 0\) and 
-\(L > 0\) such that \(\nabla^2 f(x) - m I\) and \(\nabla^2 f(x) - L I\) are 
+Suppose that the function   \(f:\reals^n \rightarrow \reals\)   is convex and twice continuously differentiable.   Suppose also that there are constants \(m > 0\) and
+\(L > 0\) such that \(\nabla^2 f(x) - m I\) and \(\nabla^2 f(x) - L I\) are
 positive-definite matrices. Then gradient descent with step size
 satisfying \(0 < \alpha < 2/L\) converges to the unique global minimum of \(f\).
 \end{theorem}
 
-%%% Line 1039
+%%% Line 1040
 \section{References} \label{references}
 
-%%% Line 1041
+%%% Line 1042
 \bibitem{AA} Anil Ananthasamy, \u{Why Machines Learn}
 
-%%% Line 1043
+%%% Line 1044
 \href{https://towardsdatascience.com/gradient-descent-algorithm-a-deep-dive-cf04e8115f21}{Gradient Descent Algorithm — a Deep Dive}
 
-%%% Line 1045
+%%% Line 1046
 \href{https://raphaelvallat.com/bandpower.html}{EEG Spectral Density}
 
-%%% Line 1047
+%%% Line 1048
 \href{https://www.osti.gov/servlets/purl/983240}{Steepest descent (Arizona)}
 
 \clearpage

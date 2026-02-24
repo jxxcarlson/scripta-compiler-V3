@@ -83,7 +83,8 @@ const RULES = [
         "\\footnote", "\\par", "\\newline", "\\\\",
         "\\errorHighlight", // handled by parse-error-passthrough rule
       ]);
-      return unknowns.some((cmd) => !known.has(cmd));
+      const found = [...new Set(unknowns.filter((cmd) => !known.has(cmd)))];
+      return found.length > 0 ? found : false;
     },
     explanation: "LaTeX output contains a control sequence not in the standard set",
     fixLocation:
@@ -108,9 +109,12 @@ function classify(errorEntry, scriptaLines, latexLines) {
   const latexContext = extractContext(latexLines, latexLine - 1, 1);
 
   // Try each rule in order; first match wins
+  // A rule's test() returns truthy on match. For undefined-command it returns
+  // the array of unknown commands; for others it returns true/false.
   for (const rule of RULES) {
-    if (rule.test(latexText)) {
-      return {
+    const result = rule.test(latexText);
+    if (result) {
+      const entry = {
         scriptaLine,
         scriptaContext,
         latexLine,
@@ -121,6 +125,13 @@ function classify(errorEntry, scriptaLines, latexLines) {
         fixLocation: rule.fixLocation,
         fixHint: rule.fixHint,
       };
+      // If the rule returned detail (e.g. list of unknown commands), include it
+      if (Array.isArray(result)) {
+        entry.unknownCommands = result;
+        entry.explanation =
+          "Undefined control sequence(s): " + result.join(", ");
+      }
+      return entry;
     }
   }
 

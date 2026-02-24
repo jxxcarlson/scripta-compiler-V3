@@ -11,7 +11,7 @@
       "id": 1,
       "scriptaLine": 57,
       "scriptaContext": "have  things like this: $4\\heartsuit, 5\\diamondsuit, 6\\clubsuit, 2\\spadesuit$. We can gather them in to various collections, e.g.,\n\n|| aligned",
-      "latexLine": 241,
+      "latexLine": 242,
       "latexContext": "\\end{align}\n\n%%% Line 61",
       "category": "unclassified",
       "pattern": "unknown",
@@ -23,31 +23,40 @@
       "id": 2,
       "scriptaLine": 67,
       "scriptaContext": "2\\heartsuit \\in A, \\ 2\\heartsuit\\in B,\\ 7\\spadesuit \\not\\in A,\\ 7\\spadesuit \\in B\n\nAssertions like $2\\heartsuit \\in A$ or $7\\spadesuit \\in A$ are [term propositions]: they are capable of being true or false.  True in the first case, but false in the second.",
-      "latexLine": 252,
+      "latexLine": 253,
       "latexContext": "Assertions like \\(2\\heartsuit \\in A\\) or \\(7\\spadesuit \\in A\\) are \\term{propositions}: they are capable of being true or false.   True in the first case, but false in the second.\n\n%%% Line 69",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\heartsuit, \\in, \\spadesuit, \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\heartsuit",
+        "\\in",
+        "\\spadesuit",
+        "\\term"
+      ]
     },
     {
       "id": 3,
       "scriptaLine": 73,
       "scriptaContext": "## Encoding things as sets\n\nMathematical objects like the natural numbers can be described in the language of sets.  Here is one way to do  it. Encode zero as",
-      "latexLine": 262,
+      "latexLine": 263,
       "latexContext": "the empty set \\(\\set{}\\).\nEncode one as \\(\\set{\\set{}}\\).   Encode two as \n\\(\\set{ \\set{}, \\set{\\set{}}}\\), etc. Introduce aliases for these numbers:",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\set",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\set"
+      ]
     },
     {
       "id": 4,
       "scriptaLine": 78,
       "scriptaContext": "$\\set{ \\set{}, \\set{\\set{}}}$, etc. Introduce aliases for these numbers:\n\n|| aligned",
-      "latexLine": 272,
+      "latexLine": 273,
       "latexContext": "\\end{align}\n\n%%% Line 84",
       "category": "unclassified",
       "pattern": "unknown",
@@ -59,67 +68,96 @@
       "id": 5,
       "scriptaLine": 87,
       "scriptaContext": "none of these elements is element of itself: $0 \\not\\in 0$, $1 \\not\\in 1$, etc.\n\nWe can gather these numbers into sets in various ways: the set of all natural numbers,  $\\nat = \\set{0, 1, 2, \\ldots}{}$, the subsets of $\\tt{Even}$ and $\\tt{Odd}$ numbers, respectively.  The latter is described using a predicate — a function like $\\text{isOdd}$ that returns true or false according to whether the argument of the",
-      "latexLine": 279,
+      "latexLine": 280,
       "latexContext": "We can gather these numbers into sets in various ways: the set of all natural numbers,   \\(\\nat = \\set{0, 1, 2, \\ldots}{}\\), the subsets of \\(\\tt{Even}\\) and \\(\\tt{Odd}\\) numbers, respectively.   The latter is described using a predicate --- a function like \\(\\text{isOdd}\\) that returns true or false according to whether the argument of the\nfunction is even or odd.\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\set, \\ldots, \\tt, \\text",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\set",
+        "\\ldots",
+        "\\tt",
+        "\\text"
+      ]
     },
     {
       "id": 6,
       "scriptaLine": 90,
       "scriptaContext": "function is even or odd.\n\n|| equation",
-      "latexLine": 284,
+      "latexLine": 285,
       "latexContext": "\\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\tt, \\sett, \\in, \\nat, \\text, \\true",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\tt",
+        "\\sett",
+        "\\in",
+        "\\nat",
+        "\\text",
+        "\\true"
+      ]
     },
     {
       "id": 7,
       "scriptaLine": 95,
       "scriptaContext": "Now consider the set  whose elments are not members of themselves:\n\n|| equation",
-      "latexLine": 292,
+      "latexLine": 293,
       "latexContext": "R = \\sett{x}{x \\not\\in x}\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\sett, \\not, \\in",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\sett",
+        "\\not",
+        "\\in"
+      ]
     },
     {
       "id": 8,
       "scriptaLine": 98,
       "scriptaContext": "R = \\sett{x}{x \\not\\in x}\n\nIts definition is vaguely like that of $\\tt{Odd}$.",
-      "latexLine": 298,
+      "latexLine": 299,
       "latexContext": "are the sets \\(\\nat\\), \\(\\tt{Odd}\\), and \\(\\tt{Even}\\).   But now ask if \\(R\\) is an element of itself.   If \\(R \\in R\\), we conclude from the definition of \\(R\\), that \\(R \\not \\in R\\).   If \\(R \\in R\\), we conclude\nfrom the definition of \\(R\\), that \\(R \\in R\\).   In either case, we find a contradiction, and so we are faced with a paradox.   We will revisit this\nparadox in section \\ref{comparing-sets-and-types}, where we discuss the origins of type theory and introdue the notion of type universes.",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\tt, \\in, \\not",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\tt",
+        "\\in",
+        "\\not"
+      ]
     },
     {
       "id": 9,
       "scriptaLine": 108,
       "scriptaContext": "# Formal Systems\n\nMartin-Löf type theory is a formal system, the two main ingredients",
-      "latexLine": 307,
+      "latexLine": 308,
       "latexContext": "of which are \\term{judgments} and \\term{inference rules}.   Judgments\nare the things we assert.   They are the facts known to the system.\nRules of inference are rules use to derive new judgments from",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 10,
       "scriptaLine": 156,
       "scriptaContext": "There are five kinds of jugments in MLTT.\n\n. $\\Gamma \\ctx$ — $\\Gamma$ is a well-formed context, that is, a sequence of variable declarations like $x_1 : A_1, \\ldots x_n : A_n$, where latter types $A_i$ may depend on earlier variables.",
-      "latexLine": 363,
+      "latexLine": 364,
       "latexContext": "\\item \\(\\Gamma \\ctx\\) --- \\(\\Gamma\\) is a well-formed context, that is, a sequence of variable declarations like \\(x_1 : A_1, \\ldots x_n : A_n\\), where latter types \\(A_i\\) may depend on earlier variables. Something like \\(x: A, y: B\\) where \\(A\\) depends on \\(y\\) is not well formed, nor is \\(A, B, C\\). In general, well-formed means \\quote{formed according to the rules.}\n\n%%% Line 159",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -131,43 +169,57 @@
       "id": 11,
       "scriptaLine": 159,
       "scriptaContext": "Something like $x: A, y: B$ where $A$ depends on $y$ is not well formed, nor is $A, B, C$. In general, well-formed means [quote formed according to the rules.]\n\n. $\\Gamma \\vdash A\\ \\type$ — under the assumptions of $\\Gamma$, $A$ is a type",
-      "latexLine": 366,
+      "latexLine": 367,
       "latexContext": "\\item \\(\\Gamma \\vdash A\\ \\type\\) --- under the assumptions of \\(\\Gamma\\), \\(A\\) is a type\n\n%%% Line 161",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\Gamma, \\vdash, \\type",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\Gamma",
+        "\\vdash",
+        "\\type"
+      ]
     },
     {
       "id": 12,
       "scriptaLine": 163,
       "scriptaContext": ". $\\Gamma \\vdash t : A$ — under the assumptions of $\\Gamma$, $t$ is a term of type $A$\n\n. $\\Gamma \\vdash A \\equiv B\\ \\type$ — under the assumptions of $\\Gamma$, $A$ and $B$ are equal types",
-      "latexLine": 372,
+      "latexLine": 373,
       "latexContext": "\\item \\(\\Gamma \\vdash A \\equiv B\\ \\type\\) --- under the assumptions of \\(\\Gamma\\), \\(A\\) and \\(B\\) are equal types\n\n%%% Line 165",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\Gamma, \\vdash, \\equiv, \\type",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\Gamma",
+        "\\vdash",
+        "\\equiv",
+        "\\type"
+      ]
     },
     {
       "id": 13,
       "scriptaLine": 169,
       "scriptaContext": "\n\nIn the last two judgment forms, equality is [term definitional equality] or [term judgmental equality], i.e., equality according to the rules of computation and definition of the theory.",
-      "latexLine": 380,
+      "latexLine": 381,
       "latexContext": "In the last two judgment forms, equality is \\term{definitional equality} or \\term{judgmental equality}, i.e., equality according to the rules of computation and definition of the theory.\n\n%%% Line 171",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 14,
       "scriptaLine": 173,
       "scriptaContext": "To define a type, we must give four kinds of inference rules: formation, introduction, elimination, and computation.  We begin with the first two rules for the natural numbers.\n\n|| equation",
-      "latexLine": 387,
+      "latexLine": 388,
       "latexContext": "\\frac{\\Gamma \\ctx}{\\ \\Gamma \\vdash  \\nat\\  }\\ f\\qquad\\frac{\\Gamma \\ctx}{\\Gamma \\vdash \\zero : \\nat}\\ i_1\\qquad\\frac{ \\Gamma \\vdash k : \\nat}{\\Gamma \\vdash \\suc k : \\nat}\\ i_2\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -179,43 +231,58 @@
       "id": 15,
       "scriptaLine": 181,
       "scriptaContext": "\n\nThe first rule is the formation rule for the natural numbers.  It does nothing more than announce that $\\nat$ is a type in the context $\\Gamma$.  The second two rules are introduction rules.  The first of these says that $\\zero$ is a term of $\\nat$ in context $\\Gamma$.  ",
-      "latexLine": 391,
+      "latexLine": 392,
       "latexContext": "The first rule is the formation rule for the natural numbers.   It does nothing more than announce that \\(\\nat\\) is a type in the context \\(\\Gamma\\).   The second two rules are introduction rules.   The first of these says that \\(\\zero\\) is a term of \\(\\nat\\) in context \\(\\Gamma\\).   \nThe other says that if \\(k\\) is a term of \\(\\nat\\) in context \\(\\Gamma\\),\nthen so is \\(\\suc k\\). ",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\Gamma, \\zero, \\suc",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\Gamma",
+        "\\zero",
+        "\\suc"
+      ]
     },
     {
       "id": 16,
       "scriptaLine": 185,
       "scriptaContext": "then so is $\\suc k$. \n\nBy repeated ",
-      "latexLine": 397,
+      "latexLine": 398,
       "latexContext": "application of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.\n\n%%% Line 190",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\zero, \\suc, \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\zero",
+        "\\suc",
+        "\\term"
+      ]
     },
     {
       "id": 17,
       "scriptaLine": 190,
       "scriptaContext": "\n\n| box The Empty Type",
-      "latexLine": 401,
+      "latexLine": 402,
       "latexContext": "The empty type, written \\(\\bot\\), is a type with no introduction\nrules, hence no constructors.   Consequently there are no terms of the empty type.\n\\end{box}",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\bot",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\bot"
+      ]
     },
     {
       "id": 18,
       "scriptaLine": 197,
       "scriptaContext": "can work with an empty context, in which case we might write the rules in simplified form as\n\n  || equation",
-      "latexLine": 409,
+      "latexLine": 410,
       "latexContext": "\\label{rules-without-\\gamma}\\frac{}{\\   \\nat\\  }\\ f\\qquad\\frac{}{\\zero : \\nat}\\ i_1\\qquad\\qquad\\frac{  k : \\nat}{ \\suc k : \\nat}\\ i_2\n\\end{equation}\ncan work with an empty context, in which case we might write the rules in simplified form as",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -227,19 +294,22 @@
       "id": 19,
       "scriptaLine": 208,
       "scriptaContext": "We will frequently do this to cut down on visual complexity.  For more about contexts, see the box at the end of this section.\n\nLet us continue with our discussion of the natural numbers.  Just as with the Cherry-Banana Calculus, judgments $n : \\nat$ are given by derivations, e.g.,",
-      "latexLine": 417,
+      "latexLine": 418,
       "latexContext": "Let us continue with our discussion of the natural numbers.   Just as with the Cherry-Banana Calculus, judgments \\(n : \\nat\\) are given by derivations, e.g.,\n\n%%% Line 210",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat"
+      ]
     },
     {
       "id": 20,
       "scriptaLine": 210,
       "scriptaContext": "Let us continue with our discussion of the natural numbers.  Just as with the Cherry-Banana Calculus, judgments $n : \\nat$ are given by derivations, e.g.,\n\n|| equation",
-      "latexLine": 421,
+      "latexLine": 422,
       "latexContext": "\\dfrac{\\dfrac{\\dfrac{}{\\zero : \\nat}i_1}{\\suc \\zero: \\nat}i_2}{\\suc(\\suc \\zero) : \\nat}i_2\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -251,103 +321,148 @@
       "id": 21,
       "scriptaLine": 215,
       "scriptaContext": "At this point our store of judgments is\n\n|| equation",
-      "latexLine": 429,
+      "latexLine": 430,
       "latexContext": "\\mathcal{J} = \\nat\\ \\type,\\ \\zero : \\nat,\\ \\suc\\ \\zero : \\nat,\\suc\\ (\\suc \\zero) : \\nat\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\mathcal, \\nat, \\type, \\zero, \\suc",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\mathcal",
+        "\\nat",
+        "\\type",
+        "\\zero",
+        "\\suc"
+      ]
     },
     {
       "id": 22,
       "scriptaLine": 219,
       "scriptaContext": "\\suc\\ (\\suc \\zero) : \\nat\n\nOf course it is cumbersome to work with expressions like ",
-      "latexLine": 434,
+      "latexLine": 435,
       "latexContext": "\\(\\suc\\ (\\suc\\ \\zero)\\), so we can make definitions\nlike \\(0 :≡ \\zero\\), \\(1   :≡ \\suc \\zero\\), \\(2 :≡ \\suc\\ (\\suc \\zero)\\), \netc.   Then it makes perfect sense to say that   \\(3 ≡ \\suc 2\\).",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\suc, \\zero, \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\suc",
+        "\\zero",
+        "\\term"
+      ]
     },
     {
       "id": 23,
       "scriptaLine": 227,
       "scriptaContext": "\n\n| box Contexts",
-      "latexLine": 442,
+      "latexLine": 443,
       "latexContext": "Consider the assertion \\(\\suc x : \\nat\\).   This is meaningless without the\n   assumption \\(x : \\nat\\).   Thus we write \\(x : \\nat \\vdash \\suc \\nat\\).   \n   The context is \\(x : \\nat\\).",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\suc, \\nat, \\vdash, \\term, \\Gamma, \\type",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\suc",
+        "\\nat",
+        "\\vdash",
+        "\\term",
+        "\\Gamma",
+        "\\type"
+      ]
     },
     {
       "id": 24,
       "scriptaLine": 275,
       "scriptaContext": "application\n\nTo give meaning to the lambda calculus, we define the operation of [term beta-reduction].  It defines what happens when an abstraction ",
-      "latexLine": 496,
+      "latexLine": 497,
       "latexContext": "To give meaning to the lambda calculus, we define the operation of \\term{beta-reduction}.   It defines what happens when an abstraction \nis applied to another \\(\\lambda\\)-term:\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 25,
       "scriptaLine": 310,
       "scriptaContext": "type $B$.  First, the formation rule:\n\n|| equation",
-      "latexLine": 542,
+      "latexLine": 543,
       "latexContext": "\\dfrac{A \\type \\qquad B \\type}{(A \\to B) \\type}\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\dfrac, \\type, \\qquad, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\dfrac",
+        "\\type",
+        "\\qquad",
+        "\\to"
+      ]
     },
     {
       "id": 26,
       "scriptaLine": 348,
       "scriptaContext": "write this as $A \\to B \\to C$.  If what we want is $(A \\to B) \\to C$, then the parentheses are mandatory.\n\nWhat can we do with a term $f$ of type $A \\to B \\to C$? Suppose given terms $a : A$ and $b : B$.  Because $f : A \\to (B \\to C)$, ",
-      "latexLine": 591,
+      "latexLine": 592,
       "latexContext": "we can apply \\(f(a)\\) to \\(b\\), obtaining \\(f(a)(b) : C\\). This is how we evaluate \\(f\\).   We say that \\(f(a)\\), which is a function, is the result of \\term{partial evaluation}.\n\n%%% Line 352",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 27,
       "scriptaLine": 360,
       "scriptaContext": "The Boolean type has two constructors and just two terms:\n\n|| equation",
-      "latexLine": 604,
+      "latexLine": 605,
       "latexContext": "\\dfrac{}{\\boolean \\type}\\qquad\\dfrac{}{\\true : \\boolean}\\qquad\\dfrac{}{\\false : \\boolean}\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\dfrac, \\boolean, \\type, \\qquad, \\true, \\false",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\dfrac",
+        "\\boolean",
+        "\\type",
+        "\\qquad",
+        "\\true",
+        "\\false"
+      ]
     },
     {
       "id": 28,
       "scriptaLine": 367,
       "scriptaContext": "\\dfrac{}{\\false : \\boolean}\n\nTo define a function $f : \\boolean \\to C$, we need the",
-      "latexLine": 608,
+      "latexLine": 609,
       "latexContext": "To define a function \\(f : \\boolean \\to C\\), we need the\nelimination and computations rules. Below is the \nelimination rule.   It defines a function called the \\term{recursor}.",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\boolean, \\to, \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\boolean",
+        "\\to",
+        "\\term"
+      ]
     },
     {
       "id": 29,
       "scriptaLine": 373,
       "scriptaContext": "inputs, it produces a function $f : \\boolean \\to C$ as output, namely \n\n|| equation ",
-      "latexLine": 616,
+      "latexLine": 617,
       "latexContext": "f\\, b = \\rec_\\boolean(t, f, b)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -359,7 +474,7 @@
       "id": 30,
       "scriptaLine": 376,
       "scriptaContext": "f\\, b = \\rec_\\boolean(t, f, b)\n\n|| equation",
-      "latexLine": 621,
+      "latexLine": 622,
       "latexContext": "\\dfrac{C \\type \\quad t : C \\quad f : C \\quad b : \\boolean}{\\rec_\\boolean(t, f, b): C}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -371,7 +486,7 @@
       "id": 31,
       "scriptaLine": 382,
       "scriptaContext": "To complete the picture, we must give the computation rules:\n\n|| equation",
-      "latexLine": 629,
+      "latexLine": 630,
       "latexContext": "\\dfrac{t : C\\qquad f : C}{{\\rec_\\boolean(t, f, \\true) = t : C}}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -383,7 +498,7 @@
       "id": 32,
       "scriptaLine": 386,
       "scriptaContext": "{{\\rec_\\boolean(t, f, \\true) = t : C}}\n\n|| equation",
-      "latexLine": 634,
+      "latexLine": 635,
       "latexContext": "\\dfrac{t : C\\qquad f : C}{{\\rec_\\boolean(t, f, \\false) = f : C}}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -395,19 +510,26 @@
       "id": 33,
       "scriptaLine": 390,
       "scriptaContext": "{{\\rec_\\boolean(t, f, \\false) = f : C}}\n\nThe first computation rule says that if the last argument of $\\rec$",
-      "latexLine": 638,
+      "latexLine": 639,
       "latexContext": "The first computation rule says that if the last argument of \\(\\rec\\)\nis \\(\\true\\), the return value is \\(t: C\\).   If it is false, the return value is \\(f : C\\).   Let us use what we have learned to define the function \\(\\nott : \\boolean \\to \\boolean\\) which negates its\nargument:",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\rec, \\true, \\nott, \\boolean, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\rec",
+        "\\true",
+        "\\nott",
+        "\\boolean",
+        "\\to"
+      ]
     },
     {
       "id": 34,
       "scriptaLine": 394,
       "scriptaContext": "argument:\n\n|| equation",
-      "latexLine": 644,
+      "latexLine": 645,
       "latexContext": "\\nott\\, b = \\rec_{\\boolean}(\\false,\\true, b)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -419,31 +541,39 @@
       "id": 35,
       "scriptaLine": 397,
       "scriptaContext": "\\nott\\, b = \\rec_{\\boolean}(\\false,\\true, b)\n\nExercise: show that $\\nott \\true ≡ \\false$ and $\\nott \\false ≡ \\true$.",
-      "latexLine": 648,
+      "latexLine": 649,
       "latexContext": "Exercise: show that \\(\\nott \\true ≡ \\false\\) and \\(\\nott \\false ≡ \\true\\).\n\n%%% Line 399",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nott, \\true, \\false",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nott",
+        "\\true",
+        "\\false"
+      ]
     },
     {
       "id": 36,
       "scriptaLine": 399,
       "scriptaContext": "Exercise: show that $\\nott \\true ≡ \\false$ and $\\nott \\false ≡ \\true$.\n\n[b Pattern matching.] We can also define $\\nott$ by pattern-matching:",
-      "latexLine": 651,
+      "latexLine": 652,
       "latexContext": "\\textbf{Pattern matching.} We can also define \\(\\nott\\) by pattern-matching:\n\n%%% Line 401",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nott",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nott"
+      ]
     },
     {
       "id": 37,
       "scriptaLine": 401,
       "scriptaContext": "[b Pattern matching.] We can also define $\\nott$ by pattern-matching:\n\n|| aligned",
-      "latexLine": 658,
+      "latexLine": 659,
       "latexContext": "\\end{align}\n\n%%% Line 406",
       "category": "unclassified",
       "pattern": "unknown",
@@ -455,7 +585,7 @@
       "id": 38,
       "scriptaLine": 414,
       "scriptaContext": "in Boolean algebra. Below is how we might implement logical conjunction.  Here is one way to do it, using pattern-matching:\n\n|| aligned",
-      "latexLine": 678,
+      "latexLine": 679,
       "latexContext": "\\end{align}\n\n%%% Line 421",
       "category": "unclassified",
       "pattern": "unknown",
@@ -467,7 +597,7 @@
       "id": 39,
       "scriptaLine": 423,
       "scriptaContext": "This style of pattern-matching can be improved:\n\n|| aligned",
-      "latexLine": 688,
+      "latexLine": 689,
       "latexContext": "\\end{align}\n\n%%% Line 428",
       "category": "unclassified",
       "pattern": "unknown",
@@ -479,7 +609,7 @@
       "id": 40,
       "scriptaLine": 438,
       "scriptaContext": "via the recursor:\n\n|| equation",
-      "latexLine": 703,
+      "latexLine": 704,
       "latexContext": "\\label{\\rec-def-of-adn}\\and = \\lambda b_1 . \\lambda b_2 . \\rec_\\boolean(b_2, \\false, b_1)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -491,19 +621,22 @@
       "id": 41,
       "scriptaLine": 448,
       "scriptaContext": "will show that the two derivations are interderviable.\n\n| exercise",
-      "latexLine": 717,
+      "latexLine": 718,
       "latexContext": "Define the logical function \\(\\or\\) by (1) equations, (2) the eliminator.\n\\end{exercise}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\or",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\or"
+      ]
     },
     {
       "id": 42,
       "scriptaLine": 454,
       "scriptaContext": "sequence of reductions\n\n|| aligned",
-      "latexLine": 731,
+      "latexLine": 732,
       "latexContext": "\\end{align}\n\n%%% Line 461",
       "category": "unclassified",
       "pattern": "unknown",
@@ -515,91 +648,124 @@
       "id": 43,
       "scriptaLine": 461,
       "scriptaContext": "&\\true\n\nEach line [eqref bool-reductions] is a term of $\\boolean$.  However,",
-      "latexLine": 734,
+      "latexLine": 735,
       "latexContext": "Each line \\eqref{bool-reductions} is a term of \\(\\boolean\\).   However,\nthe last term is special: it cannot be further reduced.   Such a term is said to be in \\term{normal form}.   Moreover, one can assert judgments like the below.   See the item (5) in section \\ref{mltt-as-a-formal-system}.\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\boolean, \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\boolean",
+        "\\term"
+      ]
     },
     {
       "id": 44,
       "scriptaLine": 464,
       "scriptaContext": "the last term is special: it cannot be further reduced.  Such a term is said to be in [term normal form].  Moreover, one can assert judgments like the below.  See the item (5) in section [ref mltt-as-a-formal-system].\n\n|| equation",
-      "latexLine": 739,
+      "latexLine": 740,
       "latexContext": "\\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\boolean, \\or, \\and, \\true, \\false, \\equiv",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\boolean",
+        "\\or",
+        "\\and",
+        "\\true",
+        "\\false",
+        "\\equiv"
+      ]
     },
     {
       "id": 45,
       "scriptaLine": 479,
       "scriptaContext": "# Comparing Sets and Types\n\nNow that we have developed the rudiments of type theory,",
-      "latexLine": 756,
+      "latexLine": 757,
       "latexContext": "numbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type\ntheory is quite different.   One defines a type, then goes about\nconstructing terms, adding judgments to \\(\\mathcal{J}\\) as time",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\set, \\nat",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\set",
+        "\\nat"
+      ]
     },
     {
       "id": 46,
       "scriptaLine": 503,
       "scriptaContext": "## Russell's Paradox\n\nIn 1902, Bertrand Russell wrote a letter to Gotlob Frege pointing out an error in Frege's work on the foundations of logic an mathematics.  Russell's letter introduced the set $R = \\sett{ x }{x \\not\\in x}$",
-      "latexLine": 772,
+      "latexLine": 773,
       "latexContext": "In 1902, Bertrand Russell wrote a letter to Gotlob Frege pointing out an error in Frege's work on the foundations of logic an mathematics.   Russell's letter introduced the set \\(R = \\sett{ x }{x \\not\\in x}\\)\nconsidered in section \\ref{sets}.   The resulting problem --- \\term{Russell's paradox} --- meant that there was a flaw in Frege's work on the foundations\nof logic and mathematics",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\sett, \\not, \\in, \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\sett",
+        "\\not",
+        "\\in",
+        "\\term"
+      ]
     },
     {
       "id": 47,
       "scriptaLine": 528,
       "scriptaContext": "\n\nA universe $\\cU$ is a type: one has ",
-      "latexLine": 806,
+      "latexLine": 807,
       "latexContext": "A universe \\(\\cU\\) is a type: one has \n\n%%% Line 530",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\cU",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\cU"
+      ]
     },
     {
       "id": 48,
       "scriptaLine": 530,
       "scriptaContext": "A universe $\\cU$ is a type: one has \n\n|| equation",
-      "latexLine": 810,
+      "latexLine": 811,
       "latexContext": "\\cU \\type\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\cU, \\type",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\cU",
+        "\\type"
+      ]
     },
     {
       "id": 49,
       "scriptaLine": 534,
       "scriptaContext": "\n\nThe terms of $\\cU$ are themselves types. If",
-      "latexLine": 814,
+      "latexLine": 815,
       "latexContext": "The terms of \\(\\cU\\) are themselves types. If\n\\(A : \\cU\\), then \\(A \\type\\). This setup \nlets you quantify over types safely.",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\cU, \\type",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\cU",
+        "\\type"
+      ]
     },
     {
       "id": 50,
       "scriptaLine": 539,
       "scriptaContext": "To avoid self-reference and paradoxes, MLTT uses a cumulative hierarchy of universes:\n\n|| equation",
-      "latexLine": 821,
+      "latexLine": 822,
       "latexContext": "\\cU_0 : \\cU_1 : \\cU_2 : \\ldots\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -611,7 +777,7 @@
       "id": 51,
       "scriptaLine": 543,
       "scriptaContext": "\n\nEach universe $\\cU_n$ is a term of the next universe $\\cU_{n+1}$.",
-      "latexLine": 825,
+      "latexLine": 826,
       "latexContext": "Each universe \\(\\cU_n\\) is a term of the next universe \\(\\cU_{n+1}\\).\n Types in \\(\\cU_n\\) are also in \\(\\cU_{n+1}\\), hence the hierarchy is \ncumulative. This stratification is analogous to Russell's type hierarchy: you can't have a universe that contains itself.",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -623,7 +789,7 @@
       "id": 52,
       "scriptaLine": 547,
       "scriptaContext": "cumulative. This stratification is analogous to Russell’s type hierarchy: you can’t have a universe that contains itself.\n\nWe say that $\\cU_n$ is a universe of [term level] $n$ and that",
-      "latexLine": 830,
+      "latexLine": 831,
       "latexContext": "We say that \\(\\cU_n\\) is a universe of \\term{level} \\(n\\) and that\n\\(\\cU_0\\) is the \\term{universe of small types}. The type of natural numbers\nis small, as is the type of functions \\(\\nat \\to \\nat\\). As we shall see below, there are \\quote{large} types.",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -635,7 +801,7 @@
       "id": 53,
       "scriptaLine": 555,
       "scriptaContext": "rules for the natural numbers and for the construction of function types:\n\n|| equation",
-      "latexLine": 841,
+      "latexLine": 842,
       "latexContext": "\\label{U-formation}\\dfrac{}{\\nat : \\cU_0}\\qquad\\dfrac{A : \\cU_n \\qquad B : \\cU_n}{A \\to B : \\cU_n}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -647,7 +813,7 @@
       "id": 54,
       "scriptaLine": 561,
       "scriptaContext": "\\dfrac{A : \\cU_n \\qquad B : \\cU_n}{A \\to B : \\cU_n}\n\nNote that in the case of the function type, the type constructor $\\to$ preserves universe levels: If $A$ and $B$ are terms",
-      "latexLine": 846,
+      "latexLine": 847,
       "latexContext": "of \\(\\cU_n\\), then so is \\(A \\to B\\). \n\n%%% Line 565",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -659,7 +825,7 @@
       "id": 55,
       "scriptaLine": 567,
       "scriptaContext": "## Large Types\n\nConsider a function $f : A \\to \\cU_0$ where $A : \\cU_0$.  A first ",
-      "latexLine": 852,
+      "latexLine": 853,
       "latexContext": "Consider a function \\(f : A \\to \\cU_0\\) where \\(A : \\cU_0\\).   A first \ndraft of its formaton rule is\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -671,7 +837,7 @@
       "id": 56,
       "scriptaLine": 570,
       "scriptaContext": "draft of its formaton rule is\n\n|| equation",
-      "latexLine": 857,
+      "latexLine": 858,
       "latexContext": "\\label{draft-large-\\type}\\dfrac{A: \\cU_0 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,??}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -683,7 +849,7 @@
       "id": 57,
       "scriptaLine": 574,
       "scriptaContext": "\\dfrac{A: \\cU_0 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,??}\n\nWe write $B : \\, ??$  because the draft rule doe not fit the form",
-      "latexLine": 862,
+      "latexLine": 863,
       "latexContext": "specified above.   But cumulativity saves the day: \\(\\cU_0 : \\cU_1\\)\nand if \\(A : \\cU_0\\), so \\(A :\\cU_1\\).   Then \\eqref{draft-large-type}\ncan be written as",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -695,7 +861,7 @@
       "id": 58,
       "scriptaLine": 579,
       "scriptaContext": "can be written as\n\n|| equation",
-      "latexLine": 868,
+      "latexLine": 869,
       "latexContext": "\\dfrac{A: \\cU_1 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,\\cU_1}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -707,7 +873,7 @@
       "id": 59,
       "scriptaLine": 582,
       "scriptaContext": "\\dfrac{A: \\cU_1 \\qquad \\cU_0:\\cU_1}{A \\to \\cU_0 : \\,\\cU_1}\n\nWe conclude that $f$ is a term of a type that lives in $\\cU_1$,",
-      "latexLine": 872,
+      "latexLine": 873,
       "latexContext": "We conclude that \\(f\\) is a term of a type that lives in \\(\\cU_1\\),\nnamely \\(A \\to \\cU_0\\).   Note that in this case the construction\nstill preserves type levels.",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -719,19 +885,22 @@
       "id": 60,
       "scriptaLine": 586,
       "scriptaContext": "still preserves type levels.\n\n| box Example of a Large Type",
-      "latexLine": 878,
+      "latexLine": 879,
       "latexContext": "Jumping ahead a bit, the \\textbf{\\term{ Identiy type}} is formed via \nthe rule\n%%% Line 590",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 61,
       "scriptaLine": 595,
       "scriptaContext": "  The introduction rule is \n\n  || equation",
-      "latexLine": 888,
+      "latexLine": 889,
       "latexContext": "\\dfrac{a : A}{\\refl_a : a =_A a}\n\\end{equation}\n%%% Line 598",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -743,7 +912,7 @@
       "id": 62,
       "scriptaLine": 598,
       "scriptaContext": "  \\dfrac{a : A}{\\refl_a : a =_A a}\n\n  We say that $a$ and $b$ are [b[term propositionally equal]]",
-      "latexLine": 891,
+      "latexLine": 892,
       "latexContext": "   We say that \\(a\\) and \\(b\\) are \\textbf{\\term{ propositionally equal}}\nif \\(a =_A b\\) is \\textbf{\\term{ inhabited}}, meaning that there\nis a term \\(t : a =_A b\\).   If \\(a\\) and \\(b\\) are definitionally",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -755,19 +924,22 @@
       "id": 63,
       "scriptaLine": 617,
       "scriptaContext": "\n\nWe will now show that the natural pattern matching equations",
-      "latexLine": 911,
+      "latexLine": 912,
       "latexContext": "scheme called \\term{primitive recursion}.   Such functions\nare guaranteed to terminate on all well-typed inputs.\nOnce we have the primitive recursion scheme in hand, we will",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 64,
       "scriptaLine": 627,
       "scriptaContext": "\n\n|| aligned",
-      "latexLine": 923,
+      "latexLine": 924,
       "latexContext": "\\end{align}\n\n%%% Line 632",
       "category": "unclassified",
       "pattern": "unknown",
@@ -779,19 +951,24 @@
       "id": 65,
       "scriptaLine": 632,
       "scriptaContext": "&\\fact\\; (\\suc n) = (\\suc n) * (\\fact n)\n\nWe notice that there two defining equations, one for each",
-      "latexLine": 927,
+      "latexLine": 928,
       "latexContext": "constructor of \\(\\nat\\).   The second equation defines   \\(\\fact\\)\nin terms of itself.   However, the definition is not\ncircular becuase we notice, going in more detail, that",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\fact, \\suc",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\fact",
+        "\\suc"
+      ]
     },
     {
       "id": 66,
       "scriptaLine": 645,
       "scriptaContext": "Here is a sample computation:\n\n|| aligned",
-      "latexLine": 950,
+      "latexLine": 951,
       "latexContext": "\\end{align}\n\n%%% Line 655",
       "category": "unclassified",
       "pattern": "unknown",
@@ -803,7 +980,7 @@
       "id": 67,
       "scriptaLine": 658,
       "scriptaContext": "of recursion works. We look once again at the definition:\n\n|| aligned",
-      "latexLine": 961,
+      "latexLine": 962,
       "latexContext": "\\end{align}\n\n%%% Line 663",
       "category": "unclassified",
       "pattern": "unknown",
@@ -815,55 +992,73 @@
       "id": 68,
       "scriptaLine": 665,
       "scriptaContext": "The first equation has the general form\n\n|| equation",
-      "latexLine": 968,
+      "latexLine": 969,
       "latexContext": "f \\zero = \\base\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\zero, \\base",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\zero",
+        "\\base"
+      ]
     },
     {
       "id": 69,
       "scriptaLine": 670,
       "scriptaContext": "The second has the form\n\n|| equation",
-      "latexLine": 976,
+      "latexLine": 977,
       "latexContext": "f (\\suc n) = \\step\\; n\\; (f\\; n)\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\suc, \\step",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\suc",
+        "\\step"
+      ]
     },
     {
       "id": 70,
       "scriptaLine": 675,
       "scriptaContext": "where in this case \n\n|| equation",
-      "latexLine": 984,
+      "latexLine": 985,
       "latexContext": "\\step n\\; v = (\\suc n) * v\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\step, \\suc",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\step",
+        "\\suc"
+      ]
     },
     {
       "id": 71,
       "scriptaLine": 678,
       "scriptaContext": "\\step n\\; v = (\\suc n) * v\n\nNotice that the type of $\\step$ is $\\nat \\to \\nat \\to \\nat$.",
-      "latexLine": 988,
+      "latexLine": 989,
       "latexContext": "Notice that the type of \\(\\step\\) is \\(\\nat \\to \\nat \\to \\nat\\).\nThe recursion scheme for \\(\\fact\\) is the general recursion\nscheme displayed below, where \\(C = \\nat\\):",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\step, \\nat, \\to, \\fact",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\step",
+        "\\nat",
+        "\\to",
+        "\\fact"
+      ]
     },
     {
       "id": 72,
       "scriptaLine": 682,
       "scriptaContext": "scheme displayed below, where $C = \\nat$:\n\n| box Primitive Recursion",
-      "latexLine": 994,
+      "latexLine": 995,
       "latexContext": "\n%%% Line 684\n   Functions \\(f : \\nat \\to C\\), are defined by the equations",
       "category": "unclassified",
       "pattern": "unknown",
@@ -875,19 +1070,23 @@
       "id": 73,
       "scriptaLine": 684,
       "scriptaContext": "| box Primitive Recursion\n\n  Functions $f : \\nat \\to C$, are defined by the equations",
-      "latexLine": 996,
+      "latexLine": 997,
       "latexContext": "   Functions \\(f : \\nat \\to C\\), are defined by the equations\n%%% Line 686\n\\begin{align}",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\to"
+      ]
     },
     {
       "id": 74,
       "scriptaLine": 686,
       "scriptaContext": "  Functions $f : \\nat \\to C$, are defined by the equations\n\n  || aligned",
-      "latexLine": 1001,
+      "latexLine": 1002,
       "latexContext": "\\end{align}\n%%% Line 690\n   where",
       "category": "unclassified",
       "pattern": "unknown",
@@ -899,7 +1098,7 @@
       "id": 75,
       "scriptaLine": 692,
       "scriptaContext": "  where\n\n  || aligned",
-      "latexLine": 1008,
+      "latexLine": 1009,
       "latexContext": "\\end{align}\n\\end{box}\n",
       "category": "unclassified",
       "pattern": "unknown",
@@ -911,43 +1110,57 @@
       "id": 76,
       "scriptaLine": 696,
       "scriptaContext": "  & \\step : \\nat \\to C \\to C\n\nThis scheme is what is called [term primitive recursion]. Functions",
-      "latexLine": 1012,
+      "latexLine": 1013,
       "latexContext": "This scheme is what is called \\term{primitive recursion}. Functions\ndefined by this scheme terminate on any well-typed argument.\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 77,
       "scriptaLine": 706,
       "scriptaContext": "## The Non-Dependent Eliminator\n\nFrom our primitive recursion scheme as a guide, we can formulate",
-      "latexLine": 1021,
+      "latexLine": 1022,
       "latexContext": "non-dependent types.   Consider the problem of defining a function \\(f : \\nat \\to C \\to C\\).   The data required to do this are\n\n%%% Line 710",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\to"
+      ]
     },
     {
       "id": 78,
       "scriptaLine": 710,
       "scriptaContext": "non-dependent types.  Consider the problem of defining a function $f : \\nat \\to C \\to C$.  The data required to do this are\n\n| indent",
-      "latexLine": 1025,
+      "latexLine": 1026,
       "latexContext": "(i) a type \\(C : \\cU\\)\n\\par\\par\n(ii) a term \\(\\base : C\\)",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\cU, \\base, \\step, \\nat, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\cU",
+        "\\base",
+        "\\step",
+        "\\nat",
+        "\\to"
+      ]
     },
     {
       "id": 79,
       "scriptaLine": 717,
       "scriptaContext": "(iii) a function $\\step : \\nat \\to C \\to C$\n\nLet us make up a type for a function $\\rec_\\nat$ — the recursor —",
-      "latexLine": 1033,
+      "latexLine": 1034,
       "latexContext": "Let us make up a type for a function \\(\\rec_\\nat\\) --- the recursor ---\nwhich takes the above data as input and produces a term of \n\\(\\nat \\to C\\) as output.   This straightforward:",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -959,7 +1172,7 @@
       "id": 80,
       "scriptaLine": 721,
       "scriptaContext": "$\\nat \\to C$ as output.  This straightforward:\n\n|| equation",
-      "latexLine": 1039,
+      "latexLine": 1040,
       "latexContext": "\\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -971,7 +1184,7 @@
       "id": 81,
       "scriptaLine": 726,
       "scriptaContext": "Then \n\n|| equation",
-      "latexLine": 1047,
+      "latexLine": 1048,
       "latexContext": "f\\; n = \\rec_\\nat\\; C\\; \\base\\;  \\step\\;  n\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -983,7 +1196,7 @@
       "id": 82,
       "scriptaLine": 731,
       "scriptaContext": "The computation rules are\n\n|| aligned",
-      "latexLine": 1057,
+      "latexLine": 1058,
       "latexContext": "\\end{align}\n\n%%% Line 735",
       "category": "unclassified",
       "pattern": "unknown",
@@ -995,7 +1208,7 @@
       "id": 83,
       "scriptaLine": 737,
       "scriptaContext": "The factorial function is then defined as\n\n|| equation",
-      "latexLine": 1064,
+      "latexLine": 1065,
       "latexContext": "\\fact = \\rec_\\nat\\; \\nat\\; \\zero\\; (\\lambda\\; n\\; v \\to (\\suc n) * v)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1007,7 +1220,7 @@
       "id": 84,
       "scriptaLine": 745,
       "scriptaContext": "\n\n|| aligned",
-      "latexLine": 1078,
+      "latexLine": 1079,
       "latexContext": "\\end{align}\n\n%%% Line 750",
       "category": "unclassified",
       "pattern": "unknown",
@@ -1019,19 +1232,24 @@
       "id": 85,
       "scriptaLine": 750,
       "scriptaContext": "&\\add\\; (\\suc m)\\; n = \\suc\\; (\\add m \\;n)\n\nThe type of $\\add$ is $\\nat \\to \\nat \\to \\nat$, which we",
-      "latexLine": 1081,
+      "latexLine": 1082,
       "latexContext": "The type of \\(\\add\\) is \\(\\nat \\to \\nat \\to \\nat\\), which we\nparenthesize as \\(\\nat \\to (\\nat \\to \\nat)\\) and then\nwrite as \\(\\nat \\to C\\) where \\(C = \\nat \\to \\nat\\).   Notice that the value ",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\add, \\nat, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\add",
+        "\\nat",
+        "\\to"
+      ]
     },
     {
       "id": 86,
       "scriptaLine": 756,
       "scriptaContext": "Of the three pieces of data we need to for the recursor we have two:\n\n|| equation",
-      "latexLine": 1089,
+      "latexLine": 1090,
       "latexContext": "\\add = \\rec_\\nat\\; C\\; (\\lambda n.n)\\;\\; ??\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1043,43 +1261,55 @@
       "id": 87,
       "scriptaLine": 759,
       "scriptaContext": "\\add = \\rec_\\nat\\; C\\; (\\lambda n.n)\\;\\; ??\n\nwhere $??$ is the function $\\step$.  Let us now find that function, keeping in mind that $\\step$ maps $\\add\\; m$ as a function of $n$ to ",
-      "latexLine": 1093,
+      "latexLine": 1094,
       "latexContext": "where \\(??\\) is the function \\(\\step\\).   Let us now find that function, keeping in mind that \\(\\step\\) maps \\(\\add\\; m\\) as a function of \\(n\\) to \n\\(\\add\\; (\\suc\\; m)\\) as a function of \\(n\\):\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\step, \\add, \\suc",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\step",
+        "\\add",
+        "\\suc"
+      ]
     },
     {
       "id": 88,
       "scriptaLine": 762,
       "scriptaContext": "$\\add\\; (\\suc\\; m)$ as a function of $n$:\n\n|| equation",
-      "latexLine": 1098,
+      "latexLine": 1099,
       "latexContext": "\\step n\\; (f\\; n) = f\\; (\\suc\\; n)\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\step, \\suc",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\step",
+        "\\suc"
+      ]
     },
     {
       "id": 89,
       "scriptaLine": 768,
       "scriptaContext": "\n\nTo do this, we write",
-      "latexLine": 1103,
+      "latexLine": 1104,
       "latexContext": "the recursion equation defining \\(\\add\\), then abstract with respect to \nthe variable \\(n\\) to get an equality of functions:\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\add",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\add"
+      ]
     },
     {
       "id": 90,
       "scriptaLine": 772,
       "scriptaContext": "the variable $n$ to get an equality of functions:\n\n|| aligned",
-      "latexLine": 1110,
+      "latexLine": 1111,
       "latexContext": "\\end{align}\n\n%%% Line 776",
       "category": "unclassified",
       "pattern": "unknown",
@@ -1091,19 +1321,24 @@
       "id": 91,
       "scriptaLine": 776,
       "scriptaContext": "&\\lambda n.(\\add\\; (\\suc m)\\;\n\nn) = \\lambda n.(\\suc\\; (\\add\\; m\\; n))",
-      "latexLine": 1113,
+      "latexLine": 1114,
       "latexContext": "n) = \\lambda n.(\\suc\\; (\\add\\; m\\; n))\n\n%%% Line 778",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\lambda, \\suc, \\add",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\lambda",
+        "\\suc",
+        "\\add"
+      ]
     },
     {
       "id": 92,
       "scriptaLine": 780,
       "scriptaContext": "Now\n\n|| aligned",
-      "latexLine": 1123,
+      "latexLine": 1124,
       "latexContext": "\\end{align}\n\n%%% Line 785",
       "category": "unclassified",
       "pattern": "unknown",
@@ -1115,115 +1350,157 @@
       "id": 93,
       "scriptaLine": 795,
       "scriptaContext": "- $\\text{Proofs } p \\text{ of } P \\longleftrightarrow \\text{Terms } p : P$\n\n- $\\text{Falsehood} \\longleftrightarrow \\text{ Empty type}\\; \\bot$",
-      "latexLine": 1143,
+      "latexLine": 1144,
       "latexContext": "\\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\)\n\n\\end{itemize}",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\text, \\longleftrightarrow, \\type, \\bot",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\text",
+        "\\longleftrightarrow",
+        "\\type",
+        "\\bot"
+      ]
     },
     {
       "id": 94,
       "scriptaLine": 807,
       "scriptaContext": "## Propositional Logic\n\nModus Ponens, one of the principles of classical logic, states that if",
-      "latexLine": 1166,
+      "latexLine": 1167,
       "latexContext": "\\(P \\implies Q\\), there is a witness \\(f : P \\to Q\\).   By the elimination rule for functions, \\(f\\; p : Q\\).   Therefore we know \\(Q\\). \\qed{}\n\n%%% Line 811",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\implies, \\to, \\qed",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\implies",
+        "\\to",
+        "\\qed"
+      ]
     },
     {
       "id": 95,
       "scriptaLine": 811,
       "scriptaContext": "$P \\implies Q$, there is a witness $f : P \\to Q$.  By the elimination rule for functions, $f\\; p : Q$.  Therefore we know $Q$. [qed]\n\nThe principle of the contrapositive is another part of classical logic which",
-      "latexLine": 1170,
+      "latexLine": 1171,
       "latexContext": "has an easy formulation and proof in MLTT.   The principle states that if \\(P \\implies Q\\), then \\(\\neg Q \\implies \\neg P\\). For the proof, supoose that \\(f : P \\to Q\\) and \\(nq : Q \\to \\bot\\). Then \\(nq \\circ f : P \\to \\bot\\). \\qed{}\n\n%%% Line 815",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\implies, \\neg, \\to, \\bot, \\circ, \\qed",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\implies",
+        "\\neg",
+        "\\to",
+        "\\bot",
+        "\\circ",
+        "\\qed"
+      ]
     },
     {
       "id": 96,
       "scriptaLine": 839,
       "scriptaContext": "Existential quantificcation $\\exists x : A.A(x)$ &&Dependent sum $\\Sigma_{x: A}  A(x)$\n\nThe logic thus defined is a [term constructive logic]. Such logics",
-      "latexLine": 1188,
+      "latexLine": 1189,
       "latexContext": "The logic thus defined is a \\term{constructive logic}. Such logics\nare built on the notion of proof rather\nthan truth, as in classical logic.   As a result, the Law of the Excluded Middle (LEM) does not hold, and negation must be",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 97,
       "scriptaLine": 867,
       "scriptaContext": "\n\n[b Proof. ]",
-      "latexLine": 1230,
+      "latexLine": 1231,
       "latexContext": "\\qed{}\n\n%%% Line 881",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\qed",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\qed"
+      ]
     },
     {
       "id": 98,
       "scriptaLine": 895,
       "scriptaContext": "[b Proof.] The goal is to construct a term of \n\n|| equation",
-      "latexLine": 1251,
+      "latexLine": 1252,
       "latexContext": "A \\to (A \\to \\emptyt) \\to \\emptyt\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\to, \\emptyt",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\to",
+        "\\emptyt"
+      ]
     },
     {
       "id": 99,
       "scriptaLine": 898,
       "scriptaContext": "A \\to (A \\to \\emptyt) \\to \\emptyt\n\n[i First Proof:] Given $a : A$ and $f : A \\to \\emptyt$, we have $f(a) : \\emptyt$. Thus we",
-      "latexLine": 1255,
+      "latexLine": 1256,
       "latexContext": "\\textit{First Proof:} Given \\(a : A\\) and \\(f : A \\to \\emptyt\\), we have \\(f(a) : \\emptyt\\). Thus we\nhave a term of type \\(A \\to (A \\to \\emptyt) \\to \\emptyt\\), as required. (2) Alternatively, consider\nthe \\(\\lambda\\)-term \\(t = \\lambda (a:A).\\lambda (f:A \\to \\emptyt).f\\,a\\). Then \\(t : A \\to (A \\to \\emptyt) \\to \\emptyt\\),",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\to, \\emptyt, \\lambda",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\to",
+        "\\emptyt",
+        "\\lambda"
+      ]
     },
     {
       "id": 100,
       "scriptaLine": 924,
       "scriptaContext": "definitional equalities.\n\n| indent",
-      "latexLine": 1287,
+      "latexLine": 1288,
       "latexContext": "(i) \\(\\zero + n \\equiv n\\)\n\\par\\par\n(ii) \\(n + \\zero \\equiv n\\)",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\zero, \\equiv",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\zero",
+        "\\equiv"
+      ]
     },
     {
       "id": 101,
       "scriptaLine": 930,
       "scriptaContext": "\n\nThe first is true: the normal form the left-hand side is $\\zero$",
-      "latexLine": 1293,
+      "latexLine": 1294,
       "latexContext": "The first is true: the normal form the left-hand side is \\(\\zero\\)\nas is the normal form of the right-hand side.   The second is false, because\nif \\(n\\) is not \\(\\zero\\), there are no rules to reduce the left-hand side.",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\zero, \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\zero",
+        "\\term"
+      ]
     },
     {
       "id": 102,
       "scriptaLine": 936,
       "scriptaContext": "is given to us by the [term identity type]:\n\n|| equation",
-      "latexLine": 1301,
+      "latexLine": 1302,
       "latexContext": "\\frac{A: \\cU \\quad a : A \\quad b :A}{a =_A b: \\cU}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1235,19 +1512,22 @@
       "id": 103,
       "scriptaLine": 939,
       "scriptaContext": "\\frac{A: \\cU \\quad a : A \\quad b :A}{a =_A b: \\cU}\n\nThe identity type is a [term dependent] type: its definition depends",
-      "latexLine": 1305,
+      "latexLine": 1306,
       "latexContext": "The identity type is a \\term{dependent} type: its definition depends\non terms of other types.   Notice that formation of the identity types\nis an operation within the given universe.      Constructors are given only for the type \\(a = a\\), as in the equation below. ",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 104,
       "scriptaLine": 943,
       "scriptaContext": "is an operation within the given universe.   Constructors are given only for the type $a = a$, as in the equation below. \n\n|| equation",
-      "latexLine": 1311,
+      "latexLine": 1312,
       "latexContext": "\\frac{A : \\cU \\qquad a : A}{\\refl_a : a = a}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1259,7 +1539,7 @@
       "id": 105,
       "scriptaLine": 946,
       "scriptaContext": "\\frac{A : \\cU \\qquad a : A}{\\refl_a : a = a}\n\nIf the identity type $a = b$ is [term inhabited], that is, if thre is a term $p : a = b$ then we say that $a$ and $b$ are [term propositionally equal].  We claim, and will soon prove, that proposiional equality is ",
-      "latexLine": 1315,
+      "latexLine": 1316,
       "latexContext": "If the identity type \\(a = b\\) is \\term{inhabited}, that is, if thre is a term \\(p : a = b\\) then we say that \\(a\\) and \\(b\\) are \\term{propositionally equal}.   We claim, and will soon prove, that proposiional equality is \nan equivalance relation.   It is, moreover, a \\term{congruence}: if \\(f : A \\to B\\), there is a function \\(\\congg f : x =_A y \\to f\\; x =_B f\\;   y\\).   Thus, if \\(p : x =_A y\\), then \\(\\congg f\\;      p : f\\; x =_B f\\;   y\\),\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1271,7 +1551,7 @@
       "id": 106,
       "scriptaLine": 949,
       "scriptaContext": "an equivalance relation.  It is, moreover, a [term congruence]: if $f : A \\to B$, there is a function $\\congg f : x =_A y \\to f\\; x =_B f\\;  y$.  Thus, if $p : x =_A y$, then $\\congg f\\;   p : f\\; x =_B f\\;  y$,\n\nSuppose that $a$ and $b$ are defiinitionally equal: $a \\equiv b$.",
-      "latexLine": 1320,
+      "latexLine": 1321,
       "latexContext": "The the types \\(a = b\\) and \\(a = a\\) are definitionally equal. The latter type is inhabited by \\(\\refl_a\\). The former type, which is equal to \\(a = a\\),\nis therefore also inhabited.   We have just proved that \n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1283,7 +1563,7 @@
       "id": 107,
       "scriptaLine": 956,
       "scriptaContext": "[b Principle: ] [i If $a$ and $b$ are definitionally equal, then they are also propositionally equal.]\n\nConsider now the type family $\\isRightIdentity n = n + \\zero =_\\nat n$. ",
-      "latexLine": 1329,
+      "latexLine": 1330,
       "latexContext": "Consider now the type family \\(\\isRightIdentity n = n + \\zero =_\\nat n\\). \nWe aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type \n\\((n : \\nat) \\to \\isRightIdentity n\\) is inhabited.   If that is so, we have proved that ",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1295,19 +1575,25 @@
       "id": 108,
       "scriptaLine": 960,
       "scriptaContext": "$(n : \\nat) \\to \\isRightIdentity n$ is inhabited.  If that is so, we have proved that \n\n|| equation",
-      "latexLine": 1335,
+      "latexLine": 1336,
       "latexContext": "\\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\forall, \\nat, \\text, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\forall",
+        "\\nat",
+        "\\text",
+        "\\to"
+      ]
     },
     {
       "id": 109,
       "scriptaLine": 963,
       "scriptaContext": "\\forall n : \\nat, n + 0 \\text{ is propositionaly equal to } n\n\nThe proof is by induction.  If $n = 0$, then $\\lemma n = 0 + 0 =_\\nat 0$",
-      "latexLine": 1339,
+      "latexLine": 1340,
       "latexContext": "The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\)\nis inhabited by \\(\\refl_0\\).   Assume as inductive hypothesis that\n\\(\\lemma n\\) is inhabited by \\(p\\). Then we have",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1319,7 +1605,7 @@
       "id": 110,
       "scriptaLine": 967,
       "scriptaContext": "$\\lemma n$ is inhabited by $p$. Then we have\n\n|| aligned",
-      "latexLine": 1348,
+      "latexLine": 1349,
       "latexContext": "\\end{align}\n\n%%% Line 972",
       "category": "unclassified",
       "pattern": "unknown",
@@ -1331,31 +1617,39 @@
       "id": 111,
       "scriptaLine": 974,
       "scriptaContext": "In other words, we have shown that\n\n|| equation",
-      "latexLine": 1355,
+      "latexLine": 1356,
       "latexContext": "\\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n)\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\congg, \\suc, \\lemma",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\congg",
+        "\\suc",
+        "\\lemma"
+      ]
     },
     {
       "id": 112,
       "scriptaLine": 977,
       "scriptaContext": "\\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n)\n\nConsequently $\\lemma n$ is proved for all $n$.  ",
-      "latexLine": 1359,
+      "latexLine": 1360,
       "latexContext": "Consequently \\(\\lemma n\\) is proved for all \\(n\\).   \n\n%%% Line 979",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\lemma",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\lemma"
+      ]
     },
     {
       "id": 113,
       "scriptaLine": 982,
       "scriptaContext": "bit of information that we can extract from this argument:\n\n| indent",
-      "latexLine": 1366,
+      "latexLine": 1367,
       "latexContext": "\\begin{indent}\n\\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}\n\\end{indent}",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1367,7 +1661,7 @@
       "id": 114,
       "scriptaLine": 985,
       "scriptaContext": "[i The term which inhabits $\\lemma n$ is $(\\congg \\suc)^n \\refl_0$]\n\nAs a result, we know not only that $n + 0$ ",
-      "latexLine": 1374,
+      "latexLine": 1375,
       "latexContext": "is not \\(\\refl_x\\) for some \\(x\\), but rather\nsome function applied to \\(\\refl_0\\).   That is why\nboth of the following hold: (1) \\quote{the identity type is freely generated by\\(\\refl\\)} and (2) \\(n + 0\\) is propositionally equal to \\(n\\)",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1379,7 +1673,7 @@
       "id": 115,
       "scriptaLine": 1003,
       "scriptaContext": "Consider once again the congruence principle.  It is the function\n\n|| equation",
-      "latexLine": 1390,
+      "latexLine": 1391,
       "latexContext": "\\congg : (f : A \\to B) \\to (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1391,19 +1685,22 @@
       "id": 116,
       "scriptaLine": 1006,
       "scriptaContext": "\\congg : (f : A \\to B) \\to (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y\n\nIf we apply $\\congg$ to $f$, we have",
-      "latexLine": 1394,
+      "latexLine": 1395,
       "latexContext": "If we apply \\(\\congg\\) to \\(f\\), we have\n\n%%% Line 1008",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\congg",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\congg"
+      ]
     },
     {
       "id": 117,
       "scriptaLine": 1008,
       "scriptaContext": "If we apply $\\congg$ to $f$, we have\n\n|| equation",
-      "latexLine": 1398,
+      "latexLine": 1399,
       "latexContext": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1415,7 +1712,7 @@
       "id": 118,
       "scriptaLine": 1014,
       "scriptaContext": "This function has the form\n\n|| equation",
-      "latexLine": 1406,
+      "latexLine": 1407,
       "latexContext": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to C\\; x\\; y\\; p\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1427,19 +1724,22 @@
       "id": 119,
       "scriptaLine": 1022,
       "scriptaContext": "C\\; x\\; y\\; p :\\equiv f\\; x =_B f\\; y\n\nIn this case there is no dependence on $p$. Thus constructing the function $\\congg$ is a special case of constructing functions",
-      "latexLine": 1418,
+      "latexLine": 1419,
       "latexContext": "In this case there is no dependence on \\(p\\). Thus constructing the function \\(\\congg\\) is a special case of constructing functions\n\n%%% Line 1024",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\congg",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\congg"
+      ]
     },
     {
       "id": 120,
       "scriptaLine": 1027,
       "scriptaContext": "f : (x, y: A) \\to (p : x =_A y) \\to C(x, y, p)\n\nwhere $C(x,y,p)$ is a family of types depending on $x, y : A$",
-      "latexLine": 1430,
+      "latexLine": 1431,
       "latexContext": "\\begin{enumerate}\n\n%%% Line 1031",
       "category": "unclassified",
       "pattern": "unknown",
@@ -1451,7 +1751,7 @@
       "id": 121,
       "scriptaLine": 1031,
       "scriptaContext": "exactly the same construction. To construct the output $f$, we need certain inputs:\n\n. The type family $C : (x, y : A) \\to (x =_A y) \\to \\cU$",
-      "latexLine": 1433,
+      "latexLine": 1434,
       "latexContext": "\\item The type family \\(C : (x, y : A) \\to (x =_A y) \\to \\cU\\)\n\n%%% Line 1033",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1463,7 +1763,7 @@
       "id": 122,
       "scriptaLine": 1033,
       "scriptaContext": ". The type family $C : (x, y : A) \\to (x =_A y) \\to \\cU$\n\n. A function $c : (x : A) \\to C(x,x,\\refl_x)$",
-      "latexLine": 1436,
+      "latexLine": 1437,
       "latexContext": "\\item A function \\(c : (x : A) \\to C(x,x,\\refl_x)\\)\n\n\\end{enumerate}",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1475,7 +1775,7 @@
       "id": 123,
       "scriptaLine": 1035,
       "scriptaContext": ". A function $c : (x : A) \\to C(x,x,\\refl_x)$\n\nThe type family is the one appearing in the type of $f$, so the ",
-      "latexLine": 1443,
+      "latexLine": 1444,
       "latexContext": "\\(\\refl_x : x =_A x\\) a term of type \\(C(x,x,\\refl_x)\\).\nThat is all the data needed to construct \\(f\\).\nThe induction principle for the identity type states that given",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1487,7 +1787,7 @@
       "id": 124,
       "scriptaLine": 1042,
       "scriptaContext": "these inputs, there is a function $f$ of the type indicated above which satisfies\n\n|| equation",
-      "latexLine": 1450,
+      "latexLine": 1451,
       "latexContext": "f(x,x,\\refl_x) :\\equiv c(x)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1499,19 +1799,22 @@
       "id": 125,
       "scriptaLine": 1047,
       "scriptaContext": "## Congruence\n\nConsider the hypothetical function $\\congg f$:",
-      "latexLine": 1457,
+      "latexLine": 1458,
       "latexContext": "Consider the hypothetical function \\(\\congg f\\):\n\n%%% Line 1049",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\congg",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\congg"
+      ]
     },
     {
       "id": 126,
       "scriptaLine": 1049,
       "scriptaContext": "Consider the hypothetical function $\\congg f$:\n\n|| equation",
-      "latexLine": 1461,
+      "latexLine": 1462,
       "latexContext": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1523,7 +1826,7 @@
       "id": 127,
       "scriptaLine": 1056,
       "scriptaContext": "we choose the family $C\\; x\\; y = f\\; x =_B f\\; y$ and we set\n\n|| equation",
-      "latexLine": 1470,
+      "latexLine": 1471,
       "latexContext": "c\\; x = \\refl_{(f\\, x)} : C\\; x\\; x\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1535,7 +1838,7 @@
       "id": 128,
       "scriptaLine": 1063,
       "scriptaContext": "[b Alternate method of proof.] There is an equivalent, alternate method of proof which goes as follows.   To construct\n\n|| equation",
-      "latexLine": 1481,
+      "latexLine": 1482,
       "latexContext": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1547,7 +1850,7 @@
       "id": 129,
       "scriptaLine": 1066,
       "scriptaContext": "\\congg f : (x\\; y : A) \\to (p : x =_A y) \\to f\\; x =_B f\\; y\n\nit suffices to consider the case where $x$ and $y$ are the same",
-      "latexLine": 1486,
+      "latexLine": 1487,
       "latexContext": "and \\(p = \\refl_x\\).   Then we have\n\n%%% Line 1069",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1559,7 +1862,7 @@
       "id": 130,
       "scriptaLine": 1069,
       "scriptaContext": "and $p = \\refl_x$.  Then we have\n\n|| equation",
-      "latexLine": 1490,
+      "latexLine": 1491,
       "latexContext": "\\congg f : (x\\; x : A) \\to (p : x =_A x) \\to f\\; x =_B f\\; x\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1571,7 +1874,7 @@
       "id": 131,
       "scriptaLine": 1074,
       "scriptaContext": "It suffices to set \n\n|| equation",
-      "latexLine": 1498,
+      "latexLine": 1499,
       "latexContext": "\\congg f : x\\; \\refl_x = \\refl_{(f x)}\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1583,7 +1886,7 @@
       "id": 132,
       "scriptaLine": 1083,
       "scriptaContext": "must prove is that the following function exists: \n\n|| equation",
-      "latexLine": 1510,
+      "latexLine": 1511,
       "latexContext": "\\sym : (x : A) \\to (y : A) \\to (x =_A y) \\to (y =_A x)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1595,7 +1898,7 @@
       "id": 133,
       "scriptaLine": 1088,
       "scriptaContext": "When $x$ and $y$ are the same, this reads\n\n|| equation",
-      "latexLine": 1518,
+      "latexLine": 1519,
       "latexContext": "\\sym : (x : A) \\to (x : A) \\to (x =_A x) \\to (x =_A x)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1607,7 +1910,7 @@
       "id": 134,
       "scriptaLine": 1093,
       "scriptaContext": "We set\n\n|| equation",
-      "latexLine": 1526,
+      "latexLine": 1527,
       "latexContext": "\\sym\\;x\\; x\\; \\refl_x = \\refl_x\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1619,19 +1922,22 @@
       "id": 135,
       "scriptaLine": 1096,
       "scriptaContext": "\\sym\\;x\\; x\\; \\refl_x = \\refl_x\n\nThen $\\sym$ is defined when $x = y$ and therefore defined for all $x$",
-      "latexLine": 1530,
+      "latexLine": 1531,
       "latexContext": "Then \\(\\sym\\) is defined when \\(x = y\\) and therefore defined for all \\(x\\)\nand \\(y\\).\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\sym",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\sym"
+      ]
     },
     {
       "id": 136,
       "scriptaLine": 1101,
       "scriptaContext": "## Transitivity\n\n|| equation",
-      "latexLine": 1538,
+      "latexLine": 1539,
       "latexContext": "\\trans : (x : A) \\to (y : A)\\to (z : A)\\to (x =_A y) \\to (y =_A z) \\to (x =_A z)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1643,7 +1949,7 @@
       "id": 137,
       "scriptaLine": 1104,
       "scriptaContext": "\\trans : (x : A) \\to (y : A)\\to (z : A)\\to (x =_A y) \\to (y =_A z) \\to (x =_A z)\n\nTake $y = x$, $p = \\refl_x$ and substitute, letting",
-      "latexLine": 1542,
+      "latexLine": 1543,
       "latexContext": "Take \\(y = x\\), \\(p = \\refl_x\\) and substitute, letting\n\\(f\\; z\\; q = \\trans\\, x\\; x\\; z\\; \\refl_x q\\) where\n\\(f : (z : A) \\to (x =_A z) \\to (x =_A z)\\). Now take \\(z = x\\).   Then the type of the second argument of \\(f\\) is \\(x =_A x\\), which is inhabited ",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1655,7 +1961,7 @@
       "id": 138,
       "scriptaLine": 1109,
       "scriptaContext": "by $\\refl_x$.  Set \n\n|| equation",
-      "latexLine": 1549,
+      "latexLine": 1550,
       "latexContext": "f\\; x \\refl_x = \\refl_x\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1667,7 +1973,7 @@
       "id": 139,
       "scriptaLine": 1114,
       "scriptaContext": "To conclude,\n\n|| equation",
-      "latexLine": 1557,
+      "latexLine": 1558,
       "latexContext": "\\trans\\; x\\; x\\; x\\; \\refl_x \\;\\refl_x = \\refl_x\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1679,31 +1985,38 @@
       "id": 140,
       "scriptaLine": 1118,
       "scriptaContext": "\n\n# Induction Principle for $\\nat$",
-      "latexLine": 1561,
+      "latexLine": 1562,
       "latexContext": "\\section{Induction Principle for \\(\\nat\\)} \\label{induction-principle-for-nat}\n\n%%% Line 1120",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat"
+      ]
     },
     {
       "id": 141,
       "scriptaLine": 1120,
       "scriptaContext": "# Induction Principle for $\\nat$\n\nRecall that to define a function $f : \\nat \\to C$, where $C$",
-      "latexLine": 1564,
+      "latexLine": 1565,
       "latexContext": "Recall that to define a function \\(f : \\nat \\to C\\), where \\(C\\)\nis some type, we use the elimination rule in the form of the recursor:\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\to"
+      ]
     },
     {
       "id": 142,
       "scriptaLine": 1124,
       "scriptaContext": "\n\n|| equation",
-      "latexLine": 1569,
+      "latexLine": 1570,
       "latexContext": "\\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1715,67 +2028,91 @@
       "id": 143,
       "scriptaLine": 1127,
       "scriptaContext": "\\rec_\\nat : (C: \\cU) \\to C \\to (\\nat \\to C \\to C) \\to (\\nat \\to C)\n\nTo construct proofs of assertions about the natural numbers,",
-      "latexLine": 1574,
+      "latexLine": 1575,
       "latexContext": "we need the elimination rule in its full power, namely where \\(C: \\nat \\to \\cU\\) is ia type family. The   output of the rule is a dependent function \n\n%%% Line 1130",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\to, \\cU",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\to",
+        "\\cU"
+      ]
     },
     {
       "id": 144,
       "scriptaLine": 1130,
       "scriptaContext": "we need the elimination rule in its full power, namely where $C: \\nat \\to \\cU$ is ia type family. The  output of the rule is a dependent function \n\n|| equation",
-      "latexLine": 1578,
+      "latexLine": 1579,
       "latexContext": "f : (n : \\nat) \\to C\\; n\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\to",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\to"
+      ]
     },
     {
       "id": 145,
       "scriptaLine": 1135,
       "scriptaContext": "The inputs are\n\n. a type family $C : \\nat \\to \\cU$",
-      "latexLine": 1587,
+      "latexLine": 1588,
       "latexContext": "\\item a type family \\(C : \\nat \\to \\cU\\)\n\n%%% Line 1137",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\nat, \\to, \\cU",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\nat",
+        "\\to",
+        "\\cU"
+      ]
     },
     {
       "id": 146,
       "scriptaLine": 1137,
       "scriptaContext": ". a type family $C : \\nat \\to \\cU$\n\n. a term $\\base: C\\; \\zero$",
-      "latexLine": 1590,
+      "latexLine": 1591,
       "latexContext": "\\item a term \\(\\base: C\\; \\zero\\)\n\n%%% Line 1139",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\base, \\zero",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\base",
+        "\\zero"
+      ]
     },
     {
       "id": 147,
       "scriptaLine": 1139,
       "scriptaContext": ". a term $\\base: C\\; \\zero$\n\n. a function $\\step : (n : \\nat) \\to C\\; n \\to C (\\suc\\; n$)",
-      "latexLine": 1593,
+      "latexLine": 1594,
       "latexContext": "\\item a function \\(\\step : (n : \\nat) \\to C\\; n \\to C (\\suc\\; n\\))\n\n\\end{enumerate}",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\step, \\nat, \\to, \\suc",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\step",
+        "\\nat",
+        "\\to",
+        "\\suc"
+      ]
     },
     {
       "id": 148,
       "scriptaLine": 1144,
       "scriptaContext": "can be read off this input-output data:\n\n|| equation",
-      "latexLine": 1603,
+      "latexLine": 1604,
       "latexContext": "\\ind_\\nat (C : \\nat \\to \\cU) \\to C\\; \\zero \\to ((n: \\nat) \\to C\\; n \\to C (\\suc n)) \\to ((n : \\nat) \\to C)\n\\end{equation}\n",
       "category": "math-mode",
       "pattern": "missing-dollar",
@@ -1787,7 +2124,7 @@
       "id": 149,
       "scriptaLine": 1149,
       "scriptaContext": "The computation rules are\n\n|| aligned",
-      "latexLine": 1613,
+      "latexLine": 1614,
       "latexContext": "\\end{align}\n\n%%% Line 1153",
       "category": "unclassified",
       "pattern": "unknown",
@@ -1799,175 +2136,256 @@
       "id": 150,
       "scriptaLine": 1177,
       "scriptaContext": "## Typability SLTC\n\nThis and other considerations led Curch to ",
-      "latexLine": 1650,
+      "latexLine": 1651,
       "latexContext": "is a type.   In addition, there are two \\term{typing rules}:\n\n%%% Line 1183",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 151,
       "scriptaLine": 1200,
       "scriptaContext": "## Typeability in Practice\n\nConsider functions $\\double : \\nat \\to \\nat$ and $\\isEven : \\nat \\to \\boolean$.  Let's ask whether the expressions (1) $\\isEven\\; (\\double 3)$",
-      "latexLine": 1675,
+      "latexLine": 1676,
       "latexContext": "Consider functions \\(\\double : \\nat \\to \\nat\\) and \\(\\isEven : \\nat \\to \\boolean\\).   Let's ask whether the expressions (1) \\(\\isEven\\; (\\double 3)\\)\nand (2) \\(\\double\\; (\\isEven 3)\\) are typeable. The tree for typeing the first of these is\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\double, \\nat, \\to, \\isEven, \\boolean",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\double",
+        "\\nat",
+        "\\to",
+        "\\isEven",
+        "\\boolean"
+      ]
     },
     {
       "id": 152,
       "scriptaLine": 1203,
       "scriptaContext": "and (2) $\\double\\; (\\isEven 3)$ are typeable. The tree for typeing the first of these is\n\n|| equation",
-      "latexLine": 1680,
+      "latexLine": 1681,
       "latexContext": "\\dfrac{\\nat \\to \\boolean \\qquad \\dfrac{\\nat \\to \\nat \\quad \\nat}{\\nat}}{\\boolean}\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\dfrac, \\nat, \\to, \\boolean, \\qquad, \\quad",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\dfrac",
+        "\\nat",
+        "\\to",
+        "\\boolean",
+        "\\qquad",
+        "\\quad"
+      ]
     },
     {
       "id": 153,
       "scriptaLine": 1208,
       "scriptaContext": "For the second it is \n\n|| equation",
-      "latexLine": 1688,
+      "latexLine": 1689,
       "latexContext": "\\dfrac{\\nat \\to \\nat \\qquad \\dfrac{\\nat \\to \\boolean \\quad \\nat}{\\boolean}}{\\text{Stuck!}}\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\dfrac, \\nat, \\to, \\qquad, \\boolean, \\quad, \\text",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\dfrac",
+        "\\nat",
+        "\\to",
+        "\\qquad",
+        "\\boolean",
+        "\\quad",
+        "\\text"
+      ]
     },
     {
       "id": 154,
       "scriptaLine": 1211,
       "scriptaContext": "\\dfrac{\\nat \\to \\nat \\qquad \\dfrac{\\nat \\to \\boolean \\quad \\nat}{\\boolean}}{\\text{Stuck!}}\n\nIn the second case, for $\\double\\; (\\isEven 3)$, we reach a stage in computing the tree of types (from the leaves of the tree to the root)",
-      "latexLine": 1692,
+      "latexLine": 1693,
       "latexContext": "In the second case, for \\(\\double\\; (\\isEven 3)\\), we reach a stage in computing the tree of types (from the leaves of the tree to the root)\nbeyond which we cannot proceed.   We are stuck, and so the expression\nin turn is not typeable.",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\double, \\isEven",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\double",
+        "\\isEven"
+      ]
     },
     {
       "id": 155,
       "scriptaLine": 1217,
       "scriptaContext": "## Strong normalization\n\nWe say that a formal system satisfies [term strong normalization] if every well-typed term reduces to normal form in finitely many steps. Both MLTT",
-      "latexLine": 1700,
+      "latexLine": 1701,
       "latexContext": "We say that a formal system satisfies \\term{strong normalization} if every well-typed term reduces to normal form in finitely many steps. Both MLTT\nand SLTC are strongly normalizing.      \n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 156,
       "scriptaLine": 1223,
       "scriptaContext": "## Confluence\n\nSuppose that a term $t$ has reductions $t \\to\\!\\!*\\,u_1$ and ",
-      "latexLine": 1710,
+      "latexLine": 1711,
       "latexContext": "pair of reductions of \\(t\\), we say that the system is \\term{confluent} (or satisfies the Church-Rosser property).   MLTT and SLTC are both confluent.   This means that normal forms are unique \n\n%%% Line 1229",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term"
+      ]
     },
     {
       "id": 157,
       "scriptaLine": 1250,
       "scriptaContext": "and computation), MLTT has various structural rules.\n\n- [b [term Disjontness.]]  If a type has multiple constructors, e.g. $\\zero$ and $\\suc$, their outputs cannot be equal, eg. $\\zero \\ne \\suc n$ for any $n$ ",
-      "latexLine": 1741,
+      "latexLine": 1742,
       "latexContext": "\\item \\textbf{\\term{ Disjontness.}}   If a type has multiple constructors, e.g. \\(\\zero\\) and \\(\\suc\\), their outputs cannot be equal, eg. \\(\\zero \\ne \\suc n\\) for any \\(n\\)\n\n%%% Line 1252",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\term, \\zero, \\suc, \\ne",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\term",
+        "\\zero",
+        "\\suc",
+        "\\ne"
+      ]
     },
     {
       "id": 158,
       "scriptaLine": 1269,
       "scriptaContext": "or by some well-founded measure that decreases on each function call.\n\n- Totality.  Consdier the (Haskell) function $f\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } f ( n - 1)$. It is [b[term total]] over $\\nat$: it terminates and is defined for all $n : \\nat$. Now consider",
-      "latexLine": 1769,
+      "latexLine": 1770,
       "latexContext": "\\item Totality.   Consdier the (Haskell) function \\(f\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } f ( n - 1)\\). It is \\textbf{\\term{ total}} over \\(\\nat\\): it terminates and is defined for all \\(n : \\nat\\). Now consider \\(g\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } g\\, n\\). This function is not total: it loops forever on input \\(n > 0\\).   In MLTT,   functions are total by design. The type checker will exclude functions with missing cases or which loop forever.   Thus non-total functions are not definable in Elm.\n\n\\end{itemize}",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\text, \\term, \\nat",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\text",
+        "\\term",
+        "\\nat"
+      ]
     },
     {
       "id": 159,
       "scriptaLine": 1276,
       "scriptaContext": "# Models and LEM\n\nA model $\\cM$ of a formal system $\\cF$ is a structure-preserving ",
-      "latexLine": 1777,
+      "latexLine": 1778,
       "latexContext": "A model \\(\\cM\\) of a formal system \\(\\cF\\) is a structure-preserving \nmap \\(\\nu : \\cF \\to \\cA\\) where \\(\\cA\\) is some kind of algebraic object \nsuch as a Boolean or Heyting algebra.   ",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\cM, \\cF, \\nu, \\to, \\cA",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\cM",
+        "\\cF",
+        "\\nu",
+        "\\to",
+        "\\cA"
+      ]
     },
     {
       "id": 160,
       "scriptaLine": 1280,
       "scriptaContext": "such as a Boolean or Heyting algebra.  \n\n- [b Consistency.] $\\cF$ has at least one model.",
-      "latexLine": 1784,
+      "latexLine": 1785,
       "latexContext": "\\item \\textbf{Consistency.} \\(\\cF\\) has at least one model.\n\n%%% Line 1282",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\cF",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\cF"
+      ]
     },
     {
       "id": 161,
       "scriptaLine": 1303,
       "scriptaContext": "## Heyting Models and LEM\n\nLet $\\cA$ the Heyting algebra of open sets of a topological space $X$.  The  operations are union, intersection, and Heyting complement: If $U$ is an open set, then $\\neg U$ is the interior of the complement of the set-theoretic complement of $U$.  A Heying model of a propositional calculus $\\cP$ is a map $\\cO : \\cP \\to \\cA$ that sends propositions to open sets",
-      "latexLine": 1809,
+      "latexLine": 1810,
       "latexContext": "Let \\(\\cA\\) the Heyting algebra of open sets of a topological space \\(X\\).   The   operations are union, intersection, and Heyting complement: If \\(U\\) is an open set, then \\(\\neg U\\) is the interior of the complement of the set-theoretic complement of \\(U\\).   A Heying model of a propositional calculus \\(\\cP\\) is a map \\(\\cO : \\cP \\to \\cA\\) that sends propositions to open sets\nand respects logical connectives on the left and union, intersection, and Heyting complement on the right.   One has \\(\\cO(T) = X\\) and \\(\\cO(F) = \\empty\\).   Moreover, axioms map to \\(\\cO(T)\\), and inference rules preserve truth: if the premises map to \\(\\cO(T)\\), then so does the conclusion.\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\cA, \\neg, \\cP, \\cO, \\to, \\empty",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\cA",
+        "\\neg",
+        "\\cP",
+        "\\cO",
+        "\\to",
+        "\\empty"
+      ]
     },
     {
       "id": 162,
       "scriptaLine": 1306,
       "scriptaContext": "and respects logical connectives on the left and union, intersection, and Heyting complement on the right.  One has $\\cO(T) = X$ and $\\cO(F) = \\empty$.  Moreover, axioms map to $\\cO(T)$, and inference rules preserve truth: if the premises map to $\\cO(T)$, then so does the conclusion.\n\nConsider the law of the excluded middle (LEM). It says that for all propositions $P$, $P \\lor \\neg P$ holds.  In such a system, $\\cO(P) \\cup \\neg \\cO(P) = X$.  ",
-      "latexLine": 1813,
+      "latexLine": 1814,
       "latexContext": "Consider the law of the excluded middle (LEM). It says that for all propositions \\(P\\), \\(P \\lor \\neg P\\) holds.   In such a system, \\(\\cO(P) \\cup \\neg \\cO(P) = X\\).   \n\n%%% Line 1308",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\lor, \\neg, \\cO, \\cup",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\lor",
+        "\\neg",
+        "\\cO",
+        "\\cup"
+      ]
     },
     {
       "id": 163,
       "scriptaLine": 1315,
       "scriptaContext": "Then \n\n|| equation",
-      "latexLine": 1825,
+      "latexLine": 1826,
       "latexContext": "\\cO (\\neg P) \\cup (P) = \\sett{x \\in \\bR}{ x < 0} \\cup \\sett{x \\in \\bR}{ x >  0} = \\sett{x \\in \\bR}{ x \\ne 0}\n\\end{equation}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "LaTeX output contains a control sequence not in the standard set",
+      "explanation": "Undefined control sequence(s): \\cO, \\neg, \\cup, \\sett, \\in, \\bR, \\ne",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it."
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\cO",
+        "\\neg",
+        "\\cup",
+        "\\sett",
+        "\\in",
+        "\\bR",
+        "\\ne"
+      ]
     },
     {
       "id": 164,
       "scriptaLine": 1365,
       "scriptaContext": "\n\n[link Zhang cubical Hedberg https://git.mzhang.io/michael/type-theory/src/commit/f10e3a09b9c83d8534466057d40e4fc7e5cde5af/src/HoTTEST/Agda/Lecture-Notes/files/Hedbergs-Theorem.lagda.md]",
-      "latexLine": 1895,
+      "latexLine": 1896,
       "latexContext": "\\end{document}\n",
       "category": "unclassified",
       "pattern": "unknown",

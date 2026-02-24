@@ -36,6 +36,7 @@
 \usepackage{amscd}
 
 \usepackage{fancyvrb} %% for inline verbatim
+\usepackage{makeidx}
 
 %% Chemistry
 \usepackage[version=4]{mhchem} % for \ce
@@ -293,29 +294,29 @@ Video 1 | Video 2 | Video 3 | Video 1 4 Video 5
 \section{The Scripta Markup Language} \label{the-scripta-markup-language}
 
 %%% Line 62
-The Scripta markup language   consists of just two things, \index{elements} and \index{blocks}.\footnote{Our aim is to design a langauge that is as simple as possible without losing
+The Scripta markup language   consists of just two things, \index{elements}\textit{elements} and \index{blocks}\textit{blocks}.\footnote{Our aim is to design a langauge that is as simple as possible without losing
 expressive power.}
 
 %%% Line 65
 \subsection{Elements} \label{elements}
 
 %%% Line 67
-Ordinary text, like "Happy New Year" is an element.      So are \index{named elements}, which have the form \lstinline|[NAME BODY]|.
+Ordinary text, like "Happy New Year" is an element.      So are \index{named elements}\textit{named elements}, which have the form \lstinline|[NAME BODY]|.
 Below are some examples: font-style elements, math elements, chemistry elements, and code elements.   There are many more. See XXX
 
 %%% Line 70
 \textit{\u{ Font styles.}}      \lstinline|[i Happy New Year]| is an 
-\index{italic   element}.   It renders as \textit{Happy New Year}. 
-\lstinline|[b Happy New Year]| is a \index{bold element}.
+\index{italic element}\textit{italic element}.   It renders as \textit{Happy New Year}. 
+\lstinline|[b Happy New Year]| is a \index{bold element}\textit{bold element}.
 It renders as \textbf{Happy New Year}. 
-Elements \index{compose} so \lstinline|[i [b Happy New Year]]| yields \textit{\textbf{ Happy New Year}}.   
+Elements \index{compose}\textit{compose} so \lstinline|[i [b Happy New Year]]| yields \textit{\textbf{ Happy New Year}}.   
 
 %%% Line 76
 It may seem awkward to type \lstinline| [ | then the text of the block, then \lstinline| ] |.   But the Scripta editor helps you: as soon as you type \lstinline| [ | it types \lstinline| ] | and puts the cursor between the 
 left and right braces, so you just continue typing.   When you finish typing the body of the element, type \lstinline|]| again and keep going.   Once you learn to do this, you are a speed demon.
 
 %%% Line 79
-\textit{\u{ Math.}} Write mathematical formulas, equations, etc. with a \index{math element}, e.g., \(a^2 + b^2 = c^2\).
+\textit{\u{ Math.}} Write mathematical formulas, equations, etc. with a \index{math element}\textit{math element}, e.g., \(a^2 + b^2 = c^2\).
 
 %%% Line 81
 \begin{indent}
@@ -336,7 +337,7 @@ Methane is \lstinline|[chem CH4]| \(\to\) Methane is $\ce{CH4}$
 \end{indent}
 
 %%% Line 93
-\textit{\u{ Code}.} Write code using a \index{code element}. 
+\textit{\u{ Code}.} Write code using a \index{code element}\textit{code element}. 
 
 %%% Line 95
 \begin{indent}
@@ -345,13 +346,13 @@ Methane is \lstinline|[chem CH4]| \(\to\) Methane is $\ce{CH4}$
 
 %%% Line 98
 You can also enclose
-code in backticks, e.g., `like this`.
+code in backticks, e.g., \verbatim{`}like this\verbatim{`}.
 
 %%% Line 103
 \subsection{Blocks} \label{blocks}
 
 %%% Line 105
-A \index{block} consists of a bunch of contiguous lines of text with an empty line above and below.   Like this:
+A \index{block}\textit{block} consists of a bunch of contiguous lines of text with an empty line above and below.   Like this:
 
 %%% Line 108
 \begin{verbatim}
@@ -408,7 +409,7 @@ from \textcolor{blue}{Iceland} for murder.   He died in \textbf{\textcolor{green
 \end{indent}
 
 %%% Line 155
-Scripta also has \index{named blocks}.   We give four examples:
+Scripta also has \index{named blocks}\textit{named blocks}.   We give four examples:
 image blocks, math blocks, chemistry blocks, and code 
 blocks.   There are many more, e.g., theorem blocks.   See XXX.
 
@@ -426,7 +427,7 @@ blocks.   There are many more, e.g., theorem blocks.   See XXX.
 %%% Line 169
 \begin{paragraph}
 The tiny image of jellyfish that you see on your 
-left is put there using an \index{image block}.   Click on the image to expand it.   Click on the expanded image to return the view you ser here.   Image blocks have a lot of options.   Lets begin with the simplest case, no option at all:
+left is put there using an \index{image block}\textit{image block}.   Click on the image to expand it.   Click on the expanded image to return the view you ser here.   Image blocks have a lot of options.   Lets begin with the simplest case, no option at all:
 \end{paragraph}
 
 %%% Line 173
@@ -464,14 +465,14 @@ https://imagedelivery.net/9U-0Y4s...
 In this case the header consists of four lines, each beginning
 with the pipe symbol "|" followed by a space. The first line
 of the header is "| image expandable".   Here "expandable" 
-is an \index{argument}.   These are single words that
+is an \index{argument}\textit{argument}.   These are single words that
 change the behavior of the image block.   In the case
 at hand, it means that if you click on the image it pops to
 fill a much larger screen.   Clicking the expanded image returns it to its normal state. There can be more than one argument, but these always come before the properties.
 
 %%% Line 204
 The next line of the header is the text "float:left". It defines
-a \index{property}   of the image block.   Properties alwyas
+a \index{property}\textit{property}   of the image block.   Properties alwyas
 have the form ========================================-------------------------------------------------------------------------------------------------------------------------------------------- \lstinline|key:value|.   In this case the key
 is "float" and the value associated with that key is "left".
 A block with this property hugs the left margin of the 
@@ -479,7 +480,7 @@ document and the text below it flows around it.   There is also a \lstinline|flo
 
 %%% Line 211
 %%% Line 213
- Here is a simple \index{math block}:
+ Here is a simple \index{math block}\textit{math block}:
 \subsubsection*{Math Blocks} \label{math-blocks}
 
 %%% Line 215
@@ -497,7 +498,7 @@ a^2 + b^2 = c^2
 \end{equation}
 
 %%% Line 224
-We can add a \index{label} property to it:
+We can add a \index{label}\textit{label} property to it:
 
 %%% Line 226
 \begin{verbatim}
@@ -513,7 +514,7 @@ a^2 + b^2 = c^2
 
 %%% Line 234
 Any math block that has the label property is automatically
-numbered.   The label can be used with the \index{mathref}
+numbered.   The label can be used with the \index{mathref}\textit{mathref}
 element to refer back to the equation as in the paragraph
 below:
 
@@ -531,14 +532,14 @@ ESC to return to where you were. We made the live reference
 (1) by writing \lstinline|[mathref pythag]|.   
 
 %%% Line 249
-\textit{For LaTeX users:} As a convenience, Scripta provides \index{equation blocks} and \index{eqref elements}.   These are 
+\textit{For LaTeX users:} As a convenience, Scripta provides \index{equation blocks}\textit{equation blocks} and \index{eqref elements}\textit{eqref elements}.   These are 
 synomyms for math blocks and mathref elements. They corresond to equation environments and eqref macros in LaTeX.
 
 %%% Line 254
 \subsubsection*{Chemistry Blocks} \label{chemistry-blocks}
 
 %%% Line 256
-Chemical formulas and reactions can be rendered using \index{chem blocks}.   Burning hydrogen in oxygen takes place via the reaction 
+Chemical formulas and reactions can be rendered using \index{chem blocks}\textit{chem blocks}.   Burning hydrogen in oxygen takes place via the reaction 
 
 %%% Line 258
 \[\ce{2H2 + O2 -> 2H2O + Energy}\]
@@ -559,7 +560,7 @@ See Martin Hensel's \href{https://texdoc.org/serve/mhchem/0}{mhchem bundle} for 
 \subsubsection*{Code Blocks} \label{code-blocks}
 
 %%% Line 271
-Below is an example of a \index{code block}.   Click on it
+Below is an example of a \index{code block}\textit{code block}.   Click on it
 to reveal it in the editor.   The header of the block is
 
 %%% Line 274

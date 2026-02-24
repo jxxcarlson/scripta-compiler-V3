@@ -1,57 +1,57 @@
 [
   {
-    "latex-begin": 251,
-    "latex-end": 253,
-    "latex-line": 252,
-    "latex-text": "A \\index{graph} is a functor \\(G: \\Gamma \\to \\Set\\).   Consider, ",
+    "latex-begin": 252,
+    "latex-end": 254,
+    "latex-line": 253,
+    "latex-text": "A \\index{graph}\\textit{graph} is a functor \\(G: \\Gamma \\to \\Set\\).   Consider, ",
     "scripta-line": 37
   },
   {
-    "latex-begin": 263,
-    "latex-end": 267,
-    "latex-line": 267,
+    "latex-begin": 264,
+    "latex-end": 268,
+    "latex-line": 268,
     "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}",
     "scripta-line": 58
   },
   {
-    "latex-begin": 282,
-    "latex-end": 288,
-    "latex-line": 283,
+    "latex-begin": 283,
+    "latex-end": 289,
+    "latex-line": 284,
     "latex-text": "(1) Let \\(\\op{Graph} = [\\Gamma, \\Set]\\) be the (functor) category of directed graphs.   Then a morphism of graphs is a natural; (2) Let \\(\\op{Graph} = [\\Gamma, \\Set]\\) be the (functor) category of directed graphs.   Then a morphism of graphs is a natural",
     "scripta-line": 71
   },
   {
-    "latex-begin": 312,
-    "latex-end": 330,
-    "latex-line": 330,
+    "latex-begin": 313,
+    "latex-end": 331,
+    "latex-line": 331,
     "latex-text": "(1) \\end{tikzcd}\\]; (2) \\end{tikzcd}\\]; (3) \\end{tikzcd}\\]; (4) \\end{tikzcd}\\]; (5) \\end{tikzcd}\\]; (6) \\end{tikzcd}\\]; (7) \\end{tikzcd}\\]; (8) \\end{tikzcd}\\]; (9) \\end{tikzcd}\\]; (10) \\end{tikzcd}\\]; (11) \\end{tikzcd}\\]; (12) \\end{tikzcd}\\]; (13) \\end{tikzcd}\\]; (14) \\end{tikzcd}\\]; (15) \t\\arrow[from=2-1, to=2-3]; (16) \\end{tikzcd}\\]; (17) \t\\arrow[from=2-1, to=2-3]; (18) \\end{tikzcd}\\]; (19) \\end{tikzcd}\\]; (20) \\end{tikzcd}\\]; (21) \\end{tikzcd}\\]; (22) \\end{tikzcd}\\]; (23) \\end{tikzcd}\\]; (24) \\end{tikzcd}\\]; (25) \\end{tikzcd}\\]; (26) \\end{tikzcd}\\]; (27) \\end{tikzcd}\\]; (28) \\end{tikzcd}\\]; (29) \\end{tikzcd}\\]; (30) \\end{tikzcd}\\]; (31) \\end{tikzcd}\\]; (32) \\end{tikzcd}\\]; (33) \\end{tikzcd}\\]; (34) \\end{tikzcd}\\]; (35) \\end{tikzcd}\\]; (36) \\end{tikzcd}\\]; (37) \\end{tikzcd}\\]; (38) \\end{tikzcd}\\]; (39) \\end{tikzcd}\\]; (40) \\end{tikzcd}\\]; (41) \\end{tikzcd}\\]; (42) \\end{tikzcd}\\]; (43) \\end{tikzcd}\\]; (44) \\end{tikzcd}\\]; (45) \\end{tikzcd}\\]; (46) \\end{tikzcd}\\]; (47) \\end{tikzcd}\\]; (48) \\end{tikzcd}\\]",
     "scripta-line": 108
   },
   {
-    "latex-begin": 348,
-    "latex-end": 357,
-    "latex-line": 357,
+    "latex-begin": 349,
+    "latex-end": 358,
+    "latex-line": 358,
     "latex-text": "(1) \\end{tikzcd}\\]; (2) \\end{tikzcd}\\]; (3) \\end{tikzcd}\\]; (4) \\end{tikzcd}\\]; (5) \\end{tikzcd}\\]",
     "scripta-line": 147
   },
   {
-    "latex-begin": 359,
-    "latex-end": 366,
-    "latex-line": 360,
+    "latex-begin": 360,
+    "latex-end": 367,
+    "latex-line": 361,
     "latex-text": "(1) Let \\(C_n : \\op{Graph} \\to \\Set\\) be the functor which assigns to a graph the corresponding set of \\(n\\)-colorings.; (2) Let \\(C_n : \\op{Graph} \\to \\Set\\) be the functor which assigns to a graph the corresponding set of \\(n\\)-colorings.; (3) set \\(\\bN\\) of natural numbers will do.) We say that a graph",
     "scripta-line": 164
   },
   {
-    "latex-begin": 368,
-    "latex-end": 371,
-    "latex-line": 370,
+    "latex-begin": 369,
+    "latex-end": 372,
+    "latex-line": 371,
     "latex-text": "function \\(c: G \\to \\set{1, \\ldots, n}\\).   If \\(\\phi : G' \\to G\\)",
     "scripta-line": 172
   },
   {
-    "latex-begin": 400,
-    "latex-end": 403,
-    "latex-line": 401,
+    "latex-begin": 401,
+    "latex-end": 404,
+    "latex-line": 402,
     "latex-text": "Let \\(K_n\\) be the graph with vertices \\(\\set{1, \\ldots, n}\\)",
     "scripta-line": 206
   }
