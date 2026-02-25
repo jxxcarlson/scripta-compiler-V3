@@ -1233,6 +1233,7 @@ macroDict =
         , ( "rb", \_ -> rb )
         , ( "bt", \_ -> bt )
         , ( "underscore", \_ -> underscore )
+        , ( "qed", \_ _ -> "\\hfill$\\square$" )
         , ( "tags", dontRender )
         , ( "cite", \_ -> exportCite )
         , ( "box", \_ _ -> "$\\square$" )

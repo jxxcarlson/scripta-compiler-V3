@@ -1,25 +1,7 @@
 {
   "file": "virial",
-  "totalErrors": 1,
-  "categories": {
-    "undefined-command": 1
-  },
-  "errors": [
-    {
-      "id": 1,
-      "scriptaLine": 44,
-      "scriptaContext": "# Derivation\n\nTo explain the theorem, consider first the [term moment of inertia] of the syste",
-      "latexLine": 264,
-      "latexContext": "%%% Line 44\nTo explain the theorem, consider first the \\term{moment of inertia} of the syste\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    }
-  ],
-  "summary": "1 errors across 1 categories. Breakdown: undefined-command (1)"
+  "totalErrors": 0,
+  "categories": {},
+  "errors": [],
+  "summary": "No errors."
 }

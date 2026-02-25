@@ -1,29 +1,32 @@
 {
   "file": "mltt",
-  "totalErrors": 51,
+  "totalErrors": 24,
   "categories": {
-    "escaping": 1,
-    "unclassified": 22,
-    "undefined-command": 28
+    "undefined-command": 4,
+    "unclassified": 20
   },
   "errors": [
     {
       "id": 1,
       "scriptaLine": 6,
       "scriptaContext": "\n\n|| mathmacros",
-      "latexLine": 218,
-      "latexContext": "%%% Line 6\n\\newcommand{\\set}[1]}{\\{\\ #1 \\ \\}}\n\\newcommand{\\sett}[2]{\\{\\ #1 \\ |\\ #2 \\}}",
-      "category": "escaping",
-      "pattern": "unescaped-special",
-      "explanation": "Special LaTeX characters (&, #, or %) not escaped",
-      "fixLocation": "src/Render/Export/LaTeX.elm — mapChars2 (line 1179)",
-      "fixHint": "Add escaping rules to mapChars2: & → \\&, # → \\#, % → \\%."
+      "latexLine": 231,
+      "latexContext": "\\newcommand{\\and}{\\mathop{\\mathsf{and}}}\n\\newcommand{\\or}{\\mathop{\\mathsf{or}}}\n\\newcommand{\\toa}{\\ensuremath{\\to\\!\\!*\\,}}",
+      "category": "undefined-command",
+      "pattern": "undefined-control-sequence",
+      "explanation": "Undefined control sequence(s): \\newcommand, \\mathop",
+      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
+      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
+      "unknownCommands": [
+        "\\newcommand",
+        "\\mathop"
+      ]
     },
     {
       "id": 2,
-      "scriptaLine": 57,
+      "scriptaLine": 55,
       "scriptaContext": "have  things like this: $4\\heartsuit, 5\\diamondsuit, 6\\clubsuit, 2\\spadesuit$. We can gather them in to various collections, e.g.,\n\n|| aligned",
-      "latexLine": 281,
+      "latexLine": 279,
       "latexContext": "B = \\set{2\\heartsuit, 7\\spades}\n\\end{align}\n",
       "category": "unclassified",
       "pattern": "unknown",
@@ -33,60 +36,9 @@
     },
     {
       "id": 3,
-      "scriptaLine": 67,
-      "scriptaContext": "2\\heartsuit \\in A, \\ 2\\heartsuit\\in B,\\ 7\\spadesuit \\not\\in A,\\ 7\\spadesuit \\in B\n\nAssertions like $2\\heartsuit \\in A$ or $7\\spadesuit \\in A$ are [term propositions]: they are capable of being true or false.  True in the first case, but false in the second.",
-      "latexLine": 292,
-      "latexContext": "%%% Line 67\nAssertions like \\(2\\heartsuit \\in A\\) or \\(7\\spadesuit \\in A\\) are \\term{propositions}: they are capable of being true or false.   True in the first case, but false in the second.\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 4,
-      "scriptaLine": 73,
-      "scriptaContext": "## Encoding things as sets\n\nMathematical objects like the natural numbers can be described in the language of sets.  Here is one way to do  it. Encode zero as",
-      "latexLine": 302,
-      "latexContext": "Mathematical objects like the natural numbers can be described in the language of sets.   Here is one way to do   it. Encode zero as\nthe empty set \\(\\set{}\\).\nEncode one as \\(\\set{\\set{}}\\).   Encode two as ",
-      "category": "unclassified",
-      "pattern": "unknown",
-      "explanation": "Error did not match any known pattern",
-      "fixLocation": "src/Render/Export/LaTeX.elm",
-      "fixHint": "Inspect the latex-text field manually to determine the root cause."
-    },
-    {
-      "id": 5,
-      "scriptaLine": 78,
-      "scriptaContext": "$\\set{ \\set{}, \\set{\\set{}}}$, etc. Introduce aliases for these numbers:\n\n|| aligned",
-      "latexLine": 312,
-      "latexContext": "&etc.\n\\end{align}\n",
-      "category": "unclassified",
-      "pattern": "unknown",
-      "explanation": "Error did not match any known pattern",
-      "fixLocation": "src/Render/Export/LaTeX.elm",
-      "fixHint": "Inspect the latex-text field manually to determine the root cause."
-    },
-    {
-      "id": 6,
-      "scriptaLine": 87,
-      "scriptaContext": "none of these elements is element of itself: $0 \\not\\in 0$, $1 \\not\\in 1$, etc.\n\nWe can gather these numbers into sets in various ways: the set of all natural numbers,  $\\nat = \\set{0, 1, 2, \\ldots}{}$, the subsets of $\\tt{Even}$ and $\\tt{Odd}$ numbers, respectively.  The latter is described using a predicate — a function like $\\text{isOdd}$ that returns true or false according to whether the argument of the",
-      "latexLine": 319,
-      "latexContext": "%%% Line 87\nWe can gather these numbers into sets in various ways: the set of all natural numbers,   \\(\\nat = \\set{0, 1, 2, \\ldots}{}\\), the subsets of \\(\\tt{Even}\\) and \\(\\tt{Odd}\\) numbers, respectively.   The latter is described using a predicate --- a function like \\(\\text{isOdd}\\) that returns true or false according to whether the argument of the\nfunction is even or odd.",
-      "category": "unclassified",
-      "pattern": "unknown",
-      "explanation": "Error did not match any known pattern",
-      "fixLocation": "src/Render/Export/LaTeX.elm",
-      "fixHint": "Inspect the latex-text field manually to determine the root cause."
-    },
-    {
-      "id": 7,
-      "scriptaLine": 90,
+      "scriptaLine": 88,
       "scriptaContext": "function is even or odd.\n\n|| equation",
-      "latexLine": 324,
+      "latexLine": 322,
       "latexContext": "\\begin{equation}\n\\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}\n\\end{equation}",
       "category": "unclassified",
       "pattern": "unknown",
@@ -95,55 +47,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 8,
-      "scriptaLine": 108,
-      "scriptaContext": "# Formal Systems\n\nMartin-Löf type theory is a formal system, the two main ingredients",
-      "latexLine": 347,
-      "latexContext": "Martin-Löf type theory is a formal system, the two main ingredients\nof which are \\term{judgments} and \\term{inference rules}.   Judgments\nare the things we assert.   They are the facts known to the system.",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 9,
-      "scriptaLine": 169,
-      "scriptaContext": "\n\nIn the last two judgment forms, equality is [term definitional equality] or [term judgmental equality], i.e., equality according to the rules of computation and definition of the theory.",
-      "latexLine": 420,
-      "latexContext": "%%% Line 169\nIn the last two judgment forms, equality is \\term{definitional equality} or \\term{judgmental equality}, i.e., equality according to the rules of computation and definition of the theory.\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 10,
-      "scriptaLine": 185,
-      "scriptaContext": "then so is $\\suc k$. \n\nBy repeated ",
-      "latexLine": 437,
-      "latexContext": "By repeated \napplication of the last rule, we produce arbitrarily many terms of \\(\\nat\\): \\(\\zero\\), \\(\\suc \\zero\\), \\(\\suc (\\suc \\zero)\\), etc. The symbols \\(\\zero\\) and \\(\\suc\\) are the \\term{constructors} of the natural numbers.\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 11,
-      "scriptaLine": 190,
+      "id": 4,
+      "scriptaLine": 188,
       "scriptaContext": "\n\n| box The Empty Type",
-      "latexLine": 441,
+      "latexLine": 439,
       "latexContext": "\\begin{box}\nThe empty type, written \\(\\bot\\), is a type with no introduction\nrules, hence no constructors.   Consequently there are no terms of the empty type.",
       "category": "unclassified",
       "pattern": "unknown",
@@ -152,85 +59,22 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 12,
-      "scriptaLine": 219,
-      "scriptaContext": "\\suc\\ (\\suc \\zero) : \\nat\n\nOf course it is cumbersome to work with expressions like ",
-      "latexLine": 477,
-      "latexContext": "etc.   Then it makes perfect sense to say that   \\(3 ≡ \\suc 2\\).\nThis is a \\term{definitional} or \\term{judgmental} equality.   Later we will study the far more sophisticated notion of\n\\term{propositional equality}.",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 13,
-      "scriptaLine": 227,
+      "id": 5,
+      "scriptaLine": 225,
       "scriptaContext": "\n\n| box Contexts",
-      "latexLine": 482,
+      "latexLine": 480,
       "latexContext": "\\begin{box}\nConsider the assertion \\(\\suc x : \\nat\\).   This is meaningless without the\n   assumption \\(x : \\nat\\).   Thus we write \\(x : \\nat \\vdash \\suc \\nat\\).   ",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
+      "category": "unclassified",
+      "pattern": "unknown",
+      "explanation": "Error did not match any known pattern",
+      "fixLocation": "src/Render/Export/LaTeX.elm",
+      "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 14,
-      "scriptaLine": 275,
-      "scriptaContext": "application\n\nTo give meaning to the lambda calculus, we define the operation of [term beta-reduction].  It defines what happens when an abstraction ",
-      "latexLine": 536,
-      "latexContext": "%%% Line 275\nTo give meaning to the lambda calculus, we define the operation of \\term{beta-reduction}.   It defines what happens when an abstraction \nis applied to another \\(\\lambda\\)-term:",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 15,
-      "scriptaLine": 348,
-      "scriptaContext": "write this as $A \\to B \\to C$.  If what we want is $(A \\to B) \\to C$, then the parentheses are mandatory.\n\nWhat can we do with a term $f$ of type $A \\to B \\to C$? Suppose given terms $a : A$ and $b : B$.  Because $f : A \\to (B \\to C)$, ",
-      "latexLine": 631,
-      "latexContext": "the elimination rule tells us that \\(f(a) : B \\to C\\).   Therefore \nwe can apply \\(f(a)\\) to \\(b\\), obtaining \\(f(a)(b) : C\\). This is how we evaluate \\(f\\).   We say that \\(f(a)\\), which is a function, is the result of \\term{partial evaluation}.\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 16,
-      "scriptaLine": 367,
-      "scriptaContext": "\\dfrac{}{\\false : \\boolean}\n\nTo define a function $f : \\boolean \\to C$, we need the",
-      "latexLine": 650,
-      "latexContext": "elimination and computations rules. Below is the \nelimination rule.   It defines a function called the \\term{recursor}.\nIt is a kind of universal function-builder: given certain data as ",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 17,
-      "scriptaLine": 448,
+      "id": 6,
+      "scriptaLine": 446,
       "scriptaContext": "will show that the two derivations are interderviable.\n\n| exercise",
-      "latexLine": 757,
+      "latexLine": 755,
       "latexContext": "\\begin{exercise}\nDefine the logical function \\(\\or\\) by (1) equations, (2) the eliminator.\n\\end{exercise}",
       "category": "unclassified",
       "pattern": "unknown",
@@ -239,10 +83,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 18,
-      "scriptaLine": 454,
+      "id": 7,
+      "scriptaLine": 452,
       "scriptaContext": "sequence of reductions\n\n|| aligned",
-      "latexLine": 771,
+      "latexLine": 769,
       "latexContext": "&\\true\n\\end{align}\n",
       "category": "unclassified",
       "pattern": "unknown",
@@ -251,25 +95,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 19,
-      "scriptaLine": 461,
-      "scriptaContext": "&\\true\n\nEach line [eqref bool-reductions] is a term of $\\boolean$.  However,",
-      "latexLine": 775,
-      "latexContext": "Each line \\eqref{bool-reductions} is a term of \\(\\boolean\\).   However,\nthe last term is special: it cannot be further reduced.   Such a term is said to be in \\term{normal form}.   Moreover, one can assert judgments like the below.   See the item (5) in section \\ref{mltt-as-a-formal-system}.\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 20,
-      "scriptaLine": 464,
-      "scriptaContext": "the last term is special: it cannot be further reduced.  Such a term is said to be in [term normal form].  Moreover, one can assert judgments like the below.  See the item (5) in section [ref mltt-as-a-formal-system].\n\n|| equation",
-      "latexLine": 779,
+      "id": 8,
+      "scriptaLine": 462,
+      "scriptaContext": "the last term is special: it cannot be further reduced.  Such a term is said to be in [index normal form].  Moreover, one can assert judgments like the below.  See the item (5) in section [ref mltt-as-a-formal-system].\n\n|| equation",
+      "latexLine": 777,
       "latexContext": "\\begin{equation}\n\\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean\n\\end{equation}",
       "category": "unclassified",
       "pattern": "unknown",
@@ -278,98 +107,23 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 21,
-      "scriptaLine": 479,
-      "scriptaContext": "# Comparing Sets and Types\n\nNow that we have developed the rudiments of type theory,",
-      "latexLine": 796,
-      "latexContext": "\\emph{prior} to the creation of any set into which they are gathered.   Consider,for example, the natural \nnumbers \\(\\set{}\\), \\(\\set{\\set\\,}\\).   They exist prior to their being gathered into the set of natural numbers \\(\\nat\\).   The situation in type\ntheory is quite different.   One defines a type, then goes about",
-      "category": "unclassified",
-      "pattern": "unknown",
-      "explanation": "Error did not match any known pattern",
-      "fixLocation": "src/Render/Export/LaTeX.elm",
-      "fixHint": "Inspect the latex-text field manually to determine the root cause."
-    },
-    {
-      "id": 22,
-      "scriptaLine": 503,
-      "scriptaContext": "## Russell's Paradox\n\nIn 1902, Bertrand Russell wrote a letter to Gotlob Frege pointing out an error in Frege's work on the foundations of logic an mathematics.  Russell's letter introduced the set $R = \\sett{ x }{x \\not\\in x}$",
-      "latexLine": 813,
-      "latexContext": "In 1902, Bertrand Russell wrote a letter to Gotlob Frege pointing out an error in Frege's work on the foundations of logic an mathematics.   Russell's letter introduced the set \\(R = \\sett{ x }{x \\not\\in x}\\)\nconsidered in section \\ref{sets}.   The resulting problem --- \\term{Russell's paradox} --- meant that there was a flaw in Frege's work on the foundations\nof logic and mathematics",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 23,
-      "scriptaLine": 547,
-      "scriptaContext": "cumulative. This stratification is analogous to Russell’s type hierarchy: you can’t have a universe that contains itself.\n\nWe say that $\\cU_n$ is a universe of [term level] $n$ and that",
-      "latexLine": 870,
-      "latexContext": "%%% Line 547\nWe say that \\(\\cU_n\\) is a universe of \\term{level} \\(n\\) and that\n\\(\\cU_0\\) is the \\term{universe of small types}. The type of natural numbers",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 24,
-      "scriptaLine": 586,
+      "id": 9,
+      "scriptaLine": 584,
       "scriptaContext": "still preserves type levels.\n\n| box Example of a Large Type",
-      "latexLine": 918,
-      "latexContext": "\\begin{box}\nJumping ahead a bit, the \\textbf{\\term{ Identiy type}} is formed via \nthe rule",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
+      "latexLine": 916,
+      "latexContext": "\\begin{box}\nJumping ahead a bit, the \\textbf{\\index{Identiy type}\\textit{Identiy type}} is formed via \nthe rule",
+      "category": "unclassified",
+      "pattern": "unknown",
+      "explanation": "Error did not match any known pattern",
+      "fixLocation": "src/Render/Export/LaTeX.elm",
+      "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 25,
-      "scriptaLine": 598,
-      "scriptaContext": "  \\dfrac{a : A}{\\refl_a : a =_A a}\n\n  We say that $a$ and $b$ are [b[term propositionally equal]]",
-      "latexLine": 931,
-      "latexContext": "%%% Line 598\n   We say that \\(a\\) and \\(b\\) are \\textbf{\\term{ propositionally equal}}\nif \\(a =_A b\\) is \\textbf{\\term{ inhabited}}, meaning that there",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 26,
-      "scriptaLine": 617,
-      "scriptaContext": "\n\nWe will now show that the natural pattern matching equations",
-      "latexLine": 951,
-      "latexContext": "for a function like the factorial are defined by a general\nscheme called \\term{primitive recursion}.   Such functions\nare guaranteed to terminate on all well-typed inputs.",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 27,
-      "scriptaLine": 682,
+      "id": 10,
+      "scriptaLine": 680,
       "scriptaContext": "scheme displayed below, where $C = \\nat$:\n\n| box Primitive Recursion",
-      "latexLine": 1034,
-      "latexContext": "\\begin{box}\n\n%%% Line 684",
+      "latexLine": 1032,
+      "latexContext": "\\begin{box}\n\n%%% Line 682",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",
@@ -377,26 +131,11 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 28,
-      "scriptaLine": 696,
-      "scriptaContext": "  & \\step : \\nat \\to C \\to C\n\nThis scheme is what is called [term primitive recursion]. Functions",
-      "latexLine": 1052,
-      "latexContext": "%%% Line 696\nThis scheme is what is called \\term{primitive recursion}. Functions\ndefined by this scheme terminate on any well-typed argument.",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 29,
-      "scriptaLine": 776,
+      "id": 11,
+      "scriptaLine": 774,
       "scriptaContext": "&\\lambda n.(\\add\\; (\\suc m)\\;\n\nn) = \\lambda n.(\\suc\\; (\\add\\; m\\; n))",
-      "latexLine": 1153,
-      "latexContext": "%%% Line 776\nn) = \\lambda n.(\\suc\\; (\\add\\; m\\; n))\n",
+      "latexLine": 1151,
+      "latexContext": "%%% Line 774\nn) = \\lambda n.(\\suc\\; (\\add\\; m\\; n))\n",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",
@@ -404,11 +143,11 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 30,
-      "scriptaLine": 795,
+      "id": 12,
+      "scriptaLine": 793,
       "scriptaContext": "- $\\text{Proofs } p \\text{ of } P \\longleftrightarrow \\text{Terms } p : P$\n\n- $\\text{Falsehood} \\longleftrightarrow \\text{ Empty type}\\; \\bot$",
-      "latexLine": 1183,
-      "latexContext": "%%% Line 795\n\\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\)\n",
+      "latexLine": 1181,
+      "latexContext": "%%% Line 793\n\\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\)\n",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",
@@ -416,10 +155,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 31,
-      "scriptaLine": 807,
+      "id": 13,
+      "scriptaLine": 805,
       "scriptaContext": "## Propositional Logic\n\nModus Ponens, one of the principles of classical logic, states that if",
-      "latexLine": 1206,
+      "latexLine": 1204,
       "latexContext": "we know \\(P\\) and also \\(P \\implies Q\\), then we know \\(Q\\).   This has an easy proof in MLTT. If we know \\(P\\), there is a witness \\(p : P\\).   If we know\n\\(P \\implies Q\\), there is a witness \\(f : P \\to Q\\).   By the elimination rule for functions, \\(f\\; p : Q\\).   Therefore we know \\(Q\\). \\qed{}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
@@ -431,10 +170,10 @@
       ]
     },
     {
-      "id": 32,
-      "scriptaLine": 811,
+      "id": 14,
+      "scriptaLine": 809,
       "scriptaContext": "$P \\implies Q$, there is a witness $f : P \\to Q$.  By the elimination rule for functions, $f\\; p : Q$.  Therefore we know $Q$. [qed]\n\nThe principle of the contrapositive is another part of classical logic which",
-      "latexLine": 1210,
+      "latexLine": 1208,
       "latexContext": "The principle of the contrapositive is another part of classical logic which\nhas an easy formulation and proof in MLTT.   The principle states that if \\(P \\implies Q\\), then \\(\\neg Q \\implies \\neg P\\). For the proof, supoose that \\(f : P \\to Q\\) and \\(nq : Q \\to \\bot\\). Then \\(nq \\circ f : P \\to \\bot\\). \\qed{}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
@@ -446,25 +185,10 @@
       ]
     },
     {
-      "id": 33,
-      "scriptaLine": 839,
-      "scriptaContext": "Existential quantificcation $\\exists x : A.A(x)$ &&Dependent sum $\\Sigma_{x: A}  A(x)$\n\nThe logic thus defined is a [term constructive logic]. Such logics",
-      "latexLine": 1228,
-      "latexContext": "%%% Line 839\nThe logic thus defined is a \\term{constructive logic}. Such logics\nare built on the notion of proof rather",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 34,
-      "scriptaLine": 867,
+      "id": 15,
+      "scriptaLine": 865,
       "scriptaContext": "\n\n[b Proof. ]",
-      "latexLine": 1270,
+      "latexLine": 1268,
       "latexContext": "\\par\\par\n\\qed{}\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
@@ -476,55 +200,10 @@
       ]
     },
     {
-      "id": 35,
-      "scriptaLine": 930,
-      "scriptaContext": "\n\nThe first is true: the normal form the left-hand side is $\\zero$",
-      "latexLine": 1337,
-      "latexContext": "It is because of (ii) that we need a more powerful form of equalit.   This\nis given to us by the \\term{identity type}:\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 36,
-      "scriptaLine": 939,
-      "scriptaContext": "\\frac{A: \\cU \\quad a : A \\quad b :A}{a =_A b: \\cU}\n\nThe identity type is a [term dependent] type: its definition depends",
-      "latexLine": 1345,
-      "latexContext": "%%% Line 939\nThe identity type is a \\term{dependent} type: its definition depends\non terms of other types.   Notice that formation of the identity types",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 37,
-      "scriptaLine": 946,
-      "scriptaContext": "\\frac{A : \\cU \\qquad a : A}{\\refl_a : a = a}\n\nIf the identity type $a = b$ is [term inhabited], that is, if thre is a term $p : a = b$ then we say that $a$ and $b$ are [term propositionally equal].  We claim, and will soon prove, that proposiional equality is ",
-      "latexLine": 1355,
-      "latexContext": "%%% Line 946\nIf the identity type \\(a = b\\) is \\term{inhabited}, that is, if thre is a term \\(p : a = b\\) then we say that \\(a\\) and \\(b\\) are \\term{propositionally equal}.   We claim, and will soon prove, that proposiional equality is \nan equivalance relation.   It is, moreover, a \\term{congruence}: if \\(f : A \\to B\\), there is a function \\(\\congg f : x =_A y \\to f\\; x =_B f\\;   y\\).   Thus, if \\(p : x =_A y\\), then \\(\\congg f\\;      p : f\\; x =_B f\\;   y\\),",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 38,
-      "scriptaLine": 956,
+      "id": 16,
+      "scriptaLine": 954,
       "scriptaContext": "[b Principle: ] [i If $a$ and $b$ are definitionally equal, then they are also propositionally equal.]\n\nConsider now the type family $\\isRightIdentity n = n + \\zero =_\\nat n$. ",
-      "latexLine": 1370,
+      "latexLine": 1368,
       "latexContext": "Consider now the type family \\(\\isRightIdentity n = n + \\zero =_\\nat n\\). \nWe aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type \n\\((n : \\nat) \\to \\isRightIdentity n\\) is inhabited.   If that is so, we have proved that ",
       "category": "unclassified",
       "pattern": "unknown",
@@ -533,10 +212,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 39,
-      "scriptaLine": 960,
+      "id": 17,
+      "scriptaLine": 958,
       "scriptaContext": "$(n : \\nat) \\to \\isRightIdentity n$ is inhabited.  If that is so, we have proved that \n\n|| equation",
-      "latexLine": 1375,
+      "latexLine": 1373,
       "latexContext": "\\begin{equation}\n\\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n\n\\end{equation}",
       "category": "unclassified",
       "pattern": "unknown",
@@ -545,11 +224,11 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 40,
-      "scriptaLine": 963,
+      "id": 18,
+      "scriptaLine": 961,
       "scriptaContext": "\\forall n : \\nat, n + 0 \\text{ is propositionaly equal to } n\n\nThe proof is by induction.  If $n = 0$, then $\\lemma n = 0 + 0 =_\\nat 0$",
-      "latexLine": 1379,
-      "latexContext": "%%% Line 963\nThe proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\)\nis inhabited by \\(\\refl_0\\).   Assume as inductive hypothesis that",
+      "latexLine": 1377,
+      "latexContext": "%%% Line 961\nThe proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\)\nis inhabited by \\(\\refl_0\\).   Assume as inductive hypothesis that",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",
@@ -557,10 +236,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 41,
-      "scriptaLine": 967,
+      "id": 19,
+      "scriptaLine": 965,
       "scriptaContext": "$\\lemma n$ is inhabited by $p$. Then we have\n\n|| aligned",
-      "latexLine": 1388,
+      "latexLine": 1386,
       "latexContext": "&= \\lemma\\; (\\suc n)\n\\end{align}\n",
       "category": "unclassified",
       "pattern": "unknown",
@@ -569,10 +248,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 42,
-      "scriptaLine": 974,
+      "id": 20,
+      "scriptaLine": 972,
       "scriptaContext": "In other words, we have shown that\n\n|| equation",
-      "latexLine": 1395,
+      "latexLine": 1393,
       "latexContext": "\\begin{equation}\n\\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n)\n\\end{equation}",
       "category": "unclassified",
       "pattern": "unknown",
@@ -581,11 +260,11 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 43,
-      "scriptaLine": 977,
+      "id": 21,
+      "scriptaLine": 975,
       "scriptaContext": "\\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n)\n\nConsequently $\\lemma n$ is proved for all $n$.  ",
-      "latexLine": 1399,
-      "latexContext": "%%% Line 977\nConsequently \\(\\lemma n\\) is proved for all \\(n\\).   \n",
+      "latexLine": 1397,
+      "latexContext": "%%% Line 975\nConsequently \\(\\lemma n\\) is proved for all \\(n\\).   \n",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",
@@ -593,11 +272,11 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 44,
-      "scriptaLine": 982,
+      "id": 22,
+      "scriptaLine": 980,
       "scriptaContext": "bit of information that we can extract from this argument:\n\n| indent",
-      "latexLine": 1406,
-      "latexContext": "%%% Line 982\n\\begin{indent}\n\\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}",
+      "latexLine": 1404,
+      "latexContext": "%%% Line 980\n\\begin{indent}\n\\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}",
       "category": "unclassified",
       "pattern": "unknown",
       "explanation": "Error did not match any known pattern",
@@ -605,10 +284,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 45,
-      "scriptaLine": 1027,
+      "id": 23,
+      "scriptaLine": 1025,
       "scriptaContext": "f : (x, y: A) \\to (p : x =_A y) \\to C(x, y, p)\n\nwhere $C(x,y,p)$ is a family of types depending on $x, y : A$",
-      "latexLine": 1470,
+      "latexLine": 1468,
       "latexContext": "\n\\begin{enumerate}\n",
       "category": "unclassified",
       "pattern": "unknown",
@@ -617,85 +296,10 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     },
     {
-      "id": 46,
-      "scriptaLine": 1177,
-      "scriptaContext": "## Typability SLTC\n\nThis and other considerations led Curch to ",
-      "latexLine": 1690,
-      "latexContext": "Instead of \\(\\lambda x.x\\), we write \\(\\lambda x : T\\), where \\(T\\)\nis a type.   In addition, there are two \\term{typing rules}:\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 47,
-      "scriptaLine": 1217,
-      "scriptaContext": "## Strong normalization\n\nWe say that a formal system satisfies [term strong normalization] if every well-typed term reduces to normal form in finitely many steps. Both MLTT",
-      "latexLine": 1740,
-      "latexContext": "%%% Line 1217\nWe say that a formal system satisfies \\term{strong normalization} if every well-typed term reduces to normal form in finitely many steps. Both MLTT\nand SLTC are strongly normalizing.      ",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 48,
-      "scriptaLine": 1223,
-      "scriptaContext": "## Confluence\n\nSuppose that a term $t$ has reductions $t \\to\\!\\!*\\,u_1$ and ",
-      "latexLine": 1750,
-      "latexContext": "\\(u_1 \\to\\!\\!*\\, v\\) and \\(u_2 \\to\\!\\!*\\, v\\). If there is such a \\(v\\) for any \npair of reductions of \\(t\\), we say that the system is \\term{confluent} (or satisfies the Church-Rosser property).   MLTT and SLTC are both confluent.   This means that normal forms are unique \n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 49,
-      "scriptaLine": 1250,
-      "scriptaContext": "and computation), MLTT has various structural rules.\n\n- [b [term Disjontness.]]  If a type has multiple constructors, e.g. $\\zero$ and $\\suc$, their outputs cannot be equal, eg. $\\zero \\ne \\suc n$ for any $n$ ",
-      "latexLine": 1781,
-      "latexContext": "%%% Line 1250\n\\item \\textbf{\\term{ Disjontness.}}   If a type has multiple constructors, e.g. \\(\\zero\\) and \\(\\suc\\), their outputs cannot be equal, eg. \\(\\zero \\ne \\suc n\\) for any \\(n\\)\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 50,
-      "scriptaLine": 1269,
-      "scriptaContext": "or by some well-founded measure that decreases on each function call.\n\n- Totality.  Consdier the (Haskell) function $f\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } f ( n - 1)$. It is [b[term total]] over $\\nat$: it terminates and is defined for all $n : \\nat$. Now consider",
-      "latexLine": 1809,
-      "latexContext": "%%% Line 1269\n\\item Totality.   Consdier the (Haskell) function \\(f\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } f ( n - 1)\\). It is \\textbf{\\term{ total}} over \\(\\nat\\): it terminates and is defined for all \\(n : \\nat\\). Now consider \\(g\\; n = \\text{if } n == 0 \\text{ then } 1 \\text{ else } g\\, n\\). This function is not total: it loops forever on input \\(n > 0\\).   In MLTT,   functions are total by design. The type checker will exclude functions with missing cases or which loop forever.   Thus non-total functions are not definable in Elm.\n",
-      "category": "undefined-command",
-      "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\term",
-      "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
-      "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
-      "unknownCommands": [
-        "\\term"
-      ]
-    },
-    {
-      "id": 51,
-      "scriptaLine": 1365,
+      "id": 24,
+      "scriptaLine": 1363,
       "scriptaContext": "\n\n[link Zhang cubical Hedberg https://git.mzhang.io/michael/type-theory/src/commit/f10e3a09b9c83d8534466057d40e4fc7e5cde5af/src/HoTTEST/Agda/Lecture-Notes/files/Hedbergs-Theorem.lagda.md]",
-      "latexLine": 1935,
+      "latexLine": 1933,
       "latexContext": "\n\\end{document}\n",
       "category": "unclassified",
       "pattern": "unknown",
@@ -704,5 +308,5 @@
       "fixHint": "Inspect the latex-text field manually to determine the root cause."
     }
   ],
-  "summary": "51 errors across 3 categories. Breakdown: undefined-command (28), unclassified (22), escaping (1)"
+  "summary": "24 errors across 2 categories. Breakdown: unclassified (20), undefined-command (4)"
 }

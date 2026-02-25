@@ -42,7 +42,7 @@ they are galaxies.
 
 # Derivation
 
-To explain the theorem, consider first the [term moment of inertia] of the syste
+To explain the theorem, consider first the [index moment of inertia] of the syste
 
 | equation label:moment-of-inertia
 I = sum_i m_i br_i^2
