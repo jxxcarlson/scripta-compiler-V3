@@ -1,28 +1,15 @@
 {
   "file": "datasci",
-  "totalErrors": 2,
+  "totalErrors": 1,
   "categories": {
-    "unclassified": 1,
     "bibliography": 1
   },
   "errors": [
     {
       "id": 1,
-      "scriptaLine": 527,
-      "scriptaContext": "\n\n| image caption:Standard deviation diagram width:400",
-      "latexLine": 874,
-      "latexContext": "  \\centering\n  \\includegraphics[width=0.6666666666666666\\textwidth]{Standarddeviationdiagramsvg-12.png}\n  \\caption{Standard deviation diagram}",
-      "category": "unclassified",
-      "pattern": "unknown",
-      "explanation": "Error did not match any known pattern",
-      "fixLocation": "src/Render/Export/LaTeX.elm",
-      "fixHint": "Inspect the latex-text field manually to determine the root cause."
-    },
-    {
-      "id": 2,
       "scriptaLine": 1064,
       "scriptaContext": "# References\n\n[bibitem AA] Anil Ananthasamy, [u Why Machines Learn]",
-      "latexLine": 1553,
+      "latexLine": 1560,
       "latexContext": "%%% Line 1064\n\\bibitem{AA} Anil Ananthasamy, \\u{Why Machines Learn}\n",
       "category": "bibliography",
       "pattern": "bibitem-structure",
@@ -31,5 +18,5 @@
       "fixHint": "Check that \\begin{thebibliography}{N} is emitted before \\bibitem entries and that the list counter is properly initialised."
     }
   ],
-  "summary": "2 errors across 2 categories. Breakdown: unclassified (1), bibliography (1)"
+  "summary": "1 errors across 1 categories. Breakdown: bibliography (1)"
 }

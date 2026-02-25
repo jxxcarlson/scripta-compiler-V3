@@ -1,15 +1,8 @@
 [
   {
-    "latex-begin": 871,
-    "latex-end": 877,
-    "latex-line": 874,
-    "latex-text": "(1)   \\includegraphics[width=0.6666666666666666\\textwidth]{Standarddeviationdiagramsvg-12.png}; (2)   \\includegraphics[width=0.6666666666666666\\textwidth]{Standarddeviationdiagramsvg-12.png}",
-    "scripta-line": 527
-  },
-  {
-    "latex-begin": 1552,
-    "latex-end": 1553,
-    "latex-line": 1553,
+    "latex-begin": 1559,
+    "latex-end": 1560,
+    "latex-line": 1560,
     "latex-text": "(1) \\bibitem{AA} Anil Ananthasamy, \\u{Why Machines Learn}; (2) \\bibitem{AA} Anil Ananthasamy, \\u{Why Machines Learn}; (3) \\bibitem{AA} Anil Ananthasamy, \\u{Why Machines Learn}",
     "scripta-line": 1064
   }

@@ -10,7 +10,8 @@
 \usepackage{geometry}
 \geometry{letterpaper}
 \usepackage{changepage}  % for the adjustwidth environment
-\usepackage{graphicx}    % for \includegraphics
+\usepackage{graphicx}
+\graphicspath{{/Users/carlson/dev/elm-work/scripta/pdfServer2/image/}}    % for \includegraphics
 
 %% Index, hyperref
 \usepackage[T1]{fontenc}
@@ -218,18 +219,10 @@ test-author
 
 \maketitle
 
-%%% Line 3
-\newcommand{\brac}[2]{\langle #1 | #2 \rangle}
-
-
-
-%%% Line 3
-
-
-%%% Line 6
-\begin{equation}
-\frac{1}{2} \ne \brac{4}{5}
-\end{equation}
+\begin{align}
+G &= 6.67 \times 10^{-11} \text{ SI units}\\
+M_\odot &= 1.99 \times 10^{30} \text{ kg}
+\end{align}
 
 \clearpage
 

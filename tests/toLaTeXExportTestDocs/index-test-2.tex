@@ -1,4 +1,9 @@
 \documentclass[11pt, oneside]{article}
+\usepackage{float}
+\usepackage{graphicx}
+\graphicspath{{/Users/carlson/dev/elm-work/scripta/pdfServer2/image/}}
+\usepackage{wrapfig}
+\graphicspath{ {image/} }
 
 
 
@@ -10,7 +15,8 @@
 \usepackage{geometry}
 \geometry{letterpaper}
 \usepackage{changepage}  % for the adjustwidth environment
-\usepackage{graphicx}    % for \includegraphics
+\usepackage{graphicx}
+\graphicspath{{/Users/carlson/dev/elm-work/scripta/pdfServer2/image/}}    % for \includegraphics
 
 %% Index, hyperref
 \usepackage[T1]{fontenc}
@@ -218,18 +224,81 @@ test-author
 
 \maketitle
 
-%%% Line 3
-\newcommand{\brac}[2]{\langle #1 | #2 \rangle}
-
 
 
 %%% Line 3
-
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.11666666666666667\textwidth]{5c12dfcf-0698-4e0b-733b-f9abf2bfff00-1.png}
+  \caption{Jellyfish}
+  \label{fig:jellyfish}
+\end{figure}
 
 %%% Line 6
-\begin{equation}
-\frac{1}{2} \ne \brac{4}{5}
-\end{equation}
+\begin{paragraph}
+The tiny image of jellyfish that you see on your left is put there using an \index{image block}\textit{image block} . Click on the
+image to expand it. Click on the expanded image to return the view you ser here. Image blocks have a lot of
+options. Lets begin with the simplest case, no option at all:
+\end{paragraph}
+
+%%% Line 11
+\begin{verbatim}
+| image
+https://imagedelivery.net/9U-0Y4s...
+\end{verbatim}
+
+%%% Line 15
+It has the form
+
+%%% Line 17
+\begin{verbatim}
+HEADER
+BODY
+\end{verbatim}
+
+%%% Line 21
+"have   things like this: \(4\\heartsuit, 5\\diamondsuit, 6\\clubsuit, 2\\spadesuit\). We can gather them in to
+various collections
+
+%%% Line 25
+\subsubsection{Blocks} \label{blocks}
+
+%%% Line 27
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.11666666666666667\textwidth]{5c12dfcf-0698-4e0b-733b-f9abf2bfff00-1.png}
+  \caption{Jellyfish}
+  \label{fig:jellyfish}
+\end{figure}
+
+%%% Line 30
+\begin{paragraph}
+The tiny image of jellyfish that you see on your left is put
+there using an \index{image block}\textit{image block} . Click on the image to
+expand it. Click on the expanded image to return the view you
+ser here. Image blocks have a lot of options. Lets begin with
+the simplest case, no option at all:
+\end{paragraph}
+
+%%% Line 37
+\begin{verbatim}
+| image
+https://imagedelivery.net/9U-0Y4s...
+\end{verbatim}
+
+%%% Line 41
+It has the form
+
+%%% Line 43
+\begin{verbatim}
+HEADER
+BODY
+\end{verbatim}
+
+%%% Line 47
+In this case, the header is the single line \lstinline|| image| .
+| The body is the line \lstinline|https://imagedelivery.net...|
+| the "internet address" of the image.
 
 \clearpage
 

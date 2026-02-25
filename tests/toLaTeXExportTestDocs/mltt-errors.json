@@ -1,169 +1,225 @@
 [
   {
-    "latex-begin": 217,
-    "latex-end": 255,
-    "latex-line": 231,
-    "latex-text": "(1) \\newcommand{\\or}{\\mathop{\\mathsf{or}}}; (2) \\newcommand{\\lemma}{\\mathop{\\mathsf{lemma}}}",
+    "latex-begin": 224,
+    "latex-end": 262,
+    "latex-line": 237,
+    "latex-text": "(1) \\renewcommand{\\and}{\\mathop{\\mathsf{and}}}; (2) \\newcommand{\\lemma}{\\mathop{\\mathsf{lemma}}}",
     "scripta-line": 6
   },
   {
-    "latex-begin": 275,
-    "latex-end": 279,
-    "latex-line": 279,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}",
+    "latex-begin": 282,
+    "latex-end": 286,
+    "latex-line": 286,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
     "scripta-line": 55
   },
   {
-    "latex-begin": 320,
-    "latex-end": 323,
-    "latex-line": 322,
-    "latex-text": "(1) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (2) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (3) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (4) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (5) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (6) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (7) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (8) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (9) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (10) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (11) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (12) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (13) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (14) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (15) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (16) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (17) \\tt{Odd} = \\sett{x \\in \\nat}{\\text{ isOdd(x)} = \\text{\\true}}; (18) \\end{equation}; (19) \\end{equation}; (20) \\end{equation}; (21) \\end{equation}; (22) \\end{equation}; (23) \\end{equation}; (24) \\end{equation}; (25) \\end{equation}; (26) \\end{equation}; (27) \\end{equation}; (28) \\end{equation}; (29) \\end{equation}; (30) \\end{equation}; (31) \\end{equation}; (32) \\end{equation}; (33) \\end{equation}; (34) \\end{equation}; (35) \\end{equation}; (36) \\end{equation}; (37) \\end{equation}; (38) \\end{equation}; (39) \\end{equation}; (40) \\end{equation}; (41) \\end{equation}; (42) \\end{equation}; (43) \\end{equation}",
-    "scripta-line": 88
+    "latex-begin": 311,
+    "latex-end": 317,
+    "latex-line": 317,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}",
+    "scripta-line": 76
   },
   {
-    "latex-begin": 437,
-    "latex-end": 441,
-    "latex-line": 439,
-    "latex-text": "The empty type, written \\(\\bot\\), is a type with no introduction",
+    "latex-begin": 444,
+    "latex-end": 448,
+    "latex-line": 446,
+    "latex-text": "(1) The empty type, written \\(\\bot\\), is a type with no introduction; (2) \\end{box}; (3) \\end{box}; (4) \\end{box}; (5) \\end{box}; (6) \\end{box}",
     "scripta-line": 188
   },
   {
-    "latex-begin": 478,
-    "latex-end": 509,
-    "latex-line": 480,
-    "latex-text": "Consider the assertion \\(\\suc x : \\nat\\).   This is meaningless without the",
+    "latex-begin": 485,
+    "latex-end": 516,
+    "latex-line": 487,
+    "latex-text": "(1) Consider the assertion \\(\\suc x : \\nat\\).   This is meaningless without the; (2) \\end{box}; (3) \\end{box}; (4) \\end{box}; (5) \\end{box}; (6) \\end{box}",
     "scripta-line": 225
   },
   {
-    "latex-begin": 753,
-    "latex-end": 756,
-    "latex-line": 755,
-    "latex-text": "Define the logical function \\(\\or\\) by (1) equations, (2) the eliminator.",
-    "scripta-line": 446
+    "latex-begin": 564,
+    "latex-end": 569,
+    "latex-line": 569,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
+    "scripta-line": 291
   },
   {
-    "latex-begin": 762,
-    "latex-end": 769,
-    "latex-line": 769,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}",
+    "latex-begin": 571,
+    "latex-end": 576,
+    "latex-line": 576,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
+    "scripta-line": 296
+  },
+  {
+    "latex-begin": 698,
+    "latex-end": 703,
+    "latex-line": 703,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
+    "scripta-line": 399
+  },
+  {
+    "latex-begin": 716,
+    "latex-end": 723,
+    "latex-line": 723,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}",
+    "scripta-line": 412
+  },
+  {
+    "latex-begin": 728,
+    "latex-end": 733,
+    "latex-line": 733,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
+    "scripta-line": 421
+  },
+  {
+    "latex-begin": 769,
+    "latex-end": 776,
+    "latex-line": 776,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}",
     "scripta-line": 452
   },
   {
-    "latex-begin": 775,
-    "latex-end": 778,
-    "latex-line": 777,
-    "latex-text": "(1) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean; (2) \\label{\\boolean-computation}\\or\\ (\\and\\ (\\or\\ \\true\\ \\false)\\ \\true)\\ \\false \\equiv \\true : \\boolean",
-    "scripta-line": 462
-  },
-  {
-    "latex-begin": 914,
-    "latex-end": 917,
-    "latex-line": 916,
+    "latex-begin": 921,
+    "latex-end": 924,
+    "latex-line": 923,
     "latex-text": "Jumping ahead a bit, the \\textbf{\\index{Identiy type}\\textit{Identiy type}} is formed via ",
     "scripta-line": 584
   },
   {
-    "latex-begin": 1032,
-    "latex-end": 1032,
-    "latex-line": 1032,
+    "latex-begin": 935,
+    "latex-end": 948,
+    "latex-line": 948,
+    "latex-text": "(1) \\end{box}; (2) \\end{box}; (3) \\end{box}; (4) \\end{box}; (5) \\end{box}",
+    "scripta-line": 596
+  },
+  {
+    "latex-begin": 963,
+    "latex-end": 968,
+    "latex-line": 968,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
+    "scripta-line": 625
+  },
+  {
+    "latex-begin": 985,
+    "latex-end": 995,
+    "latex-line": 995,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}",
+    "scripta-line": 643
+  },
+  {
+    "latex-begin": 1001,
+    "latex-end": 1006,
+    "latex-line": 1006,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
+    "scripta-line": 656
+  },
+  {
+    "latex-begin": 1039,
+    "latex-end": 1039,
+    "latex-line": 1039,
     "latex-text": "",
     "scripta-line": 680
   },
   {
-    "latex-begin": 1150,
-    "latex-end": 1151,
-    "latex-line": 1151,
+    "latex-begin": 1042,
+    "latex-end": 1046,
+    "latex-line": 1046,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}",
+    "scripta-line": 684
+  },
+  {
+    "latex-begin": 1049,
+    "latex-end": 1054,
+    "latex-line": 1053,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{box}; (6) \\end{box}; (7) \\end{box}; (8) \\end{box}; (9) \\end{box}",
+    "scripta-line": 690
+  },
+  {
+    "latex-begin": 1098,
+    "latex-end": 1102,
+    "latex-line": 1102,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}",
+    "scripta-line": 729
+  },
+  {
+    "latex-begin": 1118,
+    "latex-end": 1123,
+    "latex-line": 1123,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
+    "scripta-line": 743
+  },
+  {
+    "latex-begin": 1151,
+    "latex-end": 1155,
+    "latex-line": 1155,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}",
+    "scripta-line": 770
+  },
+  {
+    "latex-begin": 1157,
+    "latex-end": 1158,
+    "latex-line": 1158,
     "latex-text": "(1) n) = \\lambda n.(\\suc\\; (\\add\\; m\\; n)); (2) ; (3) ; (4) ",
     "scripta-line": 774
   },
   {
-    "latex-begin": 1180,
-    "latex-end": 1181,
-    "latex-line": 1181,
-    "latex-text": "(1) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (2) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (3) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (4) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (5) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (6) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (7) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (8) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (9) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (10) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (11) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (12) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (13) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (14) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (15) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (16) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (17) \\item \\(\\text{Falsehood} \\longleftrightarrow \\text{ Empty \\type}\\; \\bot\\); (18) \\end{itemize}; (19) \\end{itemize}; (20) \\end{itemize}; (21) \\end{itemize}; (22) \\end{itemize}; (23) \\end{itemize}; (24) \\end{itemize}; (25) \\end{itemize}; (26) \\end{itemize}; (27) \\end{itemize}; (28) \\end{itemize}; (29) \\end{itemize}; (30) \\end{itemize}; (31) \\end{itemize}; (32) \\end{itemize}; (33) \\end{itemize}; (34) \\end{itemize}; (35) \\end{itemize}; (36) \\end{itemize}; (37) \\end{itemize}; (38) \\end{itemize}; (39) \\end{itemize}; (40) \\end{itemize}",
-    "scripta-line": 793
+    "latex-begin": 1163,
+    "latex-end": 1168,
+    "latex-line": 1168,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}",
+    "scripta-line": 778
   },
   {
-    "latex-begin": 1201,
-    "latex-end": 1204,
-    "latex-line": 1204,
-    "latex-text": "\\(P \\implies Q\\), there is a witness \\(f : P \\to Q\\).   By the elimination rule for functions, \\(f\\; p : Q\\).   Therefore we know \\(Q\\). \\qed{}",
-    "scripta-line": 805
-  },
-  {
-    "latex-begin": 1206,
-    "latex-end": 1208,
-    "latex-line": 1208,
-    "latex-text": "has an easy formulation and proof in MLTT.   The principle states that if \\(P \\implies Q\\), then \\(\\neg Q \\implies \\neg P\\). For the proof, supoose that \\(f : P \\to Q\\) and \\(nq : Q \\to \\bot\\). Then \\(nq \\circ f : P \\to \\bot\\). \\qed{}",
-    "scripta-line": 809
-  },
-  {
-    "latex-begin": 1256,
-    "latex-end": 1268,
-    "latex-line": 1268,
-    "latex-text": "\\qed{}",
-    "scripta-line": 865
-  },
-  {
-    "latex-begin": 1366,
-    "latex-end": 1369,
-    "latex-line": 1368,
+    "latex-begin": 1373,
+    "latex-end": 1376,
+    "latex-line": 1375,
     "latex-text": "(1) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (2) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (3) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (4) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ; (5) We aim to show that there is a function \\(\\lemma : (n : \\nat) \\to \\isRightIdentity n\\).   In other words, we claim that the type ",
     "scripta-line": 954
   },
   {
-    "latex-begin": 1371,
-    "latex-end": 1374,
-    "latex-line": 1373,
-    "latex-text": "(1) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (2) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (3) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (4) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (5) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (6) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (7) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (8) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (9) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (10) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (11) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (12) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (13) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (14) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (15) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (16) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (17) \\forall n : \\nat, n + 0 \\text{ is propositionaly equal \\to } n; (18) \\end{equation}; (19) \\end{equation}; (20) \\end{equation}; (21) \\end{equation}; (22) \\end{equation}; (23) \\end{equation}; (24) \\end{equation}; (25) \\end{equation}; (26) \\end{equation}; (27) \\end{equation}; (28) \\end{equation}; (29) \\end{equation}; (30) \\end{equation}; (31) \\end{equation}; (32) \\end{equation}; (33) \\end{equation}; (34) \\end{equation}; (35) \\end{equation}; (36) \\end{equation}; (37) \\end{equation}; (38) \\end{equation}; (39) \\end{equation}; (40) \\end{equation}; (41) \\end{equation}; (42) \\end{equation}; (43) \\end{equation}",
-    "scripta-line": 958
-  },
-  {
-    "latex-begin": 1376,
-    "latex-end": 1379,
-    "latex-line": 1377,
+    "latex-begin": 1383,
+    "latex-end": 1386,
+    "latex-line": 1384,
     "latex-text": "(1) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (2) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (3) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (4) The proof is by induction.   If \\(n = 0\\), then \\(\\lemma n = 0 + 0 =_\\nat 0\\); (5) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (6) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (7) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have; (8) \\(\\lemma n\\) is inhabited by \\(p\\). Then we have",
     "scripta-line": 961
   },
   {
-    "latex-begin": 1381,
-    "latex-end": 1386,
-    "latex-line": 1386,
-    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}; (27) \\end{align}; (28) \\end{align}; (29) \\end{align}; (30) \\end{align}; (31) \\end{align}; (32) \\end{align}; (33) \\end{align}; (34) \\end{align}; (35) \\end{align}; (36) \\end{align}; (37) \\end{align}; (38) \\end{align}; (39) \\end{align}; (40) \\end{align}; (41) \\end{align}; (42) \\end{align}; (43) \\end{align}; (44) \\end{align}; (45) \\end{align}; (46) \\end{align}; (47) \\end{align}; (48) \\end{align}",
+    "latex-begin": 1388,
+    "latex-end": 1393,
+    "latex-line": 1393,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}; (5) \\end{align}; (6) \\end{align}; (7) \\end{align}; (8) \\end{align}; (9) \\end{align}; (10) \\end{align}; (11) \\end{align}; (12) \\end{align}; (13) \\end{align}; (14) \\end{align}; (15) \\end{align}; (16) \\end{align}; (17) \\end{align}; (18) \\end{align}; (19) \\end{align}; (20) \\end{align}; (21) \\end{align}; (22) \\end{align}; (23) \\end{align}; (24) \\end{align}; (25) \\end{align}; (26) \\end{align}; (27) \\end{align}; (28) \\end{align}; (29) \\end{align}; (30) \\end{align}; (31) \\end{align}; (32) \\end{align}; (33) \\end{align}; (34) \\end{align}; (35) \\end{align}; (36) \\end{align}; (37) \\end{align}; (38) \\end{align}; (39) \\end{align}; (40) \\end{align}; (41) \\end{align}; (42) \\end{align}; (43) \\end{align}; (44) \\end{align}; (45) \\end{align}; (46) \\end{align}; (47) \\end{align}; (48) \\end{align}; (49) \\end{align}; (50) \\end{align}; (51) \\end{align}",
     "scripta-line": 965
   },
   {
-    "latex-begin": 1391,
-    "latex-end": 1394,
-    "latex-line": 1393,
-    "latex-text": "(1) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (2) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (3) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (4) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (5) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (6) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (7) \\end{equation}; (8) \\end{equation}; (9) \\end{equation}",
+    "latex-begin": 1398,
+    "latex-end": 1401,
+    "latex-line": 1400,
+    "latex-text": "(1) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (2) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (3) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (4) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (5) \\congg\\; \\suc\\; (\\lemma n) = \\lemma\\; (\\suc n); (6) \\end{equation}; (7) \\end{equation}; (8) \\end{equation}",
     "scripta-line": 972
   },
   {
-    "latex-begin": 1396,
-    "latex-end": 1397,
-    "latex-line": 1397,
+    "latex-begin": 1403,
+    "latex-end": 1404,
+    "latex-line": 1404,
     "latex-text": "(1) Consequently \\(\\lemma n\\) is proved for all \\(n\\).   ; (2) Consequently \\(\\lemma n\\) is proved for all \\(n\\).   ; (3) Consequently \\(\\lemma n\\) is proved for all \\(n\\).   ; (4) Consequently \\(\\lemma n\\) is proved for all \\(n\\).   ",
     "scripta-line": 975
   },
   {
-    "latex-begin": 1403,
-    "latex-end": 1406,
-    "latex-line": 1404,
-    "latex-text": "(1) \\begin{indent}; (2) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (3) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (4) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (5) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}",
+    "latex-begin": 1410,
+    "latex-end": 1413,
+    "latex-line": 1412,
+    "latex-text": "(1) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (2) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (3) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}; (4) \\textit{The term which inhabits\\(\\lemma n\\) is \\((\\congg \\suc)^n \\refl_0\\)}",
     "scripta-line": 980
   },
   {
-    "latex-begin": 1467,
-    "latex-end": 1468,
-    "latex-line": 1468,
-    "latex-text": "\\begin{enumerate}",
-    "scripta-line": 1025
+    "latex-begin": 1654,
+    "latex-end": 1658,
+    "latex-line": 1658,
+    "latex-text": "(1) \\end{align}; (2) \\end{align}; (3) \\end{align}; (4) \\end{align}",
+    "scripta-line": 1147
   },
   {
-    "latex-begin": 1932,
-    "latex-end": 1933,
-    "latex-line": 1933,
+    "latex-begin": 1939,
+    "latex-end": 1940,
+    "latex-line": 1940,
     "latex-text": "\\end{document}",
     "scripta-line": 1363
   }

@@ -1,4 +1,9 @@
 \documentclass[11pt, oneside]{article}
+\usepackage{float}
+\usepackage{graphicx}
+\graphicspath{{/Users/carlson/dev/elm-work/scripta/pdfServer2/image/}}
+\usepackage{wrapfig}
+\graphicspath{ {image/} }
 
 
 
@@ -10,7 +15,8 @@
 \usepackage{geometry}
 \geometry{letterpaper}
 \usepackage{changepage}  % for the adjustwidth environment
-\usepackage{graphicx}    % for \includegraphics
+\usepackage{graphicx}
+\graphicspath{{/Users/carlson/dev/elm-work/scripta/pdfServer2/image/}}    % for \includegraphics
 
 %% Index, hyperref
 \usepackage[T1]{fontenc}
@@ -218,18 +224,15 @@ test-author
 
 \maketitle
 
-%%% Line 3
-\newcommand{\brac}[2]{\langle #1 | #2 \rangle}
-
-
+|title Image Test
 
 %%% Line 3
-
-
-%%% Line 6
-\begin{equation}
-\frac{1}{2} \ne \brac{4}{5}
-\end{equation}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5833333333333334\textwidth]{fa46a52c-79cc-4679-d90f-8006c8eb2b00-1.png}
+  \caption{Figure 1. Derivative as slope}
+  \label{fig:figure1}
+\end{figure}
 
 \clearpage
 

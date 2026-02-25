@@ -1464,7 +1464,7 @@ rb _ =
 
 bt : List Expression -> String
 bt _ =
-    "\\verbatim{`}"
+    "\\texttt{\\char96{}}"
 
 
 underscore : List Expression -> String
