@@ -47,7 +47,6 @@ verbatimNames =
     , "settings"
     , "book"
     , "article"
-    , "table"
     ]
 
 

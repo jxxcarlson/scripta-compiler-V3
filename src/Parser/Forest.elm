@@ -14,7 +14,6 @@ module Parser.Forest exposing (parse, parseToForestWithAccumulator)
 
 -}
 
-import Dict
 import Generic.Acc
 import Generic.BlockUtilities
 import Generic.ForestTransform

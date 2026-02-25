@@ -535,7 +535,7 @@ vectorPrefix vector =
 
 vectorPrefixWithLevel : Int -> Vector -> String
 vectorPrefixWithLevel lev vector =
-    Vector.toStringWithLevel lev vector |> Debug.log "@@prefix"
+    Vector.toStringWithLevel lev vector
 
 
 {-| Returns the chapter prefix string for numbering.
@@ -930,9 +930,6 @@ normalizeLines lines =
 updateWithOrdinarySectionBlock : Accumulator -> Maybe String -> Either String (List Expression) -> String -> String -> Accumulator
 updateWithOrdinarySectionBlock accumulator name content level id =
     let
-        _ =
-            Debug.log "@@updateWithOrdinarySectionBlock-content-level" ( content, level )
-
         titleWords =
             case content of
                 Left str ->

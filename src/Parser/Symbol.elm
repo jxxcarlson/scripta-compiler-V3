@@ -38,11 +38,6 @@ value symbol =
             0
 
 
-balance : List Symbol -> Int
-balance symbols =
-    symbols |> List.map value |> List.sum
-
-
 toSymbols : List Token -> List Symbol
 toSymbols tokens =
     List.map toSymbol tokens
