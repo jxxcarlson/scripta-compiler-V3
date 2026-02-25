@@ -51,5 +51,38 @@ suite =
                             ]
                     in
                     Expect.equal expected result
+            , test "unclosed bracket produces non-empty result" <|
+                -- M7: unclosed bracket — parser should produce output (possibly with error indication)
+                \_ ->
+                    pe "This is [b"
+                        |> List.isEmpty
+                        |> Expect.equal False
+            , test "unclosed math produces non-empty result" <|
+                -- M7: unclosed math — parser should produce output (possibly with error indication)
+                \_ ->
+                    pe "$x + y"
+                        |> List.isEmpty
+                        |> Expect.equal False
+            , test "empty input produces empty list" <|
+                \_ ->
+                    pe ""
+                        |> Expect.equal []
+            , test "nested functions parse correctly" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[b [i nested]]"
+                    in
+                    case result of
+                        [ Fun "b" innerExprs _ ] ->
+                            case innerExprs of
+                                [ Text _ _, Fun "i" [ Text _ _ ] _ ] ->
+                                    Expect.pass
+
+                                _ ->
+                                    Expect.fail ("Expected [Text, Fun \"i\" [...]] inside [b ...], got: " ++ Debug.toString innerExprs)
+
+                        _ ->
+                            Expect.fail ("Expected single Fun \"b\" expression, got: " ++ Debug.toString result)
             ]
         ]

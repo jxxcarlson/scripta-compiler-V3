@@ -42,9 +42,22 @@ suite =
             \_ ->
                 transformETeX Dict.empty "alpha^2 + beta^2 = gamma^2"
                     |> Expect.equal "\\alpha^2 + \\beta^2 = \\gamma^2"
-
-        --, test "bad " <|
-        --    \_ ->
-        --        transformETeX Dict.empty "[math E = \\hbar q \\omega]"
-        --            |> Expect.equal "[math E = hbar q omega]"
+        , test "unknown macro passes through silently" <|
+            -- C2: documents silent failure — unknown backslash-commands pass through unchanged
+            \_ ->
+                transformETeX Dict.empty "\\badmacro"
+                    |> Expect.equal "\\badmacro"
+        , test "multi-arg macro: space(3)" <|
+            \_ ->
+                transformETeX macroDict "space(3)"
+                    |> Expect.equal "\\space{3}"
+        , test "two-argument macro: sett(A,B)" <|
+            \_ ->
+                transformETeX macroDict "sett(A,B)"
+                    |> Expect.equal "\\sett{A}{B}"
+        , test "makeMacroDict with invalid line returns empty dict" <|
+            -- C2: bad input handling — lines without colon or \\newcommand are skipped
+            \_ ->
+                makeMacroDict "not a definition"
+                    |> Expect.equal Dict.empty
         ]

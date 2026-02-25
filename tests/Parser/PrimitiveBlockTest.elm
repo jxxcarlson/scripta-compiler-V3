@@ -222,6 +222,27 @@ suite =
                     in
                     -- 4 lines: header + 2 continuations + body
                     Expect.equal (Just 4) (Maybe.map (\b -> b.meta.numberOfLines) block)
+            , test "table is parsed as verbatim block" <|
+                -- M14: table is in verbatimNames
+                \_ ->
+                    let
+                        blocks =
+                            p "| table\ncol1\n"
+
+                        block =
+                            List.head blocks
+                    in
+                    Expect.equal (Just (Verbatim "table")) (Maybe.map .heading block)
+            , test "code is parsed as verbatim block" <|
+                \_ ->
+                    let
+                        blocks =
+                            p "| code\nfoo\n"
+
+                        block =
+                            List.head blocks
+                    in
+                    Expect.equal (Just (Verbatim "code")) (Maybe.map .heading block)
             , test "block name alone on first line, then continuation lines" <|
                 \_ ->
                     let
