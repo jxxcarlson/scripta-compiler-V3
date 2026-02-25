@@ -1,9 +1,0 @@
-[
-  {
-    "latex-begin": 326,
-    "latex-end": 343,
-    "latex-line": 340,
-    "latex-text": "(1) \t\\arrow[\"{\\eta_c}\"{description}, curve={height=-30pt}, dashed, from=1-5, to=5-5]; (2) \\end{tikzcd}\\]",
-    "scripta-line": 109
-  }
-]

@@ -1,9 +1,0 @@
-[
-  {
-    "latex-begin": 311,
-    "latex-end": 312,
-    "latex-line": 312,
-    "latex-text": "(1) For code, you can use a \\index{code element}\\textit{code element} . Thus \\lstinline|a^2 + b^2 = c^2| is produced by writing \\lstinline|[code a^2 + b^2 = c^2]| . You can also enclose code in backticks, e.g., \\backtick{} a^2 + b^2 = c^2 \\backtick{} .; (2) ",
-    "scripta-line": 51
-  }
-]

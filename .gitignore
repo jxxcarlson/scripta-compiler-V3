@@ -1,6 +1,10 @@
+
 Demo/main.js
 Demo/elm-stuff/
 elm-stuff/
 review/elm-stuff/
 .idea/
 secrets/
+tests/toLaTeXExportTestDocs/*.json
+tests/toLaTeXExportTestDocs/*.tex
+tools/toLaTeXExport/worker.js

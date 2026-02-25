@@ -1169,7 +1169,12 @@ groupByFirstLetterWithDisplay terms =
 -}
 renderBox : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderBox params acc _ block children =
-    [ Html.div
+    let
+        title =
+            Dict.get "title" block.properties |> Maybe.withDefault ""
+    in
+    [ Html.div [ HA.style "margin-left" "2.75em", HA.style "font-size" "1.15em" ] [ Html.text title ]
+    , Html.div
         (blockIdAndStyle params block
             ++ [ HA.style "border" "1px solid #ccc"
                , HA.style "padding" "1em"

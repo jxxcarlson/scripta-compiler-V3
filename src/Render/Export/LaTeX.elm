@@ -859,6 +859,14 @@ exportBlock mathMacroDict settings block =
                         _ ->
                             "error in constructing table"
 
+        Ordinary "box" ->
+            case block.body of
+                Left _ ->
+                    ""
+
+                Right exprs_ ->
+                    exportBox block.properties block.args (exportExprList mathMacroDict settings exprs_)
+
         Ordinary name ->
             case block.body of
                 Left _ ->
@@ -1259,6 +1267,29 @@ exportCite exprs =
 
         _ ->
             ""
+
+
+exportBox : Dict String String -> List String -> String -> String
+exportBox properties args body =
+    let
+        title =
+            case Dict.get "title" properties of
+                Just t ->
+                    t
+
+                Nothing ->
+                    String.join " " args
+
+        options =
+            [ "colback=blue!5!white", "boxrule=0.25pt", "left=1cm", "right=1cm" ]
+                ++ (if title == "" then
+                        []
+
+                    else
+                        [ "title={" ++ title ++ "}", "coltitle=black", "colbacktitle=blue!10!white" ]
+                   )
+    in
+    "\\begin{tcolorbox}[" ++ String.join ", " options ++ "]\n" ++ body ++ "\n\\end{tcolorbox}"
 
 
 exportBibliographyBegin : List String -> String

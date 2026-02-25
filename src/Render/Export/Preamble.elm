@@ -91,6 +91,7 @@ packageList =
     , ( "strike", [ "soul" ] )
     , ( "errorHighlight", [ "xcolor" ] )
     , ( "image", [ "graphicx", "wrapfig", "float" ] )
+    , ( "box", [ "tcolorbox" ] )
 
     --, ( "ce", [ "mhchem" ] )
     ]
@@ -337,14 +338,6 @@ commands =
 \\renewenvironment{indent}
   {\\begin{adjustwidth}{0.75cm}{}}
   {\\end{adjustwidth}}
-
-\\newenvironment{box}[1][]{%
-  \\par\\medskip\\noindent
-  \\begin{adjustwidth}{1em}{}
-  \\ifx\\relax#1\\relax\\else{\\bfseries #1}\\par\\smallskip\\fi
-}{%
-  \\end{adjustwidth}\\medskip
-}
 
 \\newcommand{\\backtick}{\\texttt{\\symbol{96}}}
 
