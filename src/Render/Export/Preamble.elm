@@ -72,7 +72,7 @@ makeArticle blockNames_ expressionNames_ =
 
 
 packageList =
-    [ ( "quiver", [ "quiver" ] )
+    [ ( "quiver", [ "tikz-cd" ] )
     , ( "tikz", [ "tikz" ] )
 
     --, ( "link", [ "hyperref" ] )
@@ -345,6 +345,8 @@ commands =
 }{%
   \\end{adjustwidth}\\medskip
 }
+
+\\newcommand{\\backtick}{\\texttt{\\symbol{96}}}
 
 %% NEWCOMMAND
 

@@ -49,7 +49,7 @@ Ordinary text, like "Happy New Year" is an element. So is [code [i Happy New Yea
 
 You can write mathematical formulas, equations, etc. using a [index math element] , e.g., [m a^2 + b^2 = c^2] . Here is what we wrote: [code [math a^2 + b^2 = c^2] ] . The shorthand form [code [m a^2 + b^2 = c^2] ] also works. If you want, you can use TeX/LaTex syntax, [code $a^2 + b^2 = c^2$ ] .
 
-For code, you can use a [index code element] . Thus [code a^2 + b^ = c^2 ] is produced by writing [code [code a^2 + b^ = c^2] ] . You can also enclose code in backticks, e.g., [bt ] a^2 + b^2 = c^2 [bt ] .
+For code, you can use a [index code element] . Thus [code a^2 + b^2 = c^2 ] is produced by writing [code [code a^2 + b^2 = c^2] ] . You can also enclose code in backticks, e.g., [bt ] a^2 + b^2 = c^2 [bt ] .
 
 ### Other elements
 
@@ -83,9 +83,9 @@ In this case, the header is the single line [code | image ] . The body is the li
 The image block we used above is a little more complex:
 
 | code
-| image expandable 
-| float:left 
-| width:70 
+| image expandable
+| float:left
+| width:70
 | caption:Jellyfish
 https://imagedelivery.net/9U-0Y4s...
 
@@ -146,14 +146,14 @@ Below is an example of a [index code block]
           if n % k == 0:
               return False
       return True
-  
-  
+
+
   def print_primes_up_to(N):
       for p in range(2, N + 1):
           if is_prime(p):
               print(p)
-  
-  
+
+
   # example usage
   N = 100
   print_primes_up_to(N)
@@ -191,9 +191,9 @@ There is a lot more to the Scripta app. See XXX. You can, for example, export Sc
 
 | hide
 We placed both the image and the equation using a new open-source language, [b Scripta Markup], described [ilink below jxxcarlson:welcome-to-scripta.1#73f8dd40-8ed6-4087-b894-b503c7fcd12b]. Scripta Markup can do most of what Tex/LateX
-can, but with a modern, streamlined syntax. 
-[ilink ILINK jxxcarlson:welcome-to-scripta.1#73f8dd40-8ed6-4087-b894-b503c7fcd12b].  Elements 
-can be combined.  
+can, but with a modern, streamlined syntax.
+[ilink ILINK jxxcarlson:welcome-to-scripta.1#73f8dd40-8ed6-4087-b894-b503c7fcd12b].  Elements
+can be combined.
 
 # Dive Right In
 
@@ -234,7 +234,7 @@ We could have written [code | equation numbered ] if we wanted the equation to b
 
 | equation label:wave-equation
 pdd(u,x) + pdd(u,y) + pdd(u,z) = frac(1,c^2) pdd(u,t)
-  qquad 
+  qquad
 "Wave Equation"
 
 We can refer to it using the element [code [eqref wave-equation] ] :
@@ -252,7 +252,7 @@ If you do need blank lines in a block, just indent the body of the block, like t
 | code
   a := 1
   b := 2
-  
+
   c := a + b
 
 The result is this:
@@ -260,7 +260,7 @@ The result is this:
 | code
   a := 1
   b := 2
-  
+
   c := a + b
 
 ## Ergonomic TeX (ETeX)
@@ -298,28 +298,28 @@ Some blocks have an off-beat syntax. For sections, subsections, etc., we borrow 
 | code
   | title
   The Kingdoms of Life
-  
+
   # Archaea
-  
+
   # Bacteria
-  
+
     ## Proteobacteria
-    
+
     ## Cyanobacteria
-  
+
   # Protista
-  
+
   # Fungi
-  
+
   # Plantae
 
 Itemized and numbered lists are also exceptional blocks, again inspired by Markdown. Here is an itemized list:
 
 | code
   - Milk
-  
+
   - Cookies
-  
+
   - Paper plates
 
 It renders as
@@ -334,9 +334,9 @@ Numbered lists are written as
 
 | code
   . Milk
-  
+
   . Cookies
-  
+
   . Paper plates
 
 Itrenders like this:
@@ -370,14 +370,14 @@ instead of the usal TeX:
 The notation is, for he most part, like the notation in mathematics. Relatively few backslashes and curly braces. If you wish, however, you can use the second, standard LaTeX form. We call streamlined syntax [i ETeX] , for [quote Ergonomic TeX.]
 
 | mathmacros
-pd:       frac(partial #1, partial #2)      
-pdd:      frac(partial^2 #1, partial #2^2)  
+pd:       frac(partial #1, partial #2)
+pdd:      frac(partial^2 #1, partial #2^2)
 
 # The Scripta App
 
 - [b Saving] . When editing your document, Scripta saves it every 3 seconds.
 
-- [b Navigation] . To navigate back and forth between documents in Scripta, use the keyboard shortcuts [code ctrl-[ ] and [code ctrl-] ] or the buttons [b B] and [b F] .
+- [b Navigation] . To navigate back and forth between documents in Scripta, use the keyboard shortcuts [code ctrl-[lb] ] and [code ctrl-[rb] ] or the buttons [b B] and [b F] .
 
 - [b Search and Replace] . To bring up the search and replace panel in the editor, type command-F (mac). To close it, type ESC.
 
@@ -438,7 +438,7 @@ UNDER CONSTRUCTION
 
 ## Uploading
 
-| image expandable float:right width:100 
+| image expandable float:right width:100
 https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ff9cfbc7-2143-4f23-289b-be3c110e7e00/public
 
 To place images in your documents, they need to be
@@ -449,7 +449,7 @@ accessible from somewhere in the cloud, as is the image on the right and what yo
 https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/f44890b6-e692-458d-a8d0-84ce54929500/public
 
 If your image is on your computer, click the [b Upload] button, navigate to the image, select it, and click [b Open].
-You will see something like the below.  The text "poison dart frog, colors:orange,black,blue" consists of [index tags] 
+You will see something like the below.  The text "poison dart frog, colors:orange,black,blue" consists of [index tags]
 that you added yourself.  Tags help you to find images later if you need them.
 
 
@@ -526,8 +526,8 @@ The first ilink was written using an [code ilink ] (internal link) block:
 You can also link to a specific part of a document, provided that it is suitably marked.  We mark the phrase "first partial derivation is stuck" in the Formal Systems document like this:
 
 | code
-The [mark first partial derivation is stuck with:stuck]: 
-it cannot be continued. 
+The [mark first partial derivation is stuck with:stuck]:
+it cannot be continued.
 
 The "mark" for this element is the word "stuck".  We can
 link to it from this document by writing
@@ -535,10 +535,10 @@ link to it from this document by writing
 | code
 [ilink stuck derivation jxxcarlson:formal-systems#stuck]
 
-Then the source text 
+Then the source text
 
 | code
-Here is an example of a [ilink stuck derivation 
+Here is an example of a [ilink stuck derivation
 jxxcarlson:formal-systems#stuck]  in a formal system.
 
 yields this:
@@ -546,8 +546,8 @@ yields this:
 | indent
 Here is an example of a [ilink stuck derivation jxxcarlson:formal-systems#stuck]  in a formal system.
 
-Try clicking on [violet stuck derivation] above.  You will be 
-transported to the Formal Systems document with the 
+Try clicking on [violet stuck derivation] above.  You will be
+transported to the Formal Systems document with the
 marked element highlighted.  To unhighlight, press ESC.  To see
 all marked elements, type [b ctrl-opt-=].
 
@@ -602,6 +602,7 @@ https://www.realsimple.com/thmb/7xn0oIF6a9eJ-y_4OO5vN0lJhCg=/1500x0/filters:no_u
 
 | references
 
+| bibliography
 
 | bibitem einstein1905a
 Albert Einstein, “Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt” Annalen der Physik, 17 (1905), pp. 132–148 (On a Heuristic Point of View Concerning the Production and Transformation of Light)

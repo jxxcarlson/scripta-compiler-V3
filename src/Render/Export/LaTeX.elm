@@ -1053,7 +1053,7 @@ exportBlock mathMacroDict settings block =
                                         |> List.drop 1
                                         -- now normalize the data
                                         |> List.filter (\line -> not <| String.contains "\\[\\begin{tikzcd}" line)
-                                        |> List.filter (\line -> not <| String.contains "\\end{tikzcd}\\]" line)
+                                        |> List.filter (\line -> not <| String.contains "\\end{tikzcd}" line)
                                         |> (\x -> line1b :: "\\[\\begin{tikzcd}" :: x ++ [ "\\end{tikzcd}\\]" ])
                                         |> String.join "\n"
                             in
@@ -1464,7 +1464,7 @@ rb _ =
 
 bt : List Expression -> String
 bt _ =
-    "\\texttt{\\char96{}}"
+    "\\backtick{}"
 
 
 underscore : List Expression -> String

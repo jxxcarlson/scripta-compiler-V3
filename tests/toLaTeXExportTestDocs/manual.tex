@@ -176,6 +176,8 @@
   \end{adjustwidth}\medskip
 }
 
+\newcommand{\backtick}{\texttt{\symbol{96}}}
+
 %% NEWCOMMAND
 
 % \definecolor{mypink1}{rgb}{0.858, 0.188, 0.478}
@@ -305,7 +307,7 @@ Ordinary text, like "Happy New Year" is an element. So is \lstinline|[i Happy Ne
 You can write mathematical formulas, equations, etc. using a \index{math element}\textit{math element} , e.g., $a^2 + b^2 = c^2$ . Here is what we wrote: \lstinline|[math a^2 + b^2 = c^2]| . The shorthand form \lstinline|[m a^2 + b^2 = c^2]| also works. If you want, you can use TeX/LaTex syntax, \lstinline|a^2 + b^2 = c^2| .
 
 %%% Line 51
-For code, you can use a \index{code element}\textit{code element} . Thus \lstinline|a^2 + b^ = c^2| is produced by writing \lstinline|[code a^2 + b^ = c^2]| . You can also enclose code in backticks, e.g., \texttt{\char96{}} a^2 + b^2 = c^2 \texttt{\char96{}} .
+For code, you can use a \index{code element}\textit{code element} . Thus \lstinline|a^2 + b^2 = c^2| is produced by writing \lstinline|[code a^2 + b^2 = c^2]| . You can also enclose code in backticks, e.g., \backtick{} a^2 + b^2 = c^2 \backtick{} .
 
 %%% Line 53
 \subsubsection{Other elements} \label{other-elements}
@@ -358,9 +360,9 @@ The image block we used above is a little more complex:
 
 %%% Line 84
 \begin{verbatim}
-| image expandable 
-| float:left 
-| width:70 
+| image expandable
+| float:left
+| width:70
 | caption:Jellyfish
 https://imagedelivery.net/9U-0Y4s...
 \end{verbatim}
@@ -450,17 +452,15 @@ Below is an example of a \index{code block}\textit{code block}
           if n % k == 0:
               return False
       return True
-  
-  
-  def print_primes_up_to(N):
-      for p in range(2, N + 1):
-          if is_prime(p):
-              print(p)
-  
-  
-  # example usage
-  N = 100
-  print_primes_up_to(N)
+%%% Line 150
+   def print\_primes\_up\_to(N):
+          for p in range(2, N + 1):
+                                    if is\_prime(p):
+                                                                              print(p)
+%%% Line 156
+\section{example usage
+N = 100
+print\\_primes\\_up\\_to(N)} \label{example-usage-n--100-printprimesupton}
 \end{verbatim}
 
 %%% Line 160
@@ -601,8 +601,8 @@ If you do need blank lines in a block, just indent the body of the block, like t
 | code
   a := 1
   b := 2
-  
-  c := a + b
+%%% Line 255
+   c := a + b
 \end{verbatim}
 
 %%% Line 257
@@ -612,8 +612,8 @@ The result is this:
 \begin{verbatim}
   a := 1
   b := 2
-  
-  c := a + b
+%%% Line 263
+   c := a + b
 \end{verbatim}
 
 %%% Line 265
@@ -667,20 +667,20 @@ Some blocks have an off-beat syntax. For sections, subsections, etc., we borrow 
 \begin{verbatim}
   | title
   The Kingdoms of Life
-  
-  # Archaea
-  
-  # Bacteria
-  
-    ## Proteobacteria
-    
-    ## Cyanobacteria
-  
-  # Protista
-  
-  # Fungi
-  
-  # Plantae
+%%% Line 301
+\section{Archaea} \label{archaea}
+%%% Line 303
+%%% Line 305
+\subsection{Proteobacteria} \label{proteobacteria}
+%%% Line 307
+\subsection{Cyanobacteria} \label{cyanobacteria}
+\section{Bacteria} \label{bacteria}
+%%% Line 309
+\section{Protista} \label{protista}
+%%% Line 311
+\section{Fungi} \label{fungi}
+%%% Line 313
+\section{Plantae} \label{plantae}
 \end{verbatim}
 
 %%% Line 315
@@ -689,10 +689,12 @@ Itemized and numbered lists are also exceptional blocks, again inspired by Markd
 %%% Line 317
 \begin{verbatim}
   - Milk
-  
-  - Cookies
-  
-  - Paper plates
+\begin{itemize}
+%%% Line 320
+\item Cookies
+%%% Line 322
+\item Paper plates
+\end{itemize}
 \end{verbatim}
 
 %%% Line 324
@@ -717,10 +719,12 @@ Numbered lists are written as
 %%% Line 334
 \begin{verbatim}
   . Milk
-  
-  . Cookies
-  
-  . Paper plates
+\begin{enumerate}
+%%% Line 337
+\item Cookies
+%%% Line 339
+\item Paper plates
+\end{enumerate}
 \end{verbatim}
 
 %%% Line 341
@@ -783,7 +787,7 @@ The notation is, for he most part, like the notation in mathematics. Relatively 
 \item \textbf{Saving} . When editing your document, Scripta saves it every 3 seconds.
 
 %%% Line 379
-\item \textbf{Navigation} . To navigate back and forth between documents in Scripta, use the keyboard shortcuts \errorHighlight{[code]?} ctrl-\errorHighlight{[ - can't have space after the bracket}\errorHighlight{extra ]?} and \lstinline|ctrl-| \errorHighlight{extra ]?} or the buttons \textbf{B} and \textbf{F} .
+\item \textbf{Navigation} . To navigate back and forth between documents in Scripta, use the keyboard shortcuts \lstinline|ctrl-[lb]| and \lstinline|ctrl-[rb]| or the buttons \textbf{B} and \textbf{F} .
 
 %%% Line 381
 \item \textbf{Search and Replace} . To bring up the search and replace panel in the editor, type command-F (mac). To close it, type ESC.
@@ -891,7 +895,7 @@ accessible from somewhere in the cloud, as is the image on the right and what yo
 
 %%% Line 450
 If your image is on your computer, click the \textbf{Upload} button, navigate to the image, select it, and click \textbf{Open}.
-You will see something like the below.   The text "poison dart frog, colors:orange,black,blue" consists of \index{tags}\textit{tags} 
+You will see something like the below.   The text "poison dart frog, colors:orange,black,blue" consists of \index{tags}\textit{tags}
 that you added yourself.   Tags help you to find images later if you need them.
 
 %%% Line 455
@@ -990,8 +994,8 @@ You can also link to a specific part of a document, provided that it is suitably
 
 %%% Line 527
 \begin{verbatim}
-The [mark first partial derivation is stuck with:stuck]: 
-it cannot be continued. 
+The [mark first partial derivation is stuck with:stuck]:
+it cannot be continued.
 \end{verbatim}
 
 %%% Line 531
@@ -1004,11 +1008,11 @@ link to it from this document by writing
 \end{verbatim}
 
 %%% Line 537
-Then the source text 
+Then the source text
 
 %%% Line 539
 \begin{verbatim}
-Here is an example of a [ilink stuck derivation 
+Here is an example of a [ilink stuck derivation
 jxxcarlson:formal-systems#stuck]  in a formal system.
 \end{verbatim}
 
@@ -1021,8 +1025,8 @@ Here is an example of a \href{https://scripta.io/s/jxxcarlson:formal-systems#stu
 \end{indent}
 
 %%% Line 548
-Try clicking on \textcolor{violet}{stuck derivation} above.   You will be 
-transported to the Formal Systems document with the 
+Try clicking on \textcolor{violet}{stuck derivation} above.   You will be
+transported to the Formal Systems document with the
 marked element highlighted.   To unhighlight, press ESC.   To see
 all marked elements, type \textbf{ctrl-opt-=}.
 
@@ -1094,17 +1098,23 @@ Note the \quote{bullhorn} icon on the right-hand edge of this page. Click on it 
 %%% Line 602
 
 
-%%% Line 605
+\section{References}
+\renewcommand{\refname}{}\vspace{-1.5em}
+\begin{thebibliography}{9}
+
+%%% Line 606
 \bibitem{einstein1905a}
 Albert Einstein, ``Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt'' Annalen der Physik, 17 (1905), pp. 132--148 (On a Heuristic Point of View Concerning the Production and Transformation of Light)
 
-%%% Line 608
+%%% Line 609
 \bibitem{einstein1905b}
 ``Über die von der molekularkinetischen Theorie der Wärme geforderte Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen'' Annalen der Physik, 17 (1905), pp. 549--560 ( On the Motion of Small Particles Suspended in Stationary Liquids as Required by the Molecular-Kinetic Theory of Heat)
 
-%%% Line 611
+%%% Line 612
 \bibitem{einstein1905c}
 ``Zur Elektrodynamik bewegter Körper'' Annalen der Physik, 17 (1905), pp. 891--921 (On the Electrodynamics of Moving Bodies)
+
+\end{thebibliography}
 
 \clearpage
 

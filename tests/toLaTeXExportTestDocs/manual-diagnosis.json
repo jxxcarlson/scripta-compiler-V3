@@ -1,75 +1,25 @@
 {
   "file": "manual",
-  "totalErrors": 5,
+  "totalErrors": 1,
   "categories": {
-    "undefined-command": 1,
-    "parse-error-passthrough": 1,
-    "bibliography": 3
+    "undefined-command": 1
   },
   "errors": [
     {
       "id": 1,
       "scriptaLine": 51,
-      "scriptaContext": "You can write mathematical formulas, equations, etc. using a [index math element] , e.g., [m a^2 + b^2 = c^2] . Here is what we wrote: [code [math a^2 + b^2 = c^2] ] . The shorthand form [code [m a^2 + b^2 = c^2] ] also works. If you want, you can use TeX/LaTex syntax, [code $a^2 + b^2 = c^2$ ] .\n\nFor code, you can use a [index code element] . Thus [code a^2 + b^ = c^2 ] is produced by writing [code [code a^2 + b^ = c^2] ] . You can also enclose code in backticks, e.g., [bt ] a^2 + b^2 = c^2 [bt ] .",
-      "latexLine": 310,
-      "latexContext": "%%% Line 51\nFor code, you can use a \\index{code element}\\textit{code element} . Thus \\lstinline|a^2 + b^ = c^2| is produced by writing \\lstinline|[code a^2 + b^ = c^2]| . You can also enclose code in backticks, e.g., \\texttt{\\char96{}} a^2 + b^2 = c^2 \\texttt{\\char96{}} .\n",
+      "scriptaContext": "You can write mathematical formulas, equations, etc. using a [index math element] , e.g., [m a^2 + b^2 = c^2] . Here is what we wrote: [code [math a^2 + b^2 = c^2] ] . The shorthand form [code [m a^2 + b^2 = c^2] ] also works. If you want, you can use TeX/LaTex syntax, [code $a^2 + b^2 = c^2$ ] .\n\nFor code, you can use a [index code element] . Thus [code a^2 + b^2 = c^2 ] is produced by writing [code [code a^2 + b^2 = c^2] ] . You can also enclose code in backticks, e.g., [bt ] a^2 + b^2 = c^2 [bt ] .",
+      "latexLine": 312,
+      "latexContext": "%%% Line 51\nFor code, you can use a \\index{code element}\\textit{code element} . Thus \\lstinline|a^2 + b^2 = c^2| is produced by writing \\lstinline|[code a^2 + b^2 = c^2]| . You can also enclose code in backticks, e.g., \\backtick{} a^2 + b^2 = c^2 \\backtick{} .\n",
       "category": "undefined-command",
       "pattern": "undefined-control-sequence",
-      "explanation": "Undefined control sequence(s): \\char",
+      "explanation": "Undefined control sequence(s): \\backtick",
       "fixLocation": "src/Render/Export/LaTeX.elm — blockDict (line 1284) or macroDict (line 1217)",
       "fixHint": "Check whether the command is intentional. If so, ensure the preamble defines it. If not, fix the export function that generated it.",
       "unknownCommands": [
-        "\\char"
+        "\\backtick"
       ]
-    },
-    {
-      "id": 2,
-      "scriptaLine": 379,
-      "scriptaContext": "- [b Saving] . When editing your document, Scripta saves it every 3 seconds.\n\n- [b Navigation] . To navigate back and forth between documents in Scripta, use the keyboard shortcuts [code ctrl-[ ] and [code ctrl-] ] or the buttons [b B] and [b F] .",
-      "latexLine": 788,
-      "latexContext": "%%% Line 379\n\\item \\textbf{Navigation} . To navigate back and forth between documents in Scripta, use the keyboard shortcuts \\errorHighlight{[code]?} ctrl-\\errorHighlight{[ - can't have space after the bracket}\\errorHighlight{extra ]?} and \\lstinline|ctrl-| \\errorHighlight{extra ]?} or the buttons \\textbf{B} and \\textbf{F} .\n",
-      "category": "parse-error-passthrough",
-      "pattern": "bare-errorHighlight",
-      "explanation": "Parser error marker \\errorHighlight leaked into LaTeX output",
-      "fixLocation": "src/Render/Export/LaTeX.elm — exportExpr (line 1663)",
-      "fixHint": "The parser produced an error expression that the exporter rendered literally. Either fix the parser to handle this input, or add a fallback in exportExpr that strips/replaces \\errorHighlight markers."
-    },
-    {
-      "id": 3,
-      "scriptaLine": 605,
-      "scriptaContext": "\n\n| bibitem einstein1905a",
-      "latexLine": 1100,
-      "latexContext": "%%% Line 605\n\\bibitem{einstein1905a}\nAlbert Einstein, ``Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt'' Annalen der Physik, 17 (1905), pp. 132--148 (On a Heuristic Point of View Concerning the Production and Transformation of Light)",
-      "category": "bibliography",
-      "pattern": "bibitem-structure",
-      "explanation": "Bibliography item \\bibitem causing undefined \\@listctr error",
-      "fixLocation": "src/Render/Export/LaTeX.elm — exportBibitem (line 1271) / exportBibliographyBegin (line 1262)",
-      "fixHint": "Check that \\begin{thebibliography}{N} is emitted before \\bibitem entries and that the list counter is properly initialised."
-    },
-    {
-      "id": 4,
-      "scriptaLine": 608,
-      "scriptaContext": "Albert Einstein, “Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt” Annalen der Physik, 17 (1905), pp. 132–148 (On a Heuristic Point of View Concerning the Production and Transformation of Light)\n\n| bibitem einstein1905b",
-      "latexLine": 1104,
-      "latexContext": "%%% Line 608\n\\bibitem{einstein1905b}\n``Über die von der molekularkinetischen Theorie der Wärme geforderte Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen'' Annalen der Physik, 17 (1905), pp. 549--560 ( On the Motion of Small Particles Suspended in Stationary Liquids as Required by the Molecular-Kinetic Theory of Heat)",
-      "category": "bibliography",
-      "pattern": "bibitem-structure",
-      "explanation": "Bibliography item \\bibitem causing undefined \\@listctr error",
-      "fixLocation": "src/Render/Export/LaTeX.elm — exportBibitem (line 1271) / exportBibliographyBegin (line 1262)",
-      "fixHint": "Check that \\begin{thebibliography}{N} is emitted before \\bibitem entries and that the list counter is properly initialised."
-    },
-    {
-      "id": 5,
-      "scriptaLine": 611,
-      "scriptaContext": "“Über die von der molekularkinetischen Theorie der Wärme geforderte Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen” Annalen der Physik, 17 (1905), pp. 549–560 ( On the Motion of Small Particles Suspended in Stationary Liquids as Required by the Molecular-Kinetic Theory of Heat)\n\n| bibitem einstein1905c",
-      "latexLine": 1108,
-      "latexContext": "%%% Line 611\n\\bibitem{einstein1905c}\n``Zur Elektrodynamik bewegter Körper'' Annalen der Physik, 17 (1905), pp. 891--921 (On the Electrodynamics of Moving Bodies)",
-      "category": "bibliography",
-      "pattern": "bibitem-structure",
-      "explanation": "Bibliography item \\bibitem causing undefined \\@listctr error",
-      "fixLocation": "src/Render/Export/LaTeX.elm — exportBibitem (line 1271) / exportBibliographyBegin (line 1262)",
-      "fixHint": "Check that \\begin{thebibliography}{N} is emitted before \\bibitem entries and that the list counter is properly initialised."
     }
   ],
-  "summary": "5 errors across 3 categories. Breakdown: bibliography (3), undefined-command (1), parse-error-passthrough (1)"
+  "summary": "1 errors across 1 categories. Breakdown: undefined-command (1)"
 }

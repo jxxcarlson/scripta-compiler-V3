@@ -8,6 +8,7 @@ Graphs and Colorings
 
 
 || mathmacros
+\newcommand{\set}[1]{\{\ #1 \ \}}
 \newcommand{\Set}{\mathop{\underline{\text{Set}}}}
 \newcommand{\bN}{\mathbb{N}}
 \newcommand{\Hom}{\op{Hom}}

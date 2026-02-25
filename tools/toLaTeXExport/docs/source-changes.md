@@ -7,7 +7,9 @@ LaTeX export errors. Organized by file.
 
 Files with source corrections:
 
-- **datasci.scripta** -- [term]->[index], inline image->block image, macro rename (\bx->\bfx)
+- **datasci.scripta** -- [term]->[index], inline image->block image, macro rename (\bx->\bfx), bibliography block
+- **graph-color.scripta** -- added missing \set macro
+- **manual.scripta** -- removed [code] from bracket shortcuts, added bibliography block
 - **mltt.scripta** -- [term]->[index], malformed \set macro, duplicate macros, \renewcommand for TeX primitives, ETeX-inside-\text fixes
 - **virial.scripta** -- [term]->[index]
 
@@ -23,6 +25,10 @@ Files with source corrections:
 
 - **Macro rename**: `\newcommand{\bx}{\mathbf x}` -> `\newcommand{\bfx}{\mathbf x}` to avoid ETeX collision (`bx` in `$ax^2 + bx + c$` was being resolved to `\bx`)
 - **Image block cleanup**: Further inline `[image ...]` -> block `| image` conversions
+
+### Uncommitted (pending)
+
+- **Bibliography block**: Wrapped `[bibitem AA]` in `| bibliography` / `| bibitem AA` block syntax (bare `[bibitem]` inline emits `\bibitem` without `\begin{thebibliography}`)
 
 ## mltt.scripta
 
@@ -54,12 +60,28 @@ Files with source corrections:
 
 ## Files with no source changes needed
 
-- `welcome.scripta` -- 1 error is a PDF server false positive (`\end{verbatim}` reported spuriously)
-- `manual.scripta` -- 1 error is the same PDF server false positive
+- `welcome.scripta` -- 0 errors (fixed by exporter bt handler change)
+
+## manual.scripta
+
+### Uncommitted (pending)
+
+- **Bracket in [code]**: Removed `[code ctrl-[ ]` and `[code ctrl-] ]` formatting — plain text `ctrl-[` and `ctrl-]` avoids parser confusion from brackets inside code elements
+- **Bibliography block**: Added `| bibliography` block before the three `| bibitem einstein1905*` entries (bare bibitems emit `\bibitem` without `\begin{thebibliography}`)
+
+## graph-color.scripta
+
+### Uncommitted (pending)
+
+- **Missing \set macro**: Added `\newcommand{\set}[1]{\{\ #1 \ \}}` to mathmacros block
+
+## Files with no source changes needed
+
+- `welcome.scripta` -- 0 errors
 - `mathnotation-inline.scripta` -- 0 errors
 - `bohr-debroglie.scripta` -- 0 errors
 - `aligned-test1.scripta` -- 0 errors
 - `aligned-test2.scripta` -- 0 errors
 - `etex.scripta` -- 0 errors
 - `index-test.scripta` -- 0 errors
-- `graph-color.scripta` -- errors require exporter fixes, not source changes
+- `graph-color.scripta` -- 1 remaining error (tikzcd `curve` option requires quiver.sty, deferred)
