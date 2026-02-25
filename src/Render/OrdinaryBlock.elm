@@ -10,6 +10,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as Decode
+import Render.Constants
 import Render.Expression
 import Render.Sizing
 import Render.Utility exposing (blockIdAndStyle, idAttr, selectedStyle)
@@ -69,6 +70,7 @@ blockDict =
         , ( "hide", renderComment )
         , ( "document", renderDocument )
         , ( "collection", renderCollection )
+
         -- Tables and lists
         , ( "table", renderXTable )
         , ( "desc", renderDesc )
@@ -1171,8 +1173,10 @@ renderBox params acc _ block children =
         (blockIdAndStyle params block
             ++ [ HA.style "border" "1px solid #ccc"
                , HA.style "padding" "1em"
-               , HA.style "margin" "1em 0"
+               , HA.style "margin-left" "2.75em"
+               , HA.style "margin-right" "5.5em"
                , HA.style "border-radius" "4px"
+               , HA.style "background-color" Render.Constants.highlightColor
                ]
             ++ Render.Utility.rlBlockSync block.meta
         )

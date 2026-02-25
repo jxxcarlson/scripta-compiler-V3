@@ -4,7 +4,7 @@ Martin-Löf Type Theory
 [tags jxxcarlson:mltt]
 
 
-|| mathmacros
+| mathmacros
 \newcommand{\set}[1]{\{\ #1 \ \}}
 \newcommand{\sett}[2]{\{\ #1 \ |\ #2 \}}
 \newcommand{\nat}{\mathbb{N}}
@@ -17,8 +17,8 @@ Martin-Löf Type Theory
 \newcommand{\false}{\mathop{\mathsf{false}}}
 \newcommand{\rec}{\mathop{\mathsf{rec}}}
 \newcommand{\nott}{\mathop{\mathsf{not}}}
-\renewcommand{\and}{\mathop{\mathsf{and}}}
-\renewcommand{\or}{\mathop{\mathsf{or}}}
+\newcommand{\And}{\mathop{\mathsf{and}}}
+\newcommand{\Or}{\mathop{\mathsf{or}}}
 \newcommand{\toa}{\ensuremath{\to\!\!*\,}}
 \newcommand{\cU}{\mathcal{U}}
 \newcommand{\refl}{\mathop{\mathsf{refl}}}
@@ -31,7 +31,7 @@ Martin-Löf Type Theory
 \newcommand{\unitt}{\top}
 \newcommand{\congg}{\mathop{\mathsf{cong}}}
 \newcommand{\isRightIdentity}{\mathop{\mathsf{isRightIdentity}}}
-\newcommand{\lemma}{\mathop{\mathsf{lemma}}}
+\newcommand{\lem}{\mathop{\mathsf{lemma}}}
 \newcommand{\sym}{\mathop{\mathsf{sym}}}
 \newcommand{\trans}{\mathop{\mathsf{trans}}}
 \newcommand{\isEven}{\mathop{\mathsf{isEven}}}
@@ -53,14 +53,14 @@ Martin-Löf Type Theory
 A set is a collection of elements.  Suppose that we
 have  things like this: $4\heartsuit, 5\diamondsuit, 6\clubsuit, 2\spadesuit$. We can gather them in to various collections, e.g.,
 
-|| aligned
-A = \set{ 2\heartsuit, 5\heartsuit} \\
-B = \set{2\heartsuit, 7\spades} \\
+| equation
+&A = \set{ 2\heartsuit, 5\heartsuit} \\
+&B = \set{2\heartsuit, 7\spadesuit}
 
-It makes sense to say $e \in A$, meaning [quote the element $e$ is in the set $A$].  Thus we have 
+It makes sense to say $e \in A$, meaning [quote the element $e$ is in the set $A$].  Thus we have
 
 
-|| equation
+| equation
 2\heartsuit \in A, \ 2\heartsuit\in B,\ 7\spadesuit \not\in A,\ 7\spadesuit \in B
 
 Assertions like $2\heartsuit \in A$ or $7\spadesuit \in A$ are [index propositions]: they are capable of being true or false.  True in the first case, but false in the second.
@@ -71,10 +71,10 @@ Two important observations: the existence of the elements $2\heartsuit, 5\hearts
 
 Mathematical objects like the natural numbers can be described in the language of sets.  Here is one way to do  it. Encode zero as
 the empty set $\set{}$.
-Encode one as $\set{\set{}}$.  Encode two as 
+Encode one as $\set{\set{}}$.  Encode two as
 $\set{ \set{}, \set{\set{}}}$, etc. Introduce aliases for these numbers:
 
-|| aligned
+| equation
 &0 :\equiv \set{} \\
 &1 :\equiv \set{\set{}} \\
 &2 :\equiv \set{ \set{}, \set{\set{}}}
@@ -86,16 +86,16 @@ none of these elements is element of itself: $0 \not\in 0$, $1 \not\in 1$, etc.
 We can gather these numbers into sets in various ways: the set of all natural numbers,  $\nat = \set{0, 1, 2, \ldots}{}$, the subsets of $\tt{Even}$ and $\tt{Odd}$ numbers, respectively.  The latter is described using a predicate — a function like $\text{isOdd}$ that returns true or false according to whether the argument of the
 function is even or odd.
 
-|| equation
+| equation
 \tt{Odd} = \sett{x \in \nat}{\text{ isOdd(x)} = \true}
 
 Now consider the set  whose elments are not members of themselves:
 
-|| equation
+| equation
 R = \sett{x}{x \not\in x}
 
 Its definition is vaguely like that of $\tt{Odd}$.
-The numbers $0, 1, 2, \dots$ are elements of $R$, as 
+The numbers $0, 1, 2, \dots$ are elements of $R$, as
 are the sets $\nat$, $\tt{Odd}$, and $\tt{Even}$.  But now ask if $R$ is an element of itself.  If $R \in R$, we conclude from the definition of $R$, that $R \not \in R$.  If $R \in R$, we conclude
 from the definition of $R$, that $R \in R$.  In either case, we find a contradiction, and so we are faced with a paradox.  We will revisit this
 paradox in section [ref comparing-sets-and-types], where we discuss the origins of type theory and introdue the notion of type universes.
@@ -108,10 +108,10 @@ Martin-Löf type theory is a formal system, the two main ingredients
 of which are [index judgments] and [index inference rules].  Judgments
 are the things we assert.  They are the facts known to the system.
 Rules of inference are rules use to derive new judgments from
-existing ones.  Their general form is 
+existing ones.  Their general form is
 
 
-|| equation
+| equation
 \frac{P_1 \ P_2 \ \ldots \ P_n}{C}
 
 
@@ -122,27 +122,27 @@ the premises are judgments, then so is the conclusion. The conclusion of a rule 
 As an example, we consider a version of Goncharov's Cherry-Banana Calculus.  It is a system with symbols $\heartsuit$ and $\spadesuit$ and the following inference rules:
 
 
-|| equation
-\frac{}{\heartsuit}a 
+| equation
+\frac{}{\heartsuit}a
 \qquad \frac{X}{\spadesuit X}p
 \qquad\frac{X\spadesuit \quad \spadesuit Y}{XY}c
 \qquad  \frac{X}{\heartsuit X \spadesuit}
 
 
-Here the labels are a = axiom, p = prepend, c = collapse, and 
+Here the labels are a = axiom, p = prepend, c = collapse, and
 e = enclose  As it stands, the only judgment in this theory
-is $\heartsuit$. Here is a derivation of the judgment 
+is $\heartsuit$. Here is a derivation of the judgment
 $\heartsuit\heartsuit\heartsuit$:
 
-|| equation
+| equation
 \dfrac{\dfrac{\dfrac{}{\heartsuit}a}{\heartsuit\heartsuit\spadesuit}e\qquad\dfrac{\dfrac{}{\heartsuit}a}{\spadesuit\heartsuit}p}
 {\heartsuit\heartsuit\heartsuit}c
 
-If we include the intermediate judgments in the previous derivation, the judgments of the theory are now 
+If we include the intermediate judgments in the previous derivation, the judgments of the theory are now
 
-|| equation
-J_1, J_2, J_3, \ldots = 
-\heartsuit,\ \heartsuit\heartsuit\spadesuit,\ 
+| equation
+J_1, J_2, J_3, \ldots =
+\heartsuit,\ \heartsuit\heartsuit\spadesuit,\
 \spadesuit\heartsuit,\ \heartsuit\heartsuit\heartsuit
 
 where each $J_n$ is derived from judgments $J_m$ with $m < n$.
@@ -169,34 +169,29 @@ In the last two judgment forms, equality is [index definitional equality] or [in
 
 To define a type, we must give four kinds of inference rules: formation, introduction, elimination, and computation.  We begin with the first two rules for the natural numbers.
 
-|| equation
+| equation
 \frac{\Gamma \ctx}{\ \Gamma \vdash  \nat\  }\ f
-\qquad 
+\qquad
 \frac{\Gamma \ctx}{\Gamma \vdash \zero : \nat}\ i_1
 \qquad
 \frac{ \Gamma \vdash k : \nat}{\Gamma \vdash \suc k : \nat}\ i_2
 
 
-The first rule is the formation rule for the natural numbers.  It does nothing more than announce that $\nat$ is a type in the context $\Gamma$.  The second two rules are introduction rules.  The first of these says that $\zero$ is a term of $\nat$ in context $\Gamma$.  
+The first rule is the formation rule for the natural numbers.  It does nothing more than announce that $\nat$ is a type in the context $\Gamma$.  The second two rules are introduction rules.  The first of these says that $\zero$ is a term of $\nat$ in context $\Gamma$.
 The other says that if $k$ is a term of $\nat$ in context $\Gamma$,
-then so is $\suc k$. 
+then so is $\suc k$.
 
-By repeated 
+By repeated
 application of the last rule, we produce arbitrarily many terms of $\nat$: $\zero$, $\suc \zero$, $\suc (\suc \zero)$, etc. The symbols $\zero$ and $\suc$ are the [index constructors] of the natural numbers.
 
-
-
-| box The Empty Type
-The empty type, written $\bot$, is a type with no introduction
-rules, hence no constructors.  Consequently there are no terms of the empty type.
 
 [b Contexts.] There are many cases in which  we
 can work with an empty context, in which case we might write the rules in simplified form as
 
-  || equation
+  | equation
   \label{rules-without-gamma}
   \frac{}{\   \nat\  }\ f
-  \qquad 
+  \qquad
   \frac{}{\zero : \nat}\ i_1
   \qquad
   \qquad
@@ -206,18 +201,18 @@ We will frequently do this to cut down on visual complexity.  For more about con
 
 Let us continue with our discussion of the natural numbers.  Just as with the Cherry-Banana Calculus, judgments $n : \nat$ are given by derivations, e.g.,
 
-|| equation
+| equation
 \dfrac{\dfrac{\dfrac{}{\zero : \nat}i_1}{\suc \zero: \nat}i_2}{\suc(\suc \zero) : \nat}i_2
 
 At this point our store of judgments is
 
-|| equation
+| equation
 \mathcal{J} = \nat\ \type,\ \zero : \nat,\ \suc\ \zero : \nat,
 \suc\ (\suc \zero) : \nat
 
-Of course it is cumbersome to work with expressions like 
+Of course it is cumbersome to work with expressions like
 $\suc\ (\suc\ \zero)$, so we can make definitions
-like $0 :≡ \zero$, $1  :≡ \suc \zero$, $2 :≡ \suc\ (\suc \zero))$, 
+like $0 :≡ \zero$, $1  :≡ \suc \zero$, $2 :≡ \suc\ (\suc \zero))$,
 etc.  Then it makes perfect sense to say that  $3 ≡ \suc 2$.
 This is a [index definitional] or [index judgmental] equality.  Later we will study the far more sophisticated notion of
 [index propositional equality].
@@ -225,12 +220,12 @@ This is a [index definitional] or [index judgmental] equality.  Later we will st
 
 | box Contexts
 Consider the assertion $\suc x : \nat$.  This is meaningless without the
-  assumption $x : \nat$.  Thus we write $x : \nat \vdash \suc \nat$.  
+  assumption $x : \nat$.  Thus we write $x : \nat \vdash \suc \nat$.
   The context is $x : \nat$.
-[//]  
+[//]
 Contexts are also needed to enforce theory-wide rules that demand that judgments be stable under [index substitution] and [index weakening], i.e., if a term is well-typed in one context, it remains well-typed when new assumptions are added (weakening), or substitutions of variables are made.
 [//]
-To reduce visual clutter, we will often write rules in the 
+To reduce visual clutter, we will often write rules in the
 simplified form [eqref rules-without-gamma].  However, always
 keep in mind that in these cases there is an invisible empty context. It is sometimes written as $.$
 [//]
@@ -240,11 +235,11 @@ break existing well-formedness.
 [//]
 [//]
 [//]
-[b Substitution.] Let's look at an example, then give the formal     rule.  Suppose that $3 : \nat$ and 
+[b Substitution.] Let's look at an example, then give the formal     rule.  Suppose that $3 : \nat$ and
 $x : \nat \vdash \suc x :\nat$.
-Then by the subsitution rule, $\vdash \suc 3 : \nat$  
+Then by the subsitution rule, $\vdash \suc 3 : \nat$
 [//]
-[b Substitution rule.]Suppose that $\Gamma \vdash a : A$ and $\Gamma, x : A, \Delta \vdash J$.  Then $\Gamma, \Delta[a/x] \vdash J[a/x]$.  The notation $Q[a/x]$ 
+[b Substitution rule.]Suppose that $\Gamma \vdash a : A$ and $\Gamma, x : A, \Delta \vdash J$.  Then $\Gamma, \Delta[a/x] \vdash J[a/x]$.  The notation $Q[a/x]$
 means [quote replace every occurrence of $x$ in $Q$ by $a$.]  The
 expresssion  $\Gamma, x : A, \Delta$ is the concatenation of of the contexts $\Gamma$, $x : A$, and $\Delta$.
 [//]
@@ -263,25 +258,25 @@ are as follow:
 
 . [b Variable Rule.] There is an infinite list of variables $x_1, x_2, x_3, \ldots $ These are $\lambda$-terms.
 
-. [b Abstraction Rule.] If $x$ is a variable and $b$ is 
+. [b Abstraction Rule.] If $x$ is a variable and $b$ is
 a lambda-term,
 then $\lambda x.b$ is a $\lambda$-term.  We call $b$ the boddy of the lambfda term.  We will think of abstractions as nameless (anonymous) functions.
 
 . [b Application Rule.]  If $a$ $b$ are $\lambda$-terms, then
-so is $a\, b$.  We will think of an appliation as being function 
+so is $a\, b$.  We will think of an appliation as being function
 application
 
-To give meaning to the lambda calculus, we define the operation of [index beta-reduction].  It defines what happens when an abstraction 
+To give meaning to the lambda calculus, we define the operation of [index beta-reduction].  It defines what happens when an abstraction
 is applied to another $\lambda$-term:
 
-|| equation
+| equation
 \label{beta-reduction}
 (\lambda x.b)a = b[a/x]
 
 
 where $b[a/x]$ means that all occurrences of $a$ in $b$ are replaced by $x$.  As an example, we have
 
-|| equation
+| equation
 (\lambda x.(x + 1))7 \xrightarrow{\beta} (x + 1)[7/x] = 7 + 1 = 8
 
 [b Examples]
@@ -289,12 +284,12 @@ where $b[a/x]$ means that all occurrences of $a$ in $b$ are replaced by $x$.  As
 $(\lambda x.x)a \xrightarrow{\beta} x[x/a] = a$.  This lambda
 expressoion acts as the identity function.
 
-|| aligned
+| equation
 (\lambda x. \lambda y  . x)\, 1\, 2 &= (\lambda x. \lambda y  . x)\, 1\, 2 \\
 & \xrightarrow{\beta} (\lambda y . 1)\, 2 \\
 & \xrightarrow{\beta}\, 1
 
-|| aligned
+| equation
 (\lambda x. \lambda y  . y)\, 1\, 2 &= (\lambda x. \lambda y  . x)\, 1\, 2 \\
 & \xrightarrow{\beta} (\lambda y . y)\, 2 \\
 & \xrightarrow{\beta}\, 2
@@ -306,46 +301,46 @@ expressoion acts as the identity function.
 Let us define the type of functions out of a type $A$ and into a
 type $B$.  First, the formation rule:
 
-|| equation
+| equation
 \dfrac{A \type \qquad B \type}{(A \to B) \type}
 
 Next, the introduction rule, so that we can construct functions:
 
-|| equation
+| equation
 \dfrac{x : A \vdash b : B}{ \lambda x.b : A \to B}
 
 The elimination rule shows that terms of a function type
-behave like functions, namely, there is a notion of 
+behave like functions, namely, there is a notion of
 evaluation of function on arguments:
 
-|| equation
+| equation
 \dfrac{f : A \to B \qquad a: A}{ f(a) : B}
 
 
 Finally, the computation rule:
 
 
-|| equation
+| equation
 \dfrac{x : A \vdash b : B \qquad a : A}
 {(\lambda x.b) a = b[a/x]: B}
 
 
-The elimination and computation rule taken together tell us how 
+The elimination and computation rule taken together tell us how
 to define functions out of $A$.
 
 ## Functions of Several Variables
 
-All functions in MLTT are functions of one variable.  However, because functions can return functions as values, we can 
-in effect work with functions that take more than one argument. 
+All functions in MLTT are functions of one variable.  However, because functions can return functions as values, we can
+in effect work with functions that take more than one argument.
 To see how this works, consider three types $A$, $B$, and $C$.
 Using the formation rule for functions we construct the
 type of functions $B \to C$.  Since this is a type, we can
 apply the formation rule to create the type $A \to (B \to C)$.
-By convention, type formation is right associative, so we usually 
+By convention, type formation is right associative, so we usually
 write this as $A \to B \to C$.  If what we want is $(A \to B) \to C$, then the parentheses are mandatory.
 
-What can we do with a term $f$ of type $A \to B \to C$? Suppose given terms $a : A$ and $b : B$.  Because $f : A \to (B \to C)$, 
-the elimination rule tells us that $f(a) : B \to C$.  Therefore 
+What can we do with a term $f$ of type $A \to B \to C$? Suppose given terms $a : A$ and $b : B$.  Because $f : A \to (B \to C)$,
+the elimination rule tells us that $f(a) : B \to C$.  Therefore
 we can apply $f(a)$ to $b$, obtaining $f(a)(b) : C$. This is how we evaluate $f$.  We say that $f(a)$, which is a function, is the result of [index partial evaluation].
 
 In functional programming languages, it is common to write $f\, a$ instead of $f(a)$.  Thus, instaead of writing $f(a)(b)$, we could write  $(f\, a)\, b$.  Here another convention comes into play: evaluation of functions is left-associative, so we may write $f\, a\, b$ without ambiguity.
@@ -356,33 +351,33 @@ In functional programming languages, it is common to write $f\, a$ instead of $f
 
 The Boolean type has two constructors and just two terms:
 
-|| equation
-\dfrac{}{\boolean \type} 
+| equation
+\dfrac{}{\boolean \type}
 \qquad
 \dfrac{}{\true : \boolean}
 \qquad
 \dfrac{}{\false : \boolean}
 
 To define a function $f : \boolean \to C$, we need the
-elimination and computations rules. Below is the 
+elimination and computations rules. Below is the
 elimination rule.  It defines a function called the [index recursor].
-It is a kind of universal function-builder: given certain data as 
-inputs, it produces a function $f : \boolean \to C$ as output, namely 
+It is a kind of universal function-builder: given certain data as
+inputs, it produces a function $f : \boolean \to C$ as output, namely
 
-|| equation 
+| equation
 f\, b = \rec_\boolean(t, f, b)
 
-|| equation
+| equation
 \dfrac{C \type \quad t : C \quad f : C \quad b : \boolean}
 {\rec_\boolean(t, f, b): C}
 
 To complete the picture, we must give the computation rules:
 
-|| equation
+| equation
 \dfrac{t : C\qquad f : C}
 {{\rec_\boolean(t, f, \true) = t : C}}
 
-|| equation
+| equation
 \dfrac{t : C\qquad f : C}
 {{\rec_\boolean(t, f, \false) = f : C}}
 
@@ -390,14 +385,14 @@ The first computation rule says that if the last argument of $\rec$
 is $\true$, the return value is $t: C$.  If it is false, the return value is $f : C$.  Let us use what we have learned to define the function $\nott : \boolean \to \boolean$ which negates its
 argument:
 
-|| equation
+| equation
 \nott\, b = \rec_{\boolean}(\false,\true, b)
 
 Exercise: show that $\nott \true ≡ \false$ and $\nott \false ≡ \true$.
 
 [b Pattern matching.] We can also define $\nott$ by pattern-matching:
 
-|| aligned
+| equation
 &\nott : \boolean \to \boolean \\
 &\nott \true =\false \\
 &\nott \false = \true
@@ -410,33 +405,33 @@ definitions into definition by eliminator.
 Let's see if we can implement a fragment of the standard operations
 in Boolean algebra. Below is how we might implement logical conjunction.  Here is one way to do it, using pattern-matching:
 
-|| aligned
-&\and : \boolean \to \boolean \to \boolean \\
-&\and \true \true = \true \\
-&\and \true \false = \false \\
-&\and \false \true= \false \\
-&\and \false \false = \true  \\
+| equation
+&\And : \boolean \to \boolean \to \boolean \\
+&\And \true \true = \true \\
+&\And \true \false = \false \\
+&\And \false \true= \false \\
+&\And \false \false = \true  \\
 
 This style of pattern-matching can be improved:
 
-|| aligned
+| equation
 \label{and-def}
-&\and \, - \false = \false \\
-&\and x \true = x
+&\And \, - \false = \false \\
+&\And x \true = x
 
-|| hide
+| hide
 \text{\_}
 \text{If } x : A \text{ and } y : B, \text{ then } \text{ctx\_pair}(x, y) : A \times B
 
-Here the first argument (underscore) of the first equation means 
+Here the first argument (underscore) of the first equation means
 [quote ignore this value.]
 
 As before, the function in question can also be defined
 via the recursor:
 
-|| equation
+| equation
 \label{rec-def-of-adn}
-\and = \lambda b_1 . \lambda b_2 . \rec_\boolean(b_2, \false, b_1)
+\And = \lambda b_1 . \lambda b_2 . \rec_\boolean(b_2, \false, b_1)
 
 | exercise
 Verify [eqref rec-def-of-adn] the equations [eqref and-def].
@@ -445,28 +440,28 @@ A careful comparison of [eqref rec-def-of-adn] and [eqref and-def]
 will show that the two derivations are interderviable.
 
 | exercise
-Define the logical function $\or$ by (1) equations, (2) the eliminator.
+Define the logical function $\Or$ by (1) equations, (2) the eliminator.
 
 Assuming the previous exercise, consider the following
 sequence of reductions
 
-|| aligned
+| equation
 \label{bool-reductions}
-&\or\ (\and\ (\or\ \true\ \false)\ \true)\ \false \to
-&\or\ (\and\ \true\ \true)\ \false \to
-&\or\ (\true\ \false) \to
+&\Or\ (\And\ (\Or\ \true\ \false)\ \true)\ \false \to
+&\Or\ (\And\ \true\ \true)\ \false \to
+&\Or\ (\true\ \false) \to
 &\true
 
 Each line [eqref bool-reductions] is a term of $\boolean$.  However,
 the last term is special: it cannot be further reduced.  Such a term is said to be in [index normal form].  Moreover, one can assert judgments like the below.  See the item (5) in section [ref mltt-as-a-formal-system].
 
-|| equation
+| equation
 \label{bool-computation}
-\or\ (\and\ (\or\ \true\ \false)\ \true)\ \false \equiv \true : \boolean
+\Or\ (\And\ (\Or\ \true\ \false)\ \true)\ \false \equiv \true : \boolean
 
 The equality here, as noted in section [ref mltt-as-a-formal-system],
 is [u definitional]. Note that in this case, computation of the boolean value on the left-hand-side of [eqref boolean-computation]
-is carreid out by a sequence of reductions to normal form.  
+is carreid out by a sequence of reductions to normal form.
 
 
 
@@ -479,14 +474,14 @@ Now that we have developed the rudiments of type theory,
 let us compare it with set theory.  First,
 in set theory, elements exist independently of any sets
 into which they me gathered. Indeed, they exist
-[emph prior] to the creation of any set into which they are gathered.  Consider,for example, the natural 
+[emph prior] to the creation of any set into which they are gathered.  Consider,for example, the natural
 numbers $\set{}$, $\set{\set\,}$.  They exist prior to their being gathered into the set of natural numbers $\nat$.  The situation in type
 theory is quite different.  One defines a type, then goes about
 constructing terms, adding judgments to $\mathcal{J}$ as time
 proceeds. The type first, then the terms.
 
-In set theory a thing like the number $3$ can be a member of 
-more than one set, e.g., the set of 
+In set theory a thing like the number $3$ can be a member of
+more than one set, e.g., the set of
 natural numbrers and the set of prime numbers.  In MLTT, a term
 is forever tied to the term from hhisch it came.  It is the result
 of application of constructors of that type and no other type,
@@ -504,7 +499,7 @@ considered in section [ref sets].  The resulting problem — [index Russell's pa
 of logic and mathematics
   The flaw arises from unrestricted self-reference.  To fix it, Russell devised a theory with
 a hierarchy of types in which sets live.  It turns out that an early form of Martin-Löf type  theory
-sufferred from a similar paradox due to Girard.  To resolve it, 
+sufferred from a similar paradox due to Girard.  To resolve it,
 Martin-Löf introdcued the hierarchy of universes described in the
 next section. I
 
@@ -524,23 +519,23 @@ An object of a given type can only refer to or contain objects of lower types, n
 ## Universes
 
 
-A universe $\cU$ is a type: one has 
+A universe $\cU$ is a type: one has
 
-|| equation
+| equation
 \cU \type
 
 
 The terms of $\cU$ are themselves types. If
-$A : \cU$, then $A \type$. This setup 
+$A : \cU$, then $A \type$. This setup
 lets you quantify over types safely.
 To avoid self-reference and paradoxes, MLTT uses a cumulative hierarchy of universes:
 
-|| equation
+| equation
 \cU_0 : \cU_1 : \cU_2 : \ldots
 
 
 Each universe $\cU_n$ is a term of the next universe $\cU_{n+1}$.
- Types in $\cU_n$ are also in $\cU_{n+1}$, hence the hierarchy is 
+ Types in $\cU_n$ are also in $\cU_{n+1}$, hence the hierarchy is
 cumulative. This stratification is analogous to Russell’s type hierarchy: you can’t have a universe that contains itself.
 
 We say that $\cU_n$ is a universe of [index level] $n$ and that
@@ -548,25 +543,25 @@ $\cU_0$ is the [index universe of small types]. The type of natural numbers
 is small, as is the type of functions $\nat \to \nat$. As we shall see below, there are [quote large] types.
 
 Having introduced universes, we must now modify the rules
-of inference which goven types to take into account this new part of the theory.  Here is what we do for the formation and introduction 
+of inference which goven types to take into account this new part of the theory.  Here is what we do for the formation and introduction
 rules for the natural numbers and for the construction of function types:
 
-|| equation
+| equation
 \label{U-formation}
 \dfrac{}{\nat : \cU_0}
 \qquad
 \dfrac{A : \cU_n \qquad B : \cU_n}{A \to B : \cU_n}
 
 Note that in the case of the function type, the type constructor $\to$ preserves universe levels: If $A$ and $B$ are terms
-of $\cU_n$, then so is $A \to B$. 
+of $\cU_n$, then so is $A \to B$.
 
 
 ## Large Types
 
-Consider a function $f : A \to \cU_0$ where $A : \cU_0$.  A first 
+Consider a function $f : A \to \cU_0$ where $A : \cU_0$.  A first
 draft of its formaton rule is
 
-|| equation
+| equation
 \label{draft-large-type}
 \dfrac{A: \cU_0 \qquad \cU_0:\cU_1}{A \to \cU_0 : \,??}
 
@@ -575,7 +570,7 @@ specified above.  But cumulativity saves the day: $\cU_0 : \cU_1$
 and if $A : cU_0$, so $A :\cU_1$.  Then [eqref draft-large-type]
 can be written as
 
-|| equation
+| equation
 \dfrac{A: \cU_1 \qquad \cU_0:\cU_1}{A \to \cU_0 : \,\cU_1}
 
 We conclude that $f$ is a term of a type that lives in $\cU_1$,
@@ -583,27 +578,27 @@ namely $A \to \cU_0$.  Note that in this case the construction
 still preserves type levels.
 
 | box Example of a Large Type
-Jumping ahead a bit, the [b [index Identiy type]] is formed via 
+Jumping ahead a bit, the [b [index Identiy type]] is formed via
 the rule
 
-  || equation
+  | equation
    \dfrac{a : A \quad b : A}{ a =_A b}
 
-  The introduction rule is 
+  The introduction rule is
 
-  || equation
+  | equation
   \dfrac{a : A}{\refl_a : a =_A a}
 
   We say that $a$ and $b$ are [b[index propositionally equal]]
   if $a =_A b$ is [b [index inhabited]], meaning that there
   is a term $t : a =_A b$.  If $a$ and $b$ are definitionally
-  equal, i.e., if they have the same normal form, then 
+  equal, i.e., if they have the same normal form, then
   $a \equiv b$.  We conclude that $a$ and $b$ are equal types:
   $a =_A b \equiv a =_A a$.  The latter type is inhabited by
   $\refl_a$.  Therefore the former type is inhabited.  Therefore
   $a$ and $b$ are propositionally equal.
-  Now consider the function $f : \nat \to \cU_0$ given 
-  by $f\, n :\equiv (0 =_\nat n)$.  Then $f$ is a term 
+  Now consider the function $f : \nat \to \cU_0$ given
+  by $f\, n :\equiv (0 =_\nat n)$.  Then $f$ is a term
   in the large type $\nat \to \cU_0$.
   [par][par]
 
@@ -619,11 +614,11 @@ scheme called [index primitive recursion].  Such functions
 are guaranteed to terminate on all well-typed inputs.
 Once we have the primitive recursion scheme in hand, we will
 tease out of it the elimination rule for the natural numbers.
-Consider now the 
+Consider now the
 factorial function:
 
 
-|| aligned
+| equation
 &\fact : \nat \to \nat
 &\fact \zero = \suc \zero
 &\fact\; (\suc n) = (\suc n) * (\fact n)
@@ -636,12 +631,12 @@ $\fact\; (\suc n)$ is defined in terms of $\fact n$. The
 argument of $\fact$ on the right is less than the argument
 of $\fact$ on the right.  Because there is a quantity which
 decreases on each function call, the recursion is guaranteed to terminate after finitely many steps.  This is a feature of
-of all functions that are definable in MLTT: computations 
+of all functions that are definable in MLTT: computations
 always terminate.
 
 Here is a sample computation:
 
-|| aligned
+| equation
 &\fact 3
 &\fact\; (\suc\ 2)
 &(\suc 2) * \fact 2
@@ -654,24 +649,24 @@ Here is a sample computation:
 Let us now discover the general scheme via which this sort
 of recursion works. We look once again at the definition:
 
-|| aligned
+| equation
 &\fact : \nat \to \nat
 &\fact \zero = \suc \zero
 &\fact\; (\suc n) = (\suc n) * (\fact n)
 
 The first equation has the general form
 
-|| equation
+| equation
 f \zero = \base
 
 The second has the form
 
-|| equation
+| equation
 f (\suc n) = \step\; n\; (f\; n)
 
-where in this case 
+where in this case
 
-|| equation
+| equation
 \step n\; v = (\suc n) * v
 
 Notice that the type of $\step$ is $\nat \to \nat \to \nat$.
@@ -682,13 +677,13 @@ scheme displayed below, where $C = \nat$:
 
   Functions $f : \nat \to C$, are defined by the equations
 
-  || aligned
+  | equation
   &f \zero = \base
   &f (\suc n) = \step n\; (f\; n)
 
   where
 
-  || aligned
+  | equation
   & \base : C
   & \step : \nat \to C \to C
 
@@ -714,26 +709,26 @@ non-dependent types.  Consider the problem of defining a function $f : \nat \to 
 (iii) a function $\step : \nat \to C \to C$
 
 Let us make up a type for a function $\rec_\nat$ — the recursor —
-which takes the above data as input and produces a term of 
+which takes the above data as input and produces a term of
 $\nat \to C$ as output.  This straightforward:
 
-|| equation
+| equation
 \rec_\nat : (C: \cU) \to C \to (\nat \to C \to C) \to (\nat \to C)
 
-Then 
+Then
 
-|| equation
+| equation
 f\; n = \rec_\nat\; C\; \base\;  \step\;  n
 
 The computation rules are
 
-|| aligned
+| equation
 &\rec_\nat\; C\; \base\;  \step\;  0 = \base
 &\rec_\nat\; C\; \base\;  \step\;  (\suc\; n) = \step\; n\; (\rec_\nat\; C\; \base\;  \step\;  n)
 
 The factorial function is then defined as
 
-|| equation
+| equation
 \fact = \rec_\nat\; \nat\; \zero\; (\lambda\; n\; v \to (\suc n) * v)
 
 ## Addition via the Eliminator
@@ -741,34 +736,34 @@ The factorial function is then defined as
 Let us see whether our scheme works for addition.  We recall the definition:
 
 
-|| aligned
+| equation
 &\add : \nat \to \nat \to \nat
 &\add \zero n = n
 &\add\; (\suc m)\; n = \suc\; (\add m \;n)
 
 The type of $\add$ is $\nat \to \nat \to \nat$, which we
 parenthesize as $\nat \to (\nat \to \nat)$ and then
-write as $\nat \to C$ where $C = \nat \to \nat$.  Notice that the value 
+write as $\nat \to C$ where $C = \nat \to \nat$.  Notice that the value
 of $\add m$ is of type $C$, and that $\add 0$ is the identity function.
 Of the three pieces of data we need to for the recursor we have two:
 
-|| equation
+| equation
 \add = \rec_\nat\; C\; (\lambda n.n)\;\; ??
 
-where $??$ is the function $\step$.  Let us now find that function, keeping in mind that $\step$ maps $\add\; m$ as a function of $n$ to 
+where $??$ is the function $\step$.  Let us now find that function, keeping in mind that $\step$ maps $\add\; m$ as a function of $n$ to
 $\add\; (\suc\; m)$ as a function of $n$:
 
-|| equation
+| equation
 \step n\; (f\; n) = f\; (\suc\; n)
 
 
 
 
 To do this, we write
-the recursion equation defining $\add$, then abstract with respect to 
+the recursion equation defining $\add$, then abstract with respect to
 the variable $n$ to get an equality of functions:
 
-|| aligned
+| equation
 &\add\; (\suc m)\; n = \suc\; (\add\; m\; n)
 &\lambda n.(\add\; (\suc m)\;
 
@@ -776,8 +771,8 @@ n) = \lambda n.(\suc\; (\add\; m\; n))
 
 Now
 
-|| aligned
-\step - (\lambda n.(\add\; m\; n)) &= \lambda n.(\add\; (\suc m)\; n) 
+| equation
+\step - (\lambda n.(\add\; m\; n)) &= \lambda n.(\add\; (\suc m)\; n)
    &= \lambda n.(\suc\; (\add\; m\; n))
 \step - (g\; n) &=  \lambda n.(\suc\; ( g \; n))
 
@@ -795,7 +790,7 @@ Type theory defines its own logic via the doctrine of Propositions as Types:
 
 The operations on propositions correspond to type forming operations, e.g.,
 
-- Implication 
+- Implication
 $P \implies Q \longleftrightarrow A \to B$.
 
 - Negation $\neg P \longleftrightarrow (P \to \bot)$
@@ -814,7 +809,7 @@ has an easy formulation and proof in MLTT.  The principle states that if $P \imp
 ## Currry-Howard Correspondence
 
 The sketch of propositional logic just given
-illustrates the promise that the doctrine of 
+illustrates the promise that the doctrine of
 Propositions as Types holds.  The Curry-Howard
 correspondence, set forth in the table
 below, shows how this doctrine suffics
@@ -824,7 +819,7 @@ calculus into type theory.
 
 
 
-|| table lcr
+| table lcr
 Logic &    &MLTT
 Implication $P \to Q$ & &Function type $P \to Q$
 Conjunction $P \land Q$ & &Product type $P\times Q$
@@ -848,18 +843,18 @@ of the Curry-Howard Correspondence that we have not yet treated.
 
 ##  Negation
 
-We have already seen that the implication 
+We have already seen that the implication
 $(P \to Q) \to (\neg Q \to \neg P)$ holds in MLTT.
 In this section we look more closely at negation in MLTT
-as compare to classical logic.  The first point is that 
-while $A \to \neg\neg A$ holds in MLTT for all $A$, the 
-principle $\neg\neg A \to A$ does not.  Thus $\neg\neg A$ 
+as compare to classical logic.  The first point is that
+while $A \to \neg\neg A$ holds in MLTT for all $A$, the
+principle $\neg\neg A \to A$ does not.  Thus $\neg\neg A$
 and $A$ are not logically equivalent, as they are in classical logic.
 
 | lemma
 [label lemma-double-neg]
 In classical logic, LEM implies both the weak and strong
-forms of the Law of Double Negation, $A \to \neg\neg A$ 
+forms of the Law of Double Negation, $A \to \neg\neg A$
 and $\neg\neg A \to A$, respectively.
 
 
@@ -869,7 +864,7 @@ and $\neg\neg A \to A$, respectively.
 By LEM, either $A$ or $\neg A$ is true. Since $\neg A$
 is false, LEM demands that $A$ be true.  We have proved that $\neg\neg A \to A$/
 [par]
-2. (Weak form). Assume $A$ is true.  Then $\neg A$ is false.  In LEM, 
+2. (Weak form). Assume $A$ is true.  Then $\neg A$ is false.  In LEM,
 replace $A$ by $\neg A$ to conclude that $\neg A \lor \neg \neg A$ is true.
 Since $\neg A$ is false, $\neg \neg A$ must be true.
 We have proved that $A \to \neg\neg A$.
@@ -878,20 +873,20 @@ We have proved that $A \to \neg\neg A$.
 
 
 The type-theoretical translation of Lemma [ref lemma-double-neg]
-states that the types representing 
+states that the types representing
 both strong and weak double negation are inhabited. The argument
 below shows that weak double negation holds in MLTT. The strong
-form does not, as we argue later in this section 
+form does not, as we argue later in this section
 [ref law-of-the-excluded-middle] and [ref heyting-theorem]
 
-| proposition 
-In MLTT, the Weak Law of Double Negation holds.  That is, 
+| proposition
+In MLTT, the Weak Law of Double Negation holds.  That is,
 $A \to \neg \neg A$ is inhabited.
 
 
-[b Proof.] The goal is to construct a term of 
+[b Proof.] The goal is to construct a term of
 
-|| equation
+| equation
 A \to (A \to \emptyt) \to \emptyt
 
 [i First Proof:] Given $a : A$ and $f : A \to \emptyt$, we have $f(a) : \emptyt$. Thus we
@@ -904,20 +899,20 @@ Below is the proof in Agda
 
 
 
-|| code
+| code
 dnn : {A : Set} → A → ¬ (¬ A)
 dnn  a f = f a
 
 The code makes more sense if we expand the declaration:
 
-|| code
+| code
 dnn : {A : Set} → A → (A → ⊥) → ⊥
 dnn  a f = f a
 
 
 # Identity Type
 
-Consider for moment these two assertions, both 
+Consider for moment these two assertions, both
 definitional equalities.
 
 | indent
@@ -932,56 +927,56 @@ if $n$ is not $\zero$, there are no rules to reduce the left-hand side.
 It is because of (ii) that we need a more powerful form of equalit.  This
 is given to us by the [index identity type]:
 
-|| equation
+| equation
 \frac{A: \cU \quad a : A \quad b :A}{a =_A b: \cU}
 
 The identity type is a [index dependent] type: its definition depends
 on terms of other types.  Notice that formation of the identity types
-is an operation within the given universe.   Constructors are given only for the type $a = a$, as in the equation below. 
+is an operation within the given universe.   Constructors are given only for the type $a = a$, as in the equation below.
 
-|| equation
+| equation
 \frac{A : \cU \qquad a : A}{\refl_a : a = a}
 
-If the identity type $a = b$ is [index inhabited], that is, if thre is a term $p : a = b$ then we say that $a$ and $b$ are [index propositionally equal].  We claim, and will soon prove, that proposiional equality is 
+If the identity type $a = b$ is [index inhabited], that is, if thre is a term $p : a = b$ then we say that $a$ and $b$ are [index propositionally equal].  We claim, and will soon prove, that proposiional equality is
 an equivalance relation.  It is, moreover, a [index congruence]: if $f : A \to B$, there is a function $\congg f : x =_A y \to f\; x =_B f\;  y$.  Thus, if $p : x =_A y$, then $\congg f\;   p : f\; x =_B f\;  y$,
 
 Suppose that $a$ and $b$ are defiinitionally equal: $a \equiv b$.
 The the types $a = b$ and $a = a$ are definitionally equal. The latter type is inhabited by $\refl_a$. The former type, which is equal to $a = a$,
-is therefore also inhabited.  We have just proved that 
+is therefore also inhabited.  We have just proved that
 
 | indent
 [b Principle: ] [i If $a$ and $b$ are definitionally equal, then they are also propositionally equal.]
 
-Consider now the type family $\isRightIdentity n = n + \zero =_\nat n$. 
-We aim to show that there is a function $\lemma : (n : \nat) \to \isRightIdentity n$.  In other words, we claim that the type 
-$(n : \nat) \to \isRightIdentity n$ is inhabited.  If that is so, we have proved that 
+Consider now the type family $\isRightIdentity n = n + \zero =_\nat n$.
+We aim to show that there is a function $\lem : (n : \nat) \to \isRightIdentity n$.  In other words, we claim that the type
+$(n : \nat) \to \isRightIdentity n$ is inhabited.  If that is so, we have proved that
 
-|| equation
+| equation
 \forall n : \nat, \quad n + 0 \equiv n
 
-The proof is by induction.  If $n = 0$, then $\lemma n = 0 + 0 =_\nat 0$
+The proof is by induction.  If $n = 0$, then $\lem n = 0 + 0 =_\nat 0$
 is inhabited by $\refl_0$.  Assume as inductive hypothesis that
-$\lemma n$ is inhabited by $p$. Then we have
+$\lem n$ is inhabited by $p$. Then we have
 
-|| aligned
+| equation
 \congg \suc (n + 0 =_\nat 0) &= \suc\; (n + 0) =_\nat \suc n
    &= (\suc n) + 0 =_\nat = \suc n
-   &= \lemma\; (\suc n)
+   &= \lem\; (\suc n)
 
 In other words, we have shown that
 
-|| equation
-\congg\; \suc\; (\lemma n) = \lemma\; (\suc n)
+| equation
+\congg\; \suc\; (\lem n) = \lem\; (\suc n)
 
-Consequently $\lemma n$ is proved for all $n$.  
+Consequently $\lem n$ is proved for all $n$.
 
 There is one more
 bit of information that we can extract from this argument:
 
 | indent
-[i The term which inhabits $\lemma n$ is $(\congg \suc)^n \refl_0$]
+[i The term which inhabits $\lem n$ is $(\congg \suc)^n \refl_0$]
 
-As a result, we know not only that $n + 0$ 
+As a result, we know not only that $n + 0$
 is propositionally equal to $n$, but
 we have in hand a proof term for this fact.  Notice that the proof term
 is not $\refl_x$ for some $x$, but rather
@@ -999,28 +994,28 @@ of this cyclic module as there are elements of the ring $R$.
 
 Consider once again the congruence principle.  It is the function
 
-|| equation
+| equation
 \congg : (f : A \to B) \to (x\; y : A) \to (p : x =_A y) \to f\; x =_B f\; y
 
 If we apply $\congg$ to $f$, we have
 
-|| equation
+| equation
 \congg f : (x\; y : A) \to (p : x =_A y) \to f\; x =_B f\; y
 
 
 This function has the form
 
-|| equation
+| equation
 \congg f : (x\; y : A) \to (p : x =_A y) \to C\; x\; y\; p
 
 where the last type is
 
-|| equation
+| equation
 C\; x\; y\; p :\equiv f\; x =_B f\; y
 
 In this case there is no dependence on $p$. Thus constructing the function $\congg$ is a special case of constructing functions
 
-|| equation
+| equation
 f : (x, y: A) \to (p : x =_A y) \to C(x, y, p)
 
 where $C(x,y,p)$ is a family of types depending on $x, y : A$
@@ -1031,65 +1026,65 @@ exactly the same construction. To construct the output $f$, we need certain inpu
 
 . A function $c : (x : A) \to C(x,x,\refl_x)$
 
-The type family is the one appearing in the type of $f$, so the 
-new element is the function $c$.  It assigns to 
+The type family is the one appearing in the type of $f$, so the
+new element is the function $c$.  It assigns to
 $\refl_x : x =_A x$ a term of type $C(x,x,\refl_x)$.
 That is all the data needed to construct $f$.
 The induction principle for the identity type states that given
 these inputs, there is a function $f$ of the type indicated above which satisfies
 
-|| equation
+| equation
 f(x,x,\refl_x) :\equiv c(x)
 
 ## Congruence
 
 Consider the hypothetical function $\congg f$:
 
-|| equation
+| equation
 \congg f : (x\; y : A) \to (p : x =_A y) \to f\; x =_B f\; y
 
 
-Let us construct it using the induction principle.  For $C$, 
+Let us construct it using the induction principle.  For $C$,
 we choose the family $C\; x\; y = f\; x =_B f\; y$ and we set
 
-|| equation
+| equation
 c\; x = \refl_{(f\, x)} : C\; x\; x
 
 This makes sense because $C\; x\; x = (f\; x =_B f\; x)$.
 
 [b Alternate method of proof.] There is an equivalent, alternate method of proof which goes as follows.   To construct
 
-|| equation
+| equation
 \congg f : (x\; y : A) \to (p : x =_A y) \to f\; x =_B f\; y
 
 it suffices to consider the case where $x$ and $y$ are the same
 and $p = \refl_x$.  Then we have
 
-|| equation
+| equation
 \congg f : (x\; x : A) \to (p : x =_A x) \to f\; x =_B f\; x
 
-It suffices to set 
+It suffices to set
 
-|| equation
+| equation
 \congg f : x\; \refl_x = \refl_{(f x)}
 
 
 ## Symmetry
 
 Let us see how the more informal method works to prove symmetry.  What we
-must prove is that the following function exists: 
+must prove is that the following function exists:
 
-|| equation
+| equation
 \sym : (x : A) \to (y : A) \to (x =_A y) \to (y =_A x)
 
 When $x$ and $y$ are the same, this reads
 
-|| equation
+| equation
 \sym : (x : A) \to (x : A) \to (x =_A x) \to (x =_A x)
 
 We set
 
-|| equation
+| equation
 \sym\;x\; x\; \refl_x = \refl_x
 
 Then $\sym$ is defined when $x = y$ and therefore defined for all $x$
@@ -1097,20 +1092,20 @@ and $y$.
 
 ## Transitivity
 
-|| equation
+| equation
 \trans : (x : A) \to (y : A)\to (z : A)\to (x =_A y) \to (y =_A z) \to (x =_A z)
 
 Take $y = x$, $p = \refl_x$ and substitute, letting
 $f\; z\; q = \trans\, x\; x\; z\; \refl_x q$ where
-$f : (z : A) \to (x =_A z) \to (x =_A z)$. Now take $z = x$.  Then the type of the second argument of $f$ is $x =_A x$, which is inhabited 
-by $\refl_x$.  Set 
+$f : (z : A) \to (x =_A z) \to (x =_A z)$. Now take $z = x$.  Then the type of the second argument of $f$ is $x =_A x$, which is inhabited
+by $\refl_x$.  Set
 
-|| equation
+| equation
 f\; x \refl_x = \refl_x
 
 To conclude,
 
-|| equation
+| equation
 \trans\; x\; x\; x\; \refl_x \;\refl_x = \refl_x
 
 
@@ -1120,13 +1115,13 @@ Recall that to define a function $f : \nat \to C$, where $C$
 is some type, we use the elimination rule in the form of the recursor:
 
 
-|| equation
+| equation
 \rec_\nat : (C: \cU) \to C \to (\nat \to C \to C) \to (\nat \to C)
 
 To construct proofs of assertions about the natural numbers,
-we need the elimination rule in its full power, namely where $C: \nat \to \cU$ is ia type family. The  output of the rule is a dependent function 
+we need the elimination rule in its full power, namely where $C: \nat \to \cU$ is ia type family. The  output of the rule is a dependent function
 
-|| equation
+| equation
 f : (n : \nat) \to C\; n
 
 The inputs are
@@ -1140,16 +1135,16 @@ The inputs are
 The elimination rule for the natural numbers and type families
 can be read off this input-output data:
 
-|| equation
+| equation
 \ind_\nat (C : \nat \to \cU) \to C\; \zero \to ((n: \nat) \to C\; n \to C (\suc n)) \to ((n : \nat) \to C)
 
 The computation rules are
 
-|| aligned
+| equation
 &\ind_\nat\; C\; \base\, \step\, \zero =  \base
 &\ind_\nat\; C\; \base\, \step\, (\suc n) =  \step n\; (\ind_\nat\; C\; \base
 
-Unsurprisingly, these are of the same form as the computaton rules for 
+Unsurprisingly, these are of the same form as the computaton rules for
 the recursor.
 
 
@@ -1161,34 +1156,34 @@ We defined definitional equality in terms of normal forms.  That begs
 some foundational questions: (1) do the exist? (2) are they unique?
 To see that there is an issue, let us consider the lambda calculus once again.  Let $\Omega = \lambda x. x\, x$  Then we have the reduction sequence
 
-|| equation 
-\Omega \Omega \xrightarrow{\beta} 
-\Omega \Omega \xrightarrow{\beta} \Omega \Omega \xrightarrow{\beta}  
+| equation
+\Omega \Omega \xrightarrow{\beta}
+\Omega \Omega \xrightarrow{\beta} \Omega \Omega \xrightarrow{\beta}
 \ldots
 
-The reduction sequence never terminates, and so $\Omega\Omega$ has 
-no normal form. 
+The reduction sequence never terminates, and so $\Omega\Omega$ has
+no normal form.
 
 In MLTT, normal forms consist entirely of constructors.
 
 ## Typability SLTC
 
-This and other considerations led Curch to 
-formulate the simply-type lambda calculus (SLTC).  The syntax 
+This and other considerations led Curch to
+formulate the simply-type lambda calculus (SLTC).  The syntax
 rules change slightly: abstractions carry a type annotation.
 Instead of $\lambda x.x$, we write $\lambda x : T$, where $T$
 is a type.  In addition, there are two [index typing rules]:
 
-|| equation
+| equation
 \frac{x : A \vdash e : B}{(\lambda x: A.e): (A \to B)}
 \qquad
 \frac{f : A \to B \quad e : A}{f\; e :B}
 
 The first of these  assings a type to  functions.  The second defines the type of a function application.  Let's take a second look at
 $\Omega = \lambda x.x\,x$.  What is its type? Let us assume that $x$
-has type $A$.  Since $x\,x$ is an application, $x$ also has type $X \to Y$ for some $X$ and $Y$. Since $x$ is applied to $x$, which has type $A$, we conclude that $X = A$. Therefore $A = A \to Y$.  We try to solve this equation for $A$, the type of $x$: 
+has type $A$.  Since $x\,x$ is an application, $x$ also has type $X \to Y$ for some $X$ and $Y$. Since $x$ is applied to $x$, which has type $A$, we conclude that $X = A$. Therefore $A = A \to Y$.  We try to solve this equation for $A$, the type of $x$:
 
-|| equation
+| equation
 A = A \to Y = (A \to Y) \to Y = ((A \to Y) \to Y) \to Y \cdots
 
 There is no solution, so $x$ is not typeable and therefore $\Omega$ is
@@ -1199,12 +1194,12 @@ not typeable.
 Consider functions $\double : \nat \to \nat$ and $\isEven : \nat \to \boolean$.  Let's ask whether the expressions (1) $\isEven\; (\double 3)$
 and (2) $\double\; (\isEven 3)$ are typeable. The tree for typeing the first of these is
 
-|| equation
+| equation
 \dfrac{\nat \to \boolean \qquad \dfrac{\nat \to \nat \quad \nat}{\nat}}{\boolean}
 
-For the second it is 
+For the second it is
 
-|| equation
+| equation
 \dfrac{\nat \to \nat \qquad \dfrac{\nat \to \boolean \quad \nat}{\boolean}}{\text{Stuck!}}
 
 In the second case, for $\double\; (\isEven 3)$, we reach a stage in computing the tree of types (from the leaves of the tree to the root)
@@ -1214,15 +1209,15 @@ in turn is not typeable.
 ## Strong normalization
 
 We say that a formal system satisfies [index strong normalization] if every well-typed term reduces to normal form in finitely many steps. Both MLTT
-and SLTC are strongly normalizing.   
+and SLTC are strongly normalizing.
 
 
 ## Confluence
 
-Suppose that a term $t$ has reductions $t \to\!\!*\,u_1$ and 
+Suppose that a term $t$ has reductions $t \to\!\!*\,u_1$ and
 $t \to\!\!*\, u_2$. The symbol $\to\!\!*\,$ means a sequence of reductions.  Supposer further that there is a term $v$ and reductions
-$u_1 \to\!\!*\, v$ and $u_2 \to\!\!*\, v$. If there is such a $v$ for any 
-pair of reductions of $t$, we say that the system is [index confluent] (or satisfies the Church-Rosser property).  MLTT and SLTC are both confluent.  This means that normal forms are unique 
+$u_1 \to\!\!*\, v$ and $u_2 \to\!\!*\, v$. If there is such a $v$ for any
+pair of reductions of $t$, we say that the system is [index confluent] (or satisfies the Church-Rosser property).  MLTT and SLTC are both confluent.  This means that normal forms are unique
 
 
 ## Consistency
@@ -1246,11 +1241,11 @@ axioms like function extensionality or univalence, as in homotopy type theory, s
 In addition the type-specific rules (formation, introduction, elimination,
 and computation), MLTT has various structural rules.
 
-- [b [index Disjontness.]]  If a type has multiple constructors, e.g. $\zero$ and $\suc$, their outputs cannot be equal, eg. $\zero \ne \suc n$ for any $n$ 
+- [b [index Disjontness.]]  If a type has multiple constructors, e.g. $\zero$ and $\suc$, their outputs cannot be equal, eg. $\zero \ne \suc n$ for any $n$
 
 - [b Injectivity of construtors.] If $c x = c y$, then $x = y$.  This important for pattern-matching.
 
-## Metatheory 
+## Metatheory
 
 Metatheory is theory about theory.
 
@@ -1266,19 +1261,19 @@ and $A$, does $\Gamma \vdash t : A$ hold?
 or by some well-founded measure that decreases on each function call.
 
 - Totality.  Consdier the (Haskell) function $f\; n = \text{if } n == 0 \text{ then } 1 \text{ else } f ( n - 1)$. It is [b[index total]] over $\nat$: it terminates and is defined for all $n : \nat$. Now consider
-$g\; n = \text{if } n == 0 \text{ then } 1 \text{ else } g\, n$. This function is not total: it loops forever on input $n > 0$.  In MLTT, 
+$g\; n = \text{if } n == 0 \text{ then } 1 \text{ else } g\, n$. This function is not total: it loops forever on input $n > 0$.  In MLTT,
 functions are total by design. The type checker will exclude functions with missing cases or which loop forever.  Thus non-total functions are not definable in Elm.
 
 
 # Models and LEM
 
-A model $\cM$ of a formal system $\cF$ is a structure-preserving 
-map $\nu : \cF \to \cA$ where $\cA$ is some kind of algebraic object 
-such as a Boolean or Heyting algebra.  
+A model $\cM$ of a formal system $\cF$ is a structure-preserving
+map $\nu : \cF \to \cA$ where $\cA$ is some kind of algebraic object
+such as a Boolean or Heyting algebra.
 
 - [b Consistency.] $\cF$ has at least one model.
 
-- [b Soundness.] $\Gamma \vdash \varphi \implies \Gamma 
+- [b Soundness.] $\Gamma \vdash \varphi \implies \Gamma
 \models \varphi$, that is, if $\varphi$ is derivable, it is true in all models.
 
 - [b Completeness.]  $\Gamma \models \varphi \implies \Gamma \vdash \varphi$ that is, if $\varphi$ is true in all models, it is derivable.
@@ -1286,14 +1281,14 @@ such as a Boolean or Heyting algebra.
 Propositional logic is consistent, sound, and complete.
 
 
-|| table
+| table
 $p$ & $q$ & $p \land q$ & $\leftrightarrow$ & $q \land p$
 T & T & T & T & T
 T & F & F & T & F
 F & T & F & T & F
 F & F & F & T & F
 
-Each row in the table has a difrent assignment of truht 
+Each row in the table has a difrent assignment of truht
 values to $p$ and $q$.  Each row is a model.  In this case there
 are just $2$ propositional variables $p$ and $q$, so there are only $4$ models.  The column for $\leftrightarrow$ consists entirely of $T$'s, so we can say that $\models p \land q \leftrightarrow q \land p$ — this formula is true in all models.
 
@@ -1302,16 +1297,16 @@ are just $2$ propositional variables $p$ and $q$, so there are only $4$ models. 
 Let $\cA$ the Heyting algebra of open sets of a topological space $X$.  The  operations are union, intersection, and Heyting complement: If $U$ is an open set, then $\neg U$ is the interior of the complement of the set-theoretic complement of $U$.  A Heying model of a propositional calculus $\cP$ is a map $\cO : \cP \to \cA$ that sends propositions to open sets
 and respects logical connectives on the left and union, intersection, and Heyting complement on the right.  One has $\cO(T) = X$ and $\cO(F) = \empty$.  Moreover, axioms map to $\cO(T)$, and inference rules preserve truth: if the premises map to $\cO(T)$, then so does the conclusion.
 
-Consider the law of the excluded middle (LEM). It says that for all propositions $P$, $P \lor \neg P$ holds.  In such a system, $\cO(P) \cup \neg \cO(P) = X$.  
+Consider the law of the excluded middle (LEM). It says that for all propositions $P$, $P \lor \neg P$ holds.  In such a system, $\cO(P) \cup \neg \cO(P) = X$.
 
 Now consider a system like intuitionistic logic in whch LEM is not an
 axiom.  We ask: is it derivable in intuitionistic logic..  This is a question that model theory
 can answer.  Intuitionistic logic has axioms and inference rules,
-and one can set models so that these are preserved. Choose such a model 
+and one can set models so that these are preserved. Choose such a model
 so that a distinguised proposition $P$ maps to the open set $x > 0$.
-Then 
+Then
 
-|| equation
+| equation
 \cO (\neg P) \cup (P) = \sett{x \in \bR}{ x < 0} \cup \sett{x \in \bR}{ x >  0} = \sett{x \in \bR}{ x \ne 0}
 
 Consequently LEM is not derivalble in intuitonistic logic.
@@ -1320,7 +1315,7 @@ Consequently LEM is not derivalble in intuitonistic logic.
 
 
 | remark
-If the topology of $X$ is discrete, then the set-theoretic 
+If the topology of $X$ is discrete, then the set-theoretic
 complement and the Heyting complement are the same. LEM cannot be
 refuted by such models.
 
@@ -1362,11 +1357,3 @@ refuted by such models.
 
 
 [link Zhang cubical Hedberg https://git.mzhang.io/michael/type-theory/src/commit/f10e3a09b9c83d8534466057d40e4fc7e5cde5af/src/HoTTEST/Agda/Lecture-Notes/files/Hedbergs-Theorem.lagda.md]
-
-
-
-
-
-
-
-
