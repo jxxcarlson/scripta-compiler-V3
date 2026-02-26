@@ -84,5 +84,41 @@ suite =
 
                         _ ->
                             Expect.fail ("Expected single Fun \"b\" expression, got: " ++ Debug.toString result)
+            , test "parses \\(...\\) as inline math" <|
+                \_ ->
+                    let
+                        result =
+                            pe "\\(A\\)"
+                    in
+                    case result of
+                        [ VFun "math" "A" _ ] ->
+                            Expect.pass
+
+                        _ ->
+                            Expect.fail ("Expected [VFun \"math\" \"A\" _], got: " ++ Debug.toString result)
+            , test "parses \\(...\\) with surrounding text" <|
+                \_ ->
+                    let
+                        result =
+                            pe "hello \\(x + y\\) world"
+                    in
+                    case result of
+                        [ Text "hello " _, VFun "math" "x + y" _, Text " world" _ ] ->
+                            Expect.pass
+
+                        _ ->
+                            Expect.fail ("Expected [Text, VFun \"math\", Text], got: " ++ Debug.toString result)
+            , test "parses mixed \\(...\\) and $...$ delimiters" <|
+                \_ ->
+                    let
+                        result =
+                            pe "\\(A\\) and $B$"
+                    in
+                    case result of
+                        [ VFun "math" "A" _, Text " and " _, VFun "math" "B" _ ] ->
+                            Expect.pass
+
+                        _ ->
+                            Expect.fail ("Expected [VFun \"math\" \"A\", Text, VFun \"math\" \"B\"], got: " ++ Debug.toString result)
             ]
         ]

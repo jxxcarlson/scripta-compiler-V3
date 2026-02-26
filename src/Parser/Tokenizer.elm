@@ -10,7 +10,7 @@ module Parser.Tokenizer exposing
 
 import Parser.Advanced as Parser exposing (DeadEnd)
 import Tools.Loop exposing (Step(..), loop)
-import Tools.ParserTools as PT exposing (Context, Problem)
+import Tools.ParserTools as PT exposing (Context, Problem(..))
 
 
 type Token_ meta
@@ -378,6 +378,8 @@ tokenParser_ start index =
     Parser.oneOf
         [ whiteSpaceParser start index
         , textParser start index
+        , parenMathOpenParser start index
+        , parenMathCloseParser start index
         , backslashTextParser start index
         , leftBracketParser start index
         , rightBracketParser start index
@@ -389,6 +391,18 @@ tokenParser_ start index =
 {-| Parse backslash followed by letters as a single text token.
 This ensures `\alpha` in Normal mode becomes `S "\\alpha"` rather than a TokenError.
 -}
+parenMathOpenParser : Int -> Int -> TokenParser
+parenMathOpenParser start index =
+    Parser.symbol (Parser.Token "\\(" (ExpectingSymbol "\\("))
+        |> Parser.map (\_ -> MathToken { begin = start, end = start + 1, index = index })
+
+
+parenMathCloseParser : Int -> Int -> TokenParser
+parenMathCloseParser start index =
+    Parser.symbol (Parser.Token "\\)" (ExpectingSymbol "\\)"))
+        |> Parser.map (\_ -> MathToken { begin = start, end = start + 1, index = index })
+
+
 backslashTextParser : Int -> Int -> TokenParser
 backslashTextParser start index =
     PT.text (\c -> c == '\\') (\c -> Char.isAlpha c)
@@ -398,7 +412,8 @@ backslashTextParser start index =
 mathParser_ : Int -> Int -> TokenParser
 mathParser_ start index =
     Parser.oneOf
-        [ mathTextParser start index
+        [ parenMathCloseParser start index
+        , mathTextParser start index
         , mathParser start index
         , whiteSpaceParser start index
         ]
