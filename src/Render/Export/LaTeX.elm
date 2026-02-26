@@ -1495,7 +1495,8 @@ rb _ =
 
 bt : List Expression -> String
 bt _ =
-    "\\backtick{}"
+    --"\\backtick{}"
+    "\\`{}"
 
 
 underscore : List Expression -> String
@@ -1740,6 +1741,9 @@ exportExpr mathMacroDict settings expr =
 
                     Nothing ->
                         "Error extracting lambda"
+
+            else if name == "dollar" then
+                "\\$"
 
             else
                 case Dict.get name macroDict of

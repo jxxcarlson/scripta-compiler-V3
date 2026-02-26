@@ -1,5 +1,6 @@
 | title
-Martin-Löf Type Theory
+MLTT
+
 
 [tags jxxcarlson:mltt]
 
@@ -17,8 +18,8 @@ Martin-Löf Type Theory
 \newcommand{\false}{\mathop{\mathsf{false}}}
 \newcommand{\rec}{\mathop{\mathsf{rec}}}
 \newcommand{\nott}{\mathop{\mathsf{not}}}
-\newcommand{\And}{\mathop{\mathsf{and}}}
-\newcommand{\Or}{\mathop{\mathsf{or}}}
+\renewcommand{\and}{\mathop{\mathsf{and}}}
+\renewcommand{\or}{\mathop{\mathsf{or}}}
 \newcommand{\toa}{\ensuremath{\to\!\!*\,}}
 \newcommand{\cU}{\mathcal{U}}
 \newcommand{\refl}{\mathop{\mathsf{refl}}}
@@ -31,7 +32,7 @@ Martin-Löf Type Theory
 \newcommand{\unitt}{\top}
 \newcommand{\congg}{\mathop{\mathsf{cong}}}
 \newcommand{\isRightIdentity}{\mathop{\mathsf{isRightIdentity}}}
-\newcommand{\lem}{\mathop{\mathsf{lemma}}}
+\newcommand{\lemma}{\mathop{\mathsf{lemma}}}
 \newcommand{\sym}{\mathop{\mathsf{sym}}}
 \newcommand{\trans}{\mathop{\mathsf{trans}}}
 \newcommand{\isEven}{\mathop{\mathsf{isEven}}}
@@ -54,8 +55,8 @@ A set is a collection of elements.  Suppose that we
 have  things like this: $4\heartsuit, 5\diamondsuit, 6\clubsuit, 2\spadesuit$. We can gather them in to various collections, e.g.,
 
 | equation
-&A = \set{ 2\heartsuit, 5\heartsuit} \\
-&B = \set{2\heartsuit, 7\spadesuit}
+A &= \set{ 2\heartsuit, 5\heartsuit} \\
+B &= \set{2\heartsuit, 7\spades} \\
 
 It makes sense to say $e \in A$, meaning [quote the element $e$ is in the set $A$].  Thus we have
 
@@ -184,6 +185,10 @@ then so is $\suc k$.
 By repeated
 application of the last rule, we produce arbitrarily many terms of $\nat$: $\zero$, $\suc \zero$, $\suc (\suc \zero)$, etc. The symbols $\zero$ and $\suc$ are the [index constructors] of the natural numbers.
 
+
+| box The Empty Type
+The empty type, written $\bot$, is a type with no introduction
+rules, hence no constructors.  Consequently there are no terms of the empty type.
 
 [b Contexts.] There are many cases in which  we
 can work with an empty context, in which case we might write the rules in simplified form as
@@ -406,18 +411,18 @@ Let's see if we can implement a fragment of the standard operations
 in Boolean algebra. Below is how we might implement logical conjunction.  Here is one way to do it, using pattern-matching:
 
 | equation
-&\And : \boolean \to \boolean \to \boolean \\
-&\And \true \true = \true \\
-&\And \true \false = \false \\
-&\And \false \true= \false \\
-&\And \false \false = \true  \\
+&\and : \boolean \to \boolean \to \boolean \\
+&\and \true \true = \true \\
+&\and \true \false = \false \\
+&\and \false \true= \false \\
+&\and \false \false = \true  \\
 
 This style of pattern-matching can be improved:
 
 | equation
 \label{and-def}
-&\And \, - \false = \false \\
-&\And x \true = x
+&\and \, - \false = \false \\
+&\and x \true = x
 
 | hide
 \text{\_}
@@ -431,7 +436,7 @@ via the recursor:
 
 | equation
 \label{rec-def-of-adn}
-\And = \lambda b_1 . \lambda b_2 . \rec_\boolean(b_2, \false, b_1)
+\and = \lambda b_1 . \lambda b_2 . \rec_\boolean(b_2, \false, b_1)
 
 | exercise
 Verify [eqref rec-def-of-adn] the equations [eqref and-def].
@@ -440,16 +445,16 @@ A careful comparison of [eqref rec-def-of-adn] and [eqref and-def]
 will show that the two derivations are interderviable.
 
 | exercise
-Define the logical function $\Or$ by (1) equations, (2) the eliminator.
+Define the logical function $\or$ by (1) equations, (2) the eliminator.
 
 Assuming the previous exercise, consider the following
 sequence of reductions
 
 | equation
 \label{bool-reductions}
-&\Or\ (\And\ (\Or\ \true\ \false)\ \true)\ \false \to
-&\Or\ (\And\ \true\ \true)\ \false \to
-&\Or\ (\true\ \false) \to
+&\or\ (\and\ (\or\ \true\ \false)\ \true)\ \false \to
+&\or\ (\and\ \true\ \true)\ \false \to
+&\or\ (\true\ \false) \to
 &\true
 
 Each line [eqref bool-reductions] is a term of $\boolean$.  However,
@@ -457,7 +462,7 @@ the last term is special: it cannot be further reduced.  Such a term is said to 
 
 | equation
 \label{bool-computation}
-\Or\ (\And\ (\Or\ \true\ \false)\ \true)\ \false \equiv \true : \boolean
+\or\ (\and\ (\or\ \true\ \false)\ \true)\ \false \equiv \true : \boolean
 
 The equality here, as noted in section [ref mltt-as-a-formal-system],
 is [u definitional]. Note that in this case, computation of the boolean value on the left-hand-side of [eqref boolean-computation]
@@ -948,33 +953,33 @@ is therefore also inhabited.  We have just proved that
 [b Principle: ] [i If $a$ and $b$ are definitionally equal, then they are also propositionally equal.]
 
 Consider now the type family $\isRightIdentity n = n + \zero =_\nat n$.
-We aim to show that there is a function $\lem : (n : \nat) \to \isRightIdentity n$.  In other words, we claim that the type
+We aim to show that there is a function $\lemma : (n : \nat) \to \isRightIdentity n$.  In other words, we claim that the type
 $(n : \nat) \to \isRightIdentity n$ is inhabited.  If that is so, we have proved that
 
 | equation
 \forall n : \nat, \quad n + 0 \equiv n
 
-The proof is by induction.  If $n = 0$, then $\lem n = 0 + 0 =_\nat 0$
+The proof is by induction.  If $n = 0$, then $\lemma n = 0 + 0 =_\nat 0$
 is inhabited by $\refl_0$.  Assume as inductive hypothesis that
-$\lem n$ is inhabited by $p$. Then we have
+$\lemma n$ is inhabited by $p$. Then we have
 
 | equation
 \congg \suc (n + 0 =_\nat 0) &= \suc\; (n + 0) =_\nat \suc n
    &= (\suc n) + 0 =_\nat = \suc n
-   &= \lem\; (\suc n)
+   &= \lemma\; (\suc n)
 
 In other words, we have shown that
 
 | equation
-\congg\; \suc\; (\lem n) = \lem\; (\suc n)
+\congg\; \suc\; (\lemma n) = \lemma\; (\suc n)
 
-Consequently $\lem n$ is proved for all $n$.
+Consequently $\lemma n$ is proved for all $n$.
 
 There is one more
 bit of information that we can extract from this argument:
 
 | indent
-[i The term which inhabits $\lem n$ is $(\congg \suc)^n \refl_0$]
+[i The term which inhabits $\lemma n$ is $(\congg \suc)^n \refl_0$]
 
 As a result, we know not only that $n + 0$
 is propositionally equal to $n$, but
