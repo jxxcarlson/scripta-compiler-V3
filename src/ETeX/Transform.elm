@@ -1226,7 +1226,9 @@ alphaNumWithLookaheadParser userMacroDict =
             (\name ->
                 oneOf
                     [ -- Check if followed by '(' and parse comma-separated arguments
-                      functionArgsParser userMacroDict
+                      -- backtrackable: if argument parsing fails (e.g. \, inside parens),
+                      -- fall back to treating the identifier as plain AlphaNum
+                      backtrackable (functionArgsParser userMacroDict)
                         |> PA.map
                             (\args ->
                                 if isKaTeX name || isUserDefinedMacro userMacroDict name then
@@ -1259,7 +1261,9 @@ mathExprParser userMacroDict =
         , rightBraceParser
         , alphaNumWithLookaheadParser userMacroDict -- This handles both function calls and plain alphanums
         , macroParser userMacroDict
-        , lazy (\_ -> standaloneParenthExprParser userMacroDict) -- For standalone parentheses
+        , backtrackable (lazy (\_ -> standaloneParenthExprParser userMacroDict)) -- For standalone parentheses
+        , leftParenParser -- Fallback: bare ( when standaloneParenthExprParser backtracks
+        , rightParenParser -- Bare )
         , commaParser
         , mathSymbolsParser
         , lazy (\_ -> argParser userMacroDict)
@@ -1344,7 +1348,16 @@ rightBraceParser =
 
 
 
--- Removed unused parsers: leftParenParser and rightParenParser
+leftParenParser : PA.Parser c Problem MathExpr
+leftParenParser =
+    succeed LeftParen
+        |. symbol (Token "(" ExpectingLeftParen)
+
+
+rightParenParser : PA.Parser c Problem MathExpr
+rightParenParser =
+    succeed RightParen
+        |. symbol (Token ")" ExpectingRightParen)
 
 
 commaParser : PA.Parser c Problem MathExpr

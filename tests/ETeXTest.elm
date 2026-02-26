@@ -90,26 +90,27 @@ suite =
             \_ ->
                 transformETeX macroDictWithZero "\\text{\\textbf{bold} normal}"
                     |> Expect.equal "\\text{\\textbf{bold} normal}"
-        , test "KNOWN BUG(1): f(\\suc\\, m) causes ETeX parse error (parens misinterpreted as function call)" <|
-            -- The parser sees f( and tries to parse a function call f(...),
-            -- but \\, inside the parens is parsed as a comma separator,
-            -- causing ExpectingRightParen at column 44.
+        , test "backtracking: f(\\suc\\, m) no longer misinterpreted as function call" <|
+            -- Previously the parser saw f( and committed to function-call mode,
+            -- but \\, inside the parens was parsed as a comma separator.
+            -- Now the parser backtracks out of function-call mode when arg parsing fails.
+            \_ ->
+                transformETeX Dict.empty "f(\\suc\\, m)"
+                    |> Expect.equal "f(\\suc\\, m)"
+        , test "backtracking: f(\\suc\\, m) in larger expression" <|
+            \_ ->
+                transformETeX Dict.empty "f(\\suc\\, m) &= x"
+                    |> Expect.equal "f(\\suc\\, m) &= x"
+        , test "MLTT equation line 1: f(\\suc\\, m) &= \\lambda (\\suc\\, (f\\, m)\\,  n" <|
             \_ ->
                 transformETeX Dict.empty "f(\\suc\\, m) &= \\lambda (\\suc\\, (f\\, m)\\,  n"
-                    |> String.startsWith "[ETeX error]"
-                    |> Expect.equal True
+                    |> Expect.equal "f(\\suc\\, m) &= \\lambda (\\suc\\, (f\\, m)\\,  n"
+        , test "MLTT equation line 2: &= \\lambda g.\\lambda (n.\\suc\\,(g\\, m)).n\\,f" <|
+            \_ ->
+                transformETeX Dict.empty "&= \\lambda g.\\lambda (n.\\suc\\,(g\\, m)).n\\,f"
+                    |> Expect.equal "&= \\lambda g.\\lambda (n.\\suc\\,(g\\, m)).n\\,f"
+        , test "MLTT equation line 3: &= \\lambda m.\\lambda g.\\lambda (n.\\suc\\, (g\\, m)).n\\,f\\,m" <|
+            \_ ->
+                transformETeX Dict.empty "&= \\lambda m.\\lambda g.\\lambda (n.\\suc\\, (g\\, m)).n\\,f\\,m"
+                    |> Expect.equal "&= \\lambda m.\\lambda g.\\lambda (n.\\suc\\, (g\\, m)).n\\,f\\,m"
         ]
-
-
-
-{-
-   KNOWN BUG(1) above comes from the text below
-   It is from L1182 of document MLTT V1 in folder @Desktop
-   at Scripta.io (jxxcarlson)
-
-   | equation
-    f(\suc\, m) &= \lambda (\suc\, (f\, m)\,  n
-               &= \lambda g.\lambda (n.\suc\,(g\, m)).n\,f
-               &= \lambda m.\lambda g.\lambda (n.\suc\, (g\, m)).n\,f\,m
-
--}
