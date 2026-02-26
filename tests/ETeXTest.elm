@@ -19,8 +19,20 @@ bracket:  \\{ [ #1 ] \\}
 """
 
 
+macroDefinitionsWithZero : String
+macroDefinitionsWithZero =
+    """
+nat:      mathbb N
+zero:     mathop{\\tt{zero}}
+"""
+
+
 macroDict =
     makeMacroDict macroDefinitions
+
+
+macroDictWithZero =
+    makeMacroDict macroDefinitionsWithZero
 
 
 suite : Test
@@ -66,4 +78,16 @@ suite =
                 transformETeX Dict.empty "\\foo{"
                     |> String.startsWith "[ETeX error]"
                     |> Expect.equal True
+        , test "textsf preserves bare words that match user macros" <|
+            \_ ->
+                transformETeX macroDictWithZero "\\textsf{zero-intro}"
+                    |> Expect.equal "\\textsf{zero-intro}"
+        , test "text command preserves content as-is" <|
+            \_ ->
+                transformETeX macroDictWithZero "\\text{hello world}"
+                    |> Expect.equal "\\text{hello world}"
+        , test "text command with nested braces" <|
+            \_ ->
+                transformETeX macroDictWithZero "\\text{\\textbf{bold} normal}"
+                    |> Expect.equal "\\text{\\textbf{bold} normal}"
         ]

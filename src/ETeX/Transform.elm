@@ -1028,12 +1028,58 @@ parseWithDict userMacroDict str =
     PA.run (many (mathExprParser userMacroDict)) str
 
 
+isTextModeCommand : String -> Bool
+isTextModeCommand name =
+    List.member name [ "text", "textsf", "textbf", "textit", "texttt", "textrm", "textsc", "mbox" ]
+
+
+chompBraceBalanced : PA.Parser Context Problem ()
+chompBraceBalanced =
+    loop 0 chompBraceBalancedStep
+
+
+chompBraceBalancedStep : Int -> PA.Parser Context Problem (Step Int ())
+chompBraceBalancedStep depth =
+    if depth == 0 then
+        oneOf
+            [ chompIf (\c -> c == '{') ExpectingLeftBrace |> map (\_ -> Loop 1)
+            , chompIf (\c -> c /= '{' && c /= '}') ExpectingNotAlpha |> map (\_ -> Loop 0)
+            , succeed (Done ())
+            ]
+
+    else
+        oneOf
+            [ chompIf (\c -> c == '{') ExpectingLeftBrace |> map (\_ -> Loop (depth + 1))
+            , chompIf (\c -> c == '}') ExpectingRightBrace |> map (\_ -> Loop (depth - 1))
+            , chompIf (\c -> c /= '{' && c /= '}') ExpectingNotAlpha |> map (\_ -> Loop depth)
+            ]
+
+
+rawBraceArg : PA.Parser Context Problem MathExpr
+rawBraceArg =
+    succeed (\start end src -> Arg [ AlphaNum (String.slice start end src) ])
+        |. symbol (Token "{" ExpectingLeftBrace)
+        |= getOffset
+        |. chompBraceBalanced
+        |= getOffset
+        |= getSource
+        |. symbol (Token "}" ExpectingRightBrace)
+
+
 macroParser : MathMacroDict -> PA.Parser Context Problem MathExpr
 macroParser userMacroDict =
-    succeed Macro
+    (succeed identity
         |. symbol (Token "\\" ExpectingBackslash)
         |= alphaNumParser_
-        |= many (argParser userMacroDict)
+    )
+        |> PA.andThen
+            (\name ->
+                if isTextModeCommand name then
+                    many rawBraceArg |> map (\args -> Macro name args)
+
+                else
+                    many (argParser userMacroDict) |> map (\args -> Macro name args)
+            )
 
 
 
