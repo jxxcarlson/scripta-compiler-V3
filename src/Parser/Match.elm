@@ -1,5 +1,6 @@
 module Parser.Match exposing (getSegment, isReducible, match, splitAt)
 
+import List.Extra
 import Parser.Symbol exposing (Symbol(..), value)
 import Tools.Loop exposing (Step(..), loop)
 
@@ -106,7 +107,7 @@ getSegment sym symbols =
         n =
             List.length seg_
     in
-    case getAt (n + 1) symbols of
+    case List.Extra.getAt (n + 1) symbols of
         Nothing ->
             sym :: seg_
 
@@ -170,10 +171,3 @@ takeWhile predicate list =
                 []
 
 
-getAt : Int -> List a -> Maybe a
-getAt idx list =
-    if idx < 0 then
-        Nothing
-
-    else
-        List.head (List.drop idx list)

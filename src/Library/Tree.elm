@@ -2,6 +2,7 @@ module Library.Tree exposing (depth, flatten, makeTree, print)
 
 import Dict
 import RoseTree.Tree exposing (Tree)
+import Tools.Loop exposing (Step(..), loop)
 
 
 makeTree : (a -> Int) -> List a -> Maybe (Tree a)
@@ -150,16 +151,3 @@ nextStepTree getLevel state =
                 }
 
 
-type Step state output
-    = Loop state
-    | Done output
-
-
-loop : state -> (state -> Step state block) -> block
-loop s f =
-    case f s of
-        Loop s_ ->
-            loop s_ f
-
-        Done b ->
-            b

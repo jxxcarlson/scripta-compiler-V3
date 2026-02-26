@@ -16,6 +16,7 @@ module Parser.Expression exposing (parse)
 
 -}
 
+import List.Extra
 import Parser.Match as M
 import Parser.Symbol as Symbol exposing (Symbol(..))
 import Parser.Tokenizer as Token exposing (Token, TokenType(..), Token_(..))
@@ -123,7 +124,7 @@ advanceTokenIndex state =
 
 getToken : State -> Maybe Token
 getToken state =
-    getAt state.tokenIndex state.tokens
+    List.Extra.getAt state.tokenIndex state.tokens
 
 
 stackIsEmpty : State -> Bool
@@ -438,15 +439,6 @@ errorMessage message =
 prependMessage : Int -> String -> List String -> List String
 prependMessage lineNumber message messages =
     (message ++ " (line " ++ String.fromInt lineNumber ++ ")") :: List.take 2 messages
-
-
-getAt : Int -> List a -> Maybe a
-getAt idx list =
-    if idx < 0 then
-        Nothing
-
-    else
-        List.head (List.drop idx list)
 
 
 {-| List of function names that should be parsed as VFun (verbatim functions).

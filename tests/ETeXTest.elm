@@ -60,4 +60,10 @@ suite =
             \_ ->
                 makeMacroDict "not a definition"
                     |> Expect.equal Dict.empty
+        , test "parse failure produces visible error marker" <|
+            -- FIXED C2: parse failures now show [ETeX error] instead of silently returning input
+            \_ ->
+                transformETeX Dict.empty "\\foo{"
+                    |> String.startsWith "[ETeX error]"
+                    |> Expect.equal True
         ]
