@@ -21,13 +21,11 @@ suite =
                 \_ ->
                     transformLabel "no labels here"
                         |> Expect.equal "no labels here"
-            , test "two labels — greedy regex matches incorrectly" <|
-                -- BUG M6: greedy regex — the (.*) matches across both labels,
-                -- producing one malformed \label instead of two correct ones.
-                -- When M6 is fixed, update expected to "\\label{a} and \\label{b}"
+            , test "two labels on same line are both transformed" <|
+                -- FIXED M6: non-greedy (.*?) now correctly matches each label independently
                 \_ ->
                     transformLabel "[label a] and [label b]"
-                        |> Expect.equal "\\label{a] and [label b}"
+                        |> Expect.equal "\\label{a} and \\label{b}"
             ]
         , describe "normalizedWord"
             [ test "basic normalization" <|

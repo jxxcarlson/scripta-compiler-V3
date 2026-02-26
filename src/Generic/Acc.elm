@@ -701,7 +701,7 @@ getReferenceDatum acc block =
             block.meta.id
 
         tag =
-            Dict.get "tag" block.properties |> Maybe.withDefault "no-tag"
+            Dict.get "tag" block.properties |> Maybe.withDefault id
 
         chapterPart =
             if acc.chapterCounter > 0 then
