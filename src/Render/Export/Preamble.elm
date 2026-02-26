@@ -301,6 +301,7 @@ commands =
 
 % Unclassified
 \\newcommand{\\subheading}[1]{{\\bf #1}\\par}
+\\newcommand{\\smallsubheading}[1]{{\\bf\\small #1}\\par}
 %\\newcommand{\\term}[1]{{\\index{#1}}}
 %\\newcommand{\\termx}[1]{}
 \\newcommand{\\comment}[1]{}
@@ -339,7 +340,7 @@ commands =
   {\\begin{adjustwidth}{0.75cm}{}}
   {\\end{adjustwidth}}
 
-\\newcommand{\\backtick}{\\texttt{\\symbol{96}}}
+
 
 %% NEWCOMMAND
 

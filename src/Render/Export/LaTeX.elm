@@ -1251,12 +1251,33 @@ macroDict =
         , ( "fbox", \_ _ -> "$\\blacksquare$" )
         , ( "frbox", \_ _ -> "\\textcolor{red}{$\\blacksquare$}" )
         , ( "xbox", \_ _ -> "$\\boxtimes$" )
+        , ( "errorHighlight", \_ -> errorHighlight )
         ]
 
 
 dontRender : RenderSettings -> List Expression -> String
 dontRender _ _ =
     ""
+
+
+errorHighlight : List Expression -> String
+errorHighlight exprs =
+    let
+        content =
+            List.map exprToString exprs |> String.join ""
+
+        exprToString expr =
+            case expr of
+                Text str _ ->
+                    str
+
+                VFun _ body _ ->
+                    body
+
+                _ ->
+                    "?"
+    in
+    "\\textcolor{red}{[" ++ content ++ "]}"
 
 
 exportCite : List Expression -> String
@@ -1516,12 +1537,12 @@ setcounter args =
 
 subheading : RenderSettings -> List String -> String -> String
 subheading settings args body =
-    "\\vspace{8pt{\\Large{" ++ body ++ "}"
+    "\\vspace{8pt}{\\Large " ++ body ++ "}"
 
 
 smallsubheading : RenderSettings -> List String -> String -> String
 smallsubheading settings args body =
-    "\\vspace{4pt{\\large{" ++ body ++ "}"
+    "\\vspace{4pt}{\\large " ++ body ++ "}"
 
 
 descriptionItem : List String -> String -> String
@@ -1805,6 +1826,7 @@ aliases =
         , ( "gray", "textcolor{gray}" )
         , ( "comment", "textcolor{blue}" )
         , ( "strike", "sout" )
+        , ( "ssh", "smallsubheading" )
         ]
 
 
