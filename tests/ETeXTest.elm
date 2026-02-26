@@ -90,4 +90,26 @@ suite =
             \_ ->
                 transformETeX macroDictWithZero "\\text{\\textbf{bold} normal}"
                     |> Expect.equal "\\text{\\textbf{bold} normal}"
+        , test "KNOWN BUG(1): f(\\suc\\, m) causes ETeX parse error (parens misinterpreted as function call)" <|
+            -- The parser sees f( and tries to parse a function call f(...),
+            -- but \\, inside the parens is parsed as a comma separator,
+            -- causing ExpectingRightParen at column 44.
+            \_ ->
+                transformETeX Dict.empty "f(\\suc\\, m) &= \\lambda (\\suc\\, (f\\, m)\\,  n"
+                    |> String.startsWith "[ETeX error]"
+                    |> Expect.equal True
         ]
+
+
+
+{-
+   KNOWN BUG(1) above comes from the text below
+   It is from L1182 of document MLTT V1 in folder @Desktop
+   at Scripta.io (jxxcarlson)
+
+   | equation
+    f(\suc\, m) &= \lambda (\suc\, (f\, m)\,  n
+               &= \lambda g.\lambda (n.\suc\,(g\, m)).n\,f
+               &= \lambda m.\lambda g.\lambda (n.\suc\, (g\, m)).n\,f\,m
+
+-}
