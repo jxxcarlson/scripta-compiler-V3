@@ -1,0 +1,2851 @@
+| title
+MLTT V1
+
+[tags jxxcarlson:mltt-v1]
+
+
+
+
+
+| mathmacros
+\newcommand{\term}[1]{#1}
+\newcommand{\nat}{\mathbb{N}}
+\newcommand{\integers}{\mathbb{Z}}
+\newcommand{\rationals}{\mathbb{Q}}
+\newcommand{\bool}{\mathop{\tt{Bool}}}
+\newcommand{\true}{\mathop{\tt{true}}}
+\newcommand{\false}{\mathop{\tt{false}}}
+\newcommand{\set}[1]{\{\ #1 \ \}}
+\newcommand{\sett}[2]{\{\ #1 \ | \  #2 \ \}}
+\newcommand{\ffrac}[3]{\frac{#1}{#2}\quad\text{#3}}
+\newcommand{\ttfrac}[3]{\frac{\text{#1}}{\text{#2}}\quad\text{#3}}
+%\newcommand{\tfrac}[2]{\frac{\text{#1}}{\text{#2}}
+\newcommand{\zero}{\mathop{\tt{zero}}}
+\newcommand{\suc}{\mathop{\tt{suc}}}
+\newcommand{\double}{\mathop{\tt{double}}}
+\newcommand{\add}{\mathop{\text{add}}}
+\newcommand{\uni}{\mathop{\text{Set}}}
+\newcommand{\rec}{\mathop{\text{rec}}}
+\newcommand{\comp}{\mathop{\text{comp}}}
+\newcommand{\opo}{\mathop{\text{o}}}
+%renewcommand{\or}{\mathop{\text{or}}}
+\newcommand{\underscore}{\mathop{\text{ \textunderscore\ }}}
+\newcommand{\type}{\mathop{\tt{Type}}}
+\newcommand{\elim}{\mathsf{elim}}
+\newcommand{\isEven}{\mathop{\mathsf{isEven}}}
+\newcommand{\ttop}[1]{\mathop{\mathsf{#1}}}
+\newcommand{\dash}{\text{-}}
+\newcommand{\refl}{\ttop{refl}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\bdot}{\bullet}
+
+
+
+
+| textmacros
+[macro subheading [b x]
+[macro hello x [i [b [blue Hello [var x]!]]] ]]
+
+| hide
+## Foo
+[macro hello Howard ]
+
+[large (( W o r k] $\ $ [large i n] $\ $ [large P r o g r e s s ))]
+
+
+
+# Overview
+
+
+## Sets versus Types
+
+The standard way of formulating the foundations of mathematics is via two theories,
+set theory and first order logic.  First order logic provides tools for reasoning,
+statements such as  "for all ...", "there exists ...," as well as
+a framework within which to talk about mathematical objects.  Mathematical
+objects themselves are defined in a different theory, the  set theory of Zermelo and Frankel.  With its vocabulary of [index set],
+[index element] and [index is a member of], we speak of the set of of natural numbers  $\nat = \set{0, 1, 2, \ldots}$,
+the set of rational numbers $\rationals$, the Cartesian plane, $n$-manfolds and topological spaces, etc.   It makes sense to say that $5$ is
+an element of $\nat$, written $5 \in \nat$, and it also makes sense
+to say that the square root of $2$ is not a rational number: $\sqrt 2 \not \in \rationals$.  Both statements are [index propositions],
+that is, statements that can be either true or false.  With set theory plus logic one can both
+formulate and prove theorems — [i For all natural numbers $a$ and $b$, $a + b = b + a$,
+there exist infinitely many prime numbers, the $n$-th homology
+group of the $n$-sphere is $\integers$, etc].
+
+
+Modern type theories, specifically the version due to Per Martin-Löf (MLTT)
+which is the subject of these notes, provides a different kind of foundation.
+There is but a single formal theory whose main objects are [index types] and [index terms].
+We write the fact that $a$ is a term of the type $A$ as $a : A$.  Consider, for example, the type $\nat$ of natural numbers.  Its terms
+are given by [index rules of construction]:
+
+| indent
+(1) $\zero : \nat$
+[par]
+(2) If $n : \nat$ then $\suc\, n : \nat$
+
+
+These are a type-theoretic formulation of part of the Peano axioms.
+Rule (1) asserts that $\zero$ is a term of the type $\nat$.  Applying rule (2) to this assertion, we find that $\suc \zero$ is a term of $\nat$.
+Repeated applications of rule (2) to previously derived terms
+shows that any expression of the form
+
+| equation
+\label{constructor-seq}
+(\suc \ldots (\suc\, (\suc\, \zero))\ldots )
+
+is a term of the type $\nat$.  It
+is a sequence of [index constructors], where the constructors are $\zero$ and $\suc$.
+Note that not every sequence
+of constructors is a term:  neither $\suc$ by itself nor $\zero \suc$ are
+sequences produced by application of the rules.  Indeed,
+terms of $\nat$ obey
+the formal grammar $\ttop{nat} ::= \zero | \suc \ttop{nat}$.[footnote See the appendix for more about formal grammars]
+
+While type and term seem much like set and element, they are in fact quite
+different notions.  A set is a collection of elements which exist
+independently of the collection into which they are gathered.
+As a result a number such as $2$ can be an element of more than one
+set, e.g., $\nat$ and also $\rationals$, the set of rational numbers.
+A type, on the other hand, is a structure defined by certain rules, among which are its
+rules of construction.  Terms of  $A$ are obtained by applying constructors
+according to the rules defining the type.  In the case of the natural
+numbers, the constructors are $\zero$ and $\suc$. According to the rules,
+$\zero$ is a term, and $\suc$ applied to any term is a term. Thus
+$\suc\zero$, $\suc\suc\zero$, etc. are terms, but $\suc$ and $\zero \suc$ are not. Thus not every sequence
+of constructors is a term.  Indeed,
+terms of $\nat$ obey
+the formal grammar $\ttop{nat} ::= \zero | \suc \ttop{nat}$.[footnote See the appendix for more about formal grammars]
+
+The sequence of constructors which yields a type is in essence a program, and the term $a$ is the result of running the program. By contrast, there is no necessary computational
+content to the assertion that $2 \in \nat$ or that there exist
+transcendental numbers. Moreover, in set theory statements like $2 \in \nat$ and
+$2.3 \in \nat$, $\sqrt 2 \not\in \rationals$ are [index propositions] — statements which
+make sense and for which it makes sense to ask "is it true?"  By
+contrast, the statement $2 : \nat$ is a judgement provided that
+one has created the alias $2 :\equiv \suc\; (\suc \zero)$, while
+$2.3 : \nat$ is nonsense.
+
+## Constructing Types
+
+So far we have exhibited only the type of natural numbers.  How do we go about
+defining other mathematical objects as types?  To answer this question, we must
+first answer the question of how to define new types in general. MLTT is a formal
+theory consisting of facts and rules. Facts are things that are assumed or which have
+been established from previously established facts by applying the rules.
+
+The rules have the form
+
+| equation
+\label{inference-rule-fraction}
+\ffrac{H_1\quad H_2 \quad \ldots \quad H_n}{C}{name-of-rule}
+
+The $H_i$ are the hypotheses and $C$ is the conclusion.
+Such a rule says that if the hypotheses hold, then so does the
+conclustion. Rules which have an empty hypothesis are called [index axioms].  They hold unconditionally.
+
+In MLTT, the facts — the things estabished, the things we "know" — are called "judgements." To define a type, we must give four rules:
+
+- Formation: this rule announces the new type and gives it a name.
+
+- Introduction: this rule tells us how to construct terms of the given type.
+
+- Elimination: this rule tells us how to use terms of the given type, e.g.,
+how to construct functions from it to another type.
+
+- Computation: this rule tells us what happens when we apply the preceding two rules
+one after the other.
+
+In this introduction, we will concentrate on the formation and introduction rules.
+Here is the introduction rule for the natural numbers:
+
+| equation
+\ttfrac{}{$\nat: \cU_0$}{$\nat\text{-}\ttop{formation}$}
+
+It announces the type $\nat$ and tells us that it resides in $\cU_0$, the "universe of small types."  More about universes later.  Since
+this rule has no hypotheses, it is an axiom.  Thus $\nat : \cU_0$ is a judgement.
+The introduction rules for the natural numbers are
+
+| equation
+\ttfrac{}{zero : $\nat$}{\textsf{zero-intro}}
+\qquad
+\ttfrac{$n : \nat$}{$\suc n : \nat$}{\textsf{succ-intro}}
+
+We have already seen them as informal statements.  From them we derive
+judgements such as $\suc (\suc (\suc \zero)) : \nat$.  If we define the
+alias $3 :\equiv \suc (\suc (\suc \zero))$, then we have
+established the judgement $3 : \nat$
+
+The same recipe can be used to define the type of Boolean values.  First comes
+the formation rule,
+
+| equation
+\ttfrac{}{$\bool: \cU_0$}{$\bool\text{-}\ttop{formation}$}
+
+and then come the introduction rules:
+
+| equation
+\ttfrac{}{$\true : \bool$}{\textsf{intro}${}_1$}
+\qquad
+\ttfrac{}{$\false : \bool$}{\textsf{intro}${}_2$}
+
+
+
+
+
+[ssh Function Types]
+
+In each of the examples given so far, the formation rule came with no hypotheses.
+This is not always the case.  Here is how we form the type of functions from
+a type $A$ to a type $B$:
+
+| equation
+\ffrac{A : \cU_0 \quad B : \cU_0}{A \to B : \cU_0}{$\to$formation}
+
+At this point we know nothing about the type $A \to B$ other than the fact
+that there is such a type.  To say that terms $f : A \to B$ act like functions,
+we give the elimination rule:
+
+| equation
+\ffrac{ a : A \quad f : A \to B}{f(a) : B}{$\lambda$ elimination}
+
+This is progress — we know some facts about functions in general, but we still do
+not know how to construct them.  For this we need a general way of describing how outputs in $B$ are to be computed from inputs in $A$.  This is done using the [index lambda  calculus].  Suppose that we have an expression $e$ containing a variable $x$, for example
+$x + x$.  Consider the new expression $\lambda x.e$  It defines an function by the
+rule
+
+| equation
+(\lambda x.e)a = \text{the result of substituting $a$ for $x$ in $e$}
+
+This substitution rule is called $\beta$-reduction. For example,
+
+| equation
+(\lambda x.(x + x))2 \to_\beta 2 + 2 \to_\text{arithmetic} 4
+
+
+The $\lambda$-expression $\lambda x.(x + x)$ defines the anonymous function which
+doubles its input. Now back to function types.  The introduction rule is
+
+| equation
+\frac{ x : A \vdash b : B}{(\lambda x. b) : A \to B} \quad (\text{λ-intro})
+
+The hypothesis reads "suppose that $b$ is a term of $B$ when $x$ is a term of A."
+The conclusion reads "(then) $\lambda x.b$ is a term of $A \to B$."
+
+[ssh Examples]
+
+The expression $\text{z} = \lambda x.\zero$ defines the constant function $\text{z} : \nat \to \nat$ with value $\zero$. The function $\text{inc} = \lambda x.\suc x$
+defines a function $\text{inc} : \nat \to \nat$ which in essence increments its arguement by one unit.
+
+
+
+
+## Curry-Howard Correspondence
+
+Perhaps  most important among the differences between
+types and sets is that MLTT defines an internal logic via the [index Curry-Howard Correspondence]:
+
+| indent
+Propositions correspond to types, proofs correspond to terms of types,
+and logical operators — conjunction, disjunction, implication, negation, universal and existential quantification  — correspond to formation of new types from old.
+
+To say a bit more, let $P$ be a type thought of as a proposition, and
+let $p$ be a term of type $P$ — often called a [index witness]
+or [index inhabitant].
+Such a witness, according to Curry-Howard, is a proof of $P$.
+A cartoon version of the difference between classical logic and
+the internal logic of MLTT (like any constructivist logic) is that
+the former is concened with truth, whereas the latter is concerned with
+proof.
+
+
+
+As an example, consider the classical
+principle of [index Modus Ponens]:
+
+| indent
+[i if $P$ imples $Q$ is true and $P$ is true, then $Q$ is true.]
+
+This principle can be written as
+
+| equation
+P \implies Q, P \ \vdash \ Q
+
+where $\implies$ means "implies" and where a statement of the form
+$H_1, H_2, \ldots, H_n \vdash C$ means "the conclusion
+$C$ is derivable from the hypotheses $H_i$."  Namely, if the hypotheses
+are proved, then so is the conclusion.
+
+The implication $P \implies Q$ is modeled via C-H by the function type $P \to Q$.
+We will give a formal treatment of functions later.  For the moment, all we need
+to know is that if $f : P \to Q$ and $p : P$, then there is a function value $f(p)$
+which is a term of $Q$, i.e., $f(p): Q$. As an example, the constructor $\suc$ is a
+a function from $\nat$ to $\nat$, that is, it is a term of type type $\nat \to \nat$.
+
+
+Let us assume, then,
+that the propositions $P$ and $Q$ are given as types.  To say that
+$P$ holds is to say that it has a witness $p$, i.e., that it is a term of $P$.
+To say that $P \to Q$ holds is to say that this type has a witness $f : P \to Q$.
+To say that $Q$ holds is to exhibit a witness.  But we have one: the function  value $f(p)$. Thus Modus Ponens may be formulated [emph and proved] entirely within MLTT.
+
+A corollary of its constructivist nature is that in the logic
+of MLTT, the Law of the Excluded Middle does not hold as a universal principle. Proof by contradiction and the Law of Double Negation (that $\ttop{not} \ttop{not} P$ imples $P$) are also not general principles
+of MLTT.
+
+
+[ssh The Empty and Unit Types]
+
+Let $\bot$ be the type with no introduction rules at all. Since it has no introduction rules, ithas no costructors, and therefore no terms.  This is the [index empty type].
+As a proposition, it has no witnesses and therefore cannot be proved.  In the Curry-Howard correspondence it represents falsity.  By contrast, let $\top$ be the type
+whose only introduction rule is
+
+| equation
+\ffrac{}{* : \top}{$\top$ intro}
+
+It is a type with single term; under the Curry-Howard correspondce it represents truth.
+
+The negation of a proposition $P$, writen $\neg P$,
+is the type of functions $P \to \bot$.  Suppose that both $P$ and $\neg P$ hold.
+Thus each has a witness, say $\text{p}$ and $\text{not-p}$.
+By the elimination rule for functions, $\text{not-p}(\text{p}) : \bot$.  But the empty type
+has no terms, a contradiction.   We conclude that $P$ and $\neg P$ cannot both hold. This is the classical principle of non-contradiction.
+
+| exercise (Contrapositive)
+Using MLTT, show that $P \to Q$ implies $\neg Q \to \neg P$ and vice versa.
+
+## Paradoxes, Universes and Rules
+
+
+
+
+and also for the natural numbers:
+
+
+The rules for thetype  $\nat$ provide for the construction of the
+terms, $\zero$, $\suc \zero$, $\suc (\suc \zero) \ldots$, as already
+noted less formally above.
+
+In section [ref function-types], we give the introduction rule for
+function types and also discuss two new rules, [i elimination] and
+[i computation].  To defined a new type, we must give all four rule: formation, introduction, elimination, and computation.
+
+The hierarchy of universes is [index cumulative] in the sense that if $A$ is a
+a term of $\cU_i$, then it is also a term of $\cU_j$ for $j > i$. At
+this point the smallest
+universe, $\cU_0$, the so-called [index universe of small types], has a
+"native" population of four types, and these types are inherited by the
+higher universes $\cU_n$, $n > 0$.
+
+As an example of a native type in $\cU_1$ that does not lie in $\cU_0$,
+consider a  [index family of types] $B(x): \cU_0$ where $x$ ranges over a type $A: \cU_0$.  We may view $B$ as function from from $A$ to $\cU_0$.
+Now comes the choice of the universe in which $P$
+lies.  The choice $P : \cU_0$  leads to Russell-type paradoxes. The choice
+$P : \cU_1$ does not, and this is in fact
+a rule of construction for families of types.
+
+[ssh Example] As an example, Let us suppose that $P(n)$ is the proposition
+$n(n+1)$ is even.  According to the Curry-Howard correspondence, this proposition
+is represented by a type which we also call $P(n)$.  A proof of the universally
+quantified proposition $\forall n.P(n)$ is then given by a function $p$ which assigns
+to each $n : \nat$ a witness $p(n) : P(n)$.  This function is a [index dependent
+function], that is a function in which the codomain $P(n)$ depends on the argument $n$.
+(Think of a section of a fibration if you like.)
+
+The type of dependent functions from $A$ whose values lie in a type $B$ indexed by
+$A$ is written
+
+| equation
+\Pi_{(x : A)} B(x) \qquad or \qquad (x : A) \to B(x)
+
+Thus the proposition $\forall (x : A).B(x)$ is given by such a dependent function type,
+and a profof is given by a term  $p : (x : A) \to B(x)$.
+
+
+
+
+
+
+
+
+
+
+## MLTT as a Formal Theory
+
+As a formal theory, MLTT consists of [index judgements] and [index inference
+rules]. Judgements are the "facts" known within the theory.  There
+are four kinds of judgements.
+
+| indent
+1. $\quad A : \cU_n$ asserts that $A$ is a type in the universe $\cU_n$.
+[par]
+2. $\quad a : A$ asserts that $a$ is a term of type $A$
+[par]
+3. $\quad A = B\; \type$ asserts that $A$ and $B$ are equal types
+[par]
+4. $\quad a =_A b$ asserts that $a$ and $b$ are equal terms of type $A$.
+
+
+To define a type in MLTT is to postulate the inference
+rules which govern it.  There
+are four types of inference rules — formation, introduction, elimination,
+and computation. We have seen the first two of these in the preceding discussion.  Using the introduction rules one derives the judgements
+$\zero : \nat$, $\suc \zero : \nat$, $\suc\, (\suc \zero) :\nat$, etc.
+Note the recursive (inductive) nature of the second introduction rule.
+
+
+
+
+We give the elimination rule for natural numbers in
+section [ref induction].  Also called the [index induction principle], it provides
+a way to construction functions "out of" the  natural numbers,
+i.e., functions which are terms of the type $\nat \to A$ for some other type
+$A$.  The induction principle, which reflects the
+inductive nature of the introduction rules, is our primaary means for proving propositions about the natural numbers. It is a type-theoretic formulation of the principle of mathematical induction. Bla
+
+
+
+
+
+
+
+
+## Derivations
+
+A [index derivation] of a term $a : A$ is a record of applying
+inference rules to some initial set of judgements.  This record
+has the form of a tree with the judgement $a : A$ as root and the
+initial set of judgements as leaves:  The nodes are judgements
+and the edges are inference rules. The figure below is a derivation of $E$.
+
+| image width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/82b8dec7-fb47-48d9-3e9f-3627b4d3b600/public
+
+Terms in a type theory are the same things as roots of dervation trees. With our limited set of initial judgements and inference rules,
+the derivation trees that we can produce at this moment are
+also quite limited; they have the straight-line look
+pictured below.. The rule applied to derive a node from its parent
+written in red ink, while the nodes, representing derived terms, are
+written in black.
+
+| image width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/0bdc8400-bdb6-4731-0097-3ee4ab6ab300/public
+
+You could also picture the derivation this way:
+
+| image width:300
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/9b67d1c6-47be-44e9-6db6-ed7048a07c00/public
+
+In any case, it is easy to see that all derivation trees generated
+by constructors look like these: the top non-empty node is $\zero$
+and the nodes have the form
+
+| equation
+\suc\; (\suc\; \ldots (\suc\; \zero) \ldots )
+
+For a more interesting derivation tree, introduce these rules
+of inference:
+
+| aligned label:+-rules
+m : \nat \quad n : \nat &\vdash m + n : \nat
+\zero : \nat \quad n : \nat &\vdash \zero\; + \;n : \nat
+(\suc m ) + n : \nat&  \vdash \suc\, (m + n ): \nat
+
+The first of the preceding rules is the formation rule for
+the addition operator.  The second is an introduction rule for addition, and the last is a computation rule.
+The "fractional notation" [eqref inference-rule-fraction] is equivalent to the more compact "turnstile notation" $H_1\ H_2\ \ldots\ H_n \vdash  C$.
+Below is the derivation tree for $\suc\; (\suc\, \zero) + \suc\; (\suc\, \zero)$.
+
+
+| image
+https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ea9596e8-e556-4216-fe6d-9bce248a3c00/public
+
+ We can use the judgement
+$\suc\; (\suc\, \zero) + \suc\; (\suc\, \zero) : \nat$ as the
+starting point for another derivation where we apply
+the rules of [eqref +-rules]:
+
+| aligned label:derivation-2
+& \suc\; (\suc\, \zero) + \suc\; (\suc\, \zero) : \nat
+\vdash\; & \suc\; (\suc\, \zero + \suc\; (\suc\, \zero)) : \nat
+\vdash\; & \suc\; (\suc\; (\zero + \suc\; (\suc\, \zero))) : \nat
+\vdash\; & \suc\; (\suc\; (\suc\; (\suc\, \zero))) : \nat
+
+
+## Normal Forms
+
+Suppose given terms $t , t' : A$ where $t'$  is obtained
+from $t$ by applying one of the rules of type $A$. We say that $t$ [index reduces] to
+$t'$  in one step, and we write $t \to t'$.  A [index reduction sequence] is a sequence of one-step reductions $t_1 \to t_2 \to \cdots \to t_n$.  In this case, we write $t_1 \to^* t_n$.
+A term which cannot be reduced
+is said to be in [index normal form]. The last term in [eqref derivation-2] is in normal form.
+
+
+
+We can introduce the "aliases" $0 :\equiv \zero$, $1 :\equiv \suc\,
+\zero$, etc. so as to be able to use conventional notation.
+The derivation  [ref derivation-2] then reads as $2 + 2 \to^* 4$, with
+ $4$ an alias of the rnormal form of $2 + 2$.
+
+Let [index definitional equivalence] be the  smallest equivalence relation generated by "reduces to." One can construct it like this.
+Say that $a \sim b$ if there is an $x$ such that $x \to^* a$ and
+$x \to^* b$.  Then $a$ and $b$ are definitionally equivalent if
+and only if there is a sequence like
+
+| equation
+a \sim x_1 \sim \cdots \sim x_n \sim b
+
+In this case we say that $a \equiv b$. If we extend definitional
+equivalence to include aliasing, then [ref derivation-2] yields
+$2 + 2 \equiv 4$.
+
+
+## Notions of Equality
+
+In the last section we introduced the notion of definitional equality.  It is a purely
+syntactical notion, and determining equality is [index decidable]: there is a program
+that can be run to determine whether $a \equiv b$ or $a \not\equiv b$, assuming
+that $a$ and $b$ are terms of a common type $A$.  Definitional equality is not,
+however,strong enough to meet the needs of the mathematician.  It is the case for
+example that for all $n : \nat$, $0 + n \equiv n$.  However, the definitional
+equality $n + 0 \equiv n$ for all $n$ does not hold.  For this reason Martin-Löf introduced the notion of [index propositional equality].  Let $a, b$ terms of
+a type $A: \cU_n$.  Then we postulate a new type $a =_A b : \cU_n$ caled the [index identity type]. This is a
+[index dependent type] in that (unlike $\nat$) its definition depends on terms
+of another type.  We may, if we like, view it is a family of types, that is,
+as a function which takes terms $a, b : A$ as inputs and produces as output
+the type $a =_A b$.  If $A \times A$ is the type of pairs $(a,b)$ of terms in
+$A$, then this family is a function of type $A\times A  \to \cU_n$. It lies (XX)
+in the universe $\cU_{n+1}$ but not in the lower universe $\cU_n$.
+
+The type family $a =_A b$ has as family of constructors $\refl_a : a =_A a$.
+Here "$\refl$" stands for "reflexivity," a notion descending from Aristotle's Law of
+Identity: “Each thing is the same as itself.” The identity type $a =_A b$ is [index inhabited], i.e., has a term if and only if $a$ and $b$ are the same.  This principle
+seems so weak that it is hard to imagine that we can prove anything with it.
+However, and just for starters, when combined with the induction principle for $\nat$,
+it is sufficient to prove many identities by a type-theoretic counterpart to the
+usual proof by induction.   We discuss the induction principle below (XX) and will
+use it to prove some elementary properties of the natural numbers.
+
+
+## Strong Normalization, Termination, and Confluence
+
+
+
+A formal system is [index strongly normalizing] if there are
+no infinite reduction sequences.  Such a system is also
+called [index terminating]. In a strongly normalizing system,
+every term reduces to a normal form in finitely many steps.
+
+
+MLTT is a strongly normalizing (terminating) formal system. By contrast,
+the lambda calculus, which we discuss in the next section, is not strongly normalizing: there is  a term $\Psi$ such that
+
+| equation label:lambda-non-terminating
+\Psi\Psi \to \Psi\Psi \to \Psi\Psi \to  \ldots
+
+
+In MLTT, a term such as $\suc\, \zero$ which consists entirely
+of constructors, is in normal form.  Compare this with the term
+$2 + 2$, which written out reads $\suc\; (\suc\, \zero) + \suc\; (\suc\, \zero)$.
+It is not in normal form because is reduces to $4$, otherwise
+known as $\suc\; (\suc\; + (\suc\; (\suc\, \zero)))$.
+
+A [index computation] in MLTT  is a reduction sequence $t \to^* t'$
+where $t'$ is in normal form.  Example:  $2 + 2 \to^* 4$.
+We call $t$ the input of the computation and $t'$ the output,
+and we say that $t$ computes to $t'$.
+Because MLTT is strongly normalizing, every term in MLTT
+computes to a normal form.  Implicit in this statement
+is that normal form is reached in finitely many steps.
+
+
+
+ Suppose that that a term $t$ has two different
+reductions, $t \to^* u_1$ and $t \to^* u_2$.  We say that a formal
+system is [index confluent] if there always exists a term $v$ such
+that $u_1 \to^* v$ and $u_2 \to^* v$.
+[i In confluent systems, normal forms are unique.] Both MLTT and the lambda calculus (to be discussed later) are confluent.
+Because MLTT is both strongly normalizing and confluent, all computations
+produce an output in finitely many steps, and this output is unique.
+Because MLTT is confluent, the relations $\sim$ and $\equiv$ are the same.
+
+[smallsubheading Example: non-terminating programs]
+
+The reduction sequence [eqref lambda-non-terminating] is
+an example of a non-terminating program in the lambda calculus.
+Toor another example, consider the rule
+
+| indent
+If $k$ is even, then $f(k) = k/2$, otherwise $f(k) = 3k + 1$.
+
+By repeatedly applying $f$ to a given integer greater than one, one produces
+a list of integers $\ttop{collatz}(n) = [n, f(n), f(f(n)), \ldots]$, e.g.
+$\ttop{collatz}(6) = [6,3,10,5,16,8,4,2,1]$.  One can compute such
+sequences using the Haskell program listed below.  With it
+one has
+
+| code
+runhakskell collatz.js 13
+[13,40,20,10,5,16,8,4,2,1]
+
+
+| code
+  -- file: collatz.hs
+  import Numeric.Natural
+  import System.Environment (getArgs)
+
+  collatz :: Natural -> [Natural]
+  collatz 1 = [1]
+  collatz n
+      | even n    = n : collatz (n `div` 2)
+      | otherwise = n : collatz (3 * n + 1)
+
+  main :: IO ()
+  main = do
+      args <- getArgs
+      case args o
+          [input] -> print $ collatz (read input :: Natural)
+          _ -> putStrLn "Usage: runhaskell collatz.hs <number>"
+
+It is conjectured that computation of the sequence
+$\ttop{collatz}(n)$ terminates for all $n \in \nat$, but there
+is no proof of this statement.  Termination of  `collatz.hs`
+depends on the conjecture.
+
+
+
+
+## MLTT as a Programming Language
+
+Coming slowly into focus is the fact that MLTT is a programming language,
+albeit, of an abstract, paper-and-pencil form.  Computation in this
+language is reduction of terms to normal forms, as explained above.
+Because MLTT is terminating and confluent, such computations produce
+a well-defined result in finitely many steps. As a result MLTT is not
+Turing-complete and so cannot express programns like `collatz.hs`.
+
+
+
+
+
+
+MLTT has been implemented by the programming language [link Agda https://agda.readthedocs.io/en/latest/getting-started/what-is-agda.html].
+It can be downloaded and installed on your computer, and
+with it you can define types and terms, evaluate
+terms, and check whether proofs are correct.
+Below are some smal snippets of Agda code.
+First, we define the
+beginning with the type of natural numbers
+
+| code
+data ℕ : Set where
+       zero : ℕ
+       suc  : ℕ → ℕ
+
+The first line in the code above is the formation
+rule for the natural numbers, while the second an third lines,
+with the constructors $\zero$ and $\suc$, are the introduction rules.
+The word `Set` is Agda's way of saying `Type`.
+Add the line
+
+| code
+{-# BUILTIN NATURAL ℕ #-}
+
+
+to establish aliases $0 :\equiv \zero$, $1 :\equiv \suc \zero$, etc.
+Then you can normalize an expression like $\suc\, (\suc 5)$ to obtain
+$7$. To define addition, write this code:
+
+| code
+_+_ : ℕ → (ℕ → ℕ)
+zero + n = n
+(suc m) + n = suc(m + n)
+
+The underscores tell where to put the arguments when `+` is
+used as an operatoar. You can evaluate `_+_ 2 2` (function form) to obtain 4.
+Alternatively, evaluate `2 + 2` (operator form).
+
+When one tries to run ([index type-check]) Agda on a function definition,
+Agda attempts to verify  that the function
+is terminating.  If it cannot verify it, type-checking fails.
+All functios in a valid Agda programs consist are termnating. The
+$\ttop{collatz}$ code written above cannot be translated into valid
+Agda code.  If someone were to prove the Collatz conjecture, however, that proof could be translated into valid Agda code.
+
+
+
+# Function Types
+
+In the preceding section we learned how to define the type of booleans and the type of natural numbers.  Missing, however, is any way to
+use the terms constructed for these types.  We "use" a type $A$
+by constructing functions from $A$ to some other type $B$.  Or, as
+they say, by constructing functions "out of" $A$.  Since the objects
+of MLTT are types and terms, we begin by defining function types,
+then establishing rules to construct terms of these types.  Suppose given types $A$ and $B$. Functions from
+$A$ to $B$ form a new type $A \to B$.
+It existence is justified by its formation rule:
+
+
+| equation
+\ttfrac{A Type $\quad$ B Type}{$A \to B$ Type}{$\to$formation}
+
+
+Functions are endowed with a notion of evaluation on arguments.
+This is the [index elimination rule]:
+
+| equation
+\ttfrac{$x : A \quad f : A \to  B$}{f(x) : B}{$\to$ elimination}
+
+We often follow the common practice in functional programming, writing
+$f\ x$ instead of $f(x)$ for application of a function to its argument.
+
+## Functions of Several Variables
+
+Given types $A, B$ and $C$, the formation rule for functions
+yields the types $B \to C$
+and then $A \to (B \to C)$. Consider terms $f:A \to (B \to C)$ and $a : A$. By the elimination rule for functions, $f\; a$ has type $B \to C$.
+Thus $f$ is a function whose values are functions.  If $b$ is a term of $B$,
+we may form $(f\; a)\; b: C$.  Adopting the convention that
+type formation of functions associates to the right and function evaluation
+associates to the left, we may write these facts as
+
+| aligned
+&f : A \to B \to C
+&f \;a\;  b : C
+
+Bellow we will show how to define a function
+
+| equation
+\ttop{add}: \nat \to \nat \to \nat
+
+such that $\ttop{add}\; m\; n = m + n$.  Then $f = \ttop{add} 1$ will be
+the function which adds 1 to its argument.
+
+## Lambda Calculus
+
+So far so good.  We know how to form function types and we
+know that functions are endowed with a notion of evaluation
+that agrees with the usual conventions about domain and codomain.
+However, we do not yet know how to construct functions. We do this using the [index lambda calculus]. Its syntax is defined
+by three rules:
+
+| indent
+   [b Variables:] A variable  x  is a term.
+   [par]
+   [b Abstraction:] If  M  is a term and  x  is a variable, then  $\lambda x . M$  is a term.
+   [par]
+  [b Application:] If  M  and  N  are terms, then  M N  is also a term.
+
+
+
+
+
+The semantics of the lambda calculus is defined by rules that
+rewrite or reduce a $\lambda$-term.  The most important of
+these is beta-reduction.  It governs the way in which function application substitutes
+an argument for a parameter. Consider
+the expression $(\lambda x . x + 1)\, 5$.  It consists of a lambda abstraction $(\lambda x . x + 1)$ applied to the term $5$. The argument is $5$ and the parameter is $x$. Beta-reduction yields the expression  5 + 1.
+Formally  $(\lambda x . M) N \to_\beta M[x / N]$, where  $M[x /N]$  means “substitute   $N$  for $x$ in  $M$ .” An expression of the form $(\lambda x . M) N$ is called a [index redex] ("reducible expression").
+Here is a slightly more complicated example:
+
+| aligned
+\label{beta-red-1}
+(\lambda x.(\lambda y.(x + 2*y) 5)) 3 &\to_\beta \lambda y.(3 + 2y) 5
+  &\to_\beta 3 + 2*5
+  &\to 3 + 10
+  &\to 13
+
+
+The last two reductions are not $\beta$-reductions.  They are reductions
+in our usual system of arithmetic.
+
+It is understood that abstraction associates to the right, so that `λx. λy. λz. M` is interpreted as `λx. (λy. (λz. M))`.  On the other hand, the
+convention is that function application associates to the left,
+so that `f x y z` is interpreted as `((f x) y) z`.  Consequently
+we can write `λx.λy.(x + 2*y)5 3` with the understanding that
+it is interpreted as `(λx.(λy.(x + 2*y)5))3`.
+
+The expression in [eqref beta-red-1] can be reduced in another way,
+as indicated below.  Instead of operating on the "outer" redex
+$\lambda x.M\, 3$, where $M = \lambda y.(x + 2*y) 5$, we operate
+on the "innner" redex $\lambda y.(x + 2*y)\, 5$:
+
+| aligned
+(\lambda x.(\lambda y.(x + 2*y) 5)) 3 &\to_\beta (\lambda x.(x + 2*5))3
+  &\to_\beta 3 + 2*5
+  &\to 3 + 10
+  &\to 13
+
+ Note that the redex $\lambda y.(x + 2*y)\, 5$ contains the [index free] variable $x$.  The varaible $y$ is [index bound] via the abstraction $\lambda y$.
+
+
+| remark ( Normal Form in the Lambda Calculus)
+In the examples above, successive $\beta$-reductions lead to the term
+$3 + 2 * 5$.  That term cannot be further $\beta$-reduced, and so it is in [b [index normal form]].  According to
+the Church-Rosser theorem, beta reduction the lambda calclus is
+[b [index confluent]]: reduction to normal forms does not dependent
+on the reduction sequence.  There
+are, however, terms with no normal form, as shown in the problem below.
+
+
+| problem
+1. Compute the normal forms of (a) $\lambda x.x \,7$;
+(b) $\lambda x.\lambda y. (x\, y)\,1\, 2\ $,
+(c) $(\lambda x.\lambda y. (y\, x)1\, 2\ $,
+[par]
+2. Compute the first few terms of the reduction sequence of  $\Psi\Psi$,
+where  $\Psi = \lambda x. x\, x$.
+[par]
+3. Compute the first few terms of the reduction sequence of  $\Omega\Omega$, where $\Omega = \lambda x.x\, x\, x$.
+
+## Introduction Rule for Functions
+
+
+The introduction rule for functions is formulated in the
+language of the lambda-calculus. It tells us how to construct
+functions of type $A \to B$:
+
+| equation
+\ttfrac{$x : A \vdash e: B$}{$\lambda x.e : A \to B$}{$\to$intro}
+
+We read this as  [i "Suppose that $e$ is a term of $B$ in a context in which $x$ is a term of A. Then the lambda abstraction $\lambda x.e$ is a term of the type $A \to B$."]
+
+There is one more rule, the [index computation] rule.  It is essentially the introduction rule followed by the elimination rule:
+
+
+| equation
+\ttfrac{$(\lambda x.e): A \to B \quad a : A$}{$e[x/a]: B$}{$\to$comp}
+
+
+
+
+## Examples
+
+Consider the function $\ttop{id}_A : A \to A$ introduced by
+
+| equation
+\ttop{id}_A = \frac{x : A \vdash x : A}{\lambda x.x}
+
+
+Then $(\lambda x.x)a \to_\beta a$, so $\ttop{id}_A$ is the identity function on $A$.
+
+As a second example, consider the classical
+principle of [index Modus Ponens]: [i if $P$ imples $Q$ is true and $P$ is true, then $Q$ is true.] According to the Curry-Howard correspondence, the
+propositions $P$ and $Q$ are represented by types and the
+implication $P \implies Q$ is represented by the function type $P \to Q$.
+To say that $P \to Q$ holds is to say that it has a witness $f$, and to
+say that $P$ holds is to say that it has a witness $p$.  Given this,
+we may evaluate $f$ on $p$ to form $f\; p: Q$, yielding a witness of $Q$.
+Thus Modus Ponens may be formulated [emph and proved] entirely within MLTT.
+Let's go a step further.  Write
+
+| aligned
+&\ttop{modusPonens} : (P \to Q) \to P \to Q
+&\ttop{modusPonens} f\; p = f\; p
+
+On the left-hand side above, $f$ and $p$ are the arguments of
+the function $\ttop{modusPonens}$.  On the right-hand side they form the expression $f\; p$: evaluation of $f$ on its argument $p$.  We can write
+this function as a lambda term:
+
+| equation
+\ttop{modusPonens} = \lambda f.\lambda p.f\,p
+
+The introduction rule for
+$f : (P \to Q) \to (P \to Q)$ reads
+
+| equation label:modus-ponens-intro
+\frac{f : P \to Q \vdash \lambda p.f\,p : P \to Q}{\lambda f.\lambda p.f\,p: (P \to Q) \to (P \to Q)}
+
+However,
+
+| equation
+(P \to Q) \to (P \to Q) = (P \to Q) \to P \to Q,
+
+so [eqref modus-ponens-intro] is the introduction rule for $\ttop{modusPonens}$.
+
+
+[par]
+
+| problem Chaining of Implications
+Consider the classical logical principle [i "If $A$ implies $B$ and $B$ implies $C$, then $A$ implies $C$."] Show that this principle holds
+in the logical system of MLTT.
+
+[vspace 10]
+
+## Pattern matching
+
+Above we saw how to define functions using the introduction rule for function
+types.  Functions can also be defined by [index pattern matching].  The
+general form is a below.  The $p_i$, $q_i$, etc are [index patterns] and
+the $e_i$ are expressions of type $B$. To evaluate the function on arguments
+$x_1, x_2, \ldots$, find the first match to a sequence of patterns
+and then return the corresponding expression with the arguments
+substituted in the approprate slots XX.
+
+| aligned
+&f : A_ 1 \to  A_2 \to \ldots \to B
+&f\; p_1\; p_2\; \dots = e_1
+&f\; q_1\; q_2\; \dots = e_2
+&f\; r_1\; r_2\; \dots = e_3
+& \ldots
+
+Let's see how pattern matching works in the case of Booleans and in the case
+of natural numbers. The Boolean type is given by the rules
+
+| equation
+&\ffrac{}{\bool \type}{$\bool$\text{-}formation} \\
+&\ffrac{}{\true : \bool}{$\bool$\text{-}intro${}_1$} \\
+&\ffrac{}{\false : \bool}{$\bool$\text{-}intro${}_2$}
+
+Consider the Boolean
+function $\ttop{not}: \bool \to \bool$ which negates its argument.
+It is defined by the equations:
+
+| aligned
+&\ttop{not} : \bool \to \bool
+&\ttop{not}\; \true = \false
+&\ttop{not}\; \false = \true
+
+In this case pattern matching is a simple enumeration of cases.  Consider next
+the Boolean function $\ttop{and}$, which returns the conjunction of
+its arguments.  It can also be deined by exhaustive case analysis
+
+| aligned
+&\ttop{and} : \bool \to \bool \to \bool
+&\ttop{and}\; \true \true = \true
+&\ttop{and}\; \true \false = \false
+&\ttop{and}\; \false \true = \false
+&\ttop{and}\; \true \true = \false
+
+But we can do better:
+
+| aligned
+&\ttop{and} : \bool \to \bool \to \bool
+&\ttop{and}\; \true b = b
+&\mathsf{and}\ \mathsf{false }\ \_ \  = \mathsf{false}
+
+Here the "wildcard" symbol $\_$ matches anything.
+
+Consider next functions of the natural numbers.  A function which doubles
+its argument is defined by
+
+| aligned label:double-def
+& \ttop{double} : \nat \to \nat
+& \ttop{double} \zero = \zero
+& \ttop{double} (\suc n) =  \suc\, ( \suc\, (\ttop{double}\, n))
+
+Definitions like this consist of a [index base case] and a
+[index recursive step]. The recursive step
+defines $\ttop{double}$ in terms of itself.  While such a definition
+appears to be circular, it is because the function on
+on the right-hand side is applied to smaller terms than on the left.
+Here, as a measure of size of the argument we can take the number of constructors.  Repeated applications of the recursive step decreases
+the size of the argument and eventually reaches the base step, at which the recursion terminates.
+
+The function $\ttop{add}: \nat \to \nat \to \nat $ which adds its
+arguments can be defined in the same way:
+
+
+| aligned
+& \ttop{add}: \nat \to \nat \to \nat
+& \ttop{add}\; \zero\; n = n
+& \ttop{add}\; (\suc m)\; n = \suc\; (\ttop{add}\; m\; n)
+
+## Freeness
+
+The general principle for defining a function $f$ out of a type $A$
+via pattern-matching is that it suffices to define $f$ on
+the constructors.  This is analogous to the following
+statemnet in group theory.  Let $F$ be a free group with generators $a_i$ for
+$i \in I$ where $I$ is some index set, e.g., $\set{1, 2, \ldots, n}$
+or $\nat$.  Let $G$ be any group, and let $b_i$ be elements of $G$ for
+$i \in I$.  Then there is a unique homomorphism $\phi : F \to G$
+such that $\phi(a_i) = b_i$ for all $i \in I$.  By analogy, we
+say that $\bool$ is freely generated by $\true$ and $\false$,
+and that $\nat$ is freely generated by $\zero$ and $\suc$.
+To summarize, for inductively defined types, the elimination rule expresses the fact that the type is [index freely generated] by its constructors, meaning any function out of the type is uniquely determined by its action on those constructors.
+
+
+
+
+
+| exercise
+Compute $\ttop{add}\; (\suc\; \zero)\; (\suc\; \zero)$.
+
+| exercise
+Define aliases $0 :\equiv \zero$, $1 :\equiv succ\, 0$,
+$2 :\equiv \suc 1$, and so on.
+Then compute $2 + 2$ according to the rules of construction introduced thus far.
+
+| exercise
+Define a function $\ttop{positive} : \nat \to \bool$  such that $\ttop{positive} 0 = \true$ and $\ttop{positive} n = \false$ for
+all other $n$.
+
+| exercise
+Define a function $\ttop{equalN} : \nat \to \nat \to \bool$
+so that $\ttop{equalN}\, n\; n = \true$ for all $n : \nat$
+and such a that $\ttop{equalN}\, m\; n = \false$ in all
+other cases.
+
+| exercise
+Define a function $\ttop{greaterThan} : \nat \to \nat \to \bool$
+so that $\ttop{greaterThan}\, m\; n = \true$ if and only if $m > n$.
+
+
+
+
+
+
+## Agda
+
+Coming slowly into focus is the fact that MLTT is a programming language,
+albeit, of an abstract, paper-and-pencil form where computation is application of functions to arguments.  According to our discussion in XX,
+any such computation — a reduction of terms to normal form — terminates in a finite number of steps.  Such languages are called [index total]: unlike
+most computer languages in use, they are not Turing-complete
+
+
+
+
+Let us look at some of what we have done through the lens of Agda:
+Types are defined by a`data` statement which announces the name
+of the type and lists the constructors, thus incorporating both the
+formationand introduction rules.
+
+| code
+data Bool : Set where
+    true  : Bool
+    false : Bool
+
+| code
+data ℕ : Set where
+     zero : ℕ
+     suc  : ℕ → ℕ
+
+The word `Set` is Agda's way of writing the the so-called [index universe
+of small types].  More on universes below. Note the mandatory (and also meaningful) indentation.  Function definitions are given by
+pattern-matching and are word-for-word transcriptions of what we
+have seen above:
+
+| code
+add : ℕ → ℕ → ℕ
+add zero y = y
+add (suc x) y = suc (add x y)
+
+
+Let's also consider the function $\ttop{id} : \cU_0 \to A \to A$
+defined in [eqref id-universe-1]
+
+| code
+id : (A : Set₀) → A → A
+id x = x
+
+| code
+id : {A : Set₀} → A → A
+id x = x
+
+
+
+## Operators
+
+A [index binary operator] is just function where one argument appears
+before the function, the other after: instead of writing
+$\ttop{add}\, a\; b$, we write $a + b$.  Binary operators can also be used as ordinary function, e.g., as
+$(+)\; a\; b = a + b$
+
+
+
+This structure for function definitions also works
+for binary operators:
+
+| code
+_+_ : ℕ → ℕ → ℕ
+zero + y = y
+(suc x) + y = suc (x + y)
+
+Here $\_+\_$ is the name of a function which adds its arguments:
+one can say $\_+\_ \; 2\; 3$.
+The underscores indicate where the arguments are to go if we use $+$
+as an operator: one argument before, one after.  Thus we can also
+say $2 + 3$.
+
+[smallsubheading Problems]
+
+Use pattern-matching for the problems below, relying on case analysis
+and recursion.  Try writing out the definitions with pencil
+and paper, then check what you have done with Agda.
+
+. Define and test a function $\ttop{or} : \bool \to \bool \to \bool$
+that implements logical 'or'.
+
+. Define the logical operators $\land$ and $\lor$.
+
+. Define a function $\ttop{half} : \nat \to \nat$ that maps $n$ to the
+least integer in $n/2$
+
+## Notes
+
+[smallsubheading Vocabulary]
+There is considerable variation in the technical vocabulary of type theory.  For "term, "the synonyms "element," "inhabitant," and "witness" are common.
+They depend on author and context.
+
+# Recursion
+
+In the last section we learned how to define functions  $f : \nat \to A$
+"out of" the natural numbers using pattern matching.  There is a
+a related "recursion principle" for defining such functions which
+by construction guarantees termination. To describe it, consider
+once again the function $\ttop{double}$ defined in  [eqref double-def]:
+
+| aligned label:double-def
+& \ttop{double} : \nat \to \nat
+& \ttop{double} \zero = \zero
+& \ttop{double} (\suc n) =  \suc\, ( \suc\, (\ttop{double}\, n))
+
+This definition is an instance of a general pattern for defining
+functions out of the natural numbers to another type $A$:
+
+| aligned lable:f-rec
+& f : \nat \to  A
+& f\, \zero = \ttop{base}
+& f\, (\suc n) = \ttop{step}\, (f\, n))
+
+where $\ttop{step} : A \to A$.  In this case, $\ttop{step} = \suc \circ \suc$, where $\circ$ is function composition.
+We can define a slighty larger class of  functions by expanding
+this scheme so that $\ttop{step}$ takes an argument $n : \nat$ as
+well as $A \to A$:
+
+| aligned label:f-rec
+& f : \nat \to  A
+& f\, \zero = \ttop{base}
+& f\, (\suc n) = \ttop{step}\, n\, (f\, n))
+
+where $\ttop{base}: A$ and $\ttop{step}: \nat \to A \to A$.  The terms $\ttop{base}$
+and $\ttop{step}$ completely determine the function $f$. Consequently there is a function, the [index recursor], which takes $\ttop{base}$
+and $\ttop{step}$ and base as inputs and produces $f$ as output. That is,
+we have
+
+| equation
+\ttop{rec}_\nat : A \to (\nat \to A \to A) \to (\nat \to A)
+
+The value
+
+| equation
+f = \ttop{rec}_\nat\, \ttop{base}\, \ttop{step}
+
+is a function $f : \nat \to A$ satisfyng
+
+| aligned
+& f\, \zero = \ttop{base}
+& f\,(\suc n) = \ttop{step}\, n\, (f\, n)
+
+The function $f$ is the  [i unique] function satifying these last two
+properties.
+
+## The function $\ttop{add}$
+
+The function $\ttop{add}$ fits into the recursion scheme just defined.
+It suffices to take $A$ to be the function type $\nat \to \nat$ where
+$\ttop{base} = \ttop{id}$ is the identity function on $\nat$ and
+
+| equation
+\ttop{step} = \lambda m\lambda g.\lambda n.(\suc(g(m)))
+
+The latter requires a few words of explanation.  Recall
+the definition of $\ttop{add}$:
+
+
+| aligned label:add-rules
+(i)\quad & \add 0\ n= n
+(ii)\quad & \add \suc(m)\  n = \suc (\add m\ n)
+
+
+Writing $f = \ttop{add} m$, these equations have the form
+
+| aligned label:add-rules
+(i)\quad & f\, 0\, n = n \\
+(ii)\quad & f\, (\suc\, m)\, n = \ttop{next}\, (f\, m)\, n
+
+
+In the case at hand,  ($f\, 0) : \nat \to \nat$ is the identity function \(m \mapsto m \), and so $\ttop{base} = \lambda n.n$. Since the function $\ttop{step}$ is
+given by $\ttop{step}\, (f\,m)\, n = \suc(f\, m)\, n$, we can rewrite the preceding as
+
+
+| aligned lael:add-rules2
+(i)\quad & f\, 0 = \lambda n.n \\
+(ii)\quad & f (\suc\, m) = \lambda n.\ttop{step}\, (f\, m).n
+
+Because
+
+| equation
+f(\suc\, m) &= \lambda (\suc\, (f\, m)\,  n
+           &= \lambda g.\lambda (n.\suc\,(g\, m)).n\,f
+           &= \lambda m.\lambda g.\lambda (n.\suc\, (g\, m)).n\,f\,m
+
+
+the next-step function can be written as
+
+| equation
+\ttop{step} = \lambda m\lambda g.\lambda n.(\suc(g\, m))
+
+
+
+## Kinds of Recursion
+
+There are several schemes for implementing recursion in such a
+way that termination is guaranteed.  We discuss two of these —
+primitive recursion and structural recursion.
+
+### Primitive Recursion
+
+Functions defined via the recursor $\ttop{rec}_\nat$ are said to be [index primitive recursion].  In this recursion scheme, the argument
+on which recursion takes place must be exactly one constructor smaller in each recursive call.  The functiond $\ttop{double}$ and $\ttop{add}$
+are primitive recursive.  For another example, consider the function $\ttop{natEq}$, which compares two natural numbers
+for equality.  Induction is on both first and second arguments. The  decrease-by-one-constructor condition holds holds in each case.  Functions
+defined by primitive recursion are g
+
+
+
+| code
+natEq : ℕ → ℕ → ℕ
+natEq zero    zero    = true
+natEq zero    (suc m) = false
+natEq (suc n) zero    = false
+natEq (suc n) (suc m) = natEq n m
+
+
+
+### Structural Recursion
+
+Structural recursion means that we require recursive calls to be on a (strict) subexpression of the argument. This is more general than
+primitive recursion. The first example is the function $\ttop{fib}$,
+which computes  Fibonacci numbers:
+
+| code
+fib : ℕ → ℕ
+fib zero          = zero
+fib (suc zero)    = suc zero
+fib (suc (suc n)) = plus (fib n) (fib (suc n))
+
+In structural recursion, arguments may decrease in a lexicographic order. This can be thought of as nested primitive recursion.  See
+the code below for the Ackerman function.
+
+| code
+ack : ℕ → ℕ → ℕ
+ack zero    m       = suc m
+ack (suc n) zero    = ack n (suc zero)
+ack (suc n) (suc m) = ack n (ack (suc n) m)
+
+The first argument of $\ttop{ack}$ either decreases or it stays the same and the second argument decreases. This is the same as a lexicographic ordering.
+The Ackerman function grows very rapidly in value; for example, $\ttop{ack} ⁡ ( 4 , 2 )$ is $2^{65536}-3$, an integer with 19,729 decimal digits. (See [link Wikipedia https://en.wikipedia.org/wiki/Ackermann_function].)
+
+The reference for this and the previous section is the [link termination checking section of the Agda docs https://agda.readthedocs.io/en/v2.6.0.1/language/termination-checking.html#termination-checking].
+
+
+## Example: Lists
+
+As a further example of the recursion principle in action, let's
+look at the type of lists over a base type $A$.  Here is the type definition:
+
+| code
+  open import Data.Nat -- used for List ℕ
+
+  data List A : Set where
+      nil : List A
+      cons : A → List A → List A
+
+As an example, the list we would write in most languages as $[1,2,3]$
+is written in Agda as `cons 1 (cons 2 (cons 3 nil)`.  The constructor
+`nil` builds the empty list (`[ ]` in many languages), while `cons 7 list`
+constructs a new list  from `list` whose first element is `7`. The
+recursor is defined by
+
+| code
+  listRec : {A B : Set} → B → (A → B → B) → List A → B
+  listRec base step nil        = base
+  listRec base step (cons a l) = step a (listRec base step l)
+
+The types of first two argumens, `A` and `B` are inferred fromm the
+remaining arguments and so do not have to ge stated in function calls,
+as in the definition of below of a function which adds its two arguments.
+
+
+| code
+  sumList : List ℕ → ℕ
+  sumList = listRec 0 (λ a r → a + r)
+
+The anonymous function `λ a r → a + r`.  Finally, we do a
+computation with `sumList`:
+
+| code
+  exampleSum : ℕ
+  exampleSum = sumList exampleList  -- Result: 6
+
+
+# Induction
+
+In the last section we described the notion of recursion principle,
+which gives a uniform method for defining functions out of a given
+type $A$.  There is a still more general method, the so-called [index
+induction principle].  It has the same for as the recursion principle, except
+that it applies to type families instead of to functions.  In the
+case of the natural numbers, this principle reduces to the familiar
+notion of mathematical induction.
+
+Properly stating the induction rules requires
+some preparotory work: the notions of universe, type family, and dependent function. We do this, then develop the induction principle for the
+natural numbers.  With it can construct proofs of propositions
+about the natural numbers.  A proposition $P(n)$, where $n : \nat$, is a type, and so $P$ itself is a family of types. It can be viewed
+as a function $P : A  \to \cU$ for some uniiverse of types.
+Then $P: A \to \cU$ stands in relation
+to the induction principle for $\nat$ in precisely the same way that
+a function $\nat \to B$ stand to the recursion principle.
+
+The induction principle is the same thing as the elimination rule for
+a type.  With it in hand, we can formulate the computation rule,
+completing the four-rule package (formation, introduction, elimination, and computation) needed to define and use a new type.  Definition
+of functions and type families by pattern-matching
+is a consequence of definition by elimination and is provided
+as a useful convenience in languages such as Agda.
+
+
+
+## Universes
+
+A [index universe] is a type whose terms
+are themselves types.  To define universes in a way that avoids
+contradictions analagous to Russell's paradox, MLTT postulates a series of primitive constants, the universes
+$\cU_0,\; \cU_1,\; \cU_2,\; \ldots$ which
+ obey the rules
+
+| indent
+1. $\cU_m : \cU_n$ for $m < n$
+[par]
+2. If $A : \cU_m$ then $A : \cU_n$ for $m < n$.
+
+Each universe $\cU_i$ is a type in the "next" universe $\cU_{i+1}$.
+The least universe $\cU_0$ is called the [index universe of small types].  Formation
+rules such as "$\nat\, \ttop{Type}$" that we have seen already
+should be read as
+$\nat : \cU_0$ so that the universe of small types is populated
+by terms $\nat$,
+$\bool$, $\nat \to \nat$, etc.  Observe that in Agda we write $\ttop{Set}_i$ instead of $\cU_i$.  The notation $\ttop{Set}$ is shorthand for $\ttop{Set}_0$, i.e., for $\cU_0$.
+
+There is no universe $\cU_\infty$ such that $\cU_i : \cU_\infty$ for all $i$.  Were this the case type theory would have paradoxes similar to Russell's: let $R$ be
+the set of all sets which are not elements of themselves.  Then
+$R \in R$ implies $R \not\in R$ and $R \not\in R$ implies $R \in R$.
+Note that $\nat \in R$.  Self-referentiality is at the root of all
+of these paradoxes.
+
+## Type Families
+
+Suppose given a type $A : \cU_m$ and an integer $n \le m$.
+Then $\cU_n$ is a type viewed as a term of the universe $\cU_{n+1}$.
+Therefore one can form the function type $A \to \cU_n$.  It
+inhabits the universe $\cU_{\text{max}(m,n+1)}$.  Let $B$
+be a term of this type: $B : A \to \cU_n$. It is a [index type family]
+which is [index indexed] by $A$.  Thus, for each $x : A$, $B(x)$
+is a type in $\cU_n$.  As an example,
+we form the type
+
+| aligned
+& \ttop{isEven} = (\nat \to \cU_0) : \cU_1
+
+Just as when we defined the type of natural numbers, we postulate
+constructors:
+
+| aligned
+ \ttop{evenZero} &: \ttop{isEven}\, 0
+ \ttop{evenSuc} &: \ttop{isEven}\, n \to \ttop{isEven} \, (\suc\, \suc\, n)
+
+The types $\ttop{Even} 0$, $\ttop{Even} 2$, $\ttop{Even} 4$, etc., are inhabited, but the types $\ttop{Even} 1$, $\ttop{Even} 3$, $\ttop{Even} 5$, etc. are not: there is no base from which to start the induction.
+
+$\ttop{isEven}$ is a [index dependent type]: a type which depends on
+a term of another type (or on terms of other types).  We view it as
+a [index proposition], where "having a proof" means "having a witness," i.e.,
+being inhabited.
+
+## Dependent Functions
+
+Suppose that we have
+a  type family $B : A \to \cU_n$ which is indexed by
+a type $A : \cU_m$. A [index dependent function]
+
+| equation
+\label{dep-fun}
+f: (x : A) \to B\; x
+
+is a function whose value $f\, x$, for $ x : A$, is  a term of $B\, x$.
+That is, the type of the function value depends on the type of the
+argument.  To justify formally what has just been said, we need
+an upgrade to the rules already given for ordinary functions:
+
+| equation
+\ffrac{A : \mathcal{U}_m \quad x : A \quad B : A \to \mathcal{U}_n}{(x : A) \to B\, x : \mathcal{U}_{\max(m, n)}}{dep-fun-form}
+
+| equation
+\ffrac{f : (x : A) \to B\, x \quad a : A}{f\, a : B\, a}{dep-fun-elim}
+
+
+| equation
+(\lambda (x:A).b(x))(a) \equiv b(a) \quad \text{comp}
+
+| remark
+  The type $(x : A) \to B\; x$ can also be written as $\Pi_{x : A} B\, x$.
+
+[smallsubheading Example]
+
+
+Consider the function
+
+| equation
+\label{id-universe-1}
+\ttop{id} :\equiv \lambda(A:\cU_0).\lambda(x:A).x
+
+It can also be defined by pattern-matching:
+
+| aligned
+\label{id-universe-1b}
+&\ttop{id}: (A: \cU_0) \to A \to A
+&\ttop{id} A x = x
+
+
+This function is a generic identify function for $\cU_0$
+in the sense that if $x : A$ for any
+$A : \cU_0$, $id\; A\; x = x$.
+Because $\cU_0 : \cU_1$, the type  rule for universes tells us that
+[eqref id-universe-1b] belongs to the universe $\cU_1$ but not $\cU_0$.
+
+
+## Universal Quantification
+
+Consider a dependent function
+
+
+| equation
+f : (x : A) \to B\; x
+
+ If we view $B$
+as a proposition whose value depends on $x$, then
+$f\, x$ is a proof of $B\, x$ for all $x : A$.  In other words, $f$
+is a proof  of $\forall x : A.(B\, x)$.  Consequently dependent functions represent universal quantification.
+As an example of universal quantification in the logic of MLTT,
+we give a proof that the function $\ttop{double}$ defined above [eqref double-def] takes even values for all $n : \nat$. This will lead us to
+a formulation of the elimination rule for the natural numbers.
+
+Let us now formulate and prove a simple proposition about the natural numbers
+and prove it by what amounts to the induction principle for $\nat$.
+The proposition in question is
+
+| equation
+\ttop{doubleIsEven} : (n : \nat) → \ttop{isEven} (\ttop{double} n)
+
+We know that
+
+| aligned
+\ttop{doubleIsEven}\, 0 &= \ttop{isEven} (\ttop{double} 0)
+                        &= \ttop{isEven} 0
+
+The last expression is inhabited by $\ttop{evenZero}$, so the proposition
+is proved in the case $n = 0$.
+
+
+Suppose for a moment that $\ttop{doubleIsEven} n$ proved, i.e.,
+is inhabited
+and consider the expression $\ttop{doubleIsEven} (\suc n)$. Then
+we have the derivation
+
+| aligned
+\ttop{doubleIsEven} (\suc n) &= \ttop{isEven} (\ttop{double} (\suc n))
+    &= \ttop{isEven} (\suc\, (\suc\, (\ttop{double} n)))
+    &= \ttop{evenSuc}\, (\ttop{isEven}\, (\ttop{double} n))
+
+Consequently $\ttop{doubleIsEven} (\suc n)$ is inhabited.  In other words,
+we have constructed a term o
+
+| aligned
+&\ttop{inductiveStep} : \ttop{doubleIsEven} n  \to \ttop{doubleIsEven} (\suc n)
+&\ttop{inductiveStep}\, (\ttop{doubleIsEven} n ) = \ttop{evenSuc}\, (\ttop{isEven}\, (\ttop{double} n))
+
+
+To summarize, we prove $\ttop{doubleIsEven}$ for all $n : \nat$ by
+constructing witnesses for $\ttop{inductiveBase} = \ttop{isEven} 0$ and
+$\ttop{inductiveStep}$.
+
+## Induction Principle
+
+What we have just done informally using the
+classic principle of mathematical induction can now be
+translated into the formalism of MLTT as the elimination rule for
+the natural numbers.
+
+| indent
+Let $C : \nat \to \cU_i$ be a type family,
+[par]
+Let $\ttop{base} : C\, 0$,
+[par]
+Let $\ttop{step}: C\, n \to C\, (\suc n)$
+[par]
+Then there is a function $f: (n : \nat) \to C\, n$
+[par]
+such that $f\, 0 :\equiv \ttop{base}$ and $f\, (\suc n) :\equiv \ttop{step}\, n\, (f\, n)$
+
+For a still more formal presentation, we call $f$ by the name
+$\ttop{ind_\nat}$ and give its type by
+
+| equation
+\ttop{ind}_\nat : \Pi_{C : \nat \to \cU}\; C\,0 \to (\Pi_{n: \nat}\; C\,n \to C\, (\suc n))) \to \Pi_{n: \nat} C\,n
+
+The [index inductor] $\ttop{ind}_\nat$ satisfies
+
+| aligned
+& \ttop{ind}_\nat\, C\, \ttop{base}\,\ttop{step}\, 0 :\equiv d
+& \ttop{ind}_\nat\, C\, \ttop{base}\, \ttop{step}\, (\suc n)) :\equiv \ttop{step}\, n\, (\ttop{ind}_\nat\, C\, \ttop{base}\, \ttop{step}\, n)
+
+The function $\ttop{ind}_\nat$ is the elimination rule for the natural numbers.  As advertised, given the argument $C$, $\ttop{base}$, and $\ttop{step}$ — a type familiy, a base case, and a recursion function — $\ttop{ind}_\nat$ produces
+a function out of $\nat$.
+
+| reveal To do (Examples)
+Give examples of functions out of $\nat$ which are defined inductively.
+
+## Agda
+
+Here is the proof in Agda that $\ttop{double}$ takes even value using
+pattern-matching:
+
+
+| code
+  module IsEven where
+
+  open import Data.Nat
+
+  data isEven : ℕ → Set where
+    evenZero : isEven zero
+    evenSucc : ∀ {n} → isEven n → isEven (suc (suc n))
+
+  double : ℕ → ℕ
+  double zero = zero
+  double (suc n) = suc (suc (double n))
+
+  doubleIsEven : (n : ℕ) → isEven (double n)
+  doubleIsEven zero = evenZero
+  doubleIsEven (suc n) = evenSucc (doubleIsEven n)
+
+Here is the same proof using the induction principle:
+
+
+| code
+  natInduction : (P : ℕ → Set) → P zero
+               → (∀ n → P n → P (suc n)) → ∀ n → P n
+  natInduction P base step zero    = base
+  natInduction P base step (suc n) = step n (natInduction P base step n)
+
+  doubleIsEven : (n : ℕ) → isEven (double n)
+  doubleIsEven = natInduction
+    (λ n → isEven (double n))      -- Property P(n): double n is even
+    evenZero                       -- Base case: double 0 = 0 is even
+    (λ n ih → evenSucc ih)         -- Inductive step
+
+
+
+## Elimination vs Pattern-Matching
+
+We now have a complete exposition of one inductive type,
+the natural numbers.  Such a type is announced by its formation
+rule.  Its constructors are given by the introduction rules, and
+a method for defining functions out of the type $\nat$ is given by
+the elimination rule (induction principle).  That functions defined by the elimination
+rule do what is intended is
+asserted by the computation rule.
+
+While foundational to the
+theory, elimination rules are hard to formulate, difficult to read, and
+cumbersome to apply.  Fortunately, there is a way out. As explained
+in [cite cocqx1] and [cite cocqx2], there is an algorithm by means
+of which the constructors determine the elimination rules and by means
+of which the elimination rules can be used to implement function definition by pattern-matching.  The burden on the mathematician is thus reduced to proper
+formulation of the type and its constructors.
+
+Proper formulation of the type and its constructors requires some care, e.g.,
+there should be no infinite terms (well-foundedness) and the constructors
+should be strictly positive so as to ensure termination.
+
+
+
+## Well-foundedness
+
+
+No infinite elements can be constructed; all elements are finite and built using the constructors.  The code below defines a $\ttop{Stream}$ type.
+This is legitimate in languages such as Haskell,  but not in Agda.
+
+| code
+  module Stream where
+
+  data Stream A : Set where
+    cons : A → Stream A → Stream A
+
+
+Agda accepts the code written so far.  Now add this:
+
+| code
+  open import Data.Nat
+
+  repeat : ℕ → Stream ℕ
+  repeat n = cons n (repeat n)
+
+As a paper-and-pencil exercise, we have the following:
+
+| aligned
+\ttop{repeat} 1 &= \ttop{cons} 1 (\ttop{repeat} 1)
+   &= \ttop{cons} 1\, (\ttop{cons} 1 (\ttop{repeat} 1))
+   &= \ttop{cons} 1\, (\ttop{cons} 1\, (\ttop{cons} 1 (\ttop{repeat} 1)))
+   &= \text{...}
+
+Therefore  $\ttop{repeat} 1$ is the infinite expression
+$\ttop{cons} 1\, (\ttop{cons} 1\, (\ttop{cons} 1 \ldots$.
+When one tries to type-check the code, the compiler signals
+an error:
+
+
+| code text
+  Termination checking failed for the following functions:
+    repeat
+  Problematic calls:
+    repeat n
+
+
+## Strict Positivity
+
+In the code below, the constructor labeled (a) is in
+[index negative position] whereas the constructors labeled
+(b) and (c) are in [index positive position]. Strict
+positivity means that there are no constructors in negative
+position.
+
+| code
+data Bad : Set where
+    bad : (Bad → Bad) → Bad
+    --      a     b      c
+
+Type-checking the above code with Agda fails with the following
+error message:
+
+
+| code text
+Bad is not strictly positive, because it occurs
+to the left of an arrow
+in the type of the constructor f
+in the definition of Bad.
+
+Non strictly-positive declarations are rejected because they admit non-terminating functions. If the positivity check is disabled, so that a similar declaration of Bad is allowed, it is possible to construct a term of the empty type, even without recursion. — [link Read the Docs https://agda.readthedocs.io/en/v2.6.0.1/language/data-types.html]
+
+Consider, for example the code below.
+The expression $\ttop{selfApp} (\ttop{bad} \ttop{selfApp})$ expands
+in one step to $\ttop{selfApp} (\ttop{bad} \ttop{selfApp})$, and so
+has non-terminating reduction.  If positivity checking is turned off,
+then `absurd` is inhabited (XX).  That is, the empty type is inhabited.
+Consequently this type-theoretic logic with a non-strictly positive constructor is inconsistent.
+
+| code
+  -- from https://agda.readthedocs.io/en/v2.6.0.1/language/data-types.html
+  {-# OPTIONS --no-positivity-check #-}
+
+  data ⊥ : Set where
+
+  data Bad : Set where
+    bad : (Bad → ⊥) → Bad
+
+  selfApp : Bad → ⊥
+  selfApp (bad f) = f (bad f)
+
+  absurd : ⊥
+  absurd = selfApp (bad selfApp)
+
+
+
+#  Constructive Logic
+
+As noted above, MLTT defines a system of logic through the [b [index Curry-Howard correspondence]]: [i  propositions correspond to types and
+a proof of a proposition $P$ is a term of $P$ viewed as a type].  Logical
+operators ($\neg$, $\land$, $\lor$, $\implies$, $\forall$, $\exists$)
+correspond to rules for formning new types:
+
+
+| table lcr
+Logic &    &MLTT
+Implication $P \implies Q$ & &Function type $P \to Q$
+Conjunction $P \land Q$ & &Product type $P\times Q$
+Disjunction $P \lor Q$ & &Sum type $P + Q$
+Truth & & Unit type $\top$
+False & & Empty type $\bot$
+Negation $\neg P$ & & $P \to \bot$
+Universal quantificaton $\forall x :  A.A(x)$ &&Dependent function $\Pi_{x: A} A(x)$
+Existential quantificcation $\exists x : A.A(x)$ &&Dependent sum $\Sigma_{x: A}  A(x)$
+
+The logic thus defined is a [index constructive logic]. Such logics
+are built on the notion of proof rather
+than truth, as in classical logic.  As a result, the Law of the Excluded Middle (LEM) does not hold, and negation must be
+handled with greater care.
+
+
+
+
+## Empty Type and Negation
+
+For a a type-theoretic formulation of LEM, we begin
+by defining the [index empty type] $\bot$ as a type with no constructors.
+The formation rule is
+
+| equation
+\ffrac{}{\bot \type}{$\bot$-formation}
+
+Since we postulate no introduction rules, the empty
+type is uninhabited.  From the point of view of the Curry-Howard correspondence, the
+empty type represents a proposition which has no proof, and so it is used
+to represent the logical notion of falsehood: a proposition that can never be proved.  Define the type-theoretic
+negaton of a proposition $P$ to be the function type
+
+| equation
+\label{def-neg}
+\neg P = P \to \bot
+
+| problem
+Verify that $\neg P$ and $P \to \bot$ have the same truth table.
+
+
+
+
+
+
+
+
+
+
+## Unit Type
+
+Just as the empty type is used to represent falsehood, the  [index unit type]
+is used to represent truth.  It is defined by the rules
+
+| equation
+\ffrac{}{\top \type}{$\top$\text{-formation}}
+\qquad\qquad
+\ffrac{}{\ttop{tt} : \top}{$\top$-intro}
+
+This  type has exactly one term, $\ttop{tt}$.  In Agda we say
+
+| code
+  data ⊥ : Set where
+
+  data ⊤ : Set where
+      tt : ⊤
+
+
+## Double Negation
+
+The Law of Double Negation asserts that $\neg \neg A \implies A$.
+for all $A$.  The Law of Weak Double Negation asserts the converse:
+$\neg \neg A \implies A$
+
+| lemma
+[label lemma-double-neg]
+In classical logic, LEM implies both the weak and strong
+forms of the Law of Double Negation
+
+
+[b Proof. ]
+[par]
+1. (Strong form). Assume $\neg \neg A$ is true.  Then $\neg A$ is false.
+By LEM, either $A$ or $\neg A$ is true. Since $\neg A$
+is false, LEM demands that $A$ be true.
+[par]
+2. (Weak form). Assume $A$ is true.  Then $\neg A$ is false.  In LEM,
+replace $A$ by $\neg A$ to conclude that $\neg A \lor \neg \neg A$ is true.
+Since $\neg A$ is false, $\neg \neg A$ must be true.
+[par]
+[qed]
+
+
+The type-theoretical translation of Lemma [ref lemma-double-neg]
+states that the types representing
+both strong and weak double negation are inhhabited. The argument
+below shows that weak double negation holds in MLTT. The strong
+form does not, as we argue later in this section
+[ref law-of-the-excluded-middle] and [ref heyting-theorem]
+
+| proposition
+In MLTT, the Weak Law of Double Negation holds.  That is,
+$A \to \neg \neg A$ is inhabited.
+
+
+[b Proof.] The goal is to construct a term of
+
+| equation
+A \to (A \to \bot) \to \bot
+
+[i First Proof:] Given $a : A$ and $f : A \to \bot$, we have $f(a) : \bot$. Thus we
+have a term of type $A \to (A \to \bot) \to \bot$, as required. (2) Alternatively, consider
+the $\lambda$-term $t = \lambda (a:A).\lambda (f:A \to \bot).f\,a$. Then $t : A \to (A \to \bot) \to \bot$,
+as required.
+[par]
+Q.E.D.
+Below is the proof in Agda
+
+
+
+| code
+dnn : {A : Set} → A → ¬ (¬ A)
+dnn  a f = f a
+
+The code makes more sense if we expand the declaration:
+
+| code
+dnn : {A : Set} → A → (A → ⊥) → ⊥
+dnn  a f = f a
+
+
+
+
+## Contrapositive
+
+In classical logic, the propositions $A \to B$ and $\neg B \to \neg A$ are
+equivalent.  What is the status of this equivalance in MLTT?
+Suppose that $A \to B$ has a proof.  That is, there is a term
+$f : A \to B$.  Let $g$ be a term of $\neg B$, that is a term $g: B \to \bot$.
+The composition $g \circ f$ is a term of $A \to \bot$.  Therefore, if $A \to B$
+has a proof, then so does $\neg B \to \neg A$.
+
+
+
+The reverse implication, that if $\neg B \to \neg A$ then $A \to B$ does not hold in MLTT.
+
+| problem
+Write a proof in Agda that $A \to B$ implies $\neg B \to \neg A$.
+
+
+## Disjunction
+
+
+According the Curry-Howard Correspondence, the logical disjunction $P \lor Q$
+corresponds to the disjoint sum type $P + Q$.  It has constructor
+
+
+| equation
+\ffrac{P \type \quad Q \type \quad p: P }{\ttop{inl}(p) : P + Q}{$P+Q$-intro${}_1$}
+
+and
+
+| equation
+\ffrac{P \type \quad Q \type \quad q: Q }{\ttop{inr}(q) : P + Q}{$P+Q$-intro${}_2$}
+
+
+The first rule says that $p$ is a term of $P$ then $\ttop{inl}(p)$ is a term $P + Q$: we "put" $p$ in the first summand the disjoint sum using the
+constructor $\ttop{inl}$.  The second rule is similar.
+
+
+For the elimination rule, consider a type $C$ which depends on $A + B$,
+a term $s :  A + B$ and dependent functions $f : A \to C$ and $g : B \to C$.
+There is a function $\ttop{ind}_{A + B}(s,f,g)$ with $\ttop{ind}_{A + B}(s,f,g) : C$.  The computation rule states that  $\ttop{ind}_{A + B}(\ttop{left}\; a,f,g) = f\; a$ and $\ttop{ind}_{A + B}(\ttop{right}\; b,f,g) = g\; b$.
+
+
+[smallsubheading Example]
+
+Disjunction in Agda is written as `⊎`.
+Below we use dijunction in a proof that every natural number is either
+even or odd:
+
+
+| code
+  open import Data.Nat using (ℕ; zero; suc)
+  open import Data.Sum using (_⊎_; inj₁; inj₂)
+
+  data Even : ℕ → Set where
+    zeroEven : Even zero
+    sucEven : ∀ {n} → Even n → Even (suc (suc n))
+
+  data Odd : ℕ → Set where
+    oneOdd : Odd (suc zero)
+    sucOdd : ∀ {n} → Odd n → Odd (suc (suc n))
+
+  evenOrOdd : (n : ℕ) → Even n ⊎ Odd n
+  evenOrOdd zero = inj₁ zero  -- Zero is even
+  evenOrOdd (suc zero) = inj₂ one  -- One is odd
+  evenOrOdd (suc (suc n)) withevenOrOdd n
+    ... | inj₁ ev = inj₁ (sucEven ev)
+    ... | inj₂ od = inj₂ (sucOdd od)
+
+
+
+
+## Law of the Excluded Middle
+
+
+The formulation of LEM goes back to Aristotle:
+
+| quotation
+But on the other hand, there cannot be an intermediate between contradictories, but of one subject we must either affirm or deny any one predicate.
+[par]
+— Aristotle, Metaphysics 1011b23-24, translated by W.D. Ross
+
+
+Its modern formulation is
+
+| quotation
+For any proposition, either it is true, or its negation is true.
+(Either $P$ or not-$P$),
+
+Still more succinctly,
+
+| equation
+\forall P, (P \lor \neg P)
+
+
+ The corresponding
+statement in MLTT is that [i for all types $P$, $P + (P \to \bot)$ has
+a witness].  This means that for all $P$, either $P$ has a witness
+or $P \to \bot$ does.  Because witnesses, aka proofs are constructed
+things, this means that there is an algorithm taking an arbitrary proposition $P$ as input and producing producing either a proof or  refutation of $P$  as output.  It has been known since the time of Church and Turing that there
+is no such algorithm.
+
+While something is lost with the LEM in MLTT, something is also gained:
+a theoretical foundation for building proof assistants.
+
+## Heyting's Theorem
+[label heyting-theorem]
+
+[hrule]
+
+
+To show soundness, one verifies that each axiom is “forced” throughout the space X, meaning \(\llbracket\!\!\bigl(\text{axiom}\bigr)\!\!\rrbracket = X\). Concretely, for the first axiom \(A \to (B \to A)\), one checks:
+
+. \(\llbracket A \to (B \to A)\rrbracket = \mathrm{int}\bigl(X \setminus \llbracket A \rrbracket \;\cup\; \llbracket B \to A \rrbracket\bigr)\).
+
+. \(\llbracket B \to A \rrbracket\) is again an interior of “not B or A.”
+
+. One carefully shows any point \(x \in X\) has a neighborhood where “if x is in \(\llbracket A\rrbracket\), then from any neighborhood forcing B we already have A.” By the structure of these open sets, this condition is always satisfied (nothing about them is contradictory in a connected space).
+
+Hence the axiom is forced at every point. A similar analysis is done for each axiom. The details can be a bit technical but are straightforward: each is verified by unraveling the definitions of “\(\llbracket \rightarrow \rrbracket\),” “\(\llbracket \land \rrbracket\),” etc.
+
+[hrule]
+
+3.2 Modus Ponens or Natural-Deduction Rules
+
+For modus ponens—from A and A \to B, infer B—we require:
+
+| equation
+\text{if } x \in \llbracket A\rrbracket
+\text{ and } x \in \llbracket A \to B\rrbracket,
+\quad \text{then } x \in \llbracket B\rrbracket.
+
+By definition of \(\llbracket A \to B\rrbracket\), if x is in that open set, there is a neighborhood \(U\subseteq X\) of $x$ such that for every $y \in U$, if \(y \in \llbracket A\rrbracket\), then \(y\in \llbracket B\rrbracket\). Since \(x\in \llbracket A\rrbracket\), we pick a small enough neighborhood where that also holds. By continuity/monotonicity, we see $x\in U$ forces $B$. Concretely, one spells out how topological forcing satisfies the local “if A then B” principle. This ensures modus ponens is validated in the model.
+
+[hrule]
+
+
+
+Heyting showed that in the propositional fragment of MLTT, LEM cannot hold.
+His argument goes as follows. Define a model in which types correspond to
+open sets in a topological space $T$.  Let $\cO(P) \subset  T$ be the
+open set corresponding to a proposition.  Let $\cO(\neg P) = \neg \cO(P)$,
+where $\neg U$ for an open set $U$ is the interior of the set-theoretic
+complement:
+
+| equation
+\neg U = \text{interior}(U^c)
+
+Let $\cO(\bot) = \empty$ and let $\cO(\top) = T$.  If the
+topology is diiscrete, then one-point sets are open, and so the interior of a set is the set itself.  Therefore in the discrete topology,
+
+| aligned
+\cO(P \lor \neg P)  &= \cO(P) \cup \cO(P)^c
+    &= \cO(\top)
+
+In this case the topological model of the logic obeys LEM.  Consider,
+however, the real line $\reals$.  Suppose that $U = \cO(P)$ is the
+open interval defined by  $0 < x < \infty$. Then $\neg U$ is
+the open interval $-\infty < x < 0$, and so
+
+| equation
+U \cup \neg U = \sett{x \in \reals}{x \ne 0} \ne T
+
+[qed]
+
+## Consistency via  Normalization
+
+In the context of logic and type theory, [index consistency] means that it is impossible to derive a contradiction within a system. Formally, a system is consistent if there is no proof of  $\bot$  (falsehood). In simpler terms, this means there are no formulas  A  such that both $A$  and $\neg A$ can be derived simultaneously.
+
+
+
+
+| lemma
+If both $P$ and $\neg P$ can be derived, then so can $\bot$
+
+[b Proof.] To say that $P$ and $\neg P$ can be derived is to say
+that there are terms $x : P$ and $f : P \to \bot$.  Then $f(x): \bot$.
+[qed]
+
+It follows that if a system is inconsistent, the the empty type can be derived.
+
+| theorem
+If a system satisfies strong normalization, then it is consistent.
+
+[b Proof.] Suppose that the system is inconsistent.  Then the empty type
+is inhabited by some
+$y : \bot$. By strong normalization, there is a valid term
+$x : \bot$ that reduces to $y$.  But the empty type is not inhabited. [qed]
+
+| quotation
+[b Why strong normalization implies soundness]
+The connection between strong normalization and soundness can be summarized as follows:
+[vspace 15]
+	1.	Termination: Strong normalization guarantees that every computation terminates in a normal form. This ensures that the system does not allow infinite loops or non-terminating processes.
+[vspace 15]
+	2.	Consistency: Since all well-typed terms reduce to valid normal forms, contradictions cannot arise (e.g.,  cannot be inhabited).
+[vspace 15]
+	3.	Type Preservation: During reduction, types are preserved, ensuring that normal forms remain consistent with their types
+
+
+Both Martin-Löf Type Theory (MLTT) and the Simply Typed Lambda Calculus (STLC) are strongly normalizing and therefore consistent.
+
+
+## Consistency via Models
+
+Consistency can also be established by interpreting the logic considered
+in a system already known to be consistent. Consider the case of the propositional calculus.  A model is the same thing as an assignment
+of truth values ($\true$ or $\false$) to all variables  in such
+away that the axioms are true. Here is one set of axioms, due
+to Hilbert:
+
+| aligned
+&P \implies (Q \implies P) ,
+&(P \implies (Q \implies R)) \implies ((P \implies Q) \implies (P \implies R)) ,
+&P \implies(\neg Q \implies \neg P) \implies (P \implies Q) .
+
+The only rules of inference are [index Modus Ponens] and [index Substitution].
+Modus Ponens is
+
+| equation
+\frac{P \quad P \implies Q}{Q}
+
+Substitution is the rule that, for example, if  $P \implies Q$  is a theorem, then substituting  $P$  with  $R \land S $ and  $Q$ with  $T \lor U$  results in:
+$(R \land S) \implies (T \lor U)$.
+
+
+To build a model for this set of axioms, assign truth values to the variables $P, Q, R$ in all possible ways. For each assignment of
+truth values, write out the truth value of each axiom. In the
+case at hand, the result is a table with three rows and eight columns.
+Discard tables for which one of the axioms has a false value. Assume
+that there is at least
+one truth table that survives this process.  Next, determine whether application of the inference rules preserves truth value.
+If that is the case, then propositional calculus has a model,
+i.e., a truth table in which all axioms evaluate to true, and is
+therefore consistent.
+
+
+MLTT has a model in the category of $\infty$-groupoids, thus
+providing another proof of consisency.. (XXX)   Extensions of MLTT such as
+homotopy type theory and cubical type theory are not strongly
+normalizing.  However, both have models with which consistencny is
+proved.  While we do not discuss the consistency proofs in these notes.
+However, we do show the connection of MLTT nad homotopy type theory with $\infty$-groupoids.
+
+
+
+
+# LEM and Decidability
+
+
+| reveal Comment
+This section requires more work.
+
+Let us take a second look at the Law of the Excluded Middle (LEM).
+Consider  the dependent function
+
+
+| equation
+\ttop{lem}\, (P : \cU_0) = P + (P \to \bot)
+
+Since $\ttop{lem}$ operates on types in $\cU_0$, it is a function
+defined in the next higher universe $\cU_1$.  As we have noted
+already, this function type cannot be implemented. If it were,
+we would have a program which on input $P$ would
+produce an output in $P + (P \to \bot)$.  Such an output wouldd
+be either $\ttop{inl} p : P$ for some $p : P$
+or $\ttop{inr} f : P \to \bot$ for some $f : P \to \bot$.  That
+is, it would be either a proof or a refutation of $P$.  Therefore we
+woud have a universal algorithm for constructing proofs.
+It has been known since the time of
+Church and Turing that this is not possible.
+
+
+## Decidability
+
+While the Law of the Excluded Middle is not valid as general
+principle, it is nonetheless valid in certain restricted contexts.
+To formulate this idea precisely, we say that a proposition  $P$ is [index decidable] if we can construct a term of type:
+
+| equation
+\ttop{Dec}\; P = \ttop{Dec\; P}\ +\ \ttop{Dec\ \neg\; P}
+
+Here is how $\ttop{Dec}$ is defined in Agda:
+
+| code
+-- From Relation.Nullary:
+data Dec (P : Set) : Set where
+  yes : P → Dec P
+  no  : (¬ P) → Dec P
+
+
+Below is a proof that the evenness of a number is decidable.
+Decidability is a kind of restricted                                                                                         version of LEM.
+
+| code
+decEven : (n : ℕ) → Dec (Even n)
+decEven zero = yes zero
+decEven (suc zero) = no λ ()
+decEven (suc (suc n)) with decEven n
+... | yes e = yes (suc-suc e)
+... | no ¬e = no λ { (suc-suc e) → ¬e e }
+
+
+Thus `decEven n` returns a `Dec (Even n)`, which can be either:
+`yes` with a proof of `Even n`, or
+`no` with a proof that `Even n` is impossible.
+
+| indent
+$\ttop{decEven 0} \to \ttop{yes} 0$.
+[vspace 5]
+$\ttop{decEven 1} \to \ttop{no}\ ()$
+[vspace 5]
+
+
+Recursive Case: `decEven (suc (suc n))`
+This is the most interesting part of the function, where recursion comes into play.
+
+Case 1: `n = 2`.
+
+| code
+decEven (suc (suc 0)) with decEven 0
+... | yes e = yes (evenStep e)
+
+
+Input:  n=2
+Logic: To determine whether
+2 is even, the function reduces the problem to deciding whether 0 is even by calling decEven 0.
+From the earlier base case, we know `decEven 0 = yes evenZero`.
+Substituting `yes evenZero` into the with clause:
+`e = evenZero` is the evidence that `0 is even`.
+The function constructs a new proof for `Even 2` using `evenStep evenZero`.
+The result is `yes (evenStep evenZero)`, indicating
+`2 is even`, with `evenStep evenZero`1 as the evidence.
+
+
+
+## Relations
+
+Agda’s standard library defines decidability for binary relations. For example:
+
+
+A binary relation is decidable if there exists an algorithm to decide whether the relation holds for any two given elements.
+
+| code
+Decidable : ∀ {A : Set} → (A → A → Set) → Set
+Decidable R = (x y : A) → Dec (R x y)
+
+This definition states that a binary relation $R$ is decidable if, for any two inputs, we can decide whether $R(x,y)$ holds.
+
+[smallsubheading Decidability for $<_\nat$]
+
+| code
+open import Data.Nat
+open import Relation.Binary
+open import Relation.Nullary
+open import Relation.Nullary.Decidable using (yes; no)
+
+| code
+-- Definition of < on natural numbers
+_<_ : ℕ → ℕ → Dec (ℕ)
+zero < zero = no λ ()    -- 0 is not less than 0
+zero < suc _ = yes λ ()  -- 0 < suc n is always true
+  suc _ < zero = no λ () -- suc n < 0 is always false
+suc n < suc m = n < m
+
+
+
+
+
+
+# Identity type
+
+Recall the introduction rules for addition:
+
+| aligned
+\label{addition-def}
+\text{Line 1.} \quad &0 + n = n
+\text{Line 2.} \quad &(\suc m) + n = \suc (m + n)
+
+Since $0 + n$ and $n$ have the same normal form, they are definitionally
+equal, and so we may write $0 + n \equiv n$.  There is, however, no definitional equality to establish $n + 0 \equiv n$ for all $n$. There is no rule of combination or rules for the type $\nat$ to justify it.  Consequently, if
+we are to express even the most elementary laws of arithmetic, we need a
+type-theoretic notion of equality that goes beyond definitional equality.
+It is for this reason that Martin-Löf invented propositional equality and the identity type.  Suppose that $A : \cU$ and that $x, y: A$. We postulate the dependent type $x =_A y$ by the rule
+
+
+
+| equation
+\ffrac{A: \cU \quad x : A \quad y: B}{(x =_A y)  : \cU}{= formation}
+
+
+This is the [index identity type] for terms $x, y : A$.
+Two terms $x$ and $y$ of $A$ are [index propositionally equal]
+if the type $x =_A y$ is inhabited.  The
+introduction rule for the identity type asserts that
+$x =_A x$ is inhabited by a term $\refl_x$:
+
+
+| equation
+\refl_x :(x: A) \to  (x =_A x)
+
+
+This rule expresses the first requirement that
+propositional equality must satisfy to be an equivalence relation, namey,
+reflexivity.  Note that if $x$ and are definitonally equal, then for the purposes of type theory, the are the same. Therefore  definitional equality implies propositional equality.  As we have seen, the converse does not hold.
+
+
+Surprisingly, the introduction rule combined with the as-yet-unstated elimination rule are sufficient to establish symmetry  and transitivity.
+and therefore to show that propositional equality is an
+equivalence relation.  It turns out that propositional equality is also
+a [index congruence], meaning that a function applied to equals results in equals:
+
+| center
+[label congruence-informal]
+[i if $x =_A y$ and $f : A \to B$, then $f\, x =_B f\, y$]
+
+In a moment, we will discuss the elimination rule and show that reflexivity
++ elimination implies the package of symmetry, transitivity, and  congruence.
+But let us see first  how symmetry + congruence yields a proof that $n + 0 =_\nat n$ for all $n$.
+
+The argument
+is by induction on the number of constructors in
+$n$. The base case is $0 + 0 =_\nat 0$.  This type
+is definitionally equal to $0 =_\nat 0$, and
+so is inhabited by $\refl_0$.  We would  like to proceed by induction,
+assuming that  $n + 0 =_\nat = n$ and proving $(\suc n) + 0 =_\nat \suc n$.
+We claim that the argument in  [eqref inductive-step-n+0] below does this. Line 1 is the induction hypothesis. Line 2 follows from Line 1 because
+equality is a congruence, meaning that if $f: \nat \to \nat$ is a function, then
+$x =_\nat y$ implies $f\, x =_\nat f\, y$.
+In the case at hand we choose $f = \suc$.  Line 3 follows from Line 2 by
+definition of addition applied to the left-hand side.  In more detail,
+ definition [ref addition-def], Line 2 implies  the definitional equality
+ $\suc n + 0 \equiv \suc (n + 0)$ and therefore the propositional
+ equality $\suc n + 0 =_\nat \suc (n + 0)$. Symmetry yields
+ the propositional equality $\suc (n + 0) =_\nat \suc n + 0$, and this
+ yields Line 3.
+
+| aligned
+\label{inductive-step-n+0}
+& \textit{Proof: inductive step}
+& 1. \quad n + 0 =_\nat n
+& 2. \quad \suc(n + 0) =_\nat \suc n
+& 3. \quad (\suc n) + 0 =_\nat \suc n
+
+The proof is sound provided that we can show that propositional equality is a congruence.  Congruence, along with reflexivity, symmetry, and transitivity, are all consequences of the rules definining the identity
+type.  That, is we claim that each of the following types is inhabited:
+
+
+## Elimination Rule
+
+
+This will follow from the induction principle (elimination rule) for the identity
+type.  Its formal expression is somewhat complex, so we  begin with an informal "rule-of-thumb" version:
+
+| indent
+[i To establish a proposition that depends on $p : x =_A y$, it suffices to establish it
+in the case $x =_A x$.]
+
+
+Let us see how this informal rule establishes the propoisitions listed below.
+
+| aligned
+\label{four-statements}
+ \text{Reflexivity:}\quad  & (x : A) \to \refl_a : x =_A y}
+\text{Symmetry:}\quad &(x, y : A \to x =_A y \to y =_A x)
+\text{Transitivity:}\quad &(x, y, z : A \to x =_A y \to y =_A z \to x =_A z)
+\text{Congruence:}\quad &(x, y : A\, f : X \to Y) \to x =_A y \to f\, x =_A f\, y)
+
+
+The first statement is the introduction rule
+for the identity type, so there is nothing to prove.  For the second, we consider the case $x = y$.  Then the type reads
+
+| equation
+\ttop{symmetry}\, (x : A )\to x =_A x \to x =_A x
+
+Then $\ttop{symmetry} \refl_x = \refl_x $ , which inhabits the rifht-hand. [qed]
+
+Next is the transitity statement .  Take $y = x$. Then
+
+| equation
+\ttop{transitivity}\ (x\, y\, z : A) = x =_A x \to x =_A z \to x =_A z
+
+and we evaluate the below by pattern-matching:
+
+| equation
+\ttop{transitivity}\ \refl_x \, \refl_x = ?
+
+The fact that the second argument inhabits $x =_A z$ implies that $z = x$,
+in which case $\refl_x$ inhabits $x =_A z$.  Therefore the type
+$\ttop{transitivity}\ (x\, y\, z : A)$ is inhabited by $\refl_z A$. [qed]
+
+Finally, there is the proof of congruence.  The assumption that $x = y$
+implies that (1) $x
+
+
+## SCRATCH WORK
+
+Consider, for example, the proposition
+
+| equation
+\ttop{cong} : (A, B : \cU) \to (f : A \to B) \to (x, y: A) \to (x =_A y) \to (f\, x =_B f\, y)
+
+In the case $x = y$, the proposition reads
+
+| equation
+\ttop{cong} : (A, B : \cU) \to (f : A \to B) \to (x, x: A) \to (x =_A x) \to (f\, x =_B f\, x )
+
+
+| equation
+\ttop{cong} A\, B\, f\, x\, x \,(x =_A x) = (f\, x =_B f\, x)
+
+
+As we will show momentarily, this follows from the induction principle (elimination rule)
+for the identity type:
+
+| aligned
+&\mathsf{J} : \prod_{(A : \mathsf{Type})} \prod_{(a : A)} \prod_{(P : \prod_{(b : A)} \mathsf{Id}A(a, b) \to \mathsf{Type})} \, P(a, \mathsf{refl}a) \\
+&\to \prod{(b : A)} \prod{(p : \mathsf{Id}_A(a, b))} P(b, p)
+
+
+
+| aligned
+& \ttop{ind}_\nat : (A : \ttop{Set})   \\
+&\qquad \to (P : (y : A) → (x =_A y) → Set)
+&\qquad \to P\,  x\,  \refl → (p : x =_A y) → P\, y\, p
+
+| code
+J : ∀ {A : Set} {x y : A}  (P : (y : A) → (x ≡ y) → Set)
+   →  P x refl → (p : x ≡ y) → P y p
+J P base refl = base
+
+## Agda
+
+Propositional equality is not predefined in Agda, but rather
+comes as part of its standard libraries.  That means we can
+choose not to use the standard libraries and define it ourselves.
+It is worth doing this at least once. The formation and introduction
+rules come bundled together in the data statement:
+
+| code elm
+-- In Agda, ≡ is used for propositional equality
+-- This is the opposite of the convention used in MLTT
+infix 4 _≡_
+data _≡_ { A : Set } (a : A) : A → Set where
+  refl : a ≡ a
+
+The notation needs some explanation.
+
+## Equivalence
+
+| code
+sym : ∀ {A : Set} {a b : A} → a ≡ b → b ≡ a
+sym refl = refl
+
+
+
+| code
+trans : ∀ { A : Set } { a b c : A } → a ≡ b → b ≡ c → a ≡ c
+trans refl refl = refl
+
+##  Congruence
+
+| code
+cong : {A B : Set} (f : A → B) { x y : A} → x ≡ y → f x ≡ f y
+cong f refl = refl
+
+
+## Simple identitites
+
+[smallsubheading Basic Arithmetic]
+
+
+[smallsubheading Commutative Law]
+
+| code
+  open import Data.Nat using (ℕ; zero; suc; _+_)
+  open import Relation.Binary.PropositionalEquality using (_≡_; refl; cong)
+
+  +-comm : ∀ (m n : ℕ) → m + n ≡ n + m
+  +-comm zero n = refl
+  +-comm (suc m) n = cong suc (+-comm m n)
+
+
+[smallsubheading Associative Law]
+
+| code
+  +-assoc : ∀ (m n p : ℕ) → (m + n) + p ≡ m + (n + p)
+  +-assoc zero n p = refl
+  +-assoc (suc m) n p = cong suc (+-assoc m n p)
+
+
+[smallsubheading Other identities]
+
+| code
+  +-suc : ∀ m n → m + suc n ≡ suc (m + n)
+  +-suc zero    n = refl
+  +-suc (suc m) n = cong suc (+-suc m n)
+
+
+[smallsubheading The function $\ttop{half}$]
+
+| code
+half : ℕ → ℕ
+half zero = zero
+half (suc zero) = zero
+half (suc (suc n)) = suc (half n)
+
+| code
+half-double : ∀ n → half (n + n) ≡ n
+half-double zero = refl
+half-double (suc n) =
+  begin
+    half (suc n + suc n)
+      ≡⟨⟩
+    half (suc (n + suc n))
+      ≡⟨ cong half (cong suc (+-comm n (suc n))) ⟩
+    half (suc (suc (n + n)))
+      ≡⟨⟩
+    suc (half (n + n))
+      ≡⟨ cong suc (half-double n) ⟩
+    suc n
+  ∎
+
+
+## Example
+
+Consider the dependent type $0 + n =_\nat n$.
+By the rules of construction for addition, $0 + n$ and $n$ have the same
+normal form and so are definitionally equal.  Therefore $0 + n =_\nat n$ is
+inhabited (by $\refl_n$).  That is, $0 + n$ and $n$ are propositionally
+equal.
+
+
+The dependent type $P\; n = n + 0 =_\nat n$ behaves
+quite differently.  The type $P\; 0 = 0 + 0 =_\nat 0$ is
+inhabited since $0 + 0$ and $0$ are definitionally equal.
+But in the general case, there is no rule to reduce $0 + n$ to $n$.
+Instead, we show by induction that $P\; n$ is inhabited by for all $n$.
+In the argument below, we assume $P\; n$ is inhabited and conclude
+that $P\; (n + 1)$ is inhabited:
+
+| code
+n + 0 = n             -- Assume P n is inhabited
+suc(n + 0) = suc n    -- we applied cong suc
+(suc n) + 0 = suc n   -- Conclude that P (n+1) is inhabited
+
+In other words, there is  function of type
+
+| equation
+(n : \nat) \to P\; n \to P\; (\suc n)
+
+
+
+
+
+But we also have a proof of $P\; 0$.  By the principle of mathematical
+induction, we have a proof of $P(n)$ for all $n$.  To complete
+a type-theoretic proof of the proposition XX, it remains to
+provide a type-theoretic formulation of the principle of mathematical
+induction.
+
+To summarize, for all propositions $P : \nat \to \ttop{Set}$, given a witness of $P\; 0$ and a witness of
+$(n : \nat) \to P\; n \to P\; (\suc n)$, there is a witness
+of $(n : \nat) \to P\; n$.  We can reformulate this still further
+as
+
+| code
+J : ∀ {A : Set} {x y : A}  (P : (y : A) → (x ≡ y) → Set)
+   →  P x refl → (p : x ≡ y) → P y p
+J P base refl = base
+
+Reading it out, we have:  For all propositions $P$, if we have witnesses for  $(P\; 0)$ (the base case) and $(n : \nat) \to P\; n \to P\; (\suc n)$ (the recursive step), then we have a witness to $\forall (n : \nat).P\; n$. This is a form of the elimination ru;e for $\nat$.
+
+## Example
+
+Consider the proposition
+
+| equation
+P(n) =  0 + 1 + \cdots + n =_\nat \frac{n(n+1)}{2}  : \ttop{Set}
+
+If $\ttop{sum} n$  and
+$\ttop{triangular} n :\equiv n(n+1)/2$ are functions
+in MLTT which compute the sum of the first $n$ integers
+and $n(n+1)/2$, then the proposition canbe formulated as
+
+
+| aligned
+& P : (n : \nat) \to \ttop{Set}
+& P\, n = \ttop{sum}\, n  =_\nat \ttop{triangular}\, n
+
+where
+
+| aligned
+&\ttop{sum} : \nat \to \nat
+&\ttop{sums}\, 0 = 0
+&\ttop{sum}\, (\suc n) = (\suc n) + \ttop{sum}\, n
+
+and  $\ttop{triangualr}\, n = \ttop{half} \,((\suc n) * n)$ where
+
+| aligned
+& \ttop{half} : \nat \to \nat
+& \ttop{half} \zero = \zero
+& \ttop{half} (\suc \zero) = \zero
+& \ttop{half} (\suc (\suc n)) = \suc(\ttop{half} n)
+
+
+Since $P\, 0 = 0 =_\nat 0$, the  base step of the proof is given
+by $\ttop{refl_0}$, For the inductive step, we need the following
+sequence of lemmas, the proof of which
+are left as an exercise:
+
+| lemma
+$(m\, n : N) \to \ttop{half}(2*m + n) =_\nat m +  \ttop{half} n$
+
+The next lemma is a special case of the preceding one:
+
+
+| lemma (half-double)
+$(n : N) \to \ttop{half}(n + n) =_\nat n$
+
+[b Proof.]
+
+| code
+half-double : ∀ n → half (n + n) ≡ n
+half-double zero = refl
+half-double (suc n) =
+  begin
+    half (suc n + suc n)
+      ≡⟨⟩
+    half (suc (n + suc n))
+      ≡⟨ cong half (cong suc (+-comm n (suc n))) ⟩
+    half (suc (suc (n + n)))
+      ≡⟨⟩
+    suc (half (n + n))
+      ≡⟨ cong suc (half-double n) ⟩
+    suc n
+  ∎
+
+| lemma
+$(n : N) \to \ttop{half}(\suc (\suc n) + n) =_\nat \suc n$
+
+| lemma
+[label half-main-lemma]
+  $(n : \nat) \to \ttop{half}(\suc\, (\suc n) * (\suc n)) =_\nat \suc n + \ttop{half}((\suc n)* n)
+$
+
+
+
+Suppose by induction that $P\, n$ is inhabited.
+Then the chain of equalities below, where we apply
+Lemma [ref half-main-lemma] shows that $P\, (\suc n)$ is
+also inhabited.
+
+| aligned
+P (\suc n) &= \ttop{sum}(\suc n) =_\nat \ttop{triangular}(\suc n)
+  &= (\suc n) + \ttop{sum}\, n =_\nat \ttop{half} \,(\suc\, (\suc n) * (\suc n))
+  &= (\suc n) + \ttop{sum}\, n =_\nat \suc n + \ttop{half} \,((\suc n) * n)
+  &= \ttop{cong} (\lambda\, m = \suc n + m) (\ttop{sum}\, n =_\nat \ttop{triangular}\, n)
+  &= \ttop{cong} (\lambda\, m = \suc n + m) (P\, n)
+
+Therefore $P(\suc\, n)$ is inhabited if $P\, n$ is.
+[par]
+[qed]
+
+
+## Equational Reasoning
+
+| code
+  open import Relation.Binary.PropositionalEquality using (_≡_; refl; cong; sym; trans)
+  open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
+  open import Data.Nat.Properties using (+-suc; *-suc)
+
+  -- Assume s and t are functions ℕ → ℕ
+  s t : ℕ → ℕ
+  suc : ℕ → ℕ
+  suc = suc
+
+  half-double : ∀ n → half (n + n) ≡ n
+  half-double zero = refl
+  half-double (suc n) =
+    begin
+      half (suc n + suc n)
+        ≡⟨⟩
+      half (suc (n + suc n))
+        ≡⟨⟩
+      half (suc (suc (n + n)))
+        ≡⟨⟩
+      suc (half (n + n))
+        ≡⟨ cong suc (half-double n) ⟩
+      suc n
+    ∎
+
+  -- Define P as a property over natural numbers
+  P : ℕ → Set
+  P n = s n ≡ t n
+
+  -- Helper function: half (assuming its behavior is defined elsewhere)
+  half : ℕ → ℕ
+  half = {!!}  -- Define as needed
+
+  -- Proof of P (suc n) using equational reasoning
+  proof-P-suc : ∀ n → P n → P (suc n)
+  proof-P-suc n Pn =
+    begin
+      s (suc n)
+        ≡⟨⟩
+      suc n + s n                             -- Step 1: Definition of s at suc n
+        ≡⟨⟩
+      suc n + half ((suc (suc n)) * (suc n))  -- Step 2: Definition of t at suc n
+        ≡⟨ cong (λ m → suc n + m) Pn ⟩
+      suc n + half ((suc n) * n)              -- Step 3: Simplify multiplication
+        ≡⟨ cong suc Pn ⟩
+      t (suc n)                               -- Final step: Apply congruence
+    ∎
+
+
+
+
+# Dependent Sums
+
+Dependent sums are a generalization of the notion of Cartesian product
+$A \times B$. Terms of a Cartesian product are pairs $(a,b)$ where $a : A$ and $b : B$.  In a dependent sum, type of the second component depends
+on the first component.  That is,  a dependent sum
+is determined by a type family $B : A \to \cU$, and terms of the
+dpendent sum are pairs $(a, b)$, where $a : A$ and $ b : B\, a$. Is $B$
+if viewed as a proposition over $A$, then the existence of a term $(a, b)$
+is the same thing as a term $ b : B\, a$, that is, a proof of $B\, a$.
+
+Given a type family $B : A \to \cU$, we write
+
+| equation
+\Sigma_{x : A} B(x) \qquad \text{or} \qquad
+\Sigma (x : A). B(x)
+
+In propositions-as-types, the dependent sum $\Sigma_{x : A} B(x)$  corresponds to the existential quantifier:
+
+| equation
+\exists x : A.\, B(x)
+
+Indeed, if $(a,b)$ is a term of the dependent sum, then $b$ is a witness to $B\, a$.  Thus we have exhibited an element $a : A$ and a proof of $B\, a$.
+Such a constructive proof is stronger than a simple assertion of existence withoug exhibition of an element with teh given property.  In classical matheamtics, we can assert that there exist transcendental numbers exist because the set of algebraic numbers (solutions of olynomial equations with rationa coefficients) is countable whereas both the real line and the complex plane are uncountable.  It is harder to prove that a specific
+number, e.g., $e$ or $\pi$ is transcendental.
+
+
+
+| equation
+\ttop{pair} : (a : A) \to B(a) \to \Sigma_{x : A} B(x)
+
+
+
+
+
+
+
+Here is an example in Agda:
+
+
+
+
+| code
+  module tmp.DependentSum where
+
+  open import Data.Nat
+  open import Relation.Binary.PropositionalEquality
+
+  data Σ (A : Set) (B : A → Set) : Set where
+    _,_ : (x : A) → B x → Σ A B
+
+  even : ℕ → Set
+  even n = Σ ℕ (λ k → n ≡ 2 * k)
+
+  even4 : even 14
+  even4 = 7 , refl
+
+[image https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/4c42832a-4dc5-4879-bde7-b954f8f58200/public width:400]
+
+## Existential Quantification
+
+## Prime Numbers
+
+| code
+  open import Data.Nat
+  open import Data.Sum     -- Added this import for ⊎
+  open import Relation.Binary.PropositionalEquality
+  open import Data.Product
+
+  _∣_ : ℕ → ℕ → Set
+  m ∣ n = Σ ℕ (λ k → n ≡ m * k)
+
+  isPrime : ℕ → Set
+  isPrime n = (2 ≤ n) × (∀ m → m ∣ n → (m ≡ 1) ⊎ (m ≡ n))
+
+
+# Products
+
+The counterpart in MLTT to conjunction of propositions is the product of types type $A \times B$.
+
+| equation
+\ffrac{ A \type \qquad B \type }{ A \times B \type}{$\times$-formation}
+
+
+The introduction rule for the product type provides a single constructor,
+the [index pair]:
+
+| equation
+\ffrac{ a : A \qquad b : B}{(a,b) : A \times B}{$\times\dash$intro}
+
+There are two elimination rules.  They provide [index projections] onto the
+factors of $A \times B$:
+
+| equation
+\ffrac{p : A \times B}{\ttop{fst} p : A}{$\times\dash$elim-1}
+\qquad
+\ffrac{p : A \times B}{\ttop{snd} p : b}{$\times\dash$elim-2}
+
+Finally, the computation rule states that
+
+| equation
+\ffrac{ a : A \qquad b : B}{\ttop{fst} (a,b) = a}{$\times\dash$comp-fst}
+
+| equation
+\ffrac{ a : A \qquad b : B}{\ttop{snd} (a\; b) = b}{$\times\dash$comp-snd}
+
+
+In logic we have the proposition
+
+| equation
+A \land (A \to B)) \to B
+
+The corresponding statement in type theory is to assert
+a witness for the type
+
+| equation
+A \times (A \to B) \to B
+
+Given a term of type $A \times (A \to B)$, we must construct a term of $B$.
+Let $(a, f)$ be a term of $A \times (A \to B)$. Then $f\; a : B$.
+[par]Q.E.D.
+
+# Properties of $\nat$
+
+At this point we have developed the basic machinery of MLTT and have
+explained with at least one example each line of the table which
+gives the Curry-Howard correspondence.  Let us now use what we have
+learned to formulate and prove the standard laws of arithmetic —
+commutative and associative laws, the distributivity of multiplication
+over addition, etc.  We also take some first steps towards proof of
+a major result, the theorem that there are infinitely many primes.
+
+## Zero
+
+## Commutative Law
+
+## Associateive Law
+
+## Distributive Law
+
+
+# What's Next
+
+- Intro to Agda Libraries
+
+- Integers and Rationals: setoids versus quotients via higher inductive types (HITs)
+
+- The circle (HIT)
+
+- HoTT
+
+- Cubical type theory? At least mention it.
+
+# Notes
+
+## Contexts
+
+A [index context] is a finite, ordered sequence of type declarations and variable bindings, e.g.,
+
+| equation
+x : \nat,\; y : \ttop{List} x
+
+As in the example above, the context says that $y : \ttop{List} \nat$.
+In general,later declarations and bindings may depened upon earlier ones.
+Rules: (1) The empty context is well-formed. (2) If $\Gamma$ is a context
+, $x$ is a variable not in $\Gamma$, and $A$ is a valid type in the context
+$\Gamma$, then $\Gamma, x : A$ is a well-formed context.
+
+	If \( \Gamma, x : A \vdash t : B \) and \( \Gamma \vdash u : A \), then substitution produces:
+
+$$
+\Gamma \vdash t[u/x] : B[u/x]
+
+
+## $\integers/N$ using higher inductive types.
+
+| code
+HIT ZmodN :=
+| 0 : ZmodN
+| S : ZmodN → ZmodN   -- Successor function
+| loop : 0 = S^N(0)   -- Path identifying 0 with N
+
+## Cubical Type Theory
+
+
+- [link Cubical Type Theory https://homotopytypetheory.org/2017/09/16/a-hands-on-introduction-to-cubicaltt/]
+
+- [link https://github.com/mortberg/cubicaltt]
+
+- [link On Consistency https://proofassistants.stackexchange.com/questions/751/tools-for-checking-the-consistency-of-a-type-theory?t]
+
+
+
+
+| endnotes
+
+# Index
+
+| index 2
+
+# References
+
+
+[smallsubheading Books, Notes and Tutorials]
+
+[link HOTT Book https://homotopytypetheory.org/book/]
+
+[link Thorsten Altenkirch, An Introduction to Type Theory https://people.cs.nott.ac.uk/psztxa/tallinn/slides-1.pdf]
+
+[link Jesper Cocqx, Zurichack Lecture notes https://github.com/jespercockx/agda-lecture-notes/blob/master/agda.pdf]
+
+[link Jesper Cocqx, Zurichack talk (youtube) https://www.youtube.com/watch?v=AVRsH_YH7XU]
+
+[link Phillip Wadler, PLFA https://plfa.github.io/]
+
+[smallsubheading Videos]
+
+[link HoTTEST Summer School 2022 https://www.youtube.com/playlist?list=PLtIZ5qxwSNnzpNqfXzJjlHI9yCAzRzKtx]
+
+
+[smallsubheading Lambda Calculus]
+
+[link STLC, Harvard https://groups.seas.harvard.edu/courses/cs152/2014sp/lectures/lec10-types.pdf]
+
+[link Blanqui, Program termination in the simply-typed
+λ-calculus https://blanqui.gitlabpages.inria.fr/lectures/stlc10sn.pdf]

@@ -1,0 +1,19 @@
+| title
+Crazy verbatim test
+
+
+# OK
+
+Literal left and right brackets using `[lb]` and `[rb]`: [lb] foo bar [rb]
+
+Literal backtick using `[bt]`: [bt]`a^2 + b^2 = c^2`[bt]
+
+Literal dollar sign using `[dollar]`: [dollar]20
+
+Using backticks: `$a^2 = U^3$`
+
+# Error
+
+Using code element: [code $a^2 = U^3$] $ne$ `$a^2 = U^3$` [par] (ERR: [dollar] missing in code element)
+
+Using code element: [code `a^2 = U^2`] [par](ERR missing backticks)
