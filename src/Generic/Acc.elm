@@ -137,7 +137,7 @@ init data =
                 Vector.init data.vectorSize
 
             Just n ->
-                { content = [ n + 1, 0, 0, 0 ], size = 4 }
+                Vector.init data.vectorSize |> Vector.set 0 (n + 1)
     , deltaLevel =
         case data.shiftAndSetCounter of
             Nothing ->
@@ -535,7 +535,7 @@ vectorPrefix vector =
 
 vectorPrefixWithLevel : Int -> Vector -> String
 vectorPrefixWithLevel lev vector =
-    Vector.toStringWithLevel lev vector |> Debug.log "@@prefix"
+    Vector.toStringWithLevel lev vector
 
 
 {-| Returns the chapter prefix string for numbering.
@@ -701,7 +701,7 @@ getReferenceDatum acc block =
             block.meta.id
 
         tag =
-            Dict.get "tag" block.properties |> Maybe.withDefault "no-tag"
+            Dict.get "tag" block.properties |> Maybe.withDefault id
 
         chapterPart =
             if acc.chapterCounter > 0 then
@@ -776,7 +776,7 @@ updateAccumulator ({ heading, indent, args, body, meta, properties } as block) a
                     accumulator
 
         Ordinary "list" ->
-            { accumulator | itemVector = Vector.init 4 }
+            { accumulator | itemVector = Vector.init accumulator.headingIndex.size }
 
         Ordinary "chapter" ->
             let
@@ -802,15 +802,7 @@ updateAccumulator ({ heading, indent, args, body, meta, properties } as block) a
             let
                 level : String
                 level =
-                    case Dict.get "has-chapters" accumulator.keyValueDict of
-                        Nothing ->
-                            Dict.get "level" properties |> Maybe.withDefault "1"
-
-                        Just "yes" ->
-                            Dict.get "level" properties |> Maybe.withDefault "1"
-
-                        _ ->
-                            Dict.get "level" properties |> Maybe.withDefault "1"
+                    Dict.get "level" properties |> Maybe.withDefault "1"
             in
             case getNameContentId block of
                 Just { name, content, id } ->
@@ -850,18 +842,21 @@ updateAccumulator ({ heading, indent, args, body, meta, properties } as block) a
 
             else
                 let
+                    vecSize =
+                        accumulator.headingIndex.size
+
                     headingIndex =
                         case Dict.get "first-section" block.properties of
                             Nothing ->
-                                { content = [ 0, 0, 0, 0 ], size = 4 }
+                                Vector.init vecSize
 
                             Just firstSection_ ->
                                 case String.toInt firstSection_ of
                                     Just n ->
-                                        { content = [ max (n - 1) 0, 0, 0, 0 ], size = 4 }
+                                        Vector.init vecSize |> Vector.set 0 (max (n - 1) 0)
 
                                     Nothing ->
-                                        { content = [ 0, 0, 0, 0 ], size = 4 }
+                                        Vector.init vecSize
                 in
                 { accumulator | headingIndex = headingIndex, keyValueDict = newKeyValueDict }
 
@@ -870,14 +865,14 @@ updateAccumulator ({ heading, indent, args, body, meta, properties } as block) a
                 n =
                     List.head args |> Maybe.andThen String.toInt |> Maybe.withDefault 1
             in
-            { accumulator | headingIndex = { content = [ n, 0, 0, 0 ], size = 4 } }
+            { accumulator | headingIndex = Vector.init accumulator.headingIndex.size |> Vector.set 0 n }
 
         Ordinary "shiftandsetcounter" ->
             let
                 n =
                     List.head args |> Maybe.andThen String.toInt |> Maybe.withDefault 1
             in
-            { accumulator | headingIndex = { content = [ n, 0, 0, 0 ], size = 4 }, deltaLevel = 1 }
+            { accumulator | headingIndex = Vector.init accumulator.headingIndex.size |> Vector.set 0 n, deltaLevel = 1 }
 
         Ordinary "bibitem" ->
             updateBibItemBlock accumulator args block.meta.id
@@ -930,9 +925,6 @@ normalizeLines lines =
 updateWithOrdinarySectionBlock : Accumulator -> Maybe String -> Either String (List Expression) -> String -> String -> Accumulator
 updateWithOrdinarySectionBlock accumulator name content level id =
     let
-        _ =
-            Debug.log "@@updateWithOrdinarySectionBlock-content-level" ( content, level )
-
         titleWords =
             case content of
                 Left str ->
@@ -1094,7 +1086,7 @@ updateWithOrdinaryBlock block accumulator =
                             Vector.increment level accumulator.itemVector
 
                         NotInList ->
-                            Vector.init 4 |> Vector.increment 0
+                            Vector.init accumulator.itemVector.size |> Vector.increment 0
 
                 index =
                     Vector.get level itemVector

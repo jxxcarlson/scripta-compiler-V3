@@ -3,6 +3,8 @@ module Generic.Vector exposing (Vector, get, increment, init, set, toString, toS
 {-| A fixed-size vector of integers for section/item numbering.
 -}
 
+import List.Extra
+
 
 type alias Vector =
     { size : Int, content : List Int }
@@ -39,38 +41,12 @@ toStringWithLevel lev v =
 
 get : Int -> Vector -> Int
 get k v =
-    getAt k v.content |> Maybe.withDefault 0
+    List.Extra.getAt k v.content |> Maybe.withDefault 0
 
 
 set : Int -> Int -> Vector -> Vector
 set k a v =
-    { v | content = setAt k a v.content }
-
-
-{-| Get element at index (0-based).
--}
-getAt : Int -> List a -> Maybe a
-getAt idx list =
-    if idx < 0 then
-        Nothing
-
-    else
-        List.head (List.drop idx list)
-
-
-{-| Set element at index (0-based).
--}
-setAt : Int -> a -> List a -> List a
-setAt idx val list =
-    List.indexedMap
-        (\i x ->
-            if i == idx then
-                val
-
-            else
-                x
-        )
-        list
+    { v | content = List.Extra.setAt k a v.content }
 
 
 resetFrom : Int -> Vector -> Vector

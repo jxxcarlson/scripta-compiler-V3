@@ -8,3 +8,4 @@ secrets/
 tests/toLaTeXExportTestDocs/*.json
 tests/toLaTeXExportTestDocs/*.tex
 tools/toLaTeXExport/worker.js
+.worktrees/

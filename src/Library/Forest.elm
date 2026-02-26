@@ -2,6 +2,7 @@ module Library.Forest exposing (makeForest)
 
 import Library.Tree
 import RoseTree.Tree exposing (Tree)
+import Tools.Loop exposing (Step(..), loop)
 
 
 makeForest : (a -> Int) -> List a -> List (Tree a)
@@ -68,22 +69,6 @@ nextStep getLevel state =
             else
                 -- new item at higher than root leve, push it onto the current list
                 Loop { state | input = xs, currentLevel = level, currentList = x :: state.currentList }
-
-
-type Step state output
-    = Loop state
-    | Done output
-
-
-loop : state -> (state -> Step state block) -> block
-loop s f =
-    case f s of
-        Loop s_ ->
-            loop s_ f
-
-        Done b ->
-            b
-
 
 
 -- PRINTING

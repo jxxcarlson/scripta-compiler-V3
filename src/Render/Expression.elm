@@ -581,7 +581,7 @@ renderRef _ acc args meta =
                         , HA.style "padding" "2px 4px"
                         , HA.style "margin" "-2px -4px"
                         ]
-                        [ Html.text (numRef |> Debug.log "@@renderRef(numRef)") ]
+                        [ Html.text numRef ]
 
                 Nothing ->
                     Html.span [ HA.id meta.id, HA.style "color" "red" ] [ Html.text ("??" ++ trimmedRefId) ]

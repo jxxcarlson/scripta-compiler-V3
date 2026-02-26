@@ -1,8 +1,10 @@
 module ETeX.Transform exposing
     ( evalStr
+    , evalStrResult
     , makeMacroDict
     , toLaTeXNewCommands
     , transformETeX
+    , transformETeXResult
     )
 
 import Dict exposing (Dict)
@@ -40,12 +42,19 @@ import Result.Extra
 
 transformETeX : MathMacroDict -> String -> String
 transformETeX userdefinedMacroDict src =
-    case transformETeX_ userdefinedMacroDict src of
+    case transformETeXResult userdefinedMacroDict src of
         Ok result ->
-            List.map print result |> String.concat
+            result
 
         Err _ ->
-            src
+            -- Return input with error marker so failures are visible in output
+            "[ETeX error] " ++ src
+
+
+transformETeXResult : MathMacroDict -> String -> Result (List (DeadEnd Context Problem)) String
+transformETeXResult userdefinedMacroDict src =
+    transformETeX_ userdefinedMacroDict src
+        |> Result.map (\result -> List.map print result |> String.concat)
 
 
 isUserDefinedMacro : MathMacroDict -> String -> Bool
@@ -166,15 +175,19 @@ resolveSymbolNameInDeco deco =
 
 evalStr : MathMacroDict -> String -> String
 evalStr userDefinedMacroDict str =
-    case parseManyWithDict userDefinedMacroDict (String.trim str) of
+    case evalStrResult userDefinedMacroDict str of
         Ok result ->
-            List.map (expandMacroWithDict userDefinedMacroDict) result |> printList
+            result
 
         Err _ ->
-            -- the intent of evalStr is to expand macros.  So if something
-            -- goes wrong with the process, just return the input string.
-            -- TODO: This solves the problem of false error reporting, but I don't like the solution.
-            str
+            -- Return input with error marker so failures are visible in output
+            "[ETeX error] " ++ str
+
+
+evalStrResult : MathMacroDict -> String -> Result (List (DeadEnd Context Problem)) String
+evalStrResult userDefinedMacroDict str =
+    parseManyWithDict userDefinedMacroDict (String.trim str)
+        |> Result.map (\result -> List.map (expandMacroWithDict userDefinedMacroDict) result |> printList)
 
 
 parseMany : MathMacroDict -> String -> Result (List (DeadEnd Context Problem)) (List MathExpr)

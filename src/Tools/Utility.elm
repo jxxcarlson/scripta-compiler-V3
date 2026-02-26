@@ -1,7 +1,6 @@
-module Tools.Utility exposing (compressWhitespace, keyValueDict, removeNonAlphaNum, userReplace)
+module Tools.Utility exposing (compressWhitespace, keyValueDict)
 
 import Dict exposing (Dict)
-import Regex
 
 
 compressWhitespace : String -> String
@@ -27,18 +26,3 @@ pairFromList strings =
 
         _ ->
             Nothing
-
-
-removeNonAlphaNum : String -> String
-removeNonAlphaNum string =
-    userReplace "[^A-Za-z0-9\\-]" (\_ -> "") string
-
-
-userReplace : String -> (Regex.Match -> String) -> String -> String
-userReplace regexString replacer string =
-    case Regex.fromString regexString of
-        Nothing ->
-            string
-
-        Just regex ->
-            Regex.replace regex replacer string
