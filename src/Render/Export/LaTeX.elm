@@ -1728,8 +1728,23 @@ exportExpr : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Expression -> St
 exportExpr mathMacroDict settings expr =
     case expr of
         Fun name exps_ _ ->
-            -- Handle verbatim-like functions: [math x^2] should export like $x^2$
-            if List.member name [ "chem", "math", "m", "code" ] then
+            if List.member name [ "scheme", "compute", "data", "button", "newPost", "tableRow", "tableItem" ] then
+                "[" ++ name ++ "]:unknown"
+
+            else if name == "sup" then
+                renderSup name exps_
+
+            else if name == "sub" then
+                renderSub name exps_
+
+            else if name == "bi" then
+                renderBi name exps_
+
+            else if name == "ds" then
+                renderDs
+                -- Handle verbatim-like functions: [math x^2] should export like $x^2$
+
+            else if List.member name [ "chem", "math", "m", "code" ] then
                 let
                     arg =
                         case exps_ of
@@ -1763,7 +1778,7 @@ exportExpr mathMacroDict settings expr =
                     Nothing ->
                         "Error extracting lambda"
 
-            else if name == "dollar" then
+            else if name == "dollar" || name == "ds" then
                 "\\$"
 
             else
@@ -1795,6 +1810,53 @@ exportExpr mathMacroDict settings expr =
         ExprList _ itemExprs _ ->
             -- Export the list of expressions
             exportExprList mathMacroDict settings itemExprs
+
+
+
+{- HELPERS FOR exportExpr -}
+
+
+renderSup name exps_ =
+    let
+        arg =
+            case exps_ of
+                [ Text str _ ] ->
+                    str
+
+                _ ->
+                    "Invalid argument to " ++ name
+    in
+    "${}^{\\text{" ++ arg ++ "}}$"
+
+
+renderSub name exps_ =
+    let
+        arg =
+            case exps_ of
+                [ Text str _ ] ->
+                    str
+
+                _ ->
+                    "Invalid argument to " ++ name
+    in
+    "${}_{\\text{" ++ arg ++ "}}$"
+
+
+renderBi name exps_ =
+    let
+        arg =
+            case exps_ of
+                [ Text str _ ] ->
+                    "\\textbf{\\textit{" ++ str ++ "}}"
+
+                _ ->
+                    "Invalid argument to " ++ name
+    in
+    "\\text{" ++ arg ++ "}"
+
+
+renderDs =
+    "\\$"
 
 
 {-| Use this to unalias names

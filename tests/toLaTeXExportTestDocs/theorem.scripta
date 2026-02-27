@@ -1,0 +1,9 @@
+| title
+Theorem Test
+
+| theorem
+There are infinitely many prime $p > 1000$.
+
+| lemma
+An integer $n >1$ is either prime or non-prime.
+
