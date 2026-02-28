@@ -387,7 +387,7 @@ addLineToBlock line block =
     let
         -- Determine the content to add based on block type
         contentToAdd =
-            if block.indent > 0 then
+            if block.indent > 0 && line.indent >= block.indent then
                 -- For indented blocks, drop the indent prefix
                 String.dropLeft block.indent line.content
 
