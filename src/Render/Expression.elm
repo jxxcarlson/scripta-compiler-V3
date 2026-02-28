@@ -1471,17 +1471,14 @@ renderMark params acc args meta =
         strippedArgs =
             stripWithProperty args
 
-        highlight =
-            if params.selectedId == "__ALL_MARKS__" && withValue /= Nothing then
-                Render.Utility.highlightStyle params.theme
-
-            else if params.selectedId == markId then
-                Render.Utility.highlightStyle params.theme
+        markClass =
+            if withValue /= Nothing then
+                [ HA.class "scripta-mark" ]
 
             else
                 []
     in
-    Html.span ([ HA.id markId ] ++ highlight) (renderList params acc strippedArgs)
+    Html.span ([ HA.id markId ] ++ markClass) (renderList params acc strippedArgs)
 
 
 {-| Extract the value from a trailing " with:..." in the last Text node.

@@ -26,7 +26,6 @@ defaultCompilerParameters : V3.Types.CompilerParameters
 defaultCompilerParameters =
     { filter = V3.Types.NoFilter
     , windowWidth = 600
-    , selectedId = "selectedId"
     , theme = V3.Types.Dark
     , editCount = 0
     , width = 600

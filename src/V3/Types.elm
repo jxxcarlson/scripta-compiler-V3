@@ -206,7 +206,6 @@ type alias MathMacroDict =
 type alias CompilerParameters =
     { filter : Filter
     , windowWidth : Int
-    , selectedId : String
     , theme : Theme
     , editCount : Int
     , width : Int

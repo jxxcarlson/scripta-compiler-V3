@@ -13,7 +13,7 @@ import Json.Decode as Decode
 import Render.Constants
 import Render.Expression
 import Render.Sizing
-import Render.Utility exposing (blockIdAndStyle, idAttr, selectedStyle)
+import Render.Utility exposing (blockIdAndStyle, idAttr)
 import V3.Types exposing (Accumulator, CompilerParameters, Expr(..), Expression, ExpressionBlock, Msg(..), TermLoc, Theme(..))
 
 
@@ -113,7 +113,7 @@ blockDict =
 renderDefault : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderDefault params acc name block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                , HA.style "margin-left" (Render.Sizing.marginLeftPx params.sizing)
                , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)
@@ -200,7 +200,7 @@ renderSection params acc _ block children =
     [ Html.div
         [ HA.id slug ]
         (tag
-            (blockIdAndStyle params block
+            (blockIdAndStyle block
                 ++ [ HA.style "font-weight" "normal"
                    , HA.style "margin-top" "1.5em"
                    , if level > 2 then
@@ -233,7 +233,7 @@ renderSubsection params acc _ block children =
     [ Html.div
         [ HA.id slug ]
         (Html.h3
-            (blockIdAndStyle params block ++ Render.Utility.rlBlockSync block.meta)
+            (blockIdAndStyle block ++ Render.Utility.rlBlockSync block.meta)
             (renderBody params acc block)
             :: children
         )
@@ -255,7 +255,7 @@ renderSubsubsection params acc _ block children =
     [ Html.div
         [ HA.id slug ]
         (Html.h4
-            (blockIdAndStyle params block ++ Render.Utility.rlBlockSync block.meta)
+            (blockIdAndStyle block ++ Render.Utility.rlBlockSync block.meta)
             (renderBody params acc block)
             :: children
         )
@@ -297,7 +297,7 @@ renderItem params acc _ block children =
                 ]
     in
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "display" "flex"
                , HA.style "margin-left" "0px"
                , HA.style "margin-bottom" marginBottom
@@ -354,7 +354,7 @@ renderNumbered params acc _ block children =
                 ]
     in
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "display" "flex"
                , HA.style "margin-left" "0px"
                , HA.style "margin-bottom" marginBottom
@@ -382,7 +382,7 @@ renderNumbered params acc _ block children =
 renderItemList : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderItemList params acc _ block children =
     [ Html.ul
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-left" "0px"
                , HA.style "padding-left" "1.5em"
                , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
@@ -403,7 +403,7 @@ renderItemList params acc _ block children =
 renderNumberedList : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderNumberedList params acc _ block children =
     [ Html.ol
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-left" "0px"
                , HA.style "padding-left" "1.5em"
                , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
@@ -697,7 +697,7 @@ renderTheorem params acc name block children =
                     "#2a2a2a"
             )
          ]
-            ++ blockIdAndStyle params block
+            ++ blockIdAndStyle block
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span
@@ -724,7 +724,7 @@ renderTheorem params acc name block children =
 renderProof : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderProof params acc _ block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-top" "0.5em"
                , HA.style "margin-bottom" "1em"
                ]
@@ -752,7 +752,7 @@ renderProof params acc _ block children =
 renderIndent : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderIndent params acc _ block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-left" "2em"
                , HA.style "padding-right" "2em"
                , HA.style "margin-bottom" "1em"
@@ -770,7 +770,7 @@ renderParagraph params acc _ block children =
             (Dict.get "padding-right" block.properties |> Maybe.withDefault "0") ++ "em"
     in
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-left" "2em"
                , HA.style "margin-bottom" "1em"
                , HA.style "padding-right" paddingRightInEms
@@ -792,7 +792,7 @@ Also available as `| quote`.
 renderQuotation : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderQuotation params acc _ block children =
     [ Html.blockquote
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "border-left" "3px solid #ccc"
                , HA.style "padding-left" "12px"
                , HA.style "margin-left" (Render.Sizing.indentWithDeltaPx 1 block.indent params.sizing)
@@ -845,7 +845,7 @@ renderXTable params acc _ block _ =
     case block.body of
         Right rows ->
             [ Html.div
-                (blockIdAndStyle params block
+                (blockIdAndStyle block
                     ++ [ HA.style "margin" "1em 0"
                        , HA.style "display" "flex"
                        , HA.style "flex-direction" "column"
@@ -920,7 +920,7 @@ renderXTableCell params acc widths formats index cell =
 renderCenter : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderCenter params acc _ block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "text-align" "center"
                ]
             ++ Render.Utility.rlBlockSync block.meta
@@ -938,7 +938,7 @@ renderCenter params acc _ block children =
 renderAbstract : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderAbstract params acc _ block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin" "1em 2em"
                , HA.style "font-size" "0.9em"
                ]
@@ -976,7 +976,7 @@ renderTitle _ _ _ _ _ =
 renderSubtitle : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubtitle params acc _ block _ =
     [ Html.h2
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "text-align" "center"
                , HA.style "font-weight" "normal"
                , HA.style "margin-top" "0"
@@ -995,7 +995,7 @@ renderSubtitle params acc _ block _ =
 renderAuthor : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderAuthor params acc _ block _ =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "text-align" "center"
                , HA.style "margin-top" "0.5em"
                ]
@@ -1013,7 +1013,7 @@ renderAuthor params acc _ block _ =
 renderDate : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderDate params acc _ block _ =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "text-align" "center"
                , HA.style "margin-top" "0.25em"
                , HA.style "font-size" "0.9em"
@@ -1175,7 +1175,7 @@ renderBox params acc _ block children =
     in
     [ Html.div [ HA.style "margin-left" "2.75em", HA.style "font-size" "1.15em" ] [ Html.text title ]
     , Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "border" "1px solid #ccc"
                , HA.style "padding" "1em"
                , HA.style "margin-left" "2.75em"
@@ -1262,7 +1262,7 @@ renderTable params acc _ block _ =
                         |> List.filterMap String.toInt
             in
             [ Html.div
-                (blockIdAndStyle params block
+                (blockIdAndStyle block
                     ++ [ HA.style "margin" "1em 0"
                        , HA.style "padding-left" "24px"
                        ]
@@ -1355,7 +1355,7 @@ renderDesc params acc _ block children =
             String.join " " block.args
     in
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "display" "flex"
                , HA.style "margin-bottom" "0.5em"
                ]
@@ -1404,7 +1404,7 @@ renderEndnotes params acc _ block _ =
                 |> List.sortBy .label
     in
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-top" "2em"
                , HA.style "padding-top" "1em"
                , HA.style "border-top" "1px solid #ccc"
@@ -1429,7 +1429,6 @@ renderFootnoteItem params { label, content, id, mSourceBlockId } =
          , HA.style "margin-bottom" "0.5em"
          , HA.style "cursor" "pointer"
          ]
-            ++ selectedStyle params.selectedId id params.theme
             ++ (case mSourceBlockId of
                     Just sourceBlockId ->
                         [ HE.stopPropagationOn "click"
@@ -1474,7 +1473,7 @@ Also available as `| sh`.
 renderSubheading : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderSubheading params acc _ block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "font-size" "1.1em"
                , HA.style "font-weight" "normal"
                , HA.style "margin-top" "1em"
@@ -1495,7 +1494,7 @@ renderSubheading params acc _ block children =
 renderCompact : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderCompact params acc _ block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "line-height" "1.2"
                ]
             ++ Render.Utility.rlBlockSync block.meta
@@ -1513,7 +1512,7 @@ renderCompact params acc _ block children =
 renderIdentity : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderIdentity params acc _ block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ Render.Utility.rlBlockSync block.meta
         )
         (renderBody params acc block ++ children)
@@ -1534,7 +1533,7 @@ Available colors: red, red2, blue.
 renderColorBlock : String -> CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderColorBlock color params acc _ block children =
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "color" color
                ]
             ++ Render.Utility.rlBlockSync block.meta
@@ -1557,7 +1556,7 @@ renderQuestion params acc _ block children =
          , HA.style "background-color" "#f0f8ff"
          , HA.style "border-left" "3px solid #4a90d9"
          ]
-            ++ blockIdAndStyle params block
+            ++ blockIdAndStyle block
             ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a90d9" ] [ Html.text "Q: " ]
@@ -1581,7 +1580,7 @@ renderAnswer params acc _ block children =
          , HA.style "background-color" "#f0fff0"
          , HA.style "border-left" "3px solid #4a9"
          ]
-            ++ blockIdAndStyle params block
+            ++ blockIdAndStyle block
             ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a9" ] [ Html.text "A: " ]
@@ -1604,7 +1603,7 @@ Arguments:
 renderReveal : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderReveal params acc _ block children =
     [ Html.details
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                ]
             ++ Render.Utility.rlBlockSync block.meta
@@ -1648,7 +1647,7 @@ renderChapter params acc _ block children =
                 ""
     in
     [ Html.h1
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "font-size" "2em"
                , HA.style "font-weight" "normal"
                , HA.style "margin-top" "1.5em"
@@ -1694,7 +1693,7 @@ renderUnnumberedSection params acc _ block children =
                     "1.1em"
     in
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "font-size" fontSize
                , HA.style "font-weight" "bold"
                , HA.style "margin-top" "1em"
@@ -1731,7 +1730,7 @@ renderVisibleBanner _ _ _ block _ =
 renderBibliography : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderBibliography params _ _ block children =
     [ Html.h2
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.text "References" ]
@@ -1775,7 +1774,6 @@ renderBibitem params acc _ block children =
          , HA.style "display" "flex"
          , HA.style "margin-bottom" "0.5em"
          ]
-            ++ selectedStyle params.selectedId bibitemId params.theme
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.span
@@ -1810,7 +1808,7 @@ renderEnv params acc _ block children =
                 |> Maybe.withDefault "environment"
     in
     [ Html.div
-        (blockIdAndStyle params block
+        (blockIdAndStyle block
             ++ [ HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                , HA.style "padding" "0.5em"
                , HA.style "border" "1px solid #ddd"

@@ -170,9 +170,8 @@ this rule has no hypotheses, it is an axiom.  Thus $\nat : \cU_0$ is a judgement
 The introduction rules for the natural numbers are
 
 | equation
-\ttfrac{}{zero : $\nat$}{\textsf{zero-intro}}
 \qquad
-\ttfrac{$n : \nat$}{$\suc n : \nat$}{\textsf{succ-intro}}
+\ffrac{n : \nat}{\suc n : \nat}{"succ-intro"}
 
 We have already seen them as informal statements.  From them we derive
 judgements such as $\suc (\suc (\suc \zero)) : \nat$.  If we define the
@@ -464,7 +463,7 @@ Below is the derivation tree for $\suc\; (\suc\, \zero) + \suc\; (\suc\, \zero)$
 https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ea9596e8-e556-4216-fe6d-9bce248a3c00/public
 
  We can use the judgement
-$\suc\; (\suc\, \zero) + \suc\; (\suc\, \zero) : \nat$ as the
+\( \suc\; (\suc\, \zero) + \suc\; (\suc\, \zero) : \nat \) as the
 starting point for another derivation where we apply
 the rules of [eqref +-rules]:
 

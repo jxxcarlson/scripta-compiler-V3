@@ -19,11 +19,14 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Html.Keyed as Keyed
+import Html.Lazy
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Parser.Forest
+import RoseTree.Tree exposing (Tree)
 import Task
 import V3.Compiler
-import V3.Types exposing (CompilerOutput, Filter(..), Msg(..), Theme(..))
+import V3.Types exposing (Accumulator, ExpressionBlock, Filter(..), Theme(..))
 
 
 
@@ -119,6 +122,7 @@ type alias Model =
     , debugClickCount : Int
     , deleteConfirmation : Maybe String -- Document ID pending deletion confirmation
     , sortMode : SortMode
+    , parsedForest : ( Accumulator, List (Tree ExpressionBlock) )
     }
 
 
@@ -187,9 +191,32 @@ init flags =
       , debugClickCount = 0
       , deleteConfirmation = Nothing
       , sortMode = ByDate
+      , parsedForest = reparse initParams currentDoc.content
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
+
+
+{-| Minimal params for parsing. The parse stage only needs `filter` and `maxLevel`.
+-}
+initParams : V3.Types.CompilerParameters
+initParams =
+    { filter = NoFilter
+    , windowWidth = 600
+    , theme = Light
+    , editCount = 0
+    , width = 600
+    , showTOC = False
+    , sizing = V3.Types.defaultSizingConfig
+    , maxLevel = 0
+    }
+
+
+{-| Re-parse source text into (Accumulator, Forest).
+-}
+reparse : V3.Types.CompilerParameters -> String -> ( Accumulator, List (Tree ExpressionBlock) )
+reparse params sourceText =
+    Parser.Forest.parseToForestWithAccumulator params (String.lines sourceText)
 
 
 defaultDocument : Document
@@ -333,6 +360,7 @@ update msg model =
                 | sourceText = newSource
                 , documents = updatedDocuments
                 , editCount = model.editCount + 1
+                , parsedForest = reparse initParams newSource
               }
             , saveDocuments (encodeDocuments updatedDocuments)
             )
@@ -350,6 +378,7 @@ update msg model =
                         | currentDocumentId = docId
                         , sourceText = doc.content
                         , editCount = model.editCount + 1
+                        , parsedForest = reparse initParams doc.content
                       }
                     , Cmd.none
                     )
@@ -376,6 +405,7 @@ update msg model =
                 , currentDocumentId = newId
                 , sourceText = newDoc.content
                 , editCount = model.editCount + 1
+                , parsedForest = reparse initParams newDoc.content
               }
             , saveDocuments (encodeDocuments updatedDocuments)
             )
@@ -399,9 +429,12 @@ update msg model =
                         updatedDocuments =
                             List.filter (\doc -> doc.id /= docId) model.documents
 
+                        deletedCurrent =
+                            docId == model.currentDocumentId
+
                         -- If we deleted the current document, switch to another
                         ( newCurrentId, newSourceText ) =
-                            if docId == model.currentDocumentId then
+                            if deletedCurrent then
                                 case List.head updatedDocuments of
                                     Just doc ->
                                         ( doc.id, doc.content )
@@ -419,6 +452,13 @@ update msg model =
 
                             else
                                 updatedDocuments
+
+                        newParsedForest =
+                            if deletedCurrent then
+                                reparse initParams newSourceText
+
+                            else
+                                model.parsedForest
                     in
                     ( { model
                         | documents = finalDocuments
@@ -426,6 +466,7 @@ update msg model =
                         , sourceText = newSourceText
                         , editCount = model.editCount + 1
                         , deleteConfirmation = Nothing
+                        , parsedForest = newParsedForest
                       }
                     , saveDocuments (encodeDocuments finalDocuments)
                     )
@@ -647,32 +688,6 @@ sidebarWidth =
 view : Model -> Html Msg
 view model =
     let
-        sizing =
-            { baseFontSize = 14.0
-            , paragraphSpacing = 18.0
-            , marginLeft = 0.0
-            , marginRight = 120.0
-            , indentation = 20.0
-            , indentUnit = 2
-            , scale = 1.0
-            }
-
-        params : V3.Types.CompilerParameters
-        params =
-            { filter = NoFilter
-            , windowWidth = panelWidth model
-            , selectedId = model.selectedId
-            , theme = model.theme
-            , editCount = model.editCount
-            , width = panelWidth model
-            , showTOC = False
-            , sizing = sizing
-            , maxLevel = 0
-            }
-
-        output =
-            V3.Compiler.compile params (String.lines model.sourceText)
-
         bgColor =
             case model.theme of
                 Light ->
@@ -707,7 +722,8 @@ view model =
         , HA.style "font-family" "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
         , HA.style "overflow" "hidden"
         ]
-        [ viewHeader model
+        [ selectionStyleElement model.selectedId model.theme
+        , viewHeader model
         , Html.div
             [ HA.style "display" "flex"
             , HA.style "flex" "1"
@@ -717,17 +733,38 @@ view model =
             ]
             [ viewSidebar model panelBg textColor
             , viewEditor model panelBg textColor
-            , viewPreview model panelBg textColor output
+            , viewPreview model panelBg textColor
             ]
         , viewDeleteConfirmation model
         ]
 
 
 viewSidebar : Model -> String -> String -> Html Msg
-viewSidebar model panelBg textColor =
+viewSidebar model _ _ =
+    Html.Lazy.lazy4 viewSidebar_ model.documents model.currentDocumentId model.sortMode model.theme
+
+
+viewSidebar_ : List Document -> String -> SortMode -> Theme -> Html Msg
+viewSidebar_ documents currentDocumentId sortMode theme =
     let
+        panelBg =
+            case theme of
+                Light ->
+                    "#fff"
+
+                Dark ->
+                    "#2a2a2a"
+
+        textColor =
+            case theme of
+                Light ->
+                    "#333"
+
+                Dark ->
+                    "#e0e0e0"
+
         selectedBg =
-            case model.theme of
+            case theme of
                 Light ->
                     "#d0d0d0"
 
@@ -735,7 +772,7 @@ viewSidebar model panelBg textColor =
                     "#4a4a4a"
 
         sortedDocs =
-            sortDocuments model.sortMode model.documents
+            sortDocuments sortMode documents
 
         sortButtonStyle isActive =
             [ HA.style "padding" "2px 6px"
@@ -745,7 +782,7 @@ viewSidebar model panelBg textColor =
             , HA.style "font-size" "0.75em"
             , HA.style "background-color"
                 (if isActive then
-                    case model.theme of
+                    case theme of
                         Light ->
                             "#007bff"
 
@@ -803,10 +840,10 @@ viewSidebar model panelBg textColor =
                 ]
                 [ Html.text "Sort:" ]
             , Html.button
-                (HE.onClick (SetSortMode ByDate) :: sortButtonStyle (model.sortMode == ByDate))
+                (HE.onClick (SetSortMode ByDate) :: sortButtonStyle (sortMode == ByDate))
                 [ Html.text "Date" ]
             , Html.button
-                (HE.onClick (SetSortMode Alphabetical) :: sortButtonStyle (model.sortMode == Alphabetical))
+                (HE.onClick (SetSortMode Alphabetical) :: sortButtonStyle (sortMode == Alphabetical))
                 [ Html.text "A-Z" ]
             ]
         , Html.div
@@ -827,7 +864,7 @@ viewSidebar model panelBg textColor =
                         , HA.style "justify-content" "space-between"
                         , HA.style "align-items" "center"
                         , HA.style "background-color"
-                            (if doc.id == model.currentDocumentId then
+                            (if doc.id == currentDocumentId then
                                 selectedBg
 
                              else
@@ -842,7 +879,7 @@ viewSidebar model panelBg textColor =
                             , HA.style "font-size" "0.9em"
                             ]
                             [ Html.text
-                                (if doc.id == model.currentDocumentId then
+                                (if doc.id == currentDocumentId then
                                     "▸ " ++ doc.title
 
                                  else
@@ -871,6 +908,11 @@ viewSidebar model panelBg textColor =
 
 viewHeader : Model -> Html Msg
 viewHeader model =
+    Html.Lazy.lazy viewHeader_ model.theme
+
+
+viewHeader_ : Theme -> Html Msg
+viewHeader_ theme =
     let
         buttonStyle =
             [ HA.style "padding" "8px 16px"
@@ -878,7 +920,7 @@ viewHeader model =
             , HA.style "border" "1px solid #ccc"
             , HA.style "border-radius" "4px"
             , HA.style "background-color"
-                (case model.theme of
+                (case theme of
                     Light ->
                         "#fff"
 
@@ -886,7 +928,7 @@ viewHeader model =
                         "#444"
                 )
             , HA.style "color"
-                (case model.theme of
+                (case theme of
                     Light ->
                         "#333"
 
@@ -925,7 +967,7 @@ viewHeader model =
             , Html.button
                 (HE.onClick ToggleTheme :: buttonStyle)
                 [ Html.text
-                    (case model.theme of
+                    (case theme of
                         Light ->
                             "Dark Mode"
 
@@ -988,8 +1030,8 @@ onTextChange =
         )
 
 
-viewPreview : Model -> String -> String -> CompilerOutput V3.Types.Msg -> Html Msg
-viewPreview model panelBg textColor output =
+viewPreview : Model -> String -> String -> Html Msg
+viewPreview model panelBg textColor =
     Html.div
         [ HA.style "flex" "1"
         , HA.style "display" "flex"
@@ -1013,8 +1055,20 @@ viewPreview model panelBg textColor output =
             , HA.style "color" textColor
             , HA.style "line-height" "1.6"
             ]
-            (List.map (Html.map CompilerMsg) output.body)
+            [ Html.Lazy.lazy2 viewPreviewBody model.parsedForest (viewParams model) ]
         ]
+
+
+{-| Render the preview body. Wrapped in Html.lazy2 so it only re-renders
+when parsedForest or renderParams change.
+-}
+viewPreviewBody : ( Accumulator, List (Tree ExpressionBlock) ) -> V3.Types.CompilerParameters -> Html Msg
+viewPreviewBody parsedForest params =
+    let
+        output =
+            V3.Compiler.render params parsedForest
+    in
+    Html.div [] (List.map (Html.map CompilerMsg) output.body)
 
 
 viewDeleteConfirmation : Model -> Html Msg
@@ -1083,10 +1137,69 @@ viewDeleteConfirmation model =
                 ]
 
 
+{-| Dynamic CSS for selection highlighting.
+Uses attribute selectors to avoid CSS escaping issues with ids containing periods/colons.
+-}
+selectionStyleElement : String -> Theme -> Html msg
+selectionStyleElement selectedId theme =
+    let
+        bgColor =
+            case theme of
+                Light ->
+                    "#d0e8ff"
+
+                Dark ->
+                    "#2a4a6a"
+
+        highlightColor =
+            case theme of
+                Light ->
+                    "rgb(229.5,229.5,255)"
+
+                Dark ->
+                    "#2a4a6a"
+
+        css =
+            if selectedId == "__ALL_MARKS__" then
+                ".scripta-mark { background-color: " ++ highlightColor ++ "; }"
+
+            else if selectedId /= "" then
+                "[id=\"" ++ selectedId ++ "\"] { background-color: " ++ bgColor ++ "; }\n"
+                    ++ ".scripta-mark[id=\"" ++ selectedId ++ "\"] { background-color: " ++ highlightColor ++ "; }"
+
+            else
+                ""
+    in
+    Html.node "style" [] [ Html.text css ]
+
+
 panelWidth : Model -> Int
 panelWidth model =
     -- Account for sidebar (200px), padding (10px * 2), and gaps (10px * 2)
     (model.windowWidth - sidebarWidth - 50) // 2
+
+
+{-| Build CompilerParameters for rendering from the current model.
+-}
+viewParams : Model -> V3.Types.CompilerParameters
+viewParams model =
+    { filter = NoFilter
+    , windowWidth = panelWidth model
+    , theme = model.theme
+    , editCount = model.editCount
+    , width = panelWidth model
+    , showTOC = False
+    , sizing =
+        { baseFontSize = 14.0
+        , paragraphSpacing = 18.0
+        , marginLeft = 0.0
+        , marginRight = 120.0
+        , indentation = 20.0
+        , indentUnit = 2
+        , scale = 1.0
+        }
+    , maxLevel = 0
+    }
 
 
 

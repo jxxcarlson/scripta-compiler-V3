@@ -1,4 +1,4 @@
-module Render.Utility exposing (blockIdAndStyle, getArg, highlightStyle, idAttr, rlBlockSync, rlSync, selectedStyle)
+module Render.Utility exposing (blockIdAndStyle, getArg, idAttr, rlBlockSync, rlSync)
 
 {-| Utility functions for rendering.
 -}
@@ -9,8 +9,7 @@ import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as Decode
 import List.Extra
-import Render.Constants
-import V3.Types exposing (CompilerParameters, ExpressionBlock, Msg, Theme(..))
+import V3.Types exposing (ExpressionBlock, Msg)
 
 
 rlSync : V3.Types.ExprMeta -> List (Html.Attribute V3.Types.Msg)
@@ -72,59 +71,24 @@ makeId prefix suffix =
     prefix ++ "-" ++ suffix
 
 
-{-| Style for selected element.
--}
-selectedStyle : String -> String -> Theme -> List (Attribute msg)
-selectedStyle selectedId blockId theme =
-    if selectedId == blockId then
-        case theme of
-            Light ->
-                [ HA.style "background-color" "#d0e8ff" ]
-
-            Dark ->
-                [ HA.style "background-color" "#2a4a6a" ]
-
-    else
-        []
-
-
-{-| Style for highlighted element.
--}
-highlightStyle : Theme -> List (Attribute msg)
-highlightStyle theme =
-    case theme of
-        Light ->
-            [ HA.style "background-color" Render.Constants.highlightColor ]
-
-        Dark ->
-            [ HA.style "background-color" Render.Constants.highlightColorDark ]
-
-
-{-| Compute the DOM id and highlight style for a block.
+{-| Compute the DOM id and CSS class for a block.
 
 If the block has a `mark` property, use its value as the DOM id
-and apply highlight style when selectedId matches or is "__ALL_MARKS__".
-Otherwise, fall back to the block's meta id with normal selection style.
+and add a "scripta-mark" class for CSS-based highlighting.
+Otherwise, fall back to the block's meta id.
+
+Selection highlighting is handled via a dynamic <style> element
+in the host app, not inline styles.
 
 -}
-blockIdAndStyle : CompilerParameters -> ExpressionBlock -> List (Attribute Msg)
-blockIdAndStyle params block =
+blockIdAndStyle : ExpressionBlock -> List (Attribute Msg)
+blockIdAndStyle block =
     case Dict.get "mark" block.properties of
         Just markId ->
-            [ HA.id markId ]
-                ++ (if params.selectedId == "__ALL_MARKS__" then
-                        highlightStyle params.theme
-
-                    else if params.selectedId == markId then
-                        highlightStyle params.theme
-
-                    else
-                        selectedStyle params.selectedId block.meta.id params.theme
-                   )
+            [ HA.id markId, HA.class "scripta-mark" ]
 
         Nothing ->
             [ HA.id block.meta.id ]
-                ++ selectedStyle params.selectedId block.meta.id params.theme
 
 
 getArg : String -> Int -> List String -> String

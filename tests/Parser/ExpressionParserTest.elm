@@ -120,5 +120,37 @@ suite =
 
                         _ ->
                             Expect.fail ("Expected [VFun \"math\" \"A\", Text, VFun \"math\" \"B\"], got: " ++ Debug.toString result)
+            , test "parses \\(...\\) with backslash macros and nested parens" <|
+                \_ ->
+                    let
+                        result =
+                            pe "\\(\\suc\\; (\\suc\\, \\zero) : \\nat\\)"
+                    in
+                    case result of
+                        [ VFun "math" content _ ] ->
+                            if String.contains "\\suc" content && String.contains "\\zero" content && String.contains "\\nat" content then
+                                Expect.pass
+
+                            else
+                                Expect.fail ("Math content missing expected macros, got: " ++ content)
+
+                        _ ->
+                            Expect.fail ("Expected [VFun \"math\" _ _], got: " ++ Debug.toString result)
+            , test "parses $...$ with backslash macros and nested parens" <|
+                \_ ->
+                    let
+                        result =
+                            pe "$\\suc\\; (\\suc\\, \\zero) : \\nat$"
+                    in
+                    case result of
+                        [ VFun "math" content _ ] ->
+                            if String.contains "\\suc" content && String.contains "\\zero" content && String.contains "\\nat" content then
+                                Expect.pass
+
+                            else
+                                Expect.fail ("Math content missing expected macros, got: " ++ content)
+
+                        _ ->
+                            Expect.fail ("Expected [VFun \"math\" _ _], got: " ++ Debug.toString result)
             ]
         ]

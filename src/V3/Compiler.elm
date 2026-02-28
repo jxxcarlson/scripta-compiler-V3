@@ -8,7 +8,6 @@ module V3.Compiler exposing (compile, render)
     params =
         { filter = NoFilter
         , windowWidth = 800
-        , selectedId = ""
         , theme = Light
         , editCount = 0
         }

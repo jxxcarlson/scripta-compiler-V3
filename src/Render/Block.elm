@@ -9,7 +9,7 @@ import Html.Attributes as HA
 import Render.Expression
 import Render.OrdinaryBlock
 import Render.Sizing
-import Render.Utility exposing (blockIdAndStyle, idAttr, selectedStyle)
+import Render.Utility exposing (blockIdAndStyle, idAttr)
 import Render.VerbatimBlock
 import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Heading(..), Msg(..))
 
@@ -38,7 +38,7 @@ renderParagraph params acc block children =
         Left errorMsg ->
             -- Error case - display error message
             Html.div
-                (blockIdAndStyle params block
+                (blockIdAndStyle block
                     ++ [ HA.style "color" "red"
                        , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                        ]
@@ -53,7 +53,7 @@ renderParagraph params acc block children =
 
             else
                 Html.p
-                    (blockIdAndStyle params block
+                    (blockIdAndStyle block
                         ++ [ HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                            , HA.style "margin-left" (Render.Sizing.marginLeftPx params.sizing)
                            , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)

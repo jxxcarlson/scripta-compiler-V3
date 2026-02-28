@@ -250,6 +250,22 @@ reduceTokens lineNumber tokens =
             (MathToken meta) :: (S str _) :: (MathToken _) :: rest ->
                 VFun "math" str (boostMeta lineNumber meta.index meta) :: reduceRestOfTokens lineNumber rest
 
+            (MathToken meta) :: rest ->
+                -- Multi-token math content: collect everything up to closing MathToken
+                let
+                    inner =
+                        List.Extra.takeWhile (not << isMathToken) rest
+
+                    after =
+                        List.drop (List.length inner + 1) rest
+
+                    content =
+                        inner
+                            |> List.filterMap tokenToString
+                            |> String.join ""
+                in
+                VFun "math" content (boostMeta lineNumber meta.index meta) :: reduceRestOfTokens lineNumber after
+
             (CodeToken meta) :: (S str _) :: (CodeToken _) :: rest ->
                 VFun "code" str (boostMeta lineNumber meta.index meta) :: reduceRestOfTokens lineNumber rest
 
@@ -447,6 +463,16 @@ These functions receive their content as a raw string rather than parsed express
 verbatimFunctionNames : List String
 verbatimFunctionNames =
     [ "m", "math", "chem", "code" ]
+
+
+isMathToken : Token -> Bool
+isMathToken token =
+    case token of
+        MathToken _ ->
+            True
+
+        _ ->
+            False
 
 
 {-| Convert a token to its string representation for verbatim functions.
