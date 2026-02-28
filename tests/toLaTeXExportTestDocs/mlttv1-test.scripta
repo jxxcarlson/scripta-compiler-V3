@@ -1,0 +1,41 @@
+| title
+MLTT1 Test
+
+| mathmacros
+| mathmacros
+\newcommand{\term}[1]{#1}
+\newcommand{\nat}{\mathbb{N}}
+\newcommand{\integers}{\mathbb{Z}}
+\newcommand{\rationals}{\mathbb{Q}}
+\newcommand{\bool}{\mathop{\tt{Bool}}}
+\newcommand{\true}{\mathop{\tt{true}}}
+\newcommand{\false}{\mathop{\tt{false}}}
+\newcommand{\set}[1]{\{\ #1 \ \}}
+\newcommand{\sett}[2]{\{\ #1 \ | \  #2 \ \}}
+\newcommand{\ffrac}[3]{\frac{#1}{#2}\quad\text{#3}}
+\newcommand{\ttfrac}[3]{\frac{\text{#1}}{\text{#2}}\quad\text{#3}}
+%\newcommand{\tfrac}[2]{\frac{\text{#1}}{\text{#2}}
+\newcommand{\zero}{\mathop{\tt{zero}}}
+\newcommand{\suc}{\mathop{\tt{suc}}}
+\newcommand{\double}{\mathop{\tt{double}}}
+\newcommand{\add}{\mathop{\text{add}}}
+\newcommand{\uni}{\mathop{\text{Set}}}
+\newcommand{\rec}{\mathop{\text{rec}}}
+\newcommand{\comp}{\mathop{\text{comp}}}
+\newcommand{\opo}{\mathop{\text{o}}}
+%renewcommand{\or}{\mathop{\text{or}}}
+\newcommand{\underscore}{\mathop{\text{ \textunderscore\ }}}
+\newcommand{\type}{\mathop{\tt{Type}}}
+\newcommand{\elim}{\mathsf{elim}}
+\newcommand{\isEven}{\mathop{\mathsf{isEven}}}
+\newcommand{\ttop}[1]{\mathop{\mathsf{#1}}}
+\newcommand{\dash}{\text{-}}
+\newcommand{\refl}{\ttop{refl}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\bdot}{\bullet}
+
+
+
+\( \suc\; (\suc\, \zero) + \suc\; (\suc\, \zero) : \nat \)
