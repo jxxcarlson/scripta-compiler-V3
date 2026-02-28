@@ -18,8 +18,8 @@ MLTT
 \newcommand{\false}{\mathop{\mathsf{false}}}
 \newcommand{\rec}{\mathop{\mathsf{rec}}}
 \newcommand{\nott}{\mathop{\mathsf{not}}}
-\renewcommand{\and}{\mathop{\mathsf{and}}}
-\renewcommand{\or}{\mathop{\mathsf{or}}}
+\newcommand{\AND}{\mathop{\mathsf{and}}}
+\newcommand{\OR}{\mathop{\mathsf{or}}}
 \newcommand{\toa}{\ensuremath{\to\!\!*\,}}
 \newcommand{\cU}{\mathcal{U}}
 \newcommand{\refl}{\mathop{\mathsf{refl}}}
@@ -32,7 +32,7 @@ MLTT
 \newcommand{\unitt}{\top}
 \newcommand{\congg}{\mathop{\mathsf{cong}}}
 \newcommand{\isRightIdentity}{\mathop{\mathsf{isRightIdentity}}}
-\newcommand{\lemma}{\mathop{\mathsf{lemma}}}
+\newcommand{\lemmaf}{\mathop{\mathsf{lemma}}}
 \newcommand{\sym}{\mathop{\mathsf{sym}}}
 \newcommand{\trans}{\mathop{\mathsf{trans}}}
 \newcommand{\isEven}{\mathop{\mathsf{isEven}}}
@@ -56,7 +56,7 @@ have  things like this: $4\heartsuit, 5\diamondsuit, 6\clubsuit, 2\spadesuit$. W
 
 | equation
 A &= \set{ 2\heartsuit, 5\heartsuit} \\
-B &= \set{2\heartsuit, 7\spades} \\
+B &= \set{2\heartsuit, 7\spadesuit} \\
 
 It makes sense to say $e \in A$, meaning [quote the element $e$ is in the set $A$].  Thus we have
 
@@ -79,7 +79,7 @@ $\set{ \set{}, \set{\set{}}}$, etc. Introduce aliases for these numbers:
 &0 :\equiv \set{} \\
 &1 :\equiv \set{\set{}} \\
 &2 :\equiv \set{ \set{}, \set{\set{}}}
-&etc.
+& "etc."
 
 Then we find $0 \in 1$, $0 \in 2$ and $1 \in 2$, etc.  However,
 none of these elements is element of itself: $0 \not\in 0$, $1 \not\in 1$, etc.
@@ -411,18 +411,18 @@ Let's see if we can implement a fragment of the standard operations
 in Boolean algebra. Below is how we might implement logical conjunction.  Here is one way to do it, using pattern-matching:
 
 | equation
-&\and : \boolean \to \boolean \to \boolean \\
-&\and \true \true = \true \\
-&\and \true \false = \false \\
-&\and \false \true= \false \\
-&\and \false \false = \true  \\
+&\AND : \boolean \to \boolean \to \boolean \\
+&\AND \true \true = \true \\
+&\AND \true \false = \false \\
+&\AND \false \true= \false \\
+&\AND \false \false = \true  \\
 
 This style of pattern-matching can be improved:
 
 | equation
 \label{and-def}
-&\and \, - \false = \false \\
-&\and x \true = x
+&\AND \, - \false = \false \\
+&\AND x \true = x
 
 | hide
 \text{\_}
@@ -436,7 +436,7 @@ via the recursor:
 
 | equation
 \label{rec-def-of-adn}
-\and = \lambda b_1 . \lambda b_2 . \rec_\boolean(b_2, \false, b_1)
+\AND = \lambda b_1 . \lambda b_2 . \rec_\boolean(b_2, \false, b_1)
 
 | exercise
 Verify [eqref rec-def-of-adn] the equations [eqref and-def].
@@ -445,16 +445,16 @@ A careful comparison of [eqref rec-def-of-adn] and [eqref and-def]
 will show that the two derivations are interderviable.
 
 | exercise
-Define the logical function $\or$ by (1) equations, (2) the eliminator.
+Define the logical function $\OR$ by (1) equations, (2) the eliminator.
 
 Assuming the previous exercise, consider the following
 sequence of reductions
 
 | equation
 \label{bool-reductions}
-&\or\ (\and\ (\or\ \true\ \false)\ \true)\ \false \to
-&\or\ (\and\ \true\ \true)\ \false \to
-&\or\ (\true\ \false) \to
+&\OR\ (\AND\ (\OR\ \true\ \false)\ \true)\ \false \to
+&\OR\ (\AND\ \true\ \true)\ \false \to
+&\OR\ (\true\ \false) \to
 &\true
 
 Each line [eqref bool-reductions] is a term of $\boolean$.  However,
@@ -462,7 +462,7 @@ the last term is special: it cannot be further reduced.  Such a term is said to 
 
 | equation
 \label{bool-computation}
-\or\ (\and\ (\or\ \true\ \false)\ \true)\ \false \equiv \true : \boolean
+\OR\ (\AND\ (\OR\ \true\ \false)\ \true)\ \false \equiv \true : \boolean
 
 The equality here, as noted in section [ref mltt-as-a-formal-system],
 is [u definitional]. Note that in this case, computation of the boolean value on the left-hand-side of [eqref boolean-computation]
@@ -771,7 +771,6 @@ the variable $n$ to get an equality of functions:
 | equation
 &\add\; (\suc m)\; n = \suc\; (\add\; m\; n)
 &\lambda n.(\add\; (\suc m)\;
-
 n) = \lambda n.(\suc\; (\add\; m\; n))
 
 Now
@@ -953,33 +952,33 @@ is therefore also inhabited.  We have just proved that
 [b Principle: ] [i If $a$ and $b$ are definitionally equal, then they are also propositionally equal.]
 
 Consider now the type family $\isRightIdentity n = n + \zero =_\nat n$.
-We aim to show that there is a function $\lemma : (n : \nat) \to \isRightIdentity n$.  In other words, we claim that the type
+We aim to show that there is a function $\lemmaf : (n : \nat) \to \isRightIdentity n$.  In other words, we claim that the type
 $(n : \nat) \to \isRightIdentity n$ is inhabited.  If that is so, we have proved that
 
 | equation
 \forall n : \nat, \quad n + 0 \equiv n
 
-The proof is by induction.  If $n = 0$, then $\lemma n = 0 + 0 =_\nat 0$
+The proof is by induction.  If $n = 0$, then $\lemmaf n = 0 + 0 =_\nat 0$
 is inhabited by $\refl_0$.  Assume as inductive hypothesis that
-$\lemma n$ is inhabited by $p$. Then we have
+$\lemmaf n$ is inhabited by $p$. Then we have
 
 | equation
 \congg \suc (n + 0 =_\nat 0) &= \suc\; (n + 0) =_\nat \suc n
    &= (\suc n) + 0 =_\nat = \suc n
-   &= \lemma\; (\suc n)
+   &= \lemmaf\; (\suc n)
 
 In other words, we have shown that
 
 | equation
-\congg\; \suc\; (\lemma n) = \lemma\; (\suc n)
+\congg\; \suc\; (\lemmaf n) = \lemmaf\; (\suc n)
 
-Consequently $\lemma n$ is proved for all $n$.
+Consequently $\lemmaf n$ is proved for all $n$.
 
 There is one more
 bit of information that we can extract from this argument:
 
 | indent
-[i The term which inhabits $\lemma n$ is $(\congg \suc)^n \refl_0$]
+[i The term which inhabits $\lemmaf n$ is $(\congg \suc)^n \refl_0$]
 
 As a result, we know not only that $n + 0$
 is propositionally equal to $n$, but

@@ -304,7 +304,7 @@ commands =
 \\newcommand{\\smallsubheading}[1]{{\\bf\\small #1}\\par}
 %\\newcommand{\\term}[1]{{\\index{#1}}}
 %\\newcommand{\\termx}[1]{}
-\\newcommand{\\comment}[1]{}
+\\providecommand{\\comment}[1]{}
 \\newcommand{\\innertableofcontents}{}
 
 

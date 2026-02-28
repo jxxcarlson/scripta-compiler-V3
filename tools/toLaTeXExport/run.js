@@ -32,6 +32,21 @@ function httpRequest(url, options, body) {
   });
 }
 
+function httpGet(url) {
+  return httpRequest(url, { method: "GET" });
+}
+
+async function fetchErrorJson(filename) {
+  const url = PDF_SERVER + "/pdf/" + filename;
+  try {
+    const res = await httpGet(url);
+    if (res.status === 200) {
+      return JSON.parse(res.body);
+    }
+  } catch (_) {}
+  return null;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   if (args.length < 1) usage();
@@ -63,7 +78,8 @@ async function main() {
     fs.writeFileSync(texPath, latex);
     console.log("Wrote:", texPath);
 
-    // POST to the PDF server
+    // POST to the PDF server using the base filename as ID.
+    // The server overwrites output files on each POST for the same ID.
     const payload = JSON.stringify({
       id: texFilename,
       content: latex,
@@ -93,9 +109,26 @@ async function main() {
       const errorsPath = path.join(OUTPUT_DIR, basename + "-errors.json");
 
       if (result.hasErrors) {
-        // Error data is in the response itself under errorJson
-        fs.writeFileSync(errorsPath, JSON.stringify(result.errorJson, null, 2));
-        console.log("Errors (" + result.errorJson.length + ") written to:", errorsPath);
+        // Try multiple sources for structured error data:
+        // 1. Inline array in response (some server versions)
+        // 2. Fetch from server by well-known name (<basename>-errors.json)
+        let errorData = null;
+
+        if (Array.isArray(result.errorJson)) {
+          errorData = result.errorJson;
+        } else {
+          errorData = await fetchErrorJson(basename + "-errors.json");
+        }
+
+        if (errorData) {
+          fs.writeFileSync(errorsPath, JSON.stringify(errorData, null, 2));
+          const count = Array.isArray(errorData) ? errorData.length : "?";
+          console.log("Errors (" + count + ") written to:", errorsPath);
+        } else {
+          const fallback = { hasErrors: true, errorReport: result.errorReport || null };
+          fs.writeFileSync(errorsPath, JSON.stringify(fallback, null, 2));
+          console.log("Errors (could not fetch details) written to:", errorsPath);
+        }
       } else {
         fs.writeFileSync(errorsPath, JSON.stringify({ hasErrors: false }, null, 2));
         console.log("No errors. Wrote:", errorsPath);
