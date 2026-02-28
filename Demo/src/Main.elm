@@ -954,11 +954,24 @@ viewSidebar_ documents currentDocumentId sortMode theme =
 
 viewHeader : Model -> Html Msg
 viewHeader model =
-    Html.Lazy.lazy viewHeader_ model.theme
+    let
+        src =
+            model.sourceText
+
+        lines =
+            src |> String.lines |> List.length
+
+        words =
+            src |> String.words |> List.length
+
+        chars =
+            String.length src
+    in
+    Html.Lazy.lazy4 viewHeader_ model.theme lines words chars
 
 
-viewHeader_ : Theme -> Html Msg
-viewHeader_ theme =
+viewHeader_ : Theme -> Int -> Int -> Int -> Html Msg
+viewHeader_ theme lines words chars =
     let
         buttonStyle =
             [ HA.style "padding" "8px 16px"
@@ -998,7 +1011,16 @@ viewHeader_ theme =
             , HA.style "font-size" "1.2em"
             , HA.style "white-space" "nowrap"
             ]
-            [ Html.text "ScriptaV3 Demo" ]
+            [ Html.text
+                ("ScriptaV3 Demo — "
+                    ++ String.fromInt lines
+                    ++ "L "
+                    ++ String.fromInt words
+                    ++ "W "
+                    ++ String.fromInt chars
+                    ++ "C"
+                )
+            ]
         , Html.div
             [ HA.style "display" "flex"
             , HA.style "gap" "8px"
