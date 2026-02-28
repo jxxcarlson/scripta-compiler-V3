@@ -23,10 +23,12 @@ import Html.Lazy
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Parser.Forest
+import Process
 import RoseTree.Tree exposing (Tree)
 import Task
 import V3.Compiler
-import V3.Types exposing (Accumulator, ExpressionBlock, Filter(..), Theme(..))
+import Dict
+import V3.Types exposing (Accumulator, ExpressionBlock, ExpressionCache, Filter(..), Theme(..))
 
 
 
@@ -123,6 +125,7 @@ type alias Model =
     , deleteConfirmation : Maybe String -- Document ID pending deletion confirmation
     , sortMode : SortMode
     , parsedForest : ( Accumulator, List (Tree ExpressionBlock) )
+    , expressionCache : ExpressionCache
     }
 
 
@@ -179,6 +182,10 @@ init flags =
         currentDoc =
             List.head documents |> Maybe.withDefault defaultDocument
     in
+    let
+        ( initialCache, initialAcc, initialForest ) =
+            Parser.Forest.parseIncrementally initParams Dict.empty (String.lines currentDoc.content)
+    in
     ( { documents = documents
       , currentDocumentId = currentDoc.id
       , sourceText = currentDoc.content
@@ -191,7 +198,8 @@ init flags =
       , debugClickCount = 0
       , deleteConfirmation = Nothing
       , sortMode = ByDate
-      , parsedForest = reparse initParams currentDoc.content
+      , parsedForest = ( initialAcc, initialForest )
+      , expressionCache = initialCache
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
@@ -210,13 +218,6 @@ initParams =
     , sizing = V3.Types.defaultSizingConfig
     , maxLevel = 0
     }
-
-
-{-| Re-parse source text into (Accumulator, Forest).
--}
-reparse : V3.Types.CompilerParameters -> String -> ( Accumulator, List (Tree ExpressionBlock) )
-reparse params sourceText =
-    Parser.Forest.parseToForestWithAccumulator params (String.lines sourceText)
 
 
 defaultDocument : Document
@@ -320,6 +321,7 @@ encodeDocuments docs =
 
 type Msg
     = SourceChanged String
+    | DebouncedReparse Int
     | SelectDocument String
     | NewDocument
     | RequestDeleteDocument String
@@ -342,6 +344,9 @@ update msg model =
     case msg of
         SourceChanged newSource ->
             let
+                newEditCount =
+                    model.editCount + 1
+
                 updatedDocuments =
                     List.map
                         (\doc ->
@@ -359,11 +364,32 @@ update msg model =
             ( { model
                 | sourceText = newSource
                 , documents = updatedDocuments
-                , editCount = model.editCount + 1
-                , parsedForest = reparse initParams newSource
+                , editCount = newEditCount
               }
-            , saveDocuments (encodeDocuments updatedDocuments)
+            , Cmd.batch
+                [ saveDocuments (encodeDocuments updatedDocuments)
+                , Process.sleep 150
+                    |> Task.perform (\_ -> DebouncedReparse newEditCount)
+                ]
             )
+
+        DebouncedReparse n ->
+            if n == model.editCount then
+                let
+                    ( newCache, acc, forest ) =
+                        Parser.Forest.parseIncrementally initParams
+                            model.expressionCache
+                            (String.lines model.sourceText)
+                in
+                ( { model
+                    | parsedForest = ( acc, forest )
+                    , expressionCache = newCache
+                  }
+                , Cmd.none
+                )
+
+            else
+                ( model, Cmd.none )
 
         SelectDocument docId ->
             let
@@ -374,11 +400,18 @@ update msg model =
             in
             case selectedDoc of
                 Just doc ->
+                    let
+                        ( newCache, acc, forest ) =
+                            Parser.Forest.parseIncrementally initParams
+                                Dict.empty
+                                (String.lines doc.content)
+                    in
                     ( { model
                         | currentDocumentId = docId
                         , sourceText = doc.content
                         , editCount = model.editCount + 1
-                        , parsedForest = reparse initParams doc.content
+                        , parsedForest = ( acc, forest )
+                        , expressionCache = newCache
                       }
                     , Cmd.none
                     )
@@ -399,13 +432,19 @@ update msg model =
 
                 updatedDocuments =
                     model.documents ++ [ newDoc ]
+
+                ( newCache, acc, forest ) =
+                    Parser.Forest.parseIncrementally initParams
+                        Dict.empty
+                        (String.lines newDoc.content)
             in
             ( { model
                 | documents = updatedDocuments
                 , currentDocumentId = newId
                 , sourceText = newDoc.content
                 , editCount = model.editCount + 1
-                , parsedForest = reparse initParams newDoc.content
+                , parsedForest = ( acc, forest )
+                , expressionCache = newCache
               }
             , saveDocuments (encodeDocuments updatedDocuments)
             )
@@ -453,12 +492,18 @@ update msg model =
                             else
                                 updatedDocuments
 
-                        newParsedForest =
+                        ( newParsedForest, newCache ) =
                             if deletedCurrent then
-                                reparse initParams newSourceText
+                                let
+                                    ( cache, acc, forest ) =
+                                        Parser.Forest.parseIncrementally initParams
+                                            Dict.empty
+                                            (String.lines newSourceText)
+                                in
+                                ( ( acc, forest ), cache )
 
                             else
-                                model.parsedForest
+                                ( model.parsedForest, model.expressionCache )
                     in
                     ( { model
                         | documents = finalDocuments
@@ -467,6 +512,7 @@ update msg model =
                         , editCount = model.editCount + 1
                         , deleteConfirmation = Nothing
                         , parsedForest = newParsedForest
+                        , expressionCache = newCache
                       }
                     , saveDocuments (encodeDocuments finalDocuments)
                     )

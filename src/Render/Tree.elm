@@ -5,6 +5,8 @@ module Render.Tree exposing (renderForest)
 
 import Html exposing (Html)
 import Html.Attributes as HA
+import Html.Keyed
+import Html.Lazy
 import Render.Block
 import RoseTree.Tree as Tree exposing (Tree)
 import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..))
@@ -14,7 +16,26 @@ import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(
 -}
 renderForest : CompilerParameters -> Accumulator -> List (Tree ExpressionBlock) -> List (Html Msg)
 renderForest params acc forest =
-    List.concatMap (renderTree params acc) forest
+    List.map (renderTreeLazy params acc) forest
+
+
+renderTreeLazy : CompilerParameters -> Accumulator -> Tree ExpressionBlock -> Html Msg
+renderTreeLazy params acc tree =
+    Html.Lazy.lazy3 renderTreeWrapped params acc tree
+
+
+renderTreeWrapped : CompilerParameters -> Accumulator -> Tree ExpressionBlock -> Html Msg
+renderTreeWrapped params acc tree =
+    let
+        block =
+            Tree.value tree
+    in
+    Html.Keyed.node "div"
+        [ HA.id ("tree-" ++ block.meta.id) ]
+        [ ( block.meta.id
+          , Html.div [] (renderTree params acc tree)
+          )
+        ]
 
 
 {-| Render a single tree to HTML.

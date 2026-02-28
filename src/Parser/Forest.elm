@@ -1,4 +1,4 @@
-module Parser.Forest exposing (parse, parseToForestWithAccumulator)
+module Parser.Forest exposing (parse, parseIncrementally, parseToForestWithAccumulator)
 
 {-| Parse source lines into a forest of ExpressionBlocks.
 
@@ -14,13 +14,14 @@ module Parser.Forest exposing (parse, parseToForestWithAccumulator)
 
 -}
 
+import Dict
 import Generic.Acc
 import Generic.BlockUtilities
 import Generic.ForestTransform
 import Parser.Pipeline
 import Parser.PrimitiveBlock
 import RoseTree.Tree as Tree exposing (Tree)
-import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Filter(..), PrimitiveBlock)
+import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, ExpressionCache, Filter(..), PrimitiveBlock)
 
 
 {-| Parse source lines into a forest of expression blocks.
@@ -83,6 +84,56 @@ filterForest filter forest =
 filterForestOnName : (Maybe String -> Bool) -> List (Tree ExpressionBlock) -> List (Tree ExpressionBlock)
 filterForestOnName predicate forest =
     List.filter (\tree -> predicate (Generic.BlockUtilities.getExpressionBlockName (Tree.value tree))) forest
+
+
+{-| Parse source lines incrementally, reusing cached expression parse results.
+-}
+parseIncrementally :
+    CompilerParameters
+    -> ExpressionCache
+    -> List String
+    -> ( ExpressionCache, Accumulator, List (Tree ExpressionBlock) )
+parseIncrementally params cache lines =
+    let
+        initialData_ =
+            Generic.Acc.initialData
+
+        initialData =
+            { initialData_ | maxLevel = initialData_.maxLevel }
+
+        exprForest =
+            lines
+                |> Parser.PrimitiveBlock.parse
+                |> Generic.ForestTransform.forestFromBlocks .indent
+                |> mapForest (Parser.Pipeline.toExpressionBlockCached cache)
+
+        ( acc, finalForest ) =
+            exprForest
+                |> filterForest params.filter
+                |> Generic.Acc.transformAccumulate initialData
+
+        newCache =
+            buildExpressionCache finalForest
+    in
+    ( newCache, acc, finalForest )
+
+
+{-| Build an expression cache from a forest of ExpressionBlocks.
+-}
+buildExpressionCache : List (Tree ExpressionBlock) -> ExpressionCache
+buildExpressionCache forest =
+    forest
+        |> List.concatMap flattenTree
+        |> List.map (\block -> ( block.meta.sourceText, block.body ))
+        |> Dict.fromList
+
+
+{-| Flatten a tree into a list of all blocks.
+-}
+flattenTree : Tree ExpressionBlock -> List ExpressionBlock
+flattenTree tree =
+    Tree.value tree
+        :: List.concatMap flattenTree (Tree.children tree)
 
 
 {-| Map a function over all values in a forest.

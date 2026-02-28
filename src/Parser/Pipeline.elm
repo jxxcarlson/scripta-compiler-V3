@@ -1,4 +1,4 @@
-module Parser.Pipeline exposing (toExpressionBlock)
+module Parser.Pipeline exposing (toExpressionBlock, toExpressionBlockCached, toExpressionBlockWithBody)
 
 {-| Convert PrimitiveBlock to ExpressionBlock by parsing inline expressions.
 
@@ -14,7 +14,7 @@ import Dict
 import Either exposing (Either(..))
 import Parser.Expression as Expression
 import Parser.Table
-import V3.Types exposing (BlockMeta, Expr(..), ExprMeta, Expression, ExpressionBlock, Heading(..), PrimitiveBlock)
+import V3.Types exposing (BlockMeta, Expr(..), ExprMeta, Expression, ExpressionBlock, ExpressionCache, Heading(..), PrimitiveBlock)
 
 
 {-| Convert a PrimitiveBlock to an ExpressionBlock.
@@ -25,15 +25,34 @@ For all other blocks, the body is parsed into expressions (Right (List Expressio
 -}
 toExpressionBlock : PrimitiveBlock -> ExpressionBlock
 toExpressionBlock block =
+    toExpressionBlockWithBody (parseBody block) block
+
+
+{-| Build an ExpressionBlock with a pre-computed body.
+-}
+toExpressionBlockWithBody : Either String (List Expression) -> PrimitiveBlock -> ExpressionBlock
+toExpressionBlockWithBody body block =
     { heading = transformBlockHeading block
     , indent = block.indent
     , args = block.args
     , properties = block.properties |> Dict.insert "id" block.meta.id
     , firstLine = block.firstLine
-    , body = parseBody block
+    , body = body
     , meta = block.meta
     , style = block.style
     }
+
+
+{-| Convert a PrimitiveBlock to an ExpressionBlock, using the cache for expression parsing.
+-}
+toExpressionBlockCached : ExpressionCache -> PrimitiveBlock -> ExpressionBlock
+toExpressionBlockCached cache block =
+    case Dict.get block.meta.sourceText cache of
+        Just cachedBody ->
+            toExpressionBlockWithBody cachedBody block
+
+        Nothing ->
+            toExpressionBlock block
 
 
 transformBlockHeading block =

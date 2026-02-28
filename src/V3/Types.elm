@@ -16,6 +16,16 @@ import Html exposing (Html)
 
 
 
+-- EXPRESSION CACHE
+
+
+{-| Cache for expression parsing results, keyed by block source text.
+-}
+type alias ExpressionCache =
+    Dict String (Either String (List Expression))
+
+
+
 -- BLOCKS
 
 
