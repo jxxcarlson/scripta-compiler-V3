@@ -1550,19 +1550,31 @@ renderColorBlock color params acc _ block children =
 -}
 renderQuestion : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderQuestion params acc _ block children =
+    let
+        clickHandler =
+            case Dict.get block.meta.id acc.qAndADict of
+                Just answerId ->
+                    Render.Utility.rlQBlockSync answerId
+
+                Nothing ->
+                    Render.Utility.rlBlockSync block.meta
+    in
     [ Html.div
         ([ HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
          , HA.style "padding" "0.5em"
          , HA.style "background-color" "#f0f8ff"
          , HA.style "border-left" "3px solid #4a90d9"
+         , HA.style "cursor" "pointer"
          ]
             ++ blockIdAndStyle block
-            ++ Render.Utility.rlBlockSync block.meta
+            ++ clickHandler
         )
-        (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a90d9" ] [ Html.text "Q: " ]
-            :: renderBody params acc block
-            ++ children
-        )
+        [ Html.div [ HA.style "pointer-events" "none" ]
+            (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a90d9" ] [ Html.text "Q: " ]
+                :: renderBody params acc block
+                ++ children
+            )
+        ]
     ]
 
 
@@ -1579,9 +1591,9 @@ renderAnswer params acc _ block children =
          , HA.style "padding" "0.5em"
          , HA.style "background-color" "#f0fff0"
          , HA.style "border-left" "3px solid #4a9"
+         , HA.style "display" "none"
          ]
             ++ blockIdAndStyle block
-            ++ Render.Utility.rlBlockSync block.meta
         )
         (Html.span [ HA.style "font-weight" "bold", HA.style "color" "#4a9" ] [ Html.text "A: " ]
             :: renderBody params acc block

@@ -1,4 +1,4 @@
-module Render.Utility exposing (blockIdAndStyle, getArg, idAttr, rlBlockSync, rlSync)
+module Render.Utility exposing (blockIdAndStyle, getArg, idAttr, rlBlockSync, rlQBlockSync, rlSync)
 
 {-| Utility functions for rendering.
 -}
@@ -54,6 +54,16 @@ rlBlockSync blockMeta =
                         Decode.succeed ( V3.Types.SendBlockMeta blockMeta, True )
                 )
         )
+    ]
+
+
+{-| Click handler for Q blocks: sends HighlightId for the paired answer block
+instead of SendBlockMeta, so clicking toggles visibility rather than opening the editor.
+-}
+rlQBlockSync : String -> List (Html.Attribute V3.Types.Msg)
+rlQBlockSync answerId =
+    [ HE.stopPropagationOn "click"
+        (Decode.succeed ( V3.Types.HighlightId answerId, True ))
     ]
 
 
