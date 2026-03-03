@@ -288,22 +288,8 @@
             }
         });
 
-        // Flag to track when we've handled a text selection
-        var handledTextSelection = false;
-
-        // Prevent click events from firing when we just handled a text selection
-        document.addEventListener('click', function(e) {
-            if (handledTextSelection) {
-                handledTextSelection = false;
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            }
-        }, true); // Use capture phase to intercept before Elm
-
-        // Handle text selection in rendered output
+        // Handle text selection in rendered output (right-to-left selection sync)
         document.addEventListener('mouseup', function(e) {
-            handledTextSelection = false; // Reset flag
             var renderedOutput = document.getElementById('rendered-output');
             if (!renderedOutput || !renderedOutput.contains(e.target)) {
                 return; // Click was outside rendered output
@@ -313,9 +299,6 @@
             if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
                 return; // No selection or collapsed selection (this is a click, let Elm handle it)
             }
-
-            // We have a real selection, set flag to block the subsequent click event
-            handledTextSelection = true;
 
             var range = selection.getRangeAt(0);
 

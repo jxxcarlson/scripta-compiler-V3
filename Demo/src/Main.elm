@@ -587,40 +587,13 @@ update msg model =
                     , scrollToElement id
                     )
 
-                V3.Types.SendMeta meta ->
-                    -- SendMeta contains source position info for editor sync
-                    -- Extract line number from id format "e-{lineNumber}.{tokenIndex}"
-                    let
-                        lineNumber =
-                            meta.id
-                                |> String.dropLeft 2
-                                -- drop "e-"
-                                |> String.split "."
-                                |> List.head
-                                |> Maybe.andThen String.toInt
-                                |> Maybe.withDefault 0
+                V3.Types.SendMeta _ ->
+                    -- Click-sync disabled; selection-sync handled in JS mouseup
+                    ( { model | debugClickCount = newClickCount }, Cmd.none )
 
-                        cmd =
-                            selectInEditor
-                                { lineNumber = lineNumber
-                                , begin = meta.begin
-                                , end = meta.end
-                                , numberOfLines = 0
-                                }
-                    in
-                    ( { model | selectedId = meta.id, debugClickCount = newClickCount }, cmd )
-
-                V3.Types.SendBlockMeta blockMeta ->
-                    let
-                        cmd =
-                            selectInEditor
-                                { lineNumber = blockMeta.lineNumber
-                                , begin = 0
-                                , end = 0
-                                , numberOfLines = blockMeta.numberOfLines
-                                }
-                    in
-                    ( { model | selectedId = blockMeta.id, debugClickCount = newClickCount }, cmd )
+                V3.Types.SendBlockMeta _ ->
+                    -- Click-sync disabled; selection-sync handled in JS mouseup
+                    ( { model | debugClickCount = newClickCount }, Cmd.none )
 
                 V3.Types.HighlightId id ->
                     ( { model | selectedId = id, debugClickCount = newClickCount }, Cmd.none )
