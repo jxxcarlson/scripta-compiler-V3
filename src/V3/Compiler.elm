@@ -1,6 +1,7 @@
-module V3.Compiler exposing (compile, render)
+module V3.Compiler exposing (compile, parse, render)
 
-{-| Compile source text to HTML.
+{-| Parse source text its AST (and Accumulator),
+compile source text to HTML Msg
 
     import Compiler
     import Types exposing (CompilerParameters, Filter(..), Theme(..))
@@ -12,8 +13,11 @@ module V3.Compiler exposing (compile, render)
         , editCount = 0
         }
 
-    Compiler.compile params (String.lines sourceText)
-    --> CompilerOutput Msg
+    parse params (String.lines sourceText)
+        --> ( Accumulator, List (Tree ExpressionBlock) )
+
+    compile params (String.lines sourceText)
+        --> CompilerOutput Msg
 
 -}
 
@@ -35,6 +39,11 @@ import V3.Types
         , Heading(..)
         , Msg
         )
+
+
+parse : CompilerParameters -> List String -> ( Accumulator, List (Tree ExpressionBlock) )
+parse params lines =
+    Parser.Forest.parseToForestWithAccumulator params lines
 
 
 {-| Compile source lines to HTML output.
