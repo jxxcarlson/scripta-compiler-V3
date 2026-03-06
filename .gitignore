@@ -9,3 +9,4 @@ tests/toLaTeXExportTestDocs/*.json
 tests/toLaTeXExportTestDocs/*.tex
 tools/toLaTeXExport/worker.js
 .worktrees/
+.DS_Store
