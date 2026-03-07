@@ -341,18 +341,17 @@
 
             // Calculate character positions within the elements
             // startOffset/endOffset are offsets within the text node
-            // Add 1 to account for off-by-one between rendered text and source positions
-            var startChar = startBegin + range.startOffset + 1;
+            var startChar = startBegin + range.startOffset;
             var endChar;
 
             if (startEl === endEl) {
                 // Selection within same element
-                endChar = startBegin + range.endOffset + 1;
+                endChar = startBegin + range.endOffset;
             } else {
                 // Selection spans multiple elements
                 // For end element, use its data-begin + offset within that element
                 var endElBegin = parseInt(endEl.getAttribute('data-begin'), 10);
-                endChar = endElBegin + range.endOffset + 1;
+                endChar = endElBegin + range.endOffset;
             }
 
             console.log('Selection debug:', {
