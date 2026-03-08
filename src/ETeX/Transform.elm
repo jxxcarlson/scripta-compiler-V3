@@ -1556,10 +1556,42 @@ standaloneParenthExprParser : MathMacroDict -> PA.Parser Context Problem MathExp
 standaloneParenthExprParser userMacroDict =
     (succeed identity
         |. symbol (Token "(" ExpectingLeftParen)
-        |= lazy (\_ -> many (mathExprParser userMacroDict))
+        |= lazy (\_ -> many (mathExprParserInsideParens userMacroDict))
     )
         |. symbol (Token ")" ExpectingRightParen)
         |> PA.map ParenthExpr
+
+
+{-| Like mathExprParser but without rightParenParser.
+
+Inside a parenthesized expression, `)` must NOT be consumed as a RightParen node
+by the inner parser. Instead, `)` should be invisible to the inner `many` loop so
+it stops, allowing standaloneParenthExprParser's own `)` delimiter to consume it.
+Nested parens are handled by recursive standaloneParenthExprParser calls.
+-}
+mathExprParserInsideParens : MathMacroDict -> PA.Parser Context Problem MathExpr
+mathExprParserInsideParens userMacroDict =
+    oneOf
+        [ textParser
+        , backtrackable greekSymbolParser
+        , mathMediumSpaceParser
+        , mathSmallSpaceParser
+        , mathSpaceParser
+        , leftBraceParser
+        , rightBraceParser
+        , alphaNumWithLookaheadParser userMacroDict
+        , macroParser userMacroDict
+        , backtrackable (lazy (\_ -> standaloneParenthExprParser userMacroDict))
+        , leftParenParser
+        , commaParser
+        , mathSymbolsParser
+        , lazy (\_ -> argParser userMacroDict)
+        , paramParser
+        , whitespaceParser
+        , f0Parser
+        , subscriptParser userMacroDict
+        , superscriptParser userMacroDict
+        ]
 
 
 whitespaceParser =
