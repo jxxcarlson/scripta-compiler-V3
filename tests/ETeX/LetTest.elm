@@ -36,8 +36,10 @@ substituteSuite =
     describe "substituteVariable"
         [ test "simple replacement" <|
             \_ -> Expect.equal "x^2 + 1" (substituteVariable 'A' "x^2" "A + 1")
-        , test "no replacement when part of longer identifier" <|
-            \_ -> Expect.equal "AB + 1" (substituteVariable 'A' "x^2" "AB + 1")
+        , test "no replacement when adjacent to lowercase" <|
+            \_ -> Expect.equal "Ab + 1" (substituteVariable 'A' "x^2" "Ab + 1")
+        , test "replacement when adjacent to uppercase" <|
+            \_ -> Expect.equal "x^2B + 1" (substituteVariable 'A' "x^2" "AB + 1")
         , test "multiple occurrences" <|
             \_ -> Expect.equal "x^2 + x^2" (substituteVariable 'A' "x^2" "A + A")
         , test "adds parens when expr has plus" <|
@@ -87,9 +89,9 @@ reduceSuite =
         , test "no parens for simple expressions" <|
             \_ ->
                 reduce "LET\n  A = x^2\n  B = y^2\nIN\n  AB"
-                    |> Expect.equal "AB"
-        , test "variables not replaced inside identifiers" <|
+                    |> Expect.equal "x^2y^2"
+        , test "variables not replaced next to lowercase" <|
             \_ ->
-                reduce "LET\n  A = x\nIN\n  AB + A"
-                    |> Expect.equal "AB + x"
+                reduce "LET\n  A = x\nIN\n  Ab + A"
+                    |> Expect.equal "Ab + x"
         ]
