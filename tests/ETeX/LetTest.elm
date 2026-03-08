@@ -54,4 +54,20 @@ suite =
             \_ ->
                 reduce "LET\n  A = (a + b)\nIN\n  A + 1"
                     |> Expect.equal "(a + b) + 1"
+        , test "multi-line definition" <|
+            \_ ->
+                reduce "LET\n  A = \\begin{pmatrix}\n1 & 2 \\\\\n3 & 4\n\\end{pmatrix}\nIN\n  A"
+                    |> Expect.equal "\\begin{pmatrix}\n1 & 2 \\\\\n3 & 4\n\\end{pmatrix}"
+        , test "multi-line definition with other defs" <|
+            \_ ->
+                reduce "LET\n  A = \\begin{pmatrix}\n1 & 2\n\\end{pmatrix}\n  B = x^2\nIN\n  A + B"
+                    |> Expect.equal "\\begin{pmatrix}\n1 & 2\n\\end{pmatrix} + x^2"
+        , test "two multi-line pmatrix defs, body AB" <|
+            \_ ->
+                reduce "LET\n  A = \\begin{pmatrix}\n1 & 2\n\\end{pmatrix}\n  B = \\begin{pmatrix}\n3 & 4\n\\end{pmatrix}\nIN\n  AB"
+                    |> Expect.equal "\\begin{pmatrix}\n1 & 2\n\\end{pmatrix}\\begin{pmatrix}\n3 & 4\n\\end{pmatrix}"
+        , test "three pmatrix defs, body AB = C" <|
+            \_ ->
+                reduce "LET\n  A = \\begin{pmatrix}\n1\n\\end{pmatrix}\n  B = \\begin{pmatrix}\n2\n\\end{pmatrix}\n  C = \\begin{pmatrix}\n3\n\\end{pmatrix}\nIN\n  AB = C"
+                    |> Expect.equal "\\begin{pmatrix}\n1\n\\end{pmatrix}\\begin{pmatrix}\n2\n\\end{pmatrix} = \\begin{pmatrix}\n3\n\\end{pmatrix}"
         ]

@@ -1,17 +1,5 @@
 module ETeX.Let exposing (reduce)
 
-import Parser.Advanced as PA
-    exposing
-        ( (|.)
-        , (|=)
-        , Step(..)
-        , chompIf
-        , chompUntilEndOr
-        , chompWhile
-        , getChompedString
-        , succeed
-        )
-
 
 type alias Definition =
     { variable : Char
@@ -23,10 +11,6 @@ type alias LetBlock =
     { definitions : List Definition
     , body : String
     }
-
-
-type alias Parser a =
-    PA.Parser () String a
 
 
 
@@ -95,16 +79,21 @@ parseLetBlock input =
             Nothing
 
         Just ( preamble, letPart ) ->
-            case PA.run letBlockParser letPart of
-                Ok block ->
-                    Just ( preamble, block )
-
-                Err _ ->
+            case splitOnIN letPart of
+                Nothing ->
                     Nothing
+
+                Just ( defsPart, body ) ->
+                    case parseDefinitions defsPart of
+                        [] ->
+                            Nothing
+
+                        defs ->
+                            Just ( preamble, { definitions = defs, body = body } )
 
 
 {-| Split input on the first line that is exactly "LET".
-Returns ( before, fromLETonward ).
+Returns ( before, fromLETonward without the LET line ).
 -}
 splitOnLET : String -> Maybe ( String, String )
 splitOnLET input =
@@ -124,7 +113,7 @@ splitOnLET input =
                                 List.take idx lines |> String.join "\n"
 
                             after =
-                                remaining |> String.join "\n"
+                                rest |> String.join "\n"
                         in
                         Just ( before, after )
 
@@ -134,59 +123,110 @@ splitOnLET input =
     findLET 0 lines
 
 
-letBlockParser : Parser LetBlock
-letBlockParser =
-    succeed LetBlock
-        |. PA.keyword (PA.Token "LET" "expected LET")
-        |. PA.spaces
-        |= definitionsParser
-        |. PA.keyword (PA.Token "IN" "expected IN")
-        |. optionalNewline
-        |= bodyParser
+{-| Split on the first line that is exactly "IN".
+Returns ( definitionsPart, body ).
+-}
+splitOnIN : String -> Maybe ( String, String )
+splitOnIN input =
+    let
+        lines =
+            String.lines input
+
+        findIN idx remaining =
+            case remaining of
+                [] ->
+                    Nothing
+
+                line :: rest ->
+                    if String.trim line == "IN" then
+                        let
+                            before =
+                                List.take idx lines |> String.join "\n"
+
+                            after =
+                                rest |> String.join "\n" |> String.trim
+                        in
+                        Just ( before, after )
+
+                    else
+                        findIN (idx + 1) rest
+    in
+    findIN 0 lines
 
 
-definitionsParser : Parser (List Definition)
-definitionsParser =
-    PA.loop [] definitionsHelper
+{-| Parse definitions from the block between LET and IN.
+A new definition starts on a line matching the pattern: spaces, uppercase letter, spaces, "=", space.
+Continuation lines (anything else) are appended to the current definition's expression.
+-}
+parseDefinitions : String -> List Definition
+parseDefinitions input =
+    let
+        lines =
+            String.lines input
+
+        processLines remaining currentDef acc =
+            case remaining of
+                [] ->
+                    case currentDef of
+                        Nothing ->
+                            List.reverse acc
+
+                        Just def ->
+                            List.reverse (finishDef def :: acc)
+
+                line :: rest ->
+                    case parseDefStart line of
+                        Just ( var, expr ) ->
+                            case currentDef of
+                                Nothing ->
+                                    processLines rest (Just ( var, expr )) acc
+
+                                Just prev ->
+                                    processLines rest (Just ( var, expr )) (finishDef prev :: acc)
+
+                        Nothing ->
+                            case currentDef of
+                                Nothing ->
+                                    -- Continuation line before any definition; skip
+                                    processLines rest Nothing acc
+
+                                Just ( var, exprSoFar ) ->
+                                    processLines rest (Just ( var, exprSoFar ++ "\n" ++ String.trim line )) acc
+
+        finishDef ( var, expr ) =
+            { variable = var, expr = String.trim expr }
+    in
+    processLines lines Nothing []
 
 
-definitionsHelper : List Definition -> Parser (Step (List Definition) (List Definition))
-definitionsHelper revDefs =
-    PA.oneOf
-        [ PA.backtrackable definitionParser
-            |> PA.map (\d -> Loop (d :: revDefs))
-        , succeed ()
-            |> PA.map (\_ -> Done (List.reverse revDefs))
-        ]
+{-| Try to parse a line as a definition start: <spaces><uppercase letter><spaces>=<space><rest>.
+Returns ( variable, expression ) on success.
+-}
+parseDefStart : String -> Maybe ( Char, String )
+parseDefStart line =
+    let
+        trimmed =
+            String.trimLeft line
+    in
+    case String.uncons trimmed of
+        Just ( c, rest ) ->
+            if Char.isUpper c then
+                let
+                    afterVar =
+                        String.trimLeft rest
+                in
+                case String.uncons afterVar of
+                    Just ( '=', afterEq ) ->
+                        Just ( c, String.trim afterEq )
 
+                    _ ->
+                        Nothing
 
-definitionParser : Parser Definition
-definitionParser =
-    succeed Definition
-        |. chompWhile (\c -> c == ' ')
-        |= (chompIf Char.isUpper "expected uppercase letter"
-                |> getChompedString
-                |> PA.map (\s -> s |> String.toList |> List.head |> Maybe.withDefault 'X')
-           )
-        |. chompWhile (\c -> c == ' ')
-        |. PA.symbol (PA.Token "=" "expected =")
-        |. chompWhile (\c -> c == ' ')
-        |= (chompUntilEndOr "\n" |> getChompedString |> PA.map String.trim)
-        |. optionalNewline
+            else
+                Nothing
 
-
-bodyParser : Parser String
-bodyParser =
-    getChompedString (chompWhile (\_ -> True))
-        |> PA.map String.trim
-
-
-optionalNewline : Parser ()
-optionalNewline =
-    PA.oneOf
-        [ PA.symbol (PA.Token "\n" "expected newline")
-        , succeed ()
-        ]
+        Nothing ->
+            Nothing
 
 
 

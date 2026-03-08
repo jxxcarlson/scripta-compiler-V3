@@ -202,9 +202,159 @@ parseManyWithDict userMacroDict str =
         |> String.trim
         |> String.lines
         |> List.map String.trim
-        |> List.map (parseWithDict userMacroDict)
+        |> groupEnvironmentLines
+        |> List.map
+            (\chunk ->
+                if String.startsWith "\\begin{" chunk then
+                    Ok [ AlphaNum chunk ]
+
+                else
+                    parseWithDict userMacroDict chunk
+            )
         |> Result.Extra.combine
         |> Result.map List.concat
+
+
+{-| Group lines that form \\begin{...}...\\end{...} blocks into single strings,
+leaving other lines as individual entries.
+-}
+groupEnvironmentLines : List String -> List String
+groupEnvironmentLines lines =
+    groupEnvironmentLinesHelper lines [] [] Nothing
+        |> List.reverse
+
+
+groupEnvironmentLinesHelper : List String -> List String -> List String -> Maybe String -> List String
+groupEnvironmentLinesHelper remaining envAcc result currentEnv =
+    case remaining of
+        [] ->
+            case currentEnv of
+                Nothing ->
+                    result
+
+                Just _ ->
+                    -- Unclosed environment: emit accumulated lines as-is
+                    String.join "\n" (List.reverse envAcc) :: result
+
+        line :: rest ->
+            case currentEnv of
+                Nothing ->
+                    case extractBeginEnv line of
+                        Just envName ->
+                            if String.contains ("\\end{" ++ envName ++ "}") line then
+                                -- Single-line environment
+                                groupEnvironmentLinesHelper rest [] (line :: result) Nothing
+
+                            else
+                                groupEnvironmentLinesHelper rest [ line ] result (Just envName)
+
+                        Nothing ->
+                            -- Check if \begin{ appears later in the line (e.g., "= \begin{pmatrix}")
+                            case splitOnBegin line of
+                                Just ( prefix, beginPart ) ->
+                                    -- Emit the prefix as a regular line, push \begin{...} back
+                                    groupEnvironmentLinesHelper (beginPart :: rest) [] (prefix :: result) Nothing
+
+                                Nothing ->
+                                    groupEnvironmentLinesHelper rest [] (line :: result) Nothing
+
+                Just envName ->
+                    let
+                        newAcc =
+                            line :: envAcc
+                    in
+                    if String.contains ("\\end{" ++ envName ++ "}") line then
+                        let
+                            endTag =
+                                "\\end{" ++ envName ++ "}"
+
+                            ( beforeEnd, afterEnd ) =
+                                splitOnFirst endTag line
+
+                            envLine =
+                                beforeEnd ++ endTag
+
+                            collapsed =
+                                String.join "\n" (List.reverse (envLine :: envAcc))
+
+                            newRemaining =
+                                if String.isEmpty (String.trim afterEnd) then
+                                    rest
+
+                                else
+                                    String.trim afterEnd :: rest
+                        in
+                        groupEnvironmentLinesHelper newRemaining [] (collapsed :: result) Nothing
+
+                    else
+                        groupEnvironmentLinesHelper rest newAcc result (Just envName)
+
+
+{-| Extract environment name from a \\begin{name} line.
+-}
+extractBeginEnv : String -> Maybe String
+extractBeginEnv line =
+    if String.startsWith "\\begin{" line then
+        let
+            afterBegin =
+                String.dropLeft 7 line
+        in
+        case String.split "}" afterBegin of
+            name :: _ ->
+                if String.isEmpty name then
+                    Nothing
+
+                else
+                    Just name
+
+            [] ->
+                Nothing
+
+    else
+        Nothing
+
+
+{-| Split a line at the first \\begin{ if it doesn't start with \\begin{.
+Returns ( prefix, "\\begin{..." ) on success.
+-}
+splitOnBegin : String -> Maybe ( String, String )
+splitOnBegin line =
+    if String.startsWith "\\begin{" line then
+        Nothing
+
+    else
+        case String.indexes "\\begin{" line of
+            idx :: _ ->
+                let
+                    prefix =
+                        String.trim (String.left idx line)
+
+                    beginPart =
+                        String.dropLeft idx line
+                in
+                if String.isEmpty prefix then
+                    Nothing
+
+                else
+                    Just ( prefix, beginPart )
+
+            [] ->
+                Nothing
+
+
+{-| Split a string on the first occurrence of a separator.
+Returns ( before, after ) where the separator is excluded from both.
+-}
+splitOnFirst : String -> String -> ( String, String )
+splitOnFirst sep str =
+    case String.indexes sep str of
+        idx :: _ ->
+            ( String.left idx str
+            , String.dropLeft (idx + String.length sep) str
+            )
+
+        [] ->
+            ( str, "" )
 
 
 
