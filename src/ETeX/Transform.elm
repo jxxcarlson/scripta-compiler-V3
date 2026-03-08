@@ -9,6 +9,7 @@ module ETeX.Transform exposing
 
 import Dict exposing (Dict)
 import ETeX.Dictionary
+import ETeX.Let
 import ETeX.KaTeX exposing (isKaTeX)
 import ETeX.MathMacros exposing (Deco(..), MacroBody(..), MathExpr(..), MathMacroDict, NewCommand(..))
 import Maybe.Extra
@@ -42,7 +43,7 @@ import Result.Extra
 
 transformETeX : MathMacroDict -> String -> String
 transformETeX userdefinedMacroDict src =
-    case transformETeXResult userdefinedMacroDict src of
+    case transformETeXResult userdefinedMacroDict (ETeX.Let.reduce src) of
         Ok result ->
             result
 
@@ -175,7 +176,7 @@ resolveSymbolNameInDeco deco =
 
 evalStr : MathMacroDict -> String -> String
 evalStr userDefinedMacroDict str =
-    case evalStrResult userDefinedMacroDict str of
+    case evalStrResult userDefinedMacroDict (ETeX.Let.reduce str) of
         Ok result ->
             result
 

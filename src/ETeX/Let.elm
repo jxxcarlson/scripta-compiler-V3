@@ -1,4 +1,4 @@
-module ETeX.Let exposing (needsParens, reduce, substituteVariable)
+module ETeX.Let exposing (reduce)
 
 import Parser.Advanced as PA
     exposing
