@@ -1,4 +1,4 @@
-module ETeX.Let exposing (needsParens, reduce)
+module ETeX.Let exposing (needsParens, reduce, substituteVariable)
 
 
 type alias Definition =
@@ -89,3 +89,52 @@ hasTopLevelPlusOrMinus str =
                 ( depth, False )
     in
     String.foldl folder ( 0, False ) str |> Tuple.second
+
+
+substituteVariable : Char -> String -> String -> String
+substituteVariable var expr target =
+    let
+        replacement =
+            if needsParens expr then
+                "(" ++ expr ++ ")"
+
+            else
+                expr
+    in
+    substituteHelper var replacement (String.toList target) []
+        |> List.reverse
+        |> String.concat
+
+
+substituteHelper : Char -> String -> List Char -> List String -> List String
+substituteHelper var replacement remaining acc =
+    case remaining of
+        [] ->
+            acc
+
+        c :: rest ->
+            if c == var && not (isAlphaNum (lastCharOfAcc acc)) && not (isAlphaNum (List.head rest)) then
+                substituteHelper var replacement rest (replacement :: acc)
+
+            else
+                substituteHelper var replacement rest (String.fromChar c :: acc)
+
+
+lastCharOfAcc : List String -> Maybe Char
+lastCharOfAcc acc =
+    case acc of
+        [] ->
+            Nothing
+
+        s :: _ ->
+            s |> String.right 1 |> String.toList |> List.head
+
+
+isAlphaNum : Maybe Char -> Bool
+isAlphaNum mc =
+    case mc of
+        Nothing ->
+            False
+
+        Just c ->
+            Char.isAlphaNum c
