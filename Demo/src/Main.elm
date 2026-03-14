@@ -26,6 +26,7 @@ import Parser.Forest
 import Process
 import RoseTree.Tree exposing (Tree)
 import Task
+import Time
 import V3.Compiler
 import Dict
 import V3.Types exposing (Accumulator, ExpressionBlock, ExpressionCache, Filter(..), Theme(..))
@@ -126,6 +127,8 @@ type alias Model =
     , sortMode : SortMode
     , parsedForest : ( Accumulator, List (Tree ExpressionBlock) )
     , expressionCache : ExpressionCache
+    , useIncrementalParsing : Bool
+    , lastParseTimeMs : Float
     }
 
 
@@ -200,6 +203,8 @@ init flags =
       , sortMode = ByDate
       , parsedForest = ( initialAcc, initialForest )
       , expressionCache = initialCache
+      , useIncrementalParsing = True
+      , lastParseTimeMs = 0
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
@@ -336,6 +341,9 @@ type Msg
     | ExportDocuments
     | RequestImportDocuments
     | GotImportedDocuments Decode.Value
+    | ToggleIncrementalParsing
+    | GotParseStartTime Int Time.Posix
+    | GotParseEndTime Int Time.Posix Time.Posix
     | CompilerMsg V3.Types.Msg
 
 
@@ -375,21 +383,53 @@ update msg model =
 
         DebouncedReparse n ->
             if n == model.editCount then
+                ( model
+                , Task.perform (GotParseStartTime n) Time.now
+                )
+
+            else
+                ( model, Cmd.none )
+
+        GotParseStartTime n startTime ->
+            if n == model.editCount then
                 let
                     ( newCache, acc, forest ) =
-                        Parser.Forest.parseIncrementally initParams
-                            model.expressionCache
-                            (String.lines model.sourceText)
+                        if model.useIncrementalParsing then
+                            Parser.Forest.parseIncrementally initParams
+                                model.expressionCache
+                                (String.lines model.sourceText)
+
+                        else
+                            let
+                                ( a, f ) =
+                                    Parser.Forest.parseToForestWithAccumulator initParams
+                                        (String.lines model.sourceText)
+                            in
+                            ( Dict.empty, a, f )
                 in
                 ( { model
                     | parsedForest = ( acc, forest )
                     , expressionCache = newCache
                   }
-                , Cmd.none
+                , Task.perform (GotParseEndTime n startTime) Time.now
                 )
 
             else
                 ( model, Cmd.none )
+
+        GotParseEndTime n startTime endTime ->
+            if n == model.editCount then
+                let
+                    elapsed =
+                        toFloat (Time.posixToMillis endTime - Time.posixToMillis startTime)
+                in
+                ( { model | lastParseTimeMs = elapsed }, Cmd.none )
+
+            else
+                ( model, Cmd.none )
+
+        ToggleIncrementalParsing ->
+            ( { model | useIncrementalParsing = not model.useIncrementalParsing }, Cmd.none )
 
         SelectDocument docId ->
             let
@@ -927,24 +967,11 @@ viewSidebar_ documents currentDocumentId sortMode theme =
 
 viewHeader : Model -> Html Msg
 viewHeader model =
-    let
-        src =
-            model.sourceText
-
-        lines =
-            src |> String.lines |> List.length
-
-        words =
-            src |> String.words |> List.length
-
-        chars =
-            String.length src
-    in
-    Html.Lazy.lazy4 viewHeader_ model.theme lines words chars
+    Html.Lazy.lazy viewHeader_ model.theme
 
 
-viewHeader_ : Theme -> Int -> Int -> Int -> Html Msg
-viewHeader_ theme lines words chars =
+viewHeader_ : Theme -> Html Msg
+viewHeader_ theme =
     let
         buttonStyle =
             [ HA.style "padding" "8px 16px"
@@ -984,16 +1011,7 @@ viewHeader_ theme lines words chars =
             , HA.style "font-size" "1.2em"
             , HA.style "white-space" "nowrap"
             ]
-            [ Html.text
-                ("ScriptaV3 Demo — "
-                    ++ String.fromInt lines
-                    ++ "L "
-                    ++ String.fromInt words
-                    ++ "W "
-                    ++ String.fromInt chars
-                    ++ "C"
-                )
-            ]
+            [ Html.text "ScriptaV3 Demo" ]
         , Html.div
             [ HA.style "display" "flex"
             , HA.style "gap" "8px"
@@ -1029,11 +1047,54 @@ viewEditor model panelBg textColor =
         , HA.style "min-width" "0"
         ]
         [ Html.div
-            [ HA.style "font-weight" "bold"
+            [ HA.style "display" "flex"
+            , HA.style "align-items" "baseline"
+            , HA.style "gap" "10px"
             , HA.style "margin-bottom" "8px"
             , HA.style "font-size" "0.9em"
             ]
-            [ Html.text "Source" ]
+            [ Html.span [ HA.style "font-weight" "bold" ] [ Html.text "Source" ]
+            , Html.span [ HA.style "color" "#888", HA.style "font-size" "0.85em" ]
+                [ Html.text
+                    (String.fromInt (model.sourceText |> String.lines |> List.length)
+                        ++ "L "
+                        ++ String.fromInt (model.sourceText |> String.words |> List.length)
+                        ++ "W "
+                        ++ String.fromInt (String.length model.sourceText)
+                        ++ "C"
+                    )
+                ]
+            , Html.span
+                [ HA.style "color" "#888"
+                , HA.style "font-size" "0.85em"
+                , HA.style "margin-left" "8px"
+                ]
+                [ Html.text (String.fromFloat model.lastParseTimeMs ++ "ms") ]
+            , Html.span
+                [ HA.style "cursor" "pointer"
+                , HA.style "font-size" "0.8em"
+                , HA.style "padding" "2px 8px"
+                , HA.style "border" "1px solid #ccc"
+                , HA.style "border-radius" "3px"
+                , HA.style "user-select" "none"
+                , HA.style "background-color"
+                    (if model.useIncrementalParsing then
+                        "#e0f0e0"
+
+                     else
+                        "#f0e0e0"
+                    )
+                , HE.onClick ToggleIncrementalParsing
+                ]
+                [ Html.text
+                    (if model.useIncrementalParsing then
+                        "Incremental"
+
+                     else
+                        "Full"
+                    )
+                ]
+            ]
         , Html.div
             [ HA.style "flex" "1"
             , HA.style "border" "1px solid #ccc"
