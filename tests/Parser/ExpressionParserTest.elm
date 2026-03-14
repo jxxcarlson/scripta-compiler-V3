@@ -46,7 +46,7 @@ suite =
 
                         expected =
                             [ Text "Pythagoras sez: " { begin = 0, end = 15, id = "e-0.0", index = 0 }
-                            , VFun "math" "a^2 + b^2 = c^2" { begin = 16, end = 16, id = "e-0.1", index = 1 }
+                            , VFun "math" "a^2 + b^2 = c^2" { begin = 16, end = 32, id = "e-0.1", index = 1 }
                             , Text "!" { begin = 33, end = 33, id = "e-0.4", index = 4 }
                             ]
                     in

@@ -67,6 +67,7 @@
 
     <script src="main.js"></script>
     <script>
+        console.log("@@SCRIPT START");
         // localStorage keys
         var OLD_STORAGE_KEY = 'scripta-demo-source';
         var STORAGE_KEY = 'scripta-demo-documents';
@@ -225,7 +226,7 @@
         });
 
         // Subscribe to selectInEditor port - sync rendered text clicks to editor
-        app.ports.selectInEditor.subscribe(function(selection) {
+        if (app.ports.selectInEditor) app.ports.selectInEditor.subscribe(function(selection) {
             // selection = { lineNumber, begin, end, numberOfLines }
             var editorElement = document.querySelector('codemirror-editor');
             if (editorElement && editorElement.editor) {
@@ -288,22 +289,8 @@
             }
         });
 
-        // Flag to track when we've handled a text selection
-        var handledTextSelection = false;
-
-        // Prevent click events from firing when we just handled a text selection
-        document.addEventListener('click', function(e) {
-            if (handledTextSelection) {
-                handledTextSelection = false;
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            }
-        }, true); // Use capture phase to intercept before Elm
-
-        // Handle text selection in rendered output
+        // Handle text selection in rendered output (right-to-left selection sync)
         document.addEventListener('mouseup', function(e) {
-            handledTextSelection = false; // Reset flag
             var renderedOutput = document.getElementById('rendered-output');
             if (!renderedOutput || !renderedOutput.contains(e.target)) {
                 return; // Click was outside rendered output
@@ -313,9 +300,6 @@
             if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
                 return; // No selection or collapsed selection (this is a click, let Elm handle it)
             }
-
-            // We have a real selection, set flag to block the subsequent click event
-            handledTextSelection = true;
 
             var range = selection.getRangeAt(0);
 
@@ -357,18 +341,17 @@
 
             // Calculate character positions within the elements
             // startOffset/endOffset are offsets within the text node
-            // Add 1 to account for off-by-one between rendered text and source positions
-            var startChar = startBegin + range.startOffset + 1;
+            var startChar = startBegin + range.startOffset;
             var endChar;
 
             if (startEl === endEl) {
                 // Selection within same element
-                endChar = startBegin + range.endOffset + 1;
+                endChar = startBegin + range.endOffset;
             } else {
                 // Selection spans multiple elements
                 // For end element, use its data-begin + offset within that element
                 var endElBegin = parseInt(endEl.getAttribute('data-begin'), 10);
-                endChar = endElBegin + range.endOffset + 1;
+                endChar = endElBegin + range.endOffset;
             }
 
             console.log('Selection debug:', {
@@ -482,21 +465,53 @@
             }
         });
 
-        // Load KaTeX and initialize math-text custom element (V2 approach)
+        // Load KaTeX and initialize math-text custom element
         function initKatex() {
             class MathText extends HTMLElement {
                 constructor() {
                     super();
+                    this.attachShadow({mode: "open"});
+                    this._content = '';
+                    this._display = false;
                 }
 
                 connectedCallback() {
-                    this.attachShadow({mode: "open"});
+                    // Recover properties set by Elm before element was upgraded
+                    this._upgradeProperty('content');
+                    this._upgradeProperty('display');
+                    this._render();
+                }
+
+                // Handle properties set before custom element was defined
+                _upgradeProperty(prop) {
+                    if (this.hasOwnProperty(prop)) {
+                        let value = this[prop];
+                        delete this[prop];
+                        this[prop] = value;
+                    }
+                }
+
+                set content(val) {
+                    this._content = val;
+                    if (this.isConnected) this._render();
+                }
+                get content() { return this._content; }
+
+                set display(val) {
+                    this._display = val;
+                    if (this.isConnected) this._render();
+                }
+                get display() { return this._display; }
+
+                _render() {
+                    console.log("@@math-text _render called, content:", this._content, "connected:", this.isConnected);
+                    if (!this._content) return;
                     this.shadowRoot.innerHTML =
                         katex.renderToString(
-                            this.content,
+                            this._content,
                             {
                                 throwOnError: false,
-                                displayMode: this.display,
+                                displayMode: this._display,
                                 trust: true
                             }
                         );
@@ -508,6 +523,7 @@
             }
 
             customElements.define('math-text', MathText);
+            console.log("@@math-text custom element registered");
         }
 
         // Load mhchem extension for chemistry formulas
@@ -521,12 +537,15 @@
             document.head.appendChild(mhChemJs);
         }
 
-        // Load KaTeX script dynamically
         var katexJs = document.createElement('script');
         katexJs.type = 'text/javascript';
         katexJs.onload = function() {
+            console.log("@@KaTeX loaded successfully");
             initKatex();
             loadMhchem();
+        };
+        katexJs.onerror = function(e) {
+            console.error("@@KaTeX FAILED to load!", e);
         };
         katexJs.src = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js";
         document.head.appendChild(katexJs);

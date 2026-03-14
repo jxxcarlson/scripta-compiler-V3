@@ -4,6 +4,7 @@ module Render.VerbatimBlock exposing (render)
 -}
 
 import Dict exposing (Dict)
+import ETeX.Let
 import ETeX.Transform
 import Either exposing (Either(..))
 import Html exposing (Html)
@@ -135,7 +136,7 @@ renderMath params acc _ block _ =
             ++ Render.Utility.rlBlockSync (.meta block)
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount block.meta.id DisplayMathMode content ]
+            [ mathText params.editCount { id = block.meta.id, begin = 0, end = 0 } DisplayMathMode content ]
         ]
     ]
 
@@ -158,21 +159,21 @@ renderEquation params acc _ block _ =
         raw =
             getVerbatimContent block
 
-        -- If content contains &, process line-by-line to preserve alignment
-        rawContent =
-            if String.contains "&" raw then
-                processAlignedLines acc.mathMacroDict raw
+        -- Resolve LET/IN blocks first, before line-by-line processing
+        reduced =
+            ETeX.Let.reduce raw
+
+        -- Process content: if it contains &, handle alignment
+        -- But first check if & only appears inside environments (e.g. pmatrix)
+        processedContent =
+            if hasTopLevelAmpersand reduced then
+                wrapInAligned (processAlignedLines acc.mathMacroDict reduced)
 
             else
-                applyMathMacros acc.mathMacroDict raw
+                applyMathMacros acc.mathMacroDict reduced
 
-        -- If content contains &, wrap in aligned environment for KaTeX
         content =
-            if String.contains "&" raw then
-                wrapInAligned rawContent
-
-            else
-                rawContent
+            processedContent
 
         -- Get equation number from block properties (set by transformBlock when label is present)
         equationNumber =
@@ -190,7 +191,7 @@ renderEquation params acc _ block _ =
         )
         [ Html.div [ HA.style "flex" "1" ] []
         , Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount block.meta.id DisplayMathMode content ]
+            [ mathText params.editCount { id = block.meta.id, begin = 0, end = 0 } DisplayMathMode content ]
         , Html.div
             [ HA.style "flex" "1"
             , HA.style "text-align" "right"
@@ -233,7 +234,7 @@ renderAligned params acc _ block _ =
             ++ Render.Utility.rlBlockSync (.meta block)
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount block.meta.id DisplayMathMode content ]
+            [ mathText params.editCount { id = block.meta.id, begin = 0, end = 0 } DisplayMathMode content ]
         ]
     ]
 
@@ -268,6 +269,7 @@ processAlignedLines macroDict content =
                 |> String.lines
                 |> List.map String.trim
                 |> List.filter (not << String.isEmpty)
+                |> collapseEnvironments
                 |> List.map (stripTrailingBackslashes >> applyMathMacros macroDict)
     in
     case List.reverse lines of
@@ -278,6 +280,158 @@ processAlignedLines macroDict content =
             (List.reverse restReversed |> List.map (\line -> line ++ " \\\\"))
                 ++ [ lastLine ]
                 |> String.join "\n"
+
+
+{-| Check if raw content has & characters outside of \\begin{...}...\\end{...} environments.
+-}
+hasTopLevelAmpersand : String -> Bool
+hasTopLevelAmpersand raw =
+    raw
+        |> String.lines
+        |> List.map String.trim
+        |> List.filter (not << String.isEmpty)
+        |> collapseEnvironments
+        |> List.filter (not << isCollapsedEnvironment)
+        |> List.any (String.contains "&")
+
+
+{-| Check if a line is a fully collapsed environment (starts with \\begin and ends with \\end).
+-}
+isCollapsedEnvironment : String -> Bool
+isCollapsedEnvironment line =
+    case extractBeginEnv line of
+        Just name ->
+            String.endsWith ("\\end{" ++ name ++ "}") line
+
+        Nothing ->
+            False
+
+
+{-| Collapse multi-line LaTeX environments into single lines.
+
+For example, lines like:
+
+    \\begin{pmatrix}
+    2 & 1 \\\\
+    1 & 2
+    \\end{pmatrix}
+
+become a single line:
+
+    \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}
+
+This preserves the environment structure when the surrounding code
+processes lines individually for aligned-equation formatting.
+
+-}
+collapseEnvironments : List String -> List String
+collapseEnvironments lines =
+    collapseEnvironmentsHelper lines [] Nothing []
+
+
+collapseEnvironmentsHelper : List String -> List String -> Maybe String -> List String -> List String
+collapseEnvironmentsHelper remaining accumulated envName result =
+    case remaining of
+        [] ->
+            -- Flush any accumulated lines if we hit the end while inside an environment
+            case envName of
+                Nothing ->
+                    List.reverse result
+
+                Just _ ->
+                    List.reverse (String.join " " (List.reverse accumulated) :: result)
+
+        line :: rest ->
+            case envName of
+                Nothing ->
+                    -- Not inside an environment: check if this line starts one
+                    case extractBeginEnv line of
+                        Just name ->
+                            if String.contains ("\\end{" ++ name ++ "}") line then
+                                -- Environment opens and closes on same line, pass through
+                                collapseEnvironmentsHelper rest [] Nothing (line :: result)
+
+                            else
+                                -- Start accumulating
+                                collapseEnvironmentsHelper rest [ line ] (Just name) result
+
+                        Nothing ->
+                            -- Regular line, pass through
+                            collapseEnvironmentsHelper rest [] Nothing (line :: result)
+
+                Just name ->
+                    -- Inside an environment: accumulate until we see \end{name}
+                    if String.contains ("\\end{" ++ name ++ "}") line then
+                        -- End of environment: collapse all accumulated lines into one
+                        -- But check if there's another \begin{} after the \end{} on the same line
+                        let
+                            endTag =
+                                "\\end{" ++ name ++ "}"
+
+                            ( beforeEnd, afterEnd ) =
+                                splitOnFirst endTag line
+
+                            envLine =
+                                beforeEnd ++ endTag
+
+                            collapsed =
+                                String.join " " (List.reverse (envLine :: accumulated))
+
+                            newRemaining =
+                                if String.isEmpty (String.trim afterEnd) then
+                                    rest
+
+                                else
+                                    String.trim afterEnd :: rest
+                        in
+                        collapseEnvironmentsHelper newRemaining [] Nothing (collapsed :: result)
+
+                    else
+                        -- Still inside, keep accumulating
+                        collapseEnvironmentsHelper rest (line :: accumulated) envName result
+
+
+{-| Extract the environment name from a \\begin{name} line, if present.
+-}
+extractBeginEnv : String -> Maybe String
+extractBeginEnv line =
+    if String.contains "\\begin{" line then
+        let
+            afterBegin =
+                line
+                    |> String.split "\\begin{"
+                    |> List.drop 1
+                    |> List.head
+                    |> Maybe.withDefault ""
+        in
+        case String.split "}" afterBegin of
+            name :: _ ->
+                if String.isEmpty name then
+                    Nothing
+
+                else
+                    Just name
+
+            [] ->
+                Nothing
+
+    else
+        Nothing
+
+
+{-| Split a string on the first occurrence of a separator.
+Returns ( before, after ) where the separator is excluded from both.
+-}
+splitOnFirst : String -> String -> ( String, String )
+splitOnFirst sep str =
+    case String.indexes sep str of
+        idx :: _ ->
+            ( String.left idx str
+            , String.dropLeft (idx + String.length sep) str
+            )
+
+        [] ->
+            ( str, "" )
 
 
 {-| Transform ETeX notation to LaTeX using ETeX.Transform.evalStr.
@@ -1118,7 +1272,7 @@ renderChem params acc _ block children =
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount block.meta.id DisplayMathMode content ]
+            [ mathText params.editCount { id = block.meta.id, begin = 0, end = 0 } DisplayMathMode content ]
         ]
     ]
 
@@ -1161,7 +1315,7 @@ renderArray params acc _ block _ =
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount block.meta.id DisplayMathMode arrayContent ]
+            [ mathText params.editCount { id = block.meta.id, begin = 0, end = 0 } DisplayMathMode arrayContent ]
         ]
     ]
 

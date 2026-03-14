@@ -1516,7 +1516,8 @@ rb _ =
 
 bt : List Expression -> String
 bt _ =
-    "\\textasciigrave{}"
+    --"\\backtick{}"
+    "\\`{}"
 
 
 underscore : List Expression -> String

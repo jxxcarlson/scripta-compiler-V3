@@ -247,14 +247,25 @@ reduceTokens lineNumber tokens =
 
     else
         case tokens of
-            (MathToken meta) :: (S str _) :: (MathToken _) :: rest ->
-                VFun "math" str (boostMeta lineNumber meta.index meta) :: reduceRestOfTokens lineNumber rest
+            (MathToken meta) :: (S str _) :: (MathToken closeMeta) :: rest ->
+                VFun "math" str (boostMeta lineNumber meta.index { meta | end = closeMeta.begin }) :: reduceRestOfTokens lineNumber rest
 
             (MathToken meta) :: rest ->
                 -- Multi-token math content: collect everything up to closing MathToken
                 let
                     inner =
                         List.Extra.takeWhile (not << isMathToken) rest
+
+                    closingToken =
+                        List.drop (List.length inner) rest |> List.head
+
+                    closeEnd =
+                        case closingToken of
+                            Just (MathToken cm) ->
+                                cm.begin
+
+                            _ ->
+                                meta.end
 
                     after =
                         List.drop (List.length inner + 1) rest
@@ -264,10 +275,10 @@ reduceTokens lineNumber tokens =
                             |> List.filterMap tokenToString
                             |> String.join ""
                 in
-                VFun "math" content (boostMeta lineNumber meta.index meta) :: reduceRestOfTokens lineNumber after
+                VFun "math" content (boostMeta lineNumber meta.index { meta | end = closeEnd }) :: reduceRestOfTokens lineNumber after
 
-            (CodeToken meta) :: (S str _) :: (CodeToken _) :: rest ->
-                VFun "code" str (boostMeta lineNumber meta.index meta) :: reduceRestOfTokens lineNumber rest
+            (CodeToken meta) :: (S str _) :: (CodeToken closeMeta) :: rest ->
+                VFun "code" str (boostMeta lineNumber meta.index { meta | end = closeMeta.begin }) :: reduceRestOfTokens lineNumber rest
 
             _ ->
                 [ errorMessage "[????]" ]

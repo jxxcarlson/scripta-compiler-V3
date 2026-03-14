@@ -70,19 +70,19 @@ renderVFun params acc name content meta =
     case name of
         "$" ->
             -- Inline math (legacy) - apply ETeX transform with user macros
-            mathText params.editCount meta.id InlineMathMode (applyMathMacros acc.mathMacroDict content)
+            mathText params.editCount { id = meta.id, begin = meta.begin, end = meta.end } InlineMathMode (applyMathMacros acc.mathMacroDict content)
 
         "math" ->
             -- Inline math - apply ETeX transform with user macros
-            mathText params.editCount meta.id InlineMathMode (applyMathMacros acc.mathMacroDict content)
+            mathText params.editCount { id = meta.id, begin = meta.begin, end = meta.end } InlineMathMode (applyMathMacros acc.mathMacroDict content)
 
         "m" ->
             -- Inline math (short alias) - apply ETeX transform with user macros
-            mathText params.editCount meta.id InlineMathMode (applyMathMacros acc.mathMacroDict content)
+            mathText params.editCount { id = meta.id, begin = meta.begin, end = meta.end } InlineMathMode (applyMathMacros acc.mathMacroDict content)
 
         "chem" ->
             -- Chemistry formula - render as math with mhchem
-            mathText params.editCount meta.id InlineMathMode ("\\ce{" ++ content ++ "}")
+            mathText params.editCount { id = meta.id, begin = meta.begin, end = meta.end } InlineMathMode ("\\ce{" ++ content ++ "}")
 
         "code" ->
             Html.code (Render.Utility.rlSync meta ++ [ HA.style "font-size" "0.9em" ]) [ Html.text content ]
