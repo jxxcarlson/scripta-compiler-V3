@@ -11,3 +11,19 @@ Wrap individual top-level trees in `Html.lazy` inside `renderForest`. Editing pa
 ## 3. Incremental parsing
 
 Only re-parse blocks that changed, reuse the rest of the forest. Compare source lines to detect which blocks were modified, inserted, or deleted, then splice the new blocks into the existing forest. Most complex of the three but the largest potential gain for long documents.
+
+## Demo App Integration
+
+All three optimizations are wired into the Demo app (`Demo/src/Main.elm`).
+
+### Debounce
+
+`SourceChanged` schedules a `DebouncedReparse` after a 150ms `Process.sleep`. The handler only parses if `editCount` hasn't changed since the timer was set — intermediate keystrokes are skipped.
+
+### Expression cache
+
+The model stores an `expressionCache : ExpressionCache` (a `Dict` mapping block source text to parsed expressions). Every parse call uses `Parser.Forest.parseIncrementally` with the current cache, and the returned new cache is stored back. On document switches (`SelectDocument`, `NewDocument`), the cache is reset to `Dict.empty` since the content is unrelated.
+
+### Per-tree Html.lazy
+
+The `parsedForest` stored in the model is rendered through `Render.Tree.renderForest`, which wraps each top-level tree in `Html.Lazy.lazy3`. Since unchanged trees produce referentially equal data across debounced reparses (same cache hit), Elm's lazy skips re-rendering them.
