@@ -112,6 +112,12 @@ type SortMode
     | Alphabetical -- A to Z, ignoring case and noise words
 
 
+type ParseMode
+    = FullParse
+    | Incremental
+    | IncrementalSkipAcc
+
+
 type alias Model =
     { documents : List Document
     , currentDocumentId : String
@@ -127,8 +133,9 @@ type alias Model =
     , sortMode : SortMode
     , parsedForest : ( Accumulator, List (Tree ExpressionBlock) )
     , expressionCache : ExpressionCache
-    , useIncrementalParsing : Bool
+    , parseMode : ParseMode
     , lastParseTimeMs : Float
+    , accWasSkipped : Bool
     }
 
 
@@ -203,8 +210,9 @@ init flags =
       , sortMode = ByDate
       , parsedForest = ( initialAcc, initialForest )
       , expressionCache = initialCache
-      , useIncrementalParsing = True
+      , parseMode = IncrementalSkipAcc
       , lastParseTimeMs = 0
+      , accWasSkipped = False
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
@@ -341,7 +349,7 @@ type Msg
     | ExportDocuments
     | RequestImportDocuments
     | GotImportedDocuments Decode.Value
-    | ToggleIncrementalParsing
+    | CycleParseMode
     | GotParseStartTime Int Time.Posix
     | GotParseEndTime Int Time.Posix Time.Posix
     | CompilerMsg V3.Types.Msg
@@ -392,27 +400,51 @@ update msg model =
 
         GotParseStartTime n startTime ->
             if n == model.editCount then
-                let
-                    ( newCache, acc, forest ) =
-                        if model.useIncrementalParsing then
-                            Parser.Forest.parseIncrementally initParams
-                                model.expressionCache
-                                (String.lines model.sourceText)
+                case model.parseMode of
+                    IncrementalSkipAcc ->
+                        let
+                            result =
+                                Parser.Forest.parseIncrementallySkipAcc initParams
+                                    model.expressionCache
+                                    model.parsedForest
+                                    (String.lines model.sourceText)
+                        in
+                        ( { model
+                            | parsedForest = ( result.acc, result.forest )
+                            , expressionCache = result.cache
+                            , accWasSkipped = result.accWasSkipped
+                          }
+                        , Task.perform (GotParseEndTime n startTime) Time.now
+                        )
 
-                        else
-                            let
-                                ( a, f ) =
-                                    Parser.Forest.parseToForestWithAccumulator initParams
-                                        (String.lines model.sourceText)
-                            in
-                            ( Dict.empty, a, f )
-                in
-                ( { model
-                    | parsedForest = ( acc, forest )
-                    , expressionCache = newCache
-                  }
-                , Task.perform (GotParseEndTime n startTime) Time.now
-                )
+                    Incremental ->
+                        let
+                            ( newCache, acc, forest ) =
+                                Parser.Forest.parseIncrementally initParams
+                                    model.expressionCache
+                                    (String.lines model.sourceText)
+                        in
+                        ( { model
+                            | parsedForest = ( acc, forest )
+                            , expressionCache = newCache
+                            , accWasSkipped = False
+                          }
+                        , Task.perform (GotParseEndTime n startTime) Time.now
+                        )
+
+                    FullParse ->
+                        let
+                            ( a, f ) =
+                                Parser.Forest.parseToForestWithAccumulator initParams
+                                    (String.lines model.sourceText)
+                        in
+                        ( { model
+                            | parsedForest = ( a, f )
+                            , expressionCache = Dict.empty
+                            , accWasSkipped = False
+                          }
+                        , Task.perform (GotParseEndTime n startTime) Time.now
+                        )
 
             else
                 ( model, Cmd.none )
@@ -428,8 +460,20 @@ update msg model =
             else
                 ( model, Cmd.none )
 
-        ToggleIncrementalParsing ->
-            ( { model | useIncrementalParsing = not model.useIncrementalParsing }, Cmd.none )
+        CycleParseMode ->
+            let
+                nextMode =
+                    case model.parseMode of
+                        FullParse ->
+                            Incremental
+
+                        Incremental ->
+                            IncrementalSkipAcc
+
+                        IncrementalSkipAcc ->
+                            FullParse
+            in
+            ( { model | parseMode = nextMode }, Cmd.none )
 
         SelectDocument docId ->
             let
@@ -1069,7 +1113,17 @@ viewEditor model panelBg textColor =
                 , HA.style "font-size" "0.85em"
                 , HA.style "margin-left" "8px"
                 ]
-                [ Html.text (String.fromFloat model.lastParseTimeMs ++ "ms") ]
+                [ Html.text
+                    (String.fromFloat model.lastParseTimeMs
+                        ++ "ms"
+                        ++ (if model.accWasSkipped then
+                                " (acc skipped)"
+
+                            else
+                                ""
+                           )
+                    )
+                ]
             , Html.span
                 [ HA.style "cursor" "pointer"
                 , HA.style "font-size" "0.8em"
@@ -1078,20 +1132,28 @@ viewEditor model panelBg textColor =
                 , HA.style "border-radius" "3px"
                 , HA.style "user-select" "none"
                 , HA.style "background-color"
-                    (if model.useIncrementalParsing then
-                        "#e0f0e0"
+                    (case model.parseMode of
+                        FullParse ->
+                            "#f0e0e0"
 
-                     else
-                        "#f0e0e0"
+                        Incremental ->
+                            "#e0f0e0"
+
+                        IncrementalSkipAcc ->
+                            "#e0e0f0"
                     )
-                , HE.onClick ToggleIncrementalParsing
+                , HE.onClick CycleParseMode
                 ]
                 [ Html.text
-                    (if model.useIncrementalParsing then
-                        "Incremental"
+                    (case model.parseMode of
+                        FullParse ->
+                            "Full"
 
-                     else
-                        "Full"
+                        Incremental ->
+                            "Incremental"
+
+                        IncrementalSkipAcc ->
+                            "Inc+SkipAcc"
                     )
                 ]
             ]
