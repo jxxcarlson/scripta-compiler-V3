@@ -68,6 +68,35 @@ suite =
                     evalStr setMacros "set( (1,2) )"
                         |> Expect.equal "\\{\\ { (1,2) } \\}"
             ]
+        , describe "user-defined macros inside function args"
+            [ test "bvec(p) inside frac() expands correctly" <|
+                \_ ->
+                    let
+                        bvecMacros =
+                            makeMacroDict "bvec:   mathbf{#1}"
+                    in
+                    evalStr bvecMacros "frac(d bvec(p)_i,dt)"
+                        |> String.contains "\\mathbf"
+                        |> Expect.equal True
+            , test "bvec(p) inside frac() does not produce error" <|
+                \_ ->
+                    let
+                        bvecMacros =
+                            makeMacroDict "bvec:   mathbf{#1}"
+                    in
+                    evalStr bvecMacros "m frac(d bvec(p)_i,dt) = F_i"
+                        |> String.contains "ETeX error"
+                        |> Expect.equal False
+            , test "bvec(p) inside frac() does not leave unexpanded #1" <|
+                \_ ->
+                    let
+                        bvecMacros =
+                            makeMacroDict "bvec:   mathbf{#1}"
+                    in
+                    evalStr bvecMacros "frac(d bvec(p)_i,dt)"
+                        |> String.contains "#1"
+                        |> Expect.equal False
+            ]
         , describe "line breaks (\\\\)"
             [ test "trailing \\\\ is preserved" <|
                 \_ ->

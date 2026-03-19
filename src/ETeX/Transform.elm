@@ -1262,7 +1262,7 @@ functionArgListParser userMacroDict =
                 , leftBraceParser
                 , rightBraceParser
                 , macroParser userMacroDict
-                , alphaNumOrMacroParser userMacroDict -- Check if alphaNum is a macro
+                , lazy (\_ -> alphaNumWithLookaheadParser userMacroDict) -- Check if alphaNum is a macro (with lookahead for nested calls like bvec(p))
                 , mathSymbolsParser
                 , lazy (\_ -> argParser userMacroDict)
                 , lazy (\_ -> standaloneParenthExprParser userMacroDict)
