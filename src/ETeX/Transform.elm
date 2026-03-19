@@ -65,7 +65,7 @@ isUserDefinedMacro dict name =
 
 transformETeX_ userdefinedMacroDict src =
     src
-        |> parseMany userdefinedMacroDict
+        |> parseManyWithDict userdefinedMacroDict
         |> Result.map resolveSymbolNames
 
 
@@ -189,11 +189,6 @@ evalStrResult : MathMacroDict -> String -> Result (List (DeadEnd Context Problem
 evalStrResult userDefinedMacroDict str =
     parseManyWithDict userDefinedMacroDict (String.trim str)
         |> Result.map (\result -> List.map (expandMacroWithDict userDefinedMacroDict) result |> printList)
-
-
-parseMany : MathMacroDict -> String -> Result (List (DeadEnd Context Problem)) (List MathExpr)
-parseMany userDefinedMacroDict str =
-    parseManyWithDict userDefinedMacroDict str
 
 
 parseManyWithDict : MathMacroDict -> String -> Result (List (DeadEnd Context Problem)) (List MathExpr)
@@ -799,66 +794,37 @@ tokenizeHelper chars acc =
 -- Helper to take digits
 
 
-takeDigits : List Char -> ( List Char, List Char )
-takeDigits chars =
+takeWhile : (Char -> Bool) -> List Char -> ( List Char, List Char )
+takeWhile pred chars =
     case chars of
         [] ->
             ( [], [] )
 
         c :: rest ->
-            if Char.isDigit c then
+            if pred c then
                 let
-                    ( digits, remaining ) =
-                        takeDigits rest
+                    ( taken, remaining ) =
+                        takeWhile pred rest
                 in
-                ( c :: digits, remaining )
+                ( c :: taken, remaining )
 
             else
                 ( [], chars )
 
 
-
--- Helper to take alphabetic characters
+takeDigits : List Char -> ( List Char, List Char )
+takeDigits =
+    takeWhile Char.isDigit
 
 
 takeAlphas : List Char -> ( List Char, List Char )
-takeAlphas chars =
-    case chars of
-        [] ->
-            ( [], [] )
-
-        c :: rest ->
-            if Char.isAlpha c then
-                let
-                    ( alphas, remaining ) =
-                        takeAlphas rest
-                in
-                ( c :: alphas, remaining )
-
-            else
-                ( [], chars )
-
-
-
--- Helper to take spaces
+takeAlphas =
+    takeWhile Char.isAlpha
 
 
 takeSpaces : List Char -> ( List Char, List Char )
-takeSpaces chars =
-    case chars of
-        [] ->
-            ( [], [] )
-
-        c :: rest ->
-            if c == ' ' || c == '\t' || c == '\n' then
-                let
-                    ( spaces, remaining ) =
-                        takeSpaces rest
-                in
-                ( c :: spaces, remaining )
-
-            else
-                ( [], chars )
+takeSpaces =
+    takeWhile (\c -> c == ' ' || c == '\t' || c == '\n')
 
 
 
@@ -1280,29 +1246,6 @@ functionArgListParser userMacroDict =
 -- Parse alpha numeric without lookahead (to avoid recursion)
 
 
-alphaNumWithoutLookaheadParser : PA.Parser c Problem MathExpr
-alphaNumWithoutLookaheadParser =
-    alphaNumParser_ |> PA.map AlphaNum
-
-
-
--- Parse alpha numeric and check if it's a macro (no lookahead for parentheses)
-
-
-alphaNumOrMacroParser : MathMacroDict -> PA.Parser Context Problem MathExpr
-alphaNumOrMacroParser userMacroDict =
-    alphaNumParser_
-        |> PA.map
-            (\name ->
-                if isKaTeX name || isUserDefinedMacro userMacroDict name then
-                    Macro name []
-
-                else
-                    AlphaNum name
-            )
-
-
-
 -- Helper for parsing one or more items
 
 
@@ -1663,13 +1606,6 @@ numericDecoParser =
 
 -- PRINT
 
-
-printNewCommand (NewCommand mathExpr arity body) =
-    if arity == 0 then
-        "\\newcommand" ++ encloseB (print mathExpr) ++ printList body
-
-    else
-        "\\newcommand" ++ encloseB (print mathExpr) ++ "[" ++ String.fromInt arity ++ "]" ++ printList body
 
 
 printList : List MathExpr -> String
