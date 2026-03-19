@@ -68,6 +68,22 @@ suite =
                     evalStr setMacros "set( (1,2) )"
                         |> Expect.equal "\\{\\ { (1,2) } \\}"
             ]
+        , describe "line breaks (\\\\)"
+            [ test "trailing \\\\ is preserved" <|
+                \_ ->
+                    evalStr Dict.empty "x = \\\\"
+                        |> Expect.equal "x = \\\\"
+            , test "equation with trailing \\\\ does not produce error" <|
+                \_ ->
+                    evalStr Dict.empty "Omega_{AB} = \\\\\nOmega_A"
+                        |> String.contains "ETeX error"
+                        |> Expect.equal False
+            , test "\\\\ between expressions is preserved" <|
+                \_ ->
+                    evalStr Dict.empty "a + b \\\\\nc + d"
+                        |> String.contains "\\\\"
+                        |> Expect.equal True
+            ]
         , describe "LET with environments"
             [ test "LET with multi-line pmatrix definitions no error" <|
                 \_ ->

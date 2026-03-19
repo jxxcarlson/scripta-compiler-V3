@@ -1410,6 +1410,7 @@ mathExprParser userMacroDict =
         , mathSpaceParser
         , leftBraceParser
         , rightBraceParser
+        , backtrackable lineBreakParser
         , alphaNumWithLookaheadParser userMacroDict -- This handles both function calls and plain alphanums
         , macroParser userMacroDict
         , backtrackable (lazy (\_ -> standaloneParenthExprParser userMacroDict)) -- For standalone parentheses
@@ -1484,6 +1485,12 @@ mathMediumSpaceParser : PA.Parser c Problem MathExpr
 mathMediumSpaceParser =
     succeed MathMediumSpace
         |. symbol (Token "\\;" ExpectingMathMediumSpace)
+
+
+lineBreakParser : PA.Parser c Problem MathExpr
+lineBreakParser =
+    succeed (MathSymbols "\\\\")
+        |. symbol (Token "\\\\" ExpectingBackslash)
 
 
 leftBraceParser : PA.Parser c Problem MathExpr
