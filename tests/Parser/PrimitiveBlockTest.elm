@@ -262,5 +262,62 @@ suite =
                         , \b -> Expect.equal (Just [ "a^2 + b^2 = c^2" ]) (Maybe.map .body b)
                         ]
                         block
+            , test "verbatim block: | unknown_name in body is NOT a continuation" <|
+                \_ ->
+                    let
+                        blocks =
+                            p TestData.codeWithPipeInBody
+
+                        block =
+                            List.head blocks
+                    in
+                    Expect.all
+                        [ \b -> Expect.equal (Just (Verbatim "code")) (Maybe.map .heading b)
+                        , \b -> Expect.equal (Just []) (Maybe.map .args b)
+                        , \b ->
+                            Expect.equal
+                                (Just [ "  | bibitem einstein1905a", "  Albert Einstein, blah blah" ])
+                                (Maybe.map .body b)
+                        ]
+                        block
+            , test "verbatim block: | unknown_name (no indent) is NOT a continuation" <|
+                \_ ->
+                    let
+                        blocks =
+                            p TestData.codeWithPipeInBodyNoIndent
+
+                        block =
+                            List.head blocks
+                    in
+                    Expect.all
+                        [ \b -> Expect.equal (Just (Verbatim "code")) (Maybe.map .heading b)
+                        , \b -> Expect.equal (Just []) (Maybe.map .args b)
+                        , \b ->
+                            Expect.equal
+                                (Just [ "| foo bar", "yada yada" ])
+                                (Maybe.map .body b)
+                        ]
+                        block
+            , test "verbatim block: property continuation works, then | line is body" <|
+                \_ ->
+                    let
+                        blocks =
+                            p TestData.codeWithPropertyThenPipeBody
+
+                        block =
+                            List.head blocks
+                    in
+                    Expect.all
+                        [ \b -> Expect.equal (Just (Verbatim "code")) (Maybe.map .heading b)
+                        , \b ->
+                            Expect.equal
+                                (Just (Dict.fromList [ ( "lang", "elm" ), ( "highlight", "1-5" ) ]))
+                                (Maybe.map .properties b)
+                        , \b ->
+                            Expect.equal
+                                (Just [ "| bibitem foo", "module Main exposing (..)" ])
+                                (Maybe.map .body b)
+                        ]
+                        block
             ]
         ]

@@ -251,8 +251,16 @@ addCurrentLine line state =
             state.position + String.length line.content + 1
 
         -- Check if this is a continuation line for extended header syntax
+        currentIsVerbatim =
+            case Maybe.map .heading state.currentBlock of
+                Just (Verbatim _) ->
+                    True
+
+                _ ->
+                    False
+
         isContinuation =
-            state.inHeader && isContinuationLine line.content
+            state.inHeader && isContinuationLine currentIsVerbatim line.content
     in
     if isContinuation then
         -- Merge continuation line's args/properties into the current block
@@ -747,8 +755,8 @@ A continuation line:
 2.  The first word after "| " is NOT a known block name (unless it contains a colon)
 
 -}
-isContinuationLine : String -> Bool
-isContinuationLine line =
+isContinuationLine : Bool -> String -> Bool
+isContinuationLine isVerbatim line =
     let
         trimmed =
             String.trim line
@@ -761,10 +769,14 @@ isContinuationLine line =
             firstWord =
                 String.words afterPrefix |> List.head |> Maybe.withDefault ""
         in
-        -- It's a continuation if the first word contains ":" (it's a property)
-        -- OR if the first word is NOT a known block name
-        String.contains ":" firstWord
-            || not (isKnownBlockName firstWord)
+        if isVerbatim then
+            -- For verbatim blocks, only property lines (containing ":") are continuations
+            String.contains ":" firstWord
+
+        else
+            -- For ordinary blocks, properties OR unknown names are continuations
+            String.contains ":" firstWord
+                || not (isKnownBlockName firstWord)
 
     else
         False

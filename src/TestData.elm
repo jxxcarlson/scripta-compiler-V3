@@ -141,3 +141,38 @@ userTestCase =
 | label:pyth
 a^2 + b^2 = c^2
 """
+
+
+{-| Code block whose first body line starts with "| " followed by
+an unknown block name. Should be treated as body content,
+not as a header continuation.
+-}
+codeWithPipeInBody =
+    """
+| code
+  | bibitem einstein1905a
+  Albert Einstein, blah blah
+"""
+
+
+{-| Code block whose first body line starts with "| " followed by
+an unknown word (no colon). Should be body content.
+-}
+codeWithPipeInBodyNoIndent =
+    """
+| code
+| foo bar
+yada yada
+"""
+
+
+{-| Verbatim block with valid property continuation (has colon)
+followed by body content starting with "|".
+-}
+codeWithPropertyThenPipeBody =
+    """
+| code lang:elm
+| highlight:1-5
+| bibitem foo
+module Main exposing (..)
+"""
