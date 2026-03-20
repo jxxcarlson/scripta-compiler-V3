@@ -97,6 +97,35 @@ suite =
                         |> String.contains "#1"
                         |> Expect.equal False
             ]
+        , describe "recursive macro expansion"
+            [ test "laplacian expands ppder which expands to frac" <|
+                \_ ->
+                    let
+                        macros =
+                            makeMacroDict "pder:   frac(partial #1, partial #2)\nppder:  frac(partial^2 #1, partial #2^2)\nlaplacian: ppder(#1, x) + ppder(#1, y) + ppder(#1, z)"
+                    in
+                    evalStr macros "laplacian(u)"
+                        |> String.contains "\\frac"
+                        |> Expect.equal True
+            , test "laplacian does not leave unexpanded ppder" <|
+                \_ ->
+                    let
+                        macros =
+                            makeMacroDict "pder:   frac(partial #1, partial #2)\nppder:  frac(partial^2 #1, partial #2^2)\nlaplacian: ppder(#1, x) + ppder(#1, y) + ppder(#1, z)"
+                    in
+                    evalStr macros "laplacian(u)"
+                        |> String.contains "ppder"
+                        |> Expect.equal False
+            , test "full diffusion equation renders without error" <|
+                \_ ->
+                    let
+                        macros =
+                            makeMacroDict "pder:   frac(partial #1, partial #2)\nppder:  frac(partial^2 #1, partial #2^2)\nlaplacian: ppder(#1, x) + ppder(#1, y) + ppder(#1, z)"
+                    in
+                    evalStr macros "pder(u,t) = D\\left( laplacian(u) \\right)"
+                        |> String.contains "ETeX error"
+                        |> Expect.equal False
+            ]
         , describe "line breaks (\\\\)"
             [ test "trailing \\\\ is preserved" <|
                 \_ ->

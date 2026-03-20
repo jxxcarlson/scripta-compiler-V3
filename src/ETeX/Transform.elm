@@ -414,6 +414,7 @@ expandMacroWithDict dict expr =
                                 extractMacroArgs args
                     in
                     Expr (expandMacro_ (List.map (expandMacroWithDict dict) macroArgs) (MacroBody arity exprs))
+                        |> expandMacroWithDict dict
 
         Arg exprs ->
             Arg (List.map (expandMacroWithDict dict) exprs)
@@ -650,7 +651,7 @@ addMixedFormatMacro line dict =
 
     else if String.contains ":" line then
         -- Simple format
-        case parseSimpleMacroWithContext knownMacros line of
+        case parseSimpleMacroWithContext knownMacros dict line of
             Just ( name, body ) ->
                 Dict.insert name body dict
 
@@ -666,8 +667,8 @@ addMixedFormatMacro line dict =
 -- Parse with context of known macro names
 
 
-parseSimpleMacroWithContext : List String -> String -> Maybe ( String, MacroBody )
-parseSimpleMacroWithContext knownMacros line =
+parseSimpleMacroWithContext : List String -> MathMacroDict -> String -> Maybe ( String, MacroBody )
+parseSimpleMacroWithContext knownMacros macroDict line =
     case String.split ":" line of
         [ name, body ] ->
             let
@@ -685,7 +686,7 @@ parseSimpleMacroWithContext knownMacros line =
                 newCommandStr =
                     "\\newcommand{\\" ++ trimmedName ++ "}{" ++ processedBody ++ "}"
             in
-            parseNewCommand Dict.empty newCommandStr
+            parseNewCommand macroDict newCommandStr
                 |> makeEntry
 
         _ ->
@@ -879,8 +880,9 @@ processTokensWithLookahead knownMacros tokens =
 
         (SimpleWord word) :: (SimpleSymbol "(") :: rest ->
             -- Word followed by ( - check if it's a function-like macro
-            if isKaTeX word && needsBraceConversion word then
-                -- For macros like frac, binom that need brace arguments
+            if (isKaTeX word && needsBraceConversion word) || List.member word knownMacros then
+                -- For macros like frac, binom that need brace arguments,
+                -- and user-defined macros with parenthesized arguments
                 let
                     ( args, remaining ) =
                         extractParenArgs rest []
@@ -891,9 +893,6 @@ processTokensWithLookahead knownMacros tokens =
                 SimpleWord ("\\" ++ word) :: convertArgsToBraces processedArgs ++ processTokensWithLookahead knownMacros remaining
 
             else if isKaTeX word then
-                SimpleWord ("\\" ++ word) :: SimpleSymbol "(" :: processTokensWithLookahead knownMacros rest
-
-            else if List.member word knownMacros then
                 SimpleWord ("\\" ++ word) :: SimpleSymbol "(" :: processTokensWithLookahead knownMacros rest
 
             else
@@ -1019,7 +1018,7 @@ simpleMacroToLaTeX line =
 
     else if String.contains ":" line then
         -- New ETeX-style: name : body
-        case parseSimpleMacroWithContext [] line of
+        case parseSimpleMacroWithContext [] Dict.empty line of
             Just ( name, MacroBody arity _ ) ->
                 let
                     processedBody =
