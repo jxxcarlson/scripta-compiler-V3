@@ -85,11 +85,11 @@ renderVFun params acc name content meta =
             mathText params.editCount { id = meta.id, begin = meta.begin, end = meta.end } InlineMathMode ("\\ce{" ++ content ++ "}")
 
         "code" ->
-            Html.code (Render.Utility.rlSync meta ++ [ HA.style "font-size" "0.9em" ]) [ Html.text content ]
+            Html.code (Render.Utility.rlSync meta ++ [ HA.style "font-size" "1.01rem" ]) [ Html.text content ]
 
         "`" ->
             -- Backtick code (alias for code)
-            Html.code (Render.Utility.rlSync meta ++ [ HA.style "font-size" "0.9em" ]) [ Html.text content ]
+            Html.code (Render.Utility.rlSync meta ++ [ HA.style "font-size" "1.01rem" ]) [ Html.text content ]
 
         _ ->
             -- Default: just show the content

@@ -63,11 +63,11 @@ itemSpacingPx config =
 
 
 {-| Get code font size as a CSS px string.
-Code size is 93% of base font size, scaled.
+Code size matches base font size, scaled.
 -}
 codeSize : SizingConfig -> String
 codeSize config =
-    toPx config (config.baseFontSize * 0.93)
+    toPx config config.baseFontSize
 
 
 {-| Get left margin as a CSS px string, applying scale.
