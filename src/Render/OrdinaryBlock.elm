@@ -1181,7 +1181,14 @@ renderBox params acc _ block children =
                , HA.style "margin-left" "2.75em"
                , HA.style "margin-right" "5.5em"
                , HA.style "border-radius" "4px"
-               , HA.style "background-color" Render.Constants.highlightColor
+               , HA.style "background-color"
+                    (case params.theme of
+                        Light ->
+                            "#f5f5f5"
+
+                        Dark ->
+                            "#1e1e1e"
+                    )
                ]
             ++ Render.Utility.rlBlockSync block.meta
         )

@@ -74,6 +74,10 @@ suite =
             \_ ->
                 reduce "LET\n  A = \\begin{pmatrix}\n2 & 1\n\\end{pmatrix}\n  B = \\begin{pmatrix}\n1 & 0 \\\\\n0 & -1\n\\end{pmatrix}\nIN\n  AB"
                     |> Expect.equal "\\begin{pmatrix}\n2 & 1\n\\end{pmatrix}\\begin{pmatrix}\n1 & 0 \\\\\n0 & -1\n\\end{pmatrix}"
+        , test "pmatrix with phantom and negative entries, AAA body" <|
+            \_ ->
+                reduce "LET\n  A = \\begin{pmatrix}\n\\phantom{-}2 & -1 \\\\\n-1 & \\phantom{-}2\n\\end{pmatrix}\nIN\n  AAA"
+                    |> Expect.equal "\\begin{pmatrix}\n\\phantom{-}2 & -1 \\\\\n-1 & \\phantom{-}2\n\\end{pmatrix}\\begin{pmatrix}\n\\phantom{-}2 & -1 \\\\\n-1 & \\phantom{-}2\n\\end{pmatrix}\\begin{pmatrix}\n\\phantom{-}2 & -1 \\\\\n-1 & \\phantom{-}2\n\\end{pmatrix}"
         , test "sum of two environments needs parens" <|
             \_ ->
                 reduce "LET\n  A = \\begin{pmatrix}\n1\n\\end{pmatrix} + \\begin{pmatrix}\n2\n\\end{pmatrix}\nIN\n  AB"
