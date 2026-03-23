@@ -70,4 +70,12 @@ suite =
             \_ ->
                 reduce "LET\n  A = \\begin{pmatrix}\n1\n\\end{pmatrix}\n  B = \\begin{pmatrix}\n2\n\\end{pmatrix}\n  C = \\begin{pmatrix}\n3\n\\end{pmatrix}\nIN\n  AB = C"
                     |> Expect.equal "\\begin{pmatrix}\n1\n\\end{pmatrix}\\begin{pmatrix}\n2\n\\end{pmatrix} = \\begin{pmatrix}\n3\n\\end{pmatrix}"
+        , test "pmatrix with negative entry should not get spurious parens" <|
+            \_ ->
+                reduce "LET\n  A = \\begin{pmatrix}\n2 & 1\n\\end{pmatrix}\n  B = \\begin{pmatrix}\n1 & 0 \\\\\n0 & -1\n\\end{pmatrix}\nIN\n  AB"
+                    |> Expect.equal "\\begin{pmatrix}\n2 & 1\n\\end{pmatrix}\\begin{pmatrix}\n1 & 0 \\\\\n0 & -1\n\\end{pmatrix}"
+        , test "sum of two environments needs parens" <|
+            \_ ->
+                reduce "LET\n  A = \\begin{pmatrix}\n1\n\\end{pmatrix} + \\begin{pmatrix}\n2\n\\end{pmatrix}\nIN\n  AB"
+                    |> Expect.equal "(\\begin{pmatrix}\n1\n\\end{pmatrix} + \\begin{pmatrix}\n2\n\\end{pmatrix})B"
         ]

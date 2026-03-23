@@ -242,8 +242,44 @@ needsParens expr =
     if isFullyWrapped trimmed then
         False
 
+    else if isLaTeXEnvironment trimmed then
+        False
+
     else
         hasTopLevelPlusOrMinus trimmed
+
+
+{-| Check if the expression is a single \begin{env}...\end{env} LaTeX environment.
+-}
+isLaTeXEnvironment : String -> Bool
+isLaTeXEnvironment str =
+    String.startsWith "\\begin{" str
+        && String.endsWith "}" str
+        && (countOccurrences "\\begin{" str == 1)
+        && (countOccurrences "\\end{" str == 1)
+
+
+countOccurrences : String -> String -> Int
+countOccurrences needle haystack =
+    if String.isEmpty needle then
+        0
+
+    else
+        let
+            len =
+                String.length needle
+
+            helper s count =
+                if String.isEmpty s then
+                    count
+
+                else if String.startsWith needle s then
+                    helper (String.dropLeft len s) (count + 1)
+
+                else
+                    helper (String.dropLeft 1 s) count
+        in
+        helper haystack 0
 
 
 {-| Check if the expression is fully wrapped in parens: "(...)".
