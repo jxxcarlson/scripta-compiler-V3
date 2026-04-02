@@ -176,6 +176,10 @@ buildTocItem params entry =
     Html.div
         [ HA.style "margin-left" (String.fromInt indent ++ "px")
         , HA.style "margin-bottom" "0.25em"
+        , HA.style "overflow" "hidden"
+        , HA.style "white-space" "nowrap"
+        , HA.style "text-overflow" "ellipsis"
+        , HA.title (prefix ++ entry.title)
         ]
         [ Html.a
             [ HA.href ("#" ++ entry.id)
