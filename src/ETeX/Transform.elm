@@ -1595,7 +1595,7 @@ superscriptParser userMacroDict =
 
 decoParser : MathMacroDict -> PA.Parser Context Problem Deco
 decoParser userMacroDict =
-    oneOf [ numericDecoParser, lazy (\_ -> mathExprParser userMacroDict) |> PA.map DecoM ]
+    oneOf [ backtrackable numericDecoParser, lazy (\_ -> mathExprParser userMacroDict) |> PA.map DecoM ]
 
 
 numericDecoParser =
