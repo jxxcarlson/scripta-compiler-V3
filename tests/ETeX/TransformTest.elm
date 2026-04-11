@@ -1,7 +1,7 @@
 module ETeX.TransformTest exposing (..)
 
 import Dict
-import ETeX.Transform exposing (evalStr, makeMacroDict)
+import ETeX.Transform exposing (evalStr, inverseTransformETeX, makeMacroDict, transformETeX)
 import Expect
 import Test exposing (Test, describe, test)
 
@@ -141,6 +141,72 @@ suite =
                     evalStr Dict.empty "a + b \\\\\nc + d"
                         |> String.contains "\\\\"
                         |> Expect.equal True
+            ]
+        , describe "inverseTransformETeX — simple cases"
+            [ test "single-arg macro: \\sin{x^2}" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\sin{x^2}"
+                        |> Expect.equal "sin(x^2)"
+            , test "two-arg macro: \\frac{1}{2}" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\frac{1}{2}"
+                        |> Expect.equal "frac(1,2)"
+            , test "zero-arg macro: \\alpha" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\alpha"
+                        |> Expect.equal "alpha"
+            , test "single-arg macro with nested subscript: \\sin{x_1}" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\sin{x_1}"
+                        |> Expect.equal "sin(x_1)"
+            , test "round-trip on \"sin(x^2)\"" <|
+                \_ ->
+                    "sin(x^2)"
+                        |> transformETeX Dict.empty
+                        |> inverseTransformETeX Dict.empty
+                        |> Expect.equal "sin(x^2)"
+            , test "round-trip on \"frac(1,2)\"" <|
+                \_ ->
+                    "frac(1,2)"
+                        |> transformETeX Dict.empty
+                        |> inverseTransformETeX Dict.empty
+                        |> Expect.equal "frac(1,2)"
+            , test "\\text{foo bar} inverts to \"foo bar\"" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\text{foo bar}"
+                        |> Expect.equal "\"foo bar\""
+            , test "\\text{hello} inverts to \"hello\" (single word)" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\text{hello}"
+                        |> Expect.equal "\"hello\""
+            , test "\\text{42} inverts to \"42\" (digits)" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\text{42}"
+                        |> Expect.equal "\"42\""
+            , test "\\text{} inverts to \"\" (empty body)" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\text{}"
+                        |> Expect.equal "\"\""
+            , test "round-trip: \"foo bar\" -> transform -> inverse -> \"foo bar\"" <|
+                \_ ->
+                    "\"foo bar\""
+                        |> transformETeX Dict.empty
+                        |> inverseTransformETeX Dict.empty
+                        |> Expect.equal "\"foo bar\""
+            , test "\\text inside a larger expression: x + \\text{foo}" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "x + \\text{foo}"
+                        |> Expect.equal "x + \"foo\""
+            , test "\\textbf{bold} is NOT inverted (only \\text is special-cased)" <|
+                \_ ->
+                    inverseTransformETeX Dict.empty "\\textbf{bold}"
+                        |> Expect.equal "textbf(bold)"
+            , test "\\text with backslash in body falls through (not inverted)" <|
+                \_ ->
+                    -- Body contains a backslash, so the simple-string guard
+                    -- rejects it and the default macro rendering applies.
+                    inverseTransformETeX Dict.empty "\\text{\\textbf{bold}}"
+                        |> Expect.notEqual "\"\\textbf{bold}\""
             ]
         , describe "LET with environments"
             [ test "LET with multi-line pmatrix definitions no error" <|

@@ -1,6 +1,7 @@
 module ETeX.Transform exposing
     ( evalStr
     , evalStrResult
+    , inverseTransformETeX
     , makeMacroDict
     , toLaTeXNewCommands
     , transformETeX
@@ -56,6 +57,28 @@ transformETeXResult : MathMacroDict -> String -> Result (List (DeadEnd Context P
 transformETeXResult userdefinedMacroDict src =
     transformETeX_ userdefinedMacroDict src
         |> Result.map (\result -> List.map print result |> String.concat)
+
+
+{-| Partial inverse of `transformETeX`. Parses LaTeX-flavored input and renders
+it back in ETeX form: braces become parentheses, multi-argument macros use
+comma-separated arguments, and bare macros drop the leading backslash.
+
+    inverseTransformETeX Dict.empty "\\sin{x^2}"   == "sin(x^2)"
+    inverseTransformETeX Dict.empty "\\frac{1}{2}" == "frac(1,2)"
+    inverseTransformETeX Dict.empty "\\alpha"      == "alpha"
+
+This is a partial inverse: it handles the simple cases above and passes
+through expressions it does not know how to re-express in ETeX form.
+
+-}
+inverseTransformETeX : MathMacroDict -> String -> String
+inverseTransformETeX userdefinedMacroDict src =
+    case parseManyWithDict userdefinedMacroDict src of
+        Ok exprs ->
+            List.map printETeX exprs |> String.concat
+
+        Err _ ->
+            "[ETeX inverse error] " ++ src
 
 
 isUserDefinedMacro : MathMacroDict -> String -> Bool
@@ -1716,6 +1739,191 @@ printDeco deco =
 
         DecoI k ->
             String.fromInt k
+
+
+
+-- PRINT (ETeX form — used by inverseTransformETeX)
+
+
+printETeXList : List MathExpr -> String
+printETeXList exprs =
+    List.map printETeX exprs |> String.concat
+
+
+printETeX : MathExpr -> String
+printETeX expr =
+    case expr of
+        Macro name body ->
+            printETeXMacro name body
+
+        Arg exprs ->
+            encloseB (printETeXList exprs)
+
+        PArg exprs ->
+            encloseP (printETeXList exprs)
+
+        ParenthExpr exprs ->
+            encloseP (printETeXList exprs)
+
+        Sub deco ->
+            "_" ++ printETeXDeco deco
+
+        Super deco ->
+            "^" ++ printETeXDeco deco
+
+        Expr exprs ->
+            printETeXList exprs
+
+        AlphaNum str ->
+            str
+
+        LeftMathBrace ->
+            "\\{"
+
+        RightMathBrace ->
+            "\\}"
+
+        LeftParen ->
+            "("
+
+        RightParen ->
+            ")"
+
+        MathSmallSpace ->
+            "\\,"
+
+        MathMediumSpace ->
+            "\\;"
+
+        MathSpace ->
+            "\\ "
+
+        MacroName str ->
+            "\\" ++ str
+
+        FunctionName str ->
+            str
+
+        Param k ->
+            "#" ++ String.fromInt k
+
+        MathSymbols str ->
+            str
+
+        WS ->
+            " "
+
+        Comma ->
+            ","
+
+        FCall name args ->
+            name ++ "(" ++ printETeXArgList args ++ ")"
+
+        Text str ->
+            "\"" ++ str ++ "\""
+
+        GreekSymbol str ->
+            str
+
+
+printETeXDeco : Deco -> String
+printETeXDeco deco =
+    case deco of
+        DecoM expr ->
+            printETeX expr
+
+        DecoI k ->
+            String.fromInt k
+
+
+{-| Render a parsed Macro in ETeX form:
+
+  - `Macro "sin" []`                           → `"sin"`
+  - `Macro "sin" [Arg [x^2]]`                  → `"sin(x^2)"`
+  - `Macro "frac" [Arg [1], Arg [2]]`          → `"frac(1,2)"`
+
+If the body contains something other than `Arg` nodes, we cannot cleanly
+re-express the macro in ETeX form, so we fall back to LaTeX form.
+
+-}
+printETeXMacro : String -> List MathExpr -> String
+printETeXMacro name body =
+    case ( name, body ) of
+        ( "text", [ Arg [ AlphaNum str ] ] ) ->
+            -- Inverse of `Text str -> "\\text{" ++ str ++ "}"` in `print`.
+            -- Only applies to simple text (no backslash); other shapes fall
+            -- through to the default macro rendering below.
+            if String.contains "\\" str then
+                defaultPrintETeXMacro name body
+
+            else
+                "\"" ++ str ++ "\""
+
+        _ ->
+            defaultPrintETeXMacro name body
+
+
+defaultPrintETeXMacro : String -> List MathExpr -> String
+defaultPrintETeXMacro name body =
+    case body of
+        [] ->
+            name
+
+        _ ->
+            if List.all isArgNode body then
+                name
+                    ++ "("
+                    ++ (body |> List.map printETeXArgInner |> String.join ",")
+                    ++ ")"
+
+            else
+                "\\" ++ name ++ printETeXList body
+
+
+isArgNode : MathExpr -> Bool
+isArgNode expr =
+    case expr of
+        Arg _ ->
+            True
+
+        _ ->
+            False
+
+
+{-| When a Macro body is a list of `Arg` nodes, render each argument's
+interior (without the surrounding braces), so that `Arg [AlphaNum "1"]`
+prints as `"1"` rather than `"{1}"`.
+-}
+printETeXArgInner : MathExpr -> String
+printETeXArgInner expr =
+    case expr of
+        Arg exprs ->
+            printETeXList exprs
+
+        _ ->
+            printETeX expr
+
+
+{-| Mirror of `printArgList`, but recursing via `printETeX` so that any
+nested macros are also rendered in ETeX form.
+-}
+printETeXArgList : List MathExpr -> String
+printETeXArgList exprs =
+    case exprs of
+        [] ->
+            ""
+
+        [ PArg contents ] ->
+            printETeXList contents
+
+        (PArg contents) :: Comma :: rest ->
+            printETeXList contents ++ "," ++ printETeXArgList rest
+
+        (PArg contents) :: rest ->
+            printETeXList contents ++ printETeXArgList rest
+
+        other :: rest ->
+            printETeX other ++ printETeXArgList rest
 
 
 
