@@ -39,8 +39,8 @@ rlSync meta =
 
 rlBlockSync : V3.Types.BlockMeta -> List (Html.Attribute V3.Types.Msg)
 rlBlockSync blockMeta =
-    [ HA.attribute "data-begin" "0"
-    , HA.attribute "data-end" "0"
+    [ HA.attribute "data-begin" (String.fromInt blockMeta.begin)
+    , HA.attribute "data-end" (String.fromInt blockMeta.end)
     , HA.attribute "data-lines" (String.fromInt blockMeta.numberOfLines)
 
     -- JXXC Temporary Edit

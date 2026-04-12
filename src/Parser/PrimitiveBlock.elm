@@ -220,6 +220,8 @@ blockFromLine line state =
             , lineNumber = line.lineNumber
             , bodyLineNumber = bodyLineNumber
             , numberOfLines = 1
+            , begin = line.position
+            , end = line.position + String.length line.content
             , messages = []
             , sourceText = line.content
             , error = Nothing
@@ -477,19 +479,26 @@ finalize block =
                 _ ->
                     reversedBody
 
-        sourceText =
-            if List.isEmpty reversedBody then
-                block.firstLine
-
-            else
-                block.firstLine ++ "\n" ++ String.join "\n" reversedBody
-
         meta =
             block.meta
+
+        -- Use `meta.sourceText` (the original raw heading line, captured at
+        -- block construction) rather than `block.firstLine`, which for `|`,
+        -- `||`, `$$`, and ``` blocks has been stripped of the heading.
+        sourceText =
+            if List.isEmpty reversedBody then
+                meta.sourceText
+
+            else
+                meta.sourceText ++ "\n" ++ String.join "\n" reversedBody
     in
     { block
         | body = finalBody
-        , meta = { meta | sourceText = sourceText }
+        , meta =
+            { meta
+                | sourceText = sourceText
+                , end = meta.begin + String.length sourceText
+            }
     }
 
 

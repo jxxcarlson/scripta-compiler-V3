@@ -71,6 +71,156 @@ suite =
                     in
                     Expect.equal expected metaData
             ]
+        , describe "block source-text offsets (begin/end)"
+            [ test "equation block: begin and end bracket the block in source" <|
+                \_ ->
+                    let
+                        source =
+                            String.join "\n"
+                                [ "1: blah blah"
+                                , "2: blah blah"
+                                , ""
+                                , "| equation"
+                                , "a^2 + b^2 = c^2"
+                                , ""
+                                , "3: blah blah"
+                                , "4: blah blah"
+                                ]
+
+                        maybeEq =
+                            p source
+                                |> List.filter (\b -> b.heading == Verbatim "equation")
+                                |> List.head
+                    in
+                    case maybeEq of
+                        Nothing ->
+                            Expect.fail "Expected an equation block"
+
+                        Just block ->
+                            -- "| equation\n" spans offsets 27..37 (10 chars heading + 1 newline);
+                            -- "a^2 + b^2 = c^2" spans offsets 38..52 (15 chars).
+                            -- So the whole block covers offsets 27..52 (inclusive) / 27..53 (exclusive).
+                            Expect.equal ( 27, 53 ) ( block.meta.begin, block.meta.end )
+            , test "equation block: slicing source by (begin, end) recovers block text" <|
+                \_ ->
+                    let
+                        source =
+                            String.join "\n"
+                                [ "1: blah blah"
+                                , "2: blah blah"
+                                , ""
+                                , "| equation"
+                                , "a^2 + b^2 = c^2"
+                                , ""
+                                , "3: blah blah"
+                                , "4: blah blah"
+                                ]
+
+                        maybeEq =
+                            p source
+                                |> List.filter (\b -> b.heading == Verbatim "equation")
+                                |> List.head
+                    in
+                    case maybeEq of
+                        Nothing ->
+                            Expect.fail "Expected an equation block"
+
+                        Just block ->
+                            Expect.equal
+                                "| equation\na^2 + b^2 = c^2"
+                                (String.slice block.meta.begin block.meta.end source)
+            , test "equation block body: offsets recover \"a^2 + b^2 = c^2\" from source" <|
+                \_ ->
+                    let
+                        source =
+                            String.join "\n"
+                                [ "1: blah blah"
+                                , "2: blah blah"
+                                , ""
+                                , "| equation"
+                                , "a^2 + b^2 = c^2"
+                                , ""
+                                , "3: blah blah"
+                                , "4: blah blah"
+                                ]
+
+                        maybeEq =
+                            p source
+                                |> List.filter (\b -> b.heading == Verbatim "equation")
+                                |> List.head
+                    in
+                    case maybeEq of
+                        Nothing ->
+                            Expect.fail "Expected an equation block"
+
+                        Just block ->
+                            let
+                                -- The body begins one line (= heading line + newline) after
+                                -- the block's begin. For a single-line heading "| equation"
+                                -- (10 chars), that is begin + 11.
+                                headingLineLength =
+                                    source
+                                        |> String.dropLeft block.meta.begin
+                                        |> String.lines
+                                        |> List.head
+                                        |> Maybe.withDefault ""
+                                        |> String.length
+
+                                bodyBegin =
+                                    block.meta.begin + headingLineLength + 1
+
+                                bodyEnd =
+                                    block.meta.end
+                            in
+                            Expect.equal
+                                "a^2 + b^2 = c^2"
+                                (String.slice bodyBegin bodyEnd source)
+            , test "equation block: end - begin equals sourceText length" <|
+                \_ ->
+                    let
+                        source =
+                            String.join "\n"
+                                [ "1: blah blah"
+                                , "2: blah blah"
+                                , ""
+                                , "| equation"
+                                , "a^2 + b^2 = c^2"
+                                , ""
+                                , "3: blah blah"
+                                , "4: blah blah"
+                                ]
+
+                        maybeEq =
+                            p source
+                                |> List.filter (\b -> b.heading == Verbatim "equation")
+                                |> List.head
+                    in
+                    case maybeEq of
+                        Nothing ->
+                            Expect.fail "Expected an equation block"
+
+                        Just block ->
+                            Expect.equal
+                                (String.length block.meta.sourceText)
+                                (block.meta.end - block.meta.begin)
+            , test "paragraph block: single-line sourceText slice matches source" <|
+                \_ ->
+                    let
+                        source =
+                            "hello world"
+
+                        maybeBlock =
+                            p source |> List.head
+                    in
+                    case maybeBlock of
+                        Nothing ->
+                            Expect.fail "Expected a block"
+
+                        Just block ->
+                            Expect.equal
+                                "hello world"
+                                (String.slice block.meta.begin block.meta.end source)
+            ]
         , describe "extended header syntax (multi-line)"
             [ test "single line args and properties (backward compatibility)" <|
                 \_ ->
