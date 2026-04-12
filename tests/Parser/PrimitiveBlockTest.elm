@@ -129,7 +129,7 @@ suite =
                             Expect.equal
                                 "| equation\na^2 + b^2 = c^2"
                                 (String.slice block.meta.begin block.meta.end source)
-            , test "equation block body: offsets recover \"a^2 + b^2 = c^2\" from source" <|
+            , test "equation block body: contentBegin/contentEnd recover \"a^2 + b^2 = c^2\"" <|
                 \_ ->
                     let
                         source =
@@ -154,27 +154,96 @@ suite =
                             Expect.fail "Expected an equation block"
 
                         Just block ->
-                            let
-                                -- The body begins one line (= heading line + newline) after
-                                -- the block's begin. For a single-line heading "| equation"
-                                -- (10 chars), that is begin + 11.
-                                headingLineLength =
-                                    source
-                                        |> String.dropLeft block.meta.begin
-                                        |> String.lines
-                                        |> List.head
-                                        |> Maybe.withDefault ""
-                                        |> String.length
-
-                                bodyBegin =
-                                    block.meta.begin + headingLineLength + 1
-
-                                bodyEnd =
-                                    block.meta.end
-                            in
                             Expect.equal
                                 "a^2 + b^2 = c^2"
-                                (String.slice bodyBegin bodyEnd source)
+                                (String.slice block.meta.contentBegin block.meta.contentEnd source)
+            , test "equation block: contentBegin is one line past begin" <|
+                \_ ->
+                    -- "| equation" is 10 chars; contentBegin = begin + 10 + 1 (newline).
+                    let
+                        source =
+                            String.join "\n"
+                                [ "1: blah blah"
+                                , "2: blah blah"
+                                , ""
+                                , "| equation"
+                                , "a^2 + b^2 = c^2"
+                                , ""
+                                , "3: blah blah"
+                                , "4: blah blah"
+                                ]
+
+                        maybeEq =
+                            p source
+                                |> List.filter (\b -> b.heading == Verbatim "equation")
+                                |> List.head
+                    in
+                    case maybeEq of
+                        Nothing ->
+                            Expect.fail "Expected an equation block"
+
+                        Just block ->
+                            Expect.equal ( 38, 53 ) ( block.meta.contentBegin, block.meta.contentEnd )
+            , test "equation block with multi-line body: contentBegin/contentEnd span all body lines" <|
+                \_ ->
+                    let
+                        source =
+                            String.join "\n"
+                                [ "| equation"
+                                , "a + b"
+                                , "  = c"
+                                , "  = d"
+                                ]
+
+                        maybeEq =
+                            p source
+                                |> List.filter (\b -> b.heading == Verbatim "equation")
+                                |> List.head
+                    in
+                    case maybeEq of
+                        Nothing ->
+                            Expect.fail "Expected an equation block"
+
+                        Just block ->
+                            Expect.equal
+                                "a + b\n  = c\n  = d"
+                                (String.slice block.meta.contentBegin block.meta.contentEnd source)
+            , test "paragraph block: contentBegin/contentEnd equal begin/end (no header line)" <|
+                \_ ->
+                    let
+                        source =
+                            "hello world"
+
+                        maybeBlock =
+                            p source |> List.head
+                    in
+                    case maybeBlock of
+                        Nothing ->
+                            Expect.fail "Expected a block"
+
+                        Just block ->
+                            Expect.equal
+                                ( block.meta.begin, block.meta.end )
+                                ( block.meta.contentBegin, block.meta.contentEnd )
+            , test "$$ math block: contentBegin skips the \"$$\" header line" <|
+                \_ ->
+                    let
+                        source =
+                            "$$\nx^2 + y^2"
+
+                        maybeBlock =
+                            p source
+                                |> List.filter (\b -> b.heading == Verbatim "math")
+                                |> List.head
+                    in
+                    case maybeBlock of
+                        Nothing ->
+                            Expect.fail "Expected a math block"
+
+                        Just block ->
+                            Expect.equal
+                                "x^2 + y^2"
+                                (String.slice block.meta.contentBegin block.meta.contentEnd source)
             , test "equation block: end - begin equals sourceText length" <|
                 \_ ->
                     let

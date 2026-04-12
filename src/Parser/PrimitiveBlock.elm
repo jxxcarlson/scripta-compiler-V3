@@ -213,6 +213,28 @@ blockFromLine line state =
                 _ ->
                     line.lineNumber + 1
 
+        -- True for blocks whose first source line is a discardable header
+        -- (| name, || name, $$, ```). Detected via firstLine == "": those
+        -- heading parsers store an empty firstLine because the raw heading
+        -- line is not kept as block content. Paragraph blocks with an empty
+        -- first line are excluded explicitly.
+        hasHeaderLine =
+            headingData.firstLine == "" && headingData.heading /= Paragraph
+
+        contentBegin_ =
+            if hasHeaderLine then
+                line.position + String.length line.content + 1
+
+            else
+                line.position
+
+        contentEnd_ =
+            if hasHeaderLine then
+                contentBegin_
+
+            else
+                line.position + String.length line.content
+
         meta : BlockMeta
         meta =
             { id = ""
@@ -222,6 +244,8 @@ blockFromLine line state =
             , numberOfLines = 1
             , begin = line.position
             , end = line.position + String.length line.content
+            , contentBegin = contentBegin_
+            , contentEnd = contentEnd_
             , messages = []
             , sourceText = line.content
             , error = Nothing
@@ -498,6 +522,7 @@ finalize block =
             { meta
                 | sourceText = sourceText
                 , end = meta.begin + String.length sourceText
+                , contentEnd = meta.begin + String.length sourceText
             }
     }
 

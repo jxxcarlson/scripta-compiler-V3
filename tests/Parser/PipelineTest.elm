@@ -30,6 +30,8 @@ suite =
                                 , numberOfLines = 1
                                 , begin = 0
                                 , end = String.length "Hello [b world]!"
+                                , contentBegin = 0
+                                , contentEnd = String.length "Hello [b world]!"
                                 , messages = []
                                 , sourceText = "Hello [b world]!"
                                 , error = Nothing
@@ -65,6 +67,8 @@ suite =
                                 , numberOfLines = 1
                                 , begin = 0
                                 , end = String.length "$$\na^2 + b^2 = c^2"
+                                , contentBegin = 3
+                                , contentEnd = String.length "$$\na^2 + b^2 = c^2"
                                 , messages = []
                                 , sourceText = "$$\na^2 + b^2 = c^2"
                                 , error = Nothing
@@ -100,6 +104,8 @@ suite =
                                 , numberOfLines = 1
                                 , begin = 0
                                 , end = String.length "- First item"
+                                , contentBegin = 0
+                                , contentEnd = String.length "- First item"
                                 , messages = []
                                 , sourceText = "- First item"
                                 , error = Nothing
@@ -138,6 +144,8 @@ suite =
                                 , numberOfLines = 1
                                 , begin = 0
                                 , end = String.length "Test"
+                                , contentBegin = 0
+                                , contentEnd = String.length "Test"
                                 , messages = []
                                 , sourceText = "Test"
                                 , error = Nothing

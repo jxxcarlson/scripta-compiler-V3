@@ -92,6 +92,8 @@ type alias BlockMeta =
     , numberOfLines : Int
     , begin : Int
     , end : Int
+    , contentBegin : Int
+    , contentEnd : Int
     , messages : List String
     , sourceText : String
     , error : Maybe String
