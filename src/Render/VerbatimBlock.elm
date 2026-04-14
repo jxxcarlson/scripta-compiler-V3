@@ -136,7 +136,7 @@ renderMath params acc _ block _ =
             ++ Render.Utility.rlBlockSync (.meta block)
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount { id = block.meta.id, begin = block.meta.begin, end = block.meta.end } DisplayMathMode content ]
+            [ mathText params.editCount { id = block.meta.id, begin = block.meta.contentBegin, end = block.meta.contentEnd } DisplayMathMode content ]
         ]
     ]
 
@@ -191,7 +191,7 @@ renderEquation params acc _ block _ =
         )
         [ Html.div [ HA.style "flex" "1" ] []
         , Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount { id = block.meta.id, begin = block.meta.begin, end = block.meta.end } DisplayMathMode content ]
+            [ mathText params.editCount { id = block.meta.id, begin = block.meta.contentBegin, end = block.meta.contentEnd } DisplayMathMode content ]
         , Html.div
             [ HA.style "flex" "1"
             , HA.style "text-align" "right"
@@ -234,7 +234,7 @@ renderAligned params acc _ block _ =
             ++ Render.Utility.rlBlockSync (.meta block)
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount { id = block.meta.id, begin = block.meta.begin, end = block.meta.end } DisplayMathMode content ]
+            [ mathText params.editCount { id = block.meta.id, begin = block.meta.contentBegin, end = block.meta.contentEnd } DisplayMathMode content ]
         ]
     ]
 
@@ -1272,7 +1272,7 @@ renderChem params acc _ block children =
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount { id = block.meta.id, begin = block.meta.begin, end = block.meta.end } DisplayMathMode content ]
+            [ mathText params.editCount { id = block.meta.id, begin = block.meta.contentBegin, end = block.meta.contentEnd } DisplayMathMode content ]
         ]
     ]
 
@@ -1315,7 +1315,7 @@ renderArray params acc _ block _ =
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.div [ HA.style "pointer-events" "none" ]
-            [ mathText params.editCount { id = block.meta.id, begin = block.meta.begin, end = block.meta.end } DisplayMathMode arrayContent ]
+            [ mathText params.editCount { id = block.meta.id, begin = block.meta.contentBegin, end = block.meta.contentEnd } DisplayMathMode arrayContent ]
         ]
     ]
 

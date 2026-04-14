@@ -292,7 +292,7 @@ commands =
 \\newcommand{\\red}[1]{\\textcolor{red}{#1}}
 \\newcommand{\\blue}[1]{\\textcolor{blue}{#1}}
 \\newcommand{\\violet}[1]{\\textcolor{violet}{#1}}
-\\newcommand{\\highlight}[1]{\\hl{#1}}
+\\newcommand{\\highlight}[1]{\\texorpdfstring{\\protect\\hl{#1}}{#1}}
 \\newcommand{\\note}[2]{\\textcolor{blue}{#1}{\\hl{#1}}}
 
 % WTF?
