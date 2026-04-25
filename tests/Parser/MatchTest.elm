@@ -39,6 +39,34 @@ suite =
                     Match.isReducible []
                         |> Expect.equal False
             ]
+        , test "[DL, ST, R, R] is True (simple [[ID]])" <|
+            \_ ->
+                Match.isReducible [ DL, ST, R, R ]
+                    |> Expect.equal True
+        , test "[DL, ST, WS, ST, R, R] is True ([[ID label]])" <|
+            \_ ->
+                Match.isReducible [ DL, ST, WS, ST, R, R ]
+                    |> Expect.equal True
+        , test "[DL, R, R] is True (empty body passes structural check)" <|
+            \_ ->
+                Match.isReducible [ DL, R, R ]
+                    |> Expect.equal True
+        , test "[DL, WS, R, R] is True (WS filtered equals empty body)" <|
+            \_ ->
+                Match.isReducible [ DL, WS, R, R ]
+                    |> Expect.equal True
+        , test "[DL, ST, L, ST, R, R, R] is False (nested [ in body)" <|
+            \_ ->
+                Match.isReducible [ DL, ST, L, ST, R, R, R ]
+                    |> Expect.equal False
+        , test "[DL, ST, DL, ST, R, R, R, R] is False (nested [[ in body)" <|
+            \_ ->
+                Match.isReducible [ DL, ST, DL, ST, R, R, R, R ]
+                    |> Expect.equal False
+        , test "[L, ST, DL, ST, R, R, R] is True (wikilink as child of [])" <|
+            \_ ->
+                Match.isReducible [ L, ST, DL, ST, R, R, R ]
+                    |> Expect.equal True
         , describe "match"
             [ test "[L, ST, R] is Just 2" <|
                 \_ ->

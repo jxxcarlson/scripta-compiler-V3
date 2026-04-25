@@ -149,6 +149,7 @@ markupDict =
         , ( "href", renderHref )
         , ( "image", renderImage )
         , ( "ilink", renderIlink )
+        , ( "wikilink", renderWikilink )
         , ( "index", renderIndex_ )
         , ( "ref", renderRef )
         , ( "eqref", renderMathRef )
@@ -523,6 +524,42 @@ renderIlink params acc args meta =
 
         _ ->
             Html.span [ HA.id meta.id ] (renderList params acc args)
+
+
+{-| Render a wikilink. Args arrive with ID first, then label words.
+Reshuffle so ID is last (to match ilink's trailing-ID convention), then
+delegate to renderIlink.
+-}
+renderWikilink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderWikilink params acc args meta =
+    renderIlink params acc (moveFirstTextToEnd args) meta
+
+
+moveFirstTextToEnd : List Expression -> List Expression
+moveFirstTextToEnd args =
+    case args of
+        [ Text first firstMeta ] ->
+            [ Text first firstMeta, Text first firstMeta ]
+
+        (Text first firstMeta) :: rest ->
+            dropLeadingWhitespace rest ++ [ Text first firstMeta ]
+
+        _ ->
+            args
+
+
+dropLeadingWhitespace : List Expression -> List Expression
+dropLeadingWhitespace args =
+    case args of
+        (Text s m) :: rest ->
+            if String.trim s == "" then
+                dropLeadingWhitespace rest
+
+            else
+                Text s m :: rest
+
+        _ ->
+            args
 
 
 exprText : Expression -> String

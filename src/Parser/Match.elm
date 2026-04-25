@@ -26,6 +26,14 @@ isReducible symbols_ =
                 _ ->
                     False
 
+        DL :: rest ->
+            case lastTwo rest of
+                Just ( R, R ) ->
+                    isFlatBody (dropLast2 rest)
+
+                _ ->
+                    False
+
         _ ->
             False
 
@@ -37,6 +45,9 @@ hasReducibleArgs symbols =
             True
 
         L :: _ ->
+            reducibleAux symbols
+
+        DL :: _ ->
             reducibleAux symbols
 
         C :: _ ->
@@ -170,4 +181,27 @@ takeWhile predicate list =
             else
                 []
 
+
+lastTwo : List a -> Maybe ( a, a )
+lastTwo list =
+    case List.reverse list of
+        b :: a :: _ ->
+            Just ( a, b )
+
+        _ ->
+            Nothing
+
+
+dropLast2 : List a -> List a
+dropLast2 list =
+    let
+        n =
+            List.length list
+    in
+    List.take (n - 2) list
+
+
+isFlatBody : List Symbol -> Bool
+isFlatBody symbols =
+    List.all (\s -> s == ST) symbols
 

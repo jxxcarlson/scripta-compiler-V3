@@ -3,8 +3,10 @@ module Parser.Tokenizer exposing
     , Token
     , TokenType(..)
     , Token_(..)
+    , getMeta
     , indexOf
     , run
+    , toString
     , type_
     )
 
@@ -15,6 +17,7 @@ import Tools.ParserTools as PT exposing (Context, Problem(..))
 
 type Token_ meta
     = LB meta
+    | DLB meta
     | RB meta
     | S String meta
     | W String meta
@@ -50,6 +53,7 @@ type Mode
 
 type TokenType
     = TLB
+    | TDLB
     | TRB
     | TS
     | TW
@@ -63,6 +67,9 @@ type_ token =
     case token of
         LB _ ->
             TLB
+
+        DLB _ ->
+            TDLB
 
         RB _ ->
             TRB
@@ -87,6 +94,9 @@ indexOf : Token -> Int
 indexOf token =
     case token of
         LB meta ->
+            meta.index
+
+        DLB meta ->
             meta.index
 
         RB meta ->
@@ -114,6 +124,9 @@ setIndex k token =
         LB meta ->
             LB { meta | index = k }
 
+        DLB meta ->
+            DLB { meta | index = k }
+
         RB meta ->
             RB { meta | index = k }
 
@@ -137,6 +150,9 @@ getMeta : Token -> Meta
 getMeta token =
     case token of
         LB m ->
+            m
+
+        DLB m ->
             m
 
         RB m ->
@@ -163,6 +179,9 @@ stringValue token =
     case token of
         LB _ ->
             "["
+
+        DLB _ ->
+            "[["
 
         RB _ ->
             "]"
@@ -248,13 +267,13 @@ nextStep state =
 
             ( tokens, tokenIndex, currentToken_ ) =
                 if isTextToken token then
-                    if Maybe.map type_ (List.head state.tokens) == Just TLB then
+                    if Maybe.map type_ (List.head state.tokens) == Just TLB || Maybe.map type_ (List.head state.tokens) == Just TDLB then
                         ( setIndex state.tokenIndex token :: state.tokens, state.tokenIndex + 1, Nothing )
 
                     else
                         ( state.tokens, state.tokenIndex, updateCurrentToken state.tokenIndex token state.currentToken )
 
-                else if type_ token == TLB then
+                else if type_ token == TLB || type_ token == TDLB then
                     case state.currentToken of
                         Nothing ->
                             ( setIndex state.tokenIndex token :: state.tokens, state.tokenIndex + 1, Nothing )
@@ -381,6 +400,7 @@ tokenParser_ start index =
         , parenMathOpenParser start index
         , parenMathCloseParser start index
         , backslashTextParser start index
+        , doubleLeftBracketParser start index
         , leftBracketParser start index
         , rightBracketParser start index
         , mathParser start index
@@ -432,6 +452,12 @@ whiteSpaceParser : Int -> Int -> TokenParser
 whiteSpaceParser start index =
     PT.text (\c -> c == ' ') (\c -> c == ' ')
         |> Parser.map (\data -> W data.content { begin = start, end = start, index = index })
+
+
+doubleLeftBracketParser : Int -> Int -> TokenParser
+doubleLeftBracketParser start index =
+    Parser.symbol (Parser.Token "[[" (ExpectingSymbol "[["))
+        |> Parser.map (\_ -> DLB { begin = start, end = start + 1, index = index })
 
 
 leftBracketParser : Int -> Int -> TokenParser

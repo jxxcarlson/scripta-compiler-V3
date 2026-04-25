@@ -1231,6 +1231,7 @@ macroDict =
     Dict.fromList
         [ ( "link", \_ -> link )
         , ( "ilink", \_ -> ilink )
+        , ( "wikilink", \_ -> wikilink )
         , ( "mark", \_ -> markwith )
         , ( "par", \_ -> par )
         , ( "eqref", \_ -> eqref )
@@ -1492,6 +1493,38 @@ ilink exprs =
             Render.Export.Util.getTwoArgs exprs
     in
     [ "\\href{", "https://scripta.io/s/", args.second, "}{", args.first, "}" ] |> String.join ""
+
+
+wikilink : List Expression -> String
+wikilink exprs =
+    ilink (wikilinkMoveFirstTextToEnd exprs)
+
+
+wikilinkMoveFirstTextToEnd : List Expression -> List Expression
+wikilinkMoveFirstTextToEnd exprs =
+    case exprs of
+        [ Text first firstMeta ] ->
+            [ Text first firstMeta, Text first firstMeta ]
+
+        (Text first firstMeta) :: rest ->
+            wikilinkDropLeadingWhitespace rest ++ [ Text first firstMeta ]
+
+        _ ->
+            exprs
+
+
+wikilinkDropLeadingWhitespace : List Expression -> List Expression
+wikilinkDropLeadingWhitespace exprs =
+    case exprs of
+        (Text s m) :: rest ->
+            if String.trim s == "" then
+                wikilinkDropLeadingWhitespace rest
+
+            else
+                Text s m :: rest
+
+        _ ->
+            exprs
 
 
 bolditalic : List Expression -> String

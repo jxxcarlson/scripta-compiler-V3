@@ -5,6 +5,7 @@ import Parser.Tokenizer exposing (Token, Token_(..))
 
 type Symbol
     = L -- LB, [
+    | DL -- DLB, [[
     | R -- RB, ]
     | ST -- S String (string)
     | M -- $
@@ -18,6 +19,9 @@ value symbol =
     case symbol of
         L ->
             1
+
+        DL ->
+            2
 
         R ->
             -1
@@ -48,6 +52,9 @@ toSymbol token =
     case token of
         LB _ ->
             L
+
+        DLB _ ->
+            DL
 
         RB _ ->
             R

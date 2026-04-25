@@ -27,6 +27,10 @@ suite =
             , test "value M is 0" <|
                 \_ ->
                     value M |> Expect.equal 0
+            , test "DL has value 2" <|
+                \_ ->
+                    value DL
+                        |> Expect.equal 2
             ]
         , describe "toSymbols"
             [ test "[LB, S, RB] gives [L, ST, R]" <|
@@ -37,5 +41,13 @@ suite =
                 \_ ->
                     toSymbols []
                         |> Expect.equal []
+            , test "DLB token maps to DL symbol" <|
+                \_ ->
+                    toSymbols [ DLB dummyMeta ]
+                        |> Expect.equal [ DL ]
+            , test "LB token maps to L symbol" <|
+                \_ ->
+                    toSymbols [ LB dummyMeta ]
+                        |> Expect.equal [ L ]
             ]
         ]

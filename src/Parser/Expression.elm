@@ -19,7 +19,7 @@ module Parser.Expression exposing (parse)
 import List.Extra
 import Parser.Match as M
 import Parser.Symbol as Symbol exposing (Symbol(..))
-import Parser.Tokenizer as Token exposing (Token, TokenType(..), Token_(..))
+import Parser.Tokenizer as Token exposing (Meta, Token, TokenType(..), Token_(..))
 import Tools.Loop exposing (Step(..), loop)
 import V3.Types exposing (Expr(..), ExprMeta, Expression)
 
@@ -33,6 +33,7 @@ type alias State =
     , stack : List Token
     , messages : List String
     , lineNumber : Int
+    , source : String
     }
 
 
@@ -71,16 +72,16 @@ parseToState : Int -> String -> State
 parseToState lineNumber str =
     str
         |> Token.run
-        |> parseTokenListToState lineNumber
+        |> parseTokenListToState lineNumber str
 
 
-parseTokenListToState : Int -> List Token -> State
-parseTokenListToState lineNumber tokens =
-    tokens |> initWithTokens lineNumber |> run
+parseTokenListToState : Int -> String -> List Token -> State
+parseTokenListToState lineNumber source tokens =
+    tokens |> initWithTokens lineNumber source |> run
 
 
-initWithTokens : Int -> List Token -> State
-initWithTokens lineNumber tokens =
+initWithTokens : Int -> String -> List Token -> State
+initWithTokens lineNumber source tokens =
     { step = 0
     , tokens = List.reverse tokens
     , numberOfTokens = List.length tokens
@@ -89,6 +90,7 @@ initWithTokens lineNumber tokens =
     , stack = []
     , messages = []
     , lineNumber = lineNumber
+    , source = source
     }
 
 
@@ -148,6 +150,9 @@ pushOrCommit token state =
             pushOnStack_ token state
 
         LB _ ->
+            pushOnStack_ token state
+
+        DLB _ ->
             pushOnStack_ token state
 
         RB _ ->
@@ -215,11 +220,21 @@ tokensAreReducible state =
 
 reduceStack : State -> List Expression
 reduceStack state =
-    reduceTokens state.lineNumber (state.stack |> List.reverse)
+    reduceTokens state.lineNumber state.source (state.stack |> List.reverse)
 
 
-reduceTokens : Int -> List Token -> List Expression
-reduceTokens lineNumber tokens =
+reduceTokens : Int -> String -> List Token -> List Expression
+reduceTokens lineNumber source tokens =
+    case tokens of
+        (DLB dlbMeta) :: rest ->
+            reduceWikilink lineNumber source dlbMeta rest
+
+        _ ->
+            reduceTokensNonWikilink lineNumber source tokens
+
+
+reduceTokensNonWikilink : Int -> String -> List Token -> List Expression
+reduceTokensNonWikilink lineNumber source tokens =
     if isExpr tokens then
         let
             args =
@@ -240,7 +255,7 @@ reduceTokens lineNumber tokens =
                     [ VFun name content (boostMeta lineNumber meta.index meta) ]
 
                 else
-                    [ Fun name (reduceRestOfTokens lineNumber (List.drop 1 args)) (boostMeta lineNumber meta.index meta) ]
+                    [ Fun name (reduceRestOfTokens lineNumber source (List.drop 1 args)) (boostMeta lineNumber meta.index meta) ]
 
             _ ->
                 [ errorMessage "[????]" ]
@@ -248,7 +263,7 @@ reduceTokens lineNumber tokens =
     else
         case tokens of
             (MathToken meta) :: (S str _) :: (MathToken closeMeta) :: rest ->
-                VFun "math" str (boostMeta lineNumber meta.index { meta | end = closeMeta.begin }) :: reduceRestOfTokens lineNumber rest
+                VFun "math" str (boostMeta lineNumber meta.index { meta | end = closeMeta.begin }) :: reduceRestOfTokens lineNumber source rest
 
             (MathToken meta) :: rest ->
                 -- Multi-token math content: collect everything up to closing MathToken
@@ -275,17 +290,17 @@ reduceTokens lineNumber tokens =
                             |> List.filterMap tokenToString
                             |> String.join ""
                 in
-                VFun "math" content (boostMeta lineNumber meta.index { meta | end = closeEnd }) :: reduceRestOfTokens lineNumber after
+                VFun "math" content (boostMeta lineNumber meta.index { meta | end = closeEnd }) :: reduceRestOfTokens lineNumber source after
 
             (CodeToken meta) :: (S str _) :: (CodeToken closeMeta) :: rest ->
-                VFun "code" str (boostMeta lineNumber meta.index { meta | end = closeMeta.begin }) :: reduceRestOfTokens lineNumber rest
+                VFun "code" str (boostMeta lineNumber meta.index { meta | end = closeMeta.begin }) :: reduceRestOfTokens lineNumber source rest
 
             _ ->
                 [ errorMessage "[????]" ]
 
 
-reduceRestOfTokens : Int -> List Token -> List Expression
-reduceRestOfTokens lineNumber tokens =
+reduceRestOfTokens : Int -> String -> List Token -> List Expression
+reduceRestOfTokens lineNumber source tokens =
     case tokens of
         (LB _) :: _ ->
             case splitTokens tokens of
@@ -293,29 +308,37 @@ reduceRestOfTokens lineNumber tokens =
                     [ Text "error on match" dummyLocWithId ]
 
                 Just ( a, b ) ->
-                    reduceTokens lineNumber a ++ reduceRestOfTokens lineNumber b
+                    reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
+
+        (DLB _) :: _ ->
+            case splitTokens tokens of
+                Nothing ->
+                    [ Text "error on match" dummyLocWithId ]
+
+                Just ( a, b ) ->
+                    reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
 
         (MathToken _) :: _ ->
             let
                 ( a, b ) =
                     splitTokensWithSegment tokens
             in
-            reduceTokens lineNumber a ++ reduceRestOfTokens lineNumber b
+            reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
 
         (CodeToken _) :: _ ->
             let
                 ( a, b ) =
                     splitTokensWithSegment tokens
             in
-            reduceTokens lineNumber a ++ reduceRestOfTokens lineNumber b
+            reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
 
         (S str meta) :: _ ->
-            Text str (boostMeta lineNumber (Token.indexOf (S str meta)) meta) :: reduceRestOfTokens lineNumber (List.drop 1 tokens)
+            Text str (boostMeta lineNumber (Token.indexOf (S str meta)) meta) :: reduceRestOfTokens lineNumber source (List.drop 1 tokens)
 
         token :: _ ->
             case stringTokenToExpr lineNumber token of
                 Just expr ->
-                    expr :: reduceRestOfTokens lineNumber (List.drop 1 tokens)
+                    expr :: reduceRestOfTokens lineNumber source (List.drop 1 tokens)
 
                 Nothing ->
                     [ Text "error converting Token" dummyLocWithId ]
@@ -327,6 +350,27 @@ reduceRestOfTokens lineNumber tokens =
 recoverFromError : State -> Step State State
 recoverFromError state =
     case List.reverse state.stack of
+        (DLB dlbMeta) :: _ ->
+            let
+                closeMeta =
+                    case List.head state.stack of
+                        Just t ->
+                            Token.getMeta t
+
+                        Nothing ->
+                            dlbMeta
+            in
+            Done
+                { state
+                    | committed =
+                        redLiteral state.lineNumber dlbMeta closeMeta state.source
+                            :: state.committed
+                    , stack = []
+                    , tokenIndex = 0
+                    , numberOfTokens = 0
+                    , messages = prependMessage state.lineNumber "Unclosed [[" state.messages
+                }
+
         (LB _) :: (RB meta) :: _ ->
             Loop
                 { state
@@ -505,3 +549,90 @@ tokenToString token =
 
         _ ->
             Nothing
+
+
+reduceWikilink : Int -> String -> Meta -> List Token -> List Expression
+reduceWikilink lineNumber source dlbMeta rest =
+    case splitOffWikilinkBody rest of
+        Just ( body, closeMeta ) ->
+            if List.any isSToken body then
+                let
+                    spanMeta =
+                        boostMeta lineNumber dlbMeta.index { dlbMeta | end = closeMeta.end }
+                in
+                [ Fun "wikilink" (wikilinkArgs lineNumber body) spanMeta ]
+
+            else
+                [ redLiteral lineNumber dlbMeta closeMeta source ]
+
+        Nothing ->
+            [ redLiteral lineNumber dlbMeta (lastMeta rest) source ]
+
+
+splitOffWikilinkBody : List Token -> Maybe ( List Token, Meta )
+splitOffWikilinkBody tokens =
+    case List.reverse tokens of
+        (RB m2) :: (RB _) :: revBody ->
+            let
+                body =
+                    List.reverse revBody
+            in
+            if List.all isFlatBodyToken body then
+                Just ( body, m2 )
+
+            else
+                Nothing
+
+        _ ->
+            Nothing
+
+
+isFlatBodyToken : Token -> Bool
+isFlatBodyToken token =
+    case token of
+        S _ _ ->
+            True
+
+        W _ _ ->
+            True
+
+        _ ->
+            False
+
+
+isSToken : Token -> Bool
+isSToken token =
+    case token of
+        S str _ ->
+            String.trim str /= ""
+
+        _ ->
+            False
+
+
+wikilinkArgs : Int -> List Token -> List Expression
+wikilinkArgs lineNumber tokens =
+    List.filterMap (stringTokenToExpr lineNumber) tokens
+
+
+lastMeta : List Token -> Meta
+lastMeta tokens =
+    case List.reverse tokens of
+        t :: _ ->
+            Token.getMeta t
+
+        [] ->
+            { begin = 0, end = 0, index = 0 }
+
+
+redLiteral : Int -> Meta -> Meta -> String -> Expression
+redLiteral lineNumber dlbMeta closeMeta source =
+    let
+        sliced =
+            String.slice dlbMeta.begin (closeMeta.end + 1) source
+
+        spanMeta =
+            boostMeta lineNumber dlbMeta.index
+                { begin = dlbMeta.begin, end = closeMeta.end, index = dlbMeta.index }
+    in
+    Fun "red" [ Text sliced spanMeta ] spanMeta

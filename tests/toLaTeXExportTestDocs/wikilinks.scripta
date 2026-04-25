@@ -1,0 +1,16 @@
+| title
+Wikilinks test
+
+Single: [[abc123]]
+
+With label: [[abc123 Example Label]]
+
+Zku: [[jxxcarlson-202611141744]]
+
+Zku with label: [[jxxcarlson-202611141744 Plato]]
+
+Empty: [[]]
+
+Whitespace: [[   ]]
+
+Malformed: [[a [b] c]]

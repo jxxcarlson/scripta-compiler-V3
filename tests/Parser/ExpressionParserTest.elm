@@ -152,5 +152,177 @@ suite =
 
                         _ ->
                             Expect.fail ("Expected [VFun \"math\" _ _], got: " ++ Debug.toString result)
+            , test "parses [[foo]] as Fun wikilink with single Text arg" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[[foo]]"
+                    in
+                    case result of
+                        [ Fun "wikilink" [ Text "foo" _ ] _ ] ->
+                            Expect.pass
+
+                        _ ->
+                            Expect.fail ("Expected Fun \"wikilink\" [Text \"foo\"], got: " ++ Debug.toString result)
+            , test "parses [[foo bar baz]] with first Text arg = ID" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[[foo bar baz]]"
+                    in
+                    case result of
+                        [ Fun "wikilink" args _ ] ->
+                            case args of
+                                (Text "foo" _) :: _ ->
+                                    Expect.pass
+
+                                _ ->
+                                    Expect.fail ("Expected first arg Text \"foo\" (the ID), got: " ++ Debug.toString args)
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"wikilink\" args _], got: " ++ Debug.toString result)
+            , test "parses [[jxxcarlson-202611141744 Plato]] (zku id)" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[[jxxcarlson-202611141744 Plato]]"
+                    in
+                    case result of
+                        [ Fun "wikilink" args _ ] ->
+                            case args of
+                                (Text "jxxcarlson-202611141744" _) :: _ ->
+                                    Expect.pass
+
+                                _ ->
+                                    Expect.fail ("Expected first arg = zku ID, got: " ++ Debug.toString args)
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"wikilink\" …], got: " ++ Debug.toString result)
+            , test "parses [[]] as Fun red with literal [[]]" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[[]]"
+                    in
+                    case result of
+                        [ Fun "red" [ Text "[[]]" _ ] _ ] ->
+                            Expect.pass
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"red\" [Text \"[[]]\"]], got: " ++ Debug.toString result)
+            , test "parses [[   ]] as Fun red with literal [[   ]]" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[[   ]]"
+                    in
+                    case result of
+                        [ Fun "red" [ Text "[[   ]]" _ ] _ ] ->
+                            Expect.pass
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"red\" [Text \"[[   ]]\"]], got: " ++ Debug.toString result)
+            , test "parses [[a [b] c]] as Fun red" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[[a [b] c]]"
+                    in
+                    case result of
+                        [ Fun "red" [ Text src _ ] _ ] ->
+                            src
+                                |> Expect.equal "[[a [b] c]]"
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"red\" [Text ...]], got: " ++ Debug.toString result)
+            , test "parses [[a [[b]] c]] as Fun red (nested wikilink malformed)" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[[a [[b]] c]]"
+                    in
+                    case result of
+                        [ Fun "red" [ Text src _ ] _ ] ->
+                            src
+                                |> Expect.equal "[[a [[b]] c]]"
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"red\" [Text \"[[a [[b]] c]]\"]], got: " ++ Debug.toString result)
+            , test "parses [[unclosed as Fun red" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[[unclosed"
+                    in
+                    case result of
+                        [ Fun "red" [ Text src _ ] _ ] ->
+                            src
+                                |> Expect.equal "[[unclosed"
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"red\" [Text \"[[unclosed\"]], got: " ++ Debug.toString result)
+            , test "parses [foo [[bar]] baz] with wikilink child" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[foo [[bar]] baz]"
+                    in
+                    case result of
+                        [ Fun "foo" children _ ] ->
+                            let
+                                hasWikilinkChild =
+                                    List.any
+                                        (\child ->
+                                            case child of
+                                                Fun "wikilink" [ Text "bar" _ ] _ ->
+                                                    True
+
+                                                _ ->
+                                                    False
+                                        )
+                                        children
+                            in
+                            if hasWikilinkChild then
+                                Expect.pass
+
+                            else
+                                Expect.fail ("Expected a wikilink child, got: " ++ Debug.toString children)
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"foo\" children _], got: " ++ Debug.toString result)
+            , test "regression: [italic how is this [bold possible?]] unchanged" <|
+                \_ ->
+                    let
+                        result =
+                            pe "[italic how is this [bold possible?]]"
+                    in
+                    case result of
+                        [ Fun "italic" _ _ ] ->
+                            Expect.pass
+
+                        _ ->
+                            Expect.fail ("Expected [Fun \"italic\" ...], got: " ++ Debug.toString result)
+            , test "parses two wikilinks on one line" <|
+                \_ ->
+                    let
+                        result =
+                            pe "prefix [[a]] middle [[b]] suffix"
+
+                        wikilinkCount =
+                            List.length
+                                (List.filter
+                                    (\expr ->
+                                        case expr of
+                                            Fun "wikilink" _ _ ->
+                                                True
+
+                                            _ ->
+                                                False
+                                    )
+                                    result
+                                )
+                    in
+                    wikilinkCount
+                        |> Expect.equal 2
             ]
         ]
