@@ -489,19 +489,37 @@ Clicking navigates within the document.
 renderIlink : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderIlink params acc args meta =
     let
-        -- Extract all text content and split into words;
-        -- last word is the targetId, the rest form the label.
+        -- Extract all text content and split into words. Tokens prefixed
+        -- "with:" are key:value args (slug for the backlinks table); they
+        -- are stripped from the visible label and from target-id selection
+        -- here, but the source body still contains them so they round-trip
+        -- through save unchanged. Of the remaining words, the last is the
+        -- targetId; the rest form the label.
         allText =
             List.map exprText args |> String.join " "
 
-        words =
+        ( withTokens, positionalWords ) =
             String.words allText
+                |> List.partition (String.startsWith "with:")
+
+        slug =
+            List.head withTokens
+                |> Maybe.map (String.dropLeft 5)
     in
-    case List.reverse words of
+    case List.reverse positionalWords of
         targetId :: labelWords ->
+            let
+                href =
+                    case slug of
+                        Just s ->
+                            "#" ++ targetId ++ "#" ++ s
+
+                        Nothing ->
+                            "#" ++ targetId
+            in
             Html.a
                 [ HA.id meta.id
-                , HA.href ("#" ++ targetId)
+                , HA.href href
                 , HE.custom "click"
                     (Decode.succeed
                         { message = GoToDocument targetId meta
