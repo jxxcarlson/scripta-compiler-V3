@@ -508,18 +508,9 @@ renderIlink params acc args meta =
     in
     case List.reverse positionalWords of
         targetId :: labelWords ->
-            let
-                href =
-                    case slug of
-                        Just s ->
-                            "#" ++ targetId ++ "#" ++ s
-
-                        Nothing ->
-                            "#" ++ targetId
-            in
             Html.a
-                [ HA.id meta.id
-                , HA.href href
+                [ HA.id (Maybe.withDefault meta.id slug)
+                , HA.href ("#" ++ targetId)
                 , HE.custom "click"
                     (Decode.succeed
                         { message = GoToDocument targetId meta
