@@ -1621,23 +1621,33 @@ Arguments:
 -}
 renderReveal : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
 renderReveal params acc _ block children =
+    let
+        closedText =
+            String.join " " block.args
+                |> (\s ->
+                        if String.isEmpty s then
+                            "More ..."
+
+                        else
+                            s
+                   )
+
+        toggleCss =
+            ".reveal-toggle > summary > .reveal-open { display: none; }"
+                ++ " .reveal-toggle[open] > summary > .reveal-closed { display: none; }"
+                ++ " .reveal-toggle[open] > summary > .reveal-open { display: inline; }"
+    in
     [ Html.details
         (blockIdAndStyle block
-            ++ [ HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
+            ++ [ HA.class "reveal-toggle"
+               , HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                ]
             ++ Render.Utility.rlBlockSync block.meta
         )
-        [ Html.summary [ HA.style "cursor" "pointer", HA.style "font-weight" "bold" ]
-            [ Html.text
-                (String.join " " block.args
-                    |> (\s ->
-                            if String.isEmpty s then
-                                "Click to reveal"
-
-                            else
-                                s
-                       )
-                )
+        [ Html.node "style" [] [ Html.text toggleCss ]
+        , Html.summary [ HA.style "cursor" "pointer", HA.style "font-weight" "bold" ]
+            [ Html.span [ HA.class "reveal-closed" ] [ Html.text closedText ]
+            , Html.span [ HA.class "reveal-open" ] [ Html.text "Less ..." ]
             ]
         , Html.div [ HA.style "padding" "0.5em" ]
             (renderBody params acc block ++ children)
