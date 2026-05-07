@@ -92,6 +92,7 @@ blockDict =
         , ( "q", renderQuestion )
         , ( "a", renderAnswer )
         , ( "reveal", renderReveal )
+        , ( "more", renderReveal )
         , ( "book", renderNothing )
         , ( "chapter", renderChapter )
         , ( "section*", renderUnnumberedSection )
