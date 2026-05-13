@@ -215,6 +215,8 @@ markupDict =
         -- Structure
         , ( "//", renderPar )
         , ( "par", renderPar )
+        , ( "///", renderPar2 )
+        , ( "par2", renderPar2 )
         , ( "indent", renderIndent )
         , ( "quote", renderQuote )
         , ( "abstract", renderAbstract )
@@ -1056,6 +1058,11 @@ renderHidden _ _ _ meta =
 renderPar : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
 renderPar _ _ _ meta =
     Html.div [ HA.id meta.id, HA.style "height" "5px" ] []
+
+
+renderPar2 : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderPar2 _ _ _ meta =
+    Html.div [ HA.id meta.id, HA.style "height" "10px" ] []
 
 
 {-| Render inline indentation (2em).
