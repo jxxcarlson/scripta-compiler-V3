@@ -38,6 +38,7 @@ blockDict =
     Dict.fromList
         [ ( "math", renderEquation )
         , ( "equation", renderEquation )
+        , ( "math", renderEquation )
         , ( "aligned", renderAligned )
         , ( "code", renderCode )
         , ( "verse", renderVerse )
