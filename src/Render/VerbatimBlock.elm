@@ -12,6 +12,8 @@ import Html.Attributes as HA
 import Html.Events
 import Json.Decode
 import Parser
+import Parser.Expression
+import Render.Expression
 import Render.Math exposing (DisplayMode(..), mathText)
 import Render.Sizing
 import Render.Utility exposing (blockIdAndStyle, idAttr)
@@ -659,21 +661,33 @@ lineNumberCss =
 
 -}
 renderVerse : CompilerParameters -> Accumulator -> String -> ExpressionBlock -> List (Html Msg) -> List (Html Msg)
-renderVerse params _ _ block _ =
+renderVerse params acc str block _ =
     let
         content =
             getVerbatimContent block
+
+        lines =
+            String.split "\n" content
+
+        parsedContent : List (List V3.Types.Expression)
+        parsedContent =
+            List.indexedMap (\k -> Parser.Expression.parse k) lines
+
+        htmlContent : List (Html Msg)
+        htmlContent =
+            List.map (Render.Expression.renderList params acc >> Html.div []) parsedContent
     in
     [ Html.div
         (blockIdAndStyle block
             ++ [ HA.style "margin" "1em 2em"
-               , HA.style "font-style" "italic"
+
+               --, HA.style "font-style" "italic"
                , HA.style "white-space" "pre-wrap"
                , HA.style "cursor" "pointer"
                ]
             ++ Render.Utility.rlBlockSync block.meta
         )
-        [ Html.span [ HA.style "pointer-events" "none" ] [ Html.text content ] ]
+        [ Html.div [ HA.style "pointer-events" "none" ] htmlContent ]
     ]
 
 

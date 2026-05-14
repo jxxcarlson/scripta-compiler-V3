@@ -191,7 +191,7 @@ markupDict =
         , ( "bt", renderChar "`" )
         , ( "rb", renderChar "]" )
         , ( "lb", renderChar "[" )
-        , ( "brackets", renderBrackets )
+        , ( "bracket", renderBracket )
 
         -- Checkbox symbols
         , ( "box", renderBox )
@@ -968,8 +968,8 @@ renderChar char _ _ _ meta =
     [ brackets content ]
 
 -}
-renderBrackets : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
-renderBrackets params acc args meta =
+renderBracket : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderBracket params acc args meta =
     Html.span (Render.Utility.rlSync meta)
         (Html.text "[" :: renderList params acc args ++ [ Html.text "]" ])
 
