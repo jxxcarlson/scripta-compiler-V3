@@ -51,6 +51,31 @@ suite =
                         |> Internal.optionsToParams
                         |> .maxLevel
                         |> Expect.equal 3
+            , test "withSizing sets the sizing configuration" <|
+                \_ ->
+                    let
+                        customSizing =
+                            { baseFontSize = 16.0
+                            , paragraphSpacing = 20.0
+                            , marginLeft = 4.0
+                            , marginRight = 8.0
+                            , indentation = 24.0
+                            , indentUnit = 3
+                            , scale = 1.5
+                            }
+                    in
+                    Scripta.defaultOptions
+                        |> Scripta.withSizing customSizing
+                        |> Internal.optionsToParams
+                        |> .sizing
+                        |> Expect.equal customSizing
+            , test "withFilter sets the forest filter" <|
+                \_ ->
+                    Scripta.defaultOptions
+                        |> Scripta.withFilter Scripta.SuppressDocumentBlocks
+                        |> Internal.optionsToParams
+                        |> .filter
+                        |> Expect.equal V3.Types.SuppressDocumentBlocks
             , test "builders compose without clobbering" <|
                 \_ ->
                     let
