@@ -22,14 +22,11 @@ import Html.Keyed as Keyed
 import Html.Lazy
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Parser.Forest
 import Process
-import RoseTree.Tree exposing (Tree)
+import Scripta exposing (Theme(..))
+import Scripta.Document
 import Task
 import Time
-import V3.Compiler
-import Dict
-import V3.Types exposing (Accumulator, ExpressionBlock, ExpressionCache, Filter(..), Theme(..))
 
 
 
@@ -112,11 +109,6 @@ type SortMode
     | Alphabetical -- A to Z, ignoring case and noise words
 
 
-type ParseMode
-    = FullParse
-    | Incremental
-    | IncrementalSkipAcc
-
 
 type alias Model =
     { documents : List Document
@@ -124,18 +116,16 @@ type alias Model =
     , sourceText : String
     , windowWidth : Int
     , windowHeight : Int
-    , theme : Theme
+    , theme : Scripta.Theme
     , editCount : Int
     , selectedId : String
-    , previousId : String -- For ESC-to-return scroll navigation
+    , previousId : String
     , debugClickCount : Int
-    , deleteConfirmation : Maybe String -- Document ID pending deletion confirmation
+    , deleteConfirmation : Maybe String
     , sortMode : SortMode
-    , parsedForest : ( Accumulator, List (Tree ExpressionBlock) )
-    , expressionCache : ExpressionCache
-    , parseMode : ParseMode
+    , document : Scripta.Document
+    , options : Scripta.Options
     , lastParseTimeMs : Float
-    , accWasSkipped : Bool
     }
 
 
@@ -172,7 +162,6 @@ That's all for now.
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
-        -- Re-extract titles from content to handle title blocks with properties
         refreshTitle : Document -> Document
         refreshTitle doc =
             { doc | title = extractTitle doc.content }
@@ -191,46 +180,53 @@ init flags =
 
         currentDoc =
             List.head documents |> Maybe.withDefault defaultDocument
-    in
-    let
-        ( initialCache, initialAcc, initialForest ) =
-            Parser.Forest.parseIncrementally initParams Dict.empty (String.lines currentDoc.content)
+
+        options =
+            makeOptions Scripta.Light 1200
     in
     ( { documents = documents
       , currentDocumentId = currentDoc.id
       , sourceText = currentDoc.content
       , windowWidth = 1200
       , windowHeight = 800
-      , theme = Light
+      , theme = Scripta.Light
       , editCount = 1
       , selectedId = ""
       , previousId = ""
       , debugClickCount = 0
       , deleteConfirmation = Nothing
       , sortMode = ByDate
-      , parsedForest = ( initialAcc, initialForest )
-      , expressionCache = initialCache
-      , parseMode = IncrementalSkipAcc
+      , document = Scripta.parse options currentDoc.content
+      , options = options
       , lastParseTimeMs = 0
-      , accWasSkipped = False
       }
     , Task.perform GotViewport Browser.Dom.getViewport
     )
 
 
-{-| Minimal params for parsing. The parse stage only needs `filter` and `maxLevel`.
+{-| Build compiler Options from theme and window width.
+Stored in the model and rebuilt only on theme/resize, so that the
+preview's Html.lazy boundary stays referentially stable across renders.
 -}
-initParams : V3.Types.CompilerParameters
-initParams =
-    { filter = NoFilter
-    , windowWidth = 600
-    , theme = Light
-    , editCount = 0
-    , width = 600
-    , showTOC = False
-    , sizing = V3.Types.defaultSizingConfig
-    , maxLevel = 0
-    }
+makeOptions : Scripta.Theme -> Int -> Scripta.Options
+makeOptions theme windowWidth =
+    let
+        contentWidth =
+            (windowWidth - sidebarWidth - 50) // 2
+    in
+    Scripta.defaultOptions
+        |> Scripta.withTheme theme
+        |> Scripta.withWindowWidth contentWidth
+        |> Scripta.withContentWidth contentWidth
+        |> Scripta.withSizing
+            { baseFontSize = 14.0
+            , paragraphSpacing = 18.0
+            , marginLeft = 0.0
+            , marginRight = 120.0
+            , indentation = 20.0
+            , indentUnit = 2
+            , scale = 1.0
+            }
 
 
 defaultDocument : Document
@@ -349,10 +345,9 @@ type Msg
     | ExportDocuments
     | RequestImportDocuments
     | GotImportedDocuments Decode.Value
-    | CycleParseMode
     | GotParseStartTime Int Time.Posix
     | GotParseEndTime Int Time.Posix Time.Posix
-    | CompilerMsg V3.Types.Msg
+    | CompilerEvent Scripta.Event
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -400,51 +395,12 @@ update msg model =
 
         GotParseStartTime n startTime ->
             if n == model.editCount then
-                case model.parseMode of
-                    IncrementalSkipAcc ->
-                        let
-                            result =
-                                Parser.Forest.parseIncrementallySkipAcc initParams
-                                    model.expressionCache
-                                    model.parsedForest
-                                    (String.lines model.sourceText)
-                        in
-                        ( { model
-                            | parsedForest = ( result.acc, result.forest )
-                            , expressionCache = result.cache
-                            , accWasSkipped = result.accWasSkipped
-                          }
-                        , Task.perform (GotParseEndTime n startTime) Time.now
-                        )
-
-                    Incremental ->
-                        let
-                            ( newCache, acc, forest ) =
-                                Parser.Forest.parseIncrementally initParams
-                                    model.expressionCache
-                                    (String.lines model.sourceText)
-                        in
-                        ( { model
-                            | parsedForest = ( acc, forest )
-                            , expressionCache = newCache
-                            , accWasSkipped = False
-                          }
-                        , Task.perform (GotParseEndTime n startTime) Time.now
-                        )
-
-                    FullParse ->
-                        let
-                            ( a, f ) =
-                                Parser.Forest.parseToForestWithAccumulator initParams
-                                    (String.lines model.sourceText)
-                        in
-                        ( { model
-                            | parsedForest = ( a, f )
-                            , expressionCache = Dict.empty
-                            , accWasSkipped = False
-                          }
-                        , Task.perform (GotParseEndTime n startTime) Time.now
-                        )
+                ( { model
+                    | document =
+                        Scripta.reparse model.options model.document model.sourceText
+                  }
+                , Task.perform (GotParseEndTime n startTime) Time.now
+                )
 
             else
                 ( model, Cmd.none )
@@ -460,21 +416,6 @@ update msg model =
             else
                 ( model, Cmd.none )
 
-        CycleParseMode ->
-            let
-                nextMode =
-                    case model.parseMode of
-                        FullParse ->
-                            Incremental
-
-                        Incremental ->
-                            IncrementalSkipAcc
-
-                        IncrementalSkipAcc ->
-                            FullParse
-            in
-            ( { model | parseMode = nextMode }, Cmd.none )
-
         SelectDocument docId ->
             let
                 selectedDoc =
@@ -484,18 +425,11 @@ update msg model =
             in
             case selectedDoc of
                 Just doc ->
-                    let
-                        ( newCache, acc, forest ) =
-                            Parser.Forest.parseIncrementally initParams
-                                Dict.empty
-                                (String.lines doc.content)
-                    in
                     ( { model
                         | currentDocumentId = docId
                         , sourceText = doc.content
                         , editCount = model.editCount + 1
-                        , parsedForest = ( acc, forest )
-                        , expressionCache = newCache
+                        , document = Scripta.parse model.options doc.content
                       }
                     , Cmd.none
                     )
@@ -516,19 +450,13 @@ update msg model =
 
                 updatedDocuments =
                     model.documents ++ [ newDoc ]
-
-                ( newCache, acc, forest ) =
-                    Parser.Forest.parseIncrementally initParams
-                        Dict.empty
-                        (String.lines newDoc.content)
             in
             ( { model
                 | documents = updatedDocuments
                 , currentDocumentId = newId
                 , sourceText = newDoc.content
                 , editCount = model.editCount + 1
-                , parsedForest = ( acc, forest )
-                , expressionCache = newCache
+                , document = Scripta.parse model.options newDoc.content
               }
             , saveDocuments (encodeDocuments updatedDocuments)
             )
@@ -576,18 +504,12 @@ update msg model =
                             else
                                 updatedDocuments
 
-                        ( newParsedForest, newCache ) =
+                        newDocument =
                             if deletedCurrent then
-                                let
-                                    ( cache, acc, forest ) =
-                                        Parser.Forest.parseIncrementally initParams
-                                            Dict.empty
-                                            (String.lines newSourceText)
-                                in
-                                ( ( acc, forest ), cache )
+                                Scripta.parse model.options newSourceText
 
                             else
-                                ( model.parsedForest, model.expressionCache )
+                                model.document
                     in
                     ( { model
                         | documents = finalDocuments
@@ -595,16 +517,20 @@ update msg model =
                         , sourceText = newSourceText
                         , editCount = model.editCount + 1
                         , deleteConfirmation = Nothing
-                        , parsedForest = newParsedForest
-                        , expressionCache = newCache
+                        , document = newDocument
                       }
                     , saveDocuments (encodeDocuments finalDocuments)
                     )
 
         GotViewport viewport ->
+            let
+                w =
+                    round viewport.viewport.width
+            in
             ( { model
-                | windowWidth = round viewport.viewport.width
+                | windowWidth = w
                 , windowHeight = round viewport.viewport.height
+                , options = makeOptions model.theme w
               }
             , Cmd.none
             )
@@ -613,19 +539,24 @@ update msg model =
             ( { model
                 | windowWidth = width
                 , windowHeight = height
+                , options = makeOptions model.theme width
               }
             , Cmd.none
             )
 
         ToggleTheme ->
-            ( { model
-                | theme =
+            let
+                newTheme =
                     case model.theme of
-                        Light ->
-                            Dark
+                        Scripta.Light ->
+                            Scripta.Dark
 
-                        Dark ->
-                            Light
+                        Scripta.Dark ->
+                            Scripta.Light
+            in
+            ( { model
+                | theme = newTheme
+                , options = makeOptions newTheme model.windowWidth
               }
             , Cmd.none
             )
@@ -701,14 +632,13 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
-        CompilerMsg compilerMsg ->
+        CompilerEvent event ->
             let
                 newClickCount =
                     model.debugClickCount + 1
             in
-            case compilerMsg of
-                V3.Types.SelectId id ->
-                    -- Save current position before navigating
+            case event of
+                Scripta.ClickedId id ->
                     ( { model
                         | selectedId = id
                         , previousId = model.selectedId
@@ -717,31 +647,23 @@ update msg model =
                     , scrollToElement id
                     )
 
-                V3.Types.SendMeta _ ->
-                    -- Click-sync disabled; selection-sync handled in JS mouseup
-                    ( { model | debugClickCount = newClickCount }, Cmd.none )
-
-                V3.Types.SendBlockMeta _ ->
-                    -- Click-sync disabled; selection-sync handled in JS mouseup
-                    ( { model | debugClickCount = newClickCount }, Cmd.none )
-
-                V3.Types.HighlightId id ->
+                Scripta.HighlightedId id ->
                     ( { model | selectedId = id, debugClickCount = newClickCount }, Cmd.none )
 
-                V3.Types.ExpandImage _ ->
-                    -- Image expansion not implemented in Demo app
+                Scripta.ClickedImage _ ->
                     ( { model | debugClickCount = newClickCount }, Cmd.none )
 
-                V3.Types.FootnoteClick { targetId } ->
-                    ( { model | selectedId = targetId, debugClickCount = newClickCount }, scrollToElement targetId )
+                Scripta.ClickedFootnote { targetId } ->
+                    ( { model | selectedId = targetId, debugClickCount = newClickCount }
+                    , scrollToElement targetId
+                    )
 
-                V3.Types.CitationClick { targetId } ->
-                    ( { model | selectedId = targetId, debugClickCount = newClickCount }, scrollToElement targetId )
+                Scripta.ClickedCitation { targetId } ->
+                    ( { model | selectedId = targetId, debugClickCount = newClickCount }
+                    , scrollToElement targetId
+                    )
 
-                V3.Types.GoToDocument _ _ ->
-                    ( { model | debugClickCount = newClickCount }, Cmd.none )
-
-                V3.Types.NoOp ->
+                Scripta.ClickedLink _ ->
                     ( { model | debugClickCount = newClickCount }, Cmd.none )
 
 
@@ -1113,49 +1035,7 @@ viewEditor model panelBg textColor =
                 , HA.style "font-size" "0.85em"
                 , HA.style "margin-left" "8px"
                 ]
-                [ Html.text
-                    (String.fromFloat model.lastParseTimeMs
-                        ++ "ms"
-                        ++ (if model.accWasSkipped then
-                                " (acc skipped)"
-
-                            else
-                                ""
-                           )
-                    )
-                ]
-            , Html.span
-                [ HA.style "cursor" "pointer"
-                , HA.style "font-size" "0.8em"
-                , HA.style "padding" "2px 8px"
-                , HA.style "border" "1px solid #ccc"
-                , HA.style "border-radius" "3px"
-                , HA.style "user-select" "none"
-                , HA.style "background-color"
-                    (case model.parseMode of
-                        FullParse ->
-                            "#f0e0e0"
-
-                        Incremental ->
-                            "#e0f0e0"
-
-                        IncrementalSkipAcc ->
-                            "#e0e0f0"
-                    )
-                , HE.onClick CycleParseMode
-                ]
-                [ Html.text
-                    (case model.parseMode of
-                        FullParse ->
-                            "Full"
-
-                        Incremental ->
-                            "Incremental"
-
-                        IncrementalSkipAcc ->
-                            "Inc+SkipAcc"
-                    )
-                ]
+                [ Html.text (String.fromFloat model.lastParseTimeMs ++ "ms") ]
             ]
         , Html.div
             [ HA.style "flex" "1"
@@ -1219,20 +1099,21 @@ viewPreview model panelBg textColor =
             , HA.style "color" textColor
             , HA.style "line-height" "1.6"
             ]
-            [ Html.Lazy.lazy2 viewPreviewBody model.parsedForest (viewParams model) ]
+            [ Html.Lazy.lazy2 viewPreviewBody model.document model.options ]
         ]
 
 
 {-| Render the preview body. Wrapped in Html.lazy2 so it only re-renders
-when parsedForest or renderParams change.
+when the document or options change.
 -}
-viewPreviewBody : ( Accumulator, List (Tree ExpressionBlock) ) -> V3.Types.CompilerParameters -> Html Msg
-viewPreviewBody parsedForest params =
+viewPreviewBody : Scripta.Document -> Scripta.Options -> Html Msg
+viewPreviewBody document options =
     let
         output =
-            V3.Compiler.render params parsedForest
+            Scripta.render options document
+                |> Scripta.mapEvent CompilerEvent
     in
-    Html.div [] (List.map (Html.map CompilerMsg) output.body)
+    Html.div [] output.body
 
 
 viewDeleteConfirmation : Model -> Html Msg
@@ -1336,34 +1217,6 @@ selectionStyleElement selectedId theme =
     in
     Html.node "style" [] [ Html.text css ]
 
-
-panelWidth : Model -> Int
-panelWidth model =
-    -- Account for sidebar (200px), padding (10px * 2), and gaps (10px * 2)
-    (model.windowWidth - sidebarWidth - 50) // 2
-
-
-{-| Build CompilerParameters for rendering from the current model.
--}
-viewParams : Model -> V3.Types.CompilerParameters
-viewParams model =
-    { filter = NoFilter
-    , windowWidth = panelWidth model
-    , theme = model.theme
-    , editCount = model.editCount
-    , width = panelWidth model
-    , showTOC = False
-    , sizing =
-        { baseFontSize = 14.0
-        , paragraphSpacing = 18.0
-        , marginLeft = 0.0
-        , marginRight = 120.0
-        , indentation = 20.0
-        , indentUnit = 2
-        , scale = 1.0
-        }
-    , maxLevel = 0
-    }
 
 
 
