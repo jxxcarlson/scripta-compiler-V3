@@ -24,7 +24,6 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 import Process
 import Scripta exposing (Theme(..))
-import Scripta.Document
 import Task
 import Time
 
@@ -109,7 +108,6 @@ type SortMode
     | Alphabetical -- A to Z, ignoring case and noise words
 
 
-
 type alias Model =
     { documents : List Document
     , currentDocumentId : String
@@ -182,14 +180,14 @@ init flags =
             List.head documents |> Maybe.withDefault defaultDocument
 
         options =
-            makeOptions Scripta.Light 1200
+            makeOptions Light 1200
     in
     ( { documents = documents
       , currentDocumentId = currentDoc.id
       , sourceText = currentDoc.content
       , windowWidth = 1200
       , windowHeight = 800
-      , theme = Scripta.Light
+      , theme = Light
       , editCount = 1
       , selectedId = ""
       , previousId = ""
@@ -548,11 +546,11 @@ update msg model =
             let
                 newTheme =
                     case model.theme of
-                        Scripta.Light ->
-                            Scripta.Dark
+                        Light ->
+                            Dark
 
-                        Scripta.Dark ->
-                            Scripta.Light
+                        Dark ->
+                            Light
             in
             ( { model
                 | theme = newTheme
