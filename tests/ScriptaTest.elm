@@ -88,4 +88,35 @@ suite =
                     Expect.equal ( params.theme, params.windowWidth )
                         ( V3.Types.Dark, 800 )
             ]
+        , describe "pipeline"
+            [ test "compile produces a non-empty body" <|
+                \_ ->
+                    Scripta.compile Scripta.defaultOptions "Hello [strong world]."
+                        |> .body
+                        |> List.isEmpty
+                        |> Expect.equal False
+            , test "parse then render produces a non-empty body" <|
+                \_ ->
+                    let
+                        doc =
+                            Scripta.parse Scripta.defaultOptions "Hello world."
+                    in
+                    Scripta.render Scripta.defaultOptions doc
+                        |> .body
+                        |> List.isEmpty
+                        |> Expect.equal False
+            , test "reparse of an edited document produces a non-empty body" <|
+                \_ ->
+                    let
+                        doc0 =
+                            Scripta.parse Scripta.defaultOptions "First paragraph.\n\nSecond paragraph."
+
+                        doc1 =
+                            Scripta.reparse Scripta.defaultOptions doc0 "First paragraph edited.\n\nSecond paragraph."
+                    in
+                    Scripta.render Scripta.defaultOptions doc1
+                        |> .body
+                        |> List.isEmpty
+                        |> Expect.equal False
+            ]
         ]

@@ -2,6 +2,9 @@ module Scripta exposing
     ( Options, defaultOptions
     , withTheme, withWindowWidth, withContentWidth, withTOC, withMaxLevel, withSizing, withFilter
     , Theme(..), Filter(..), SizingConfig, defaultSizing
+    , Document
+    , Event(..), Output
+    , parse, reparse, render, compile, mapEvent
     )
 
 {-| Public API for the Scripta compiler.
@@ -13,9 +16,20 @@ module Scripta exposing
 @docs withTheme, withWindowWidth, withContentWidth, withTOC, withMaxLevel, withSizing, withFilter
 @docs Theme, Filter, SizingConfig, defaultSizing
 
+
+# Documents and rendering
+
+@docs Document
+@docs Event, Output
+@docs parse, reparse, render, compile, mapEvent
+
 -}
 
+import Dict
+import Html exposing (Html)
+import Parser.Forest
 import Scripta.Internal as Internal exposing (Options(..))
+import V3.Compiler
 import V3.Types
 
 
@@ -137,3 +151,141 @@ withSizing sizing (Internal.Options data) =
 withFilter : Filter -> Options -> Options
 withFilter filter (Internal.Options data) =
     Internal.Options { data | filter = filterToInternal filter }
+
+
+{-| An opaque parsed document. Produced by `parse` / `reparse`, consumed by
+`render` and the `Scripta.Document` query functions.
+-}
+type alias Document =
+    Internal.Document
+
+
+{-| An interaction event emitted by rendered output.
+
+  - `ClickedId` — the user clicked an element with the given id.
+  - `ClickedFootnote` / `ClickedCitation` — jump to a target, remembering a return id.
+  - `ClickedImage` — the user clicked an image (url).
+  - `ClickedLink` — the user clicked an internal document link (slug).
+  - `HighlightedId` — request to highlight the element with the given id.
+
+-}
+type Event
+    = ClickedId String
+    | ClickedFootnote { targetId : String, returnId : String }
+    | ClickedCitation { targetId : String, returnId : String }
+    | ClickedImage String
+    | ClickedLink String
+    | HighlightedId String
+
+
+{-| Rendered output, polymorphic in the message type so `mapEvent` can retarget it.
+-}
+type alias Output msg =
+    { title : Html msg
+    , body : List (Html msg)
+    , toc : List (Html msg)
+    , banner : Maybe (Html msg)
+    }
+
+
+{-| Translate the internal compiler Msg to the public Event type.
+-}
+msgToEvent : V3.Types.Msg -> Event
+msgToEvent msg =
+    case msg of
+        V3.Types.SelectId id ->
+            ClickedId id
+
+        V3.Types.HighlightId id ->
+            HighlightedId id
+
+        V3.Types.ExpandImage url ->
+            ClickedImage url
+
+        V3.Types.FootnoteClick record ->
+            ClickedFootnote record
+
+        V3.Types.CitationClick record ->
+            ClickedCitation record
+
+        V3.Types.GoToDocument slug _ ->
+            ClickedLink slug
+
+
+{-| Parse source text into a Document (cold path: full parse).
+-}
+parse : Options -> String -> Document
+parse options source =
+    let
+        params =
+            Internal.optionsToParams options
+
+        ( cache, accumulator, forest ) =
+            Parser.Forest.parseIncrementally params Dict.empty (String.lines source)
+    in
+    Internal.Document
+        { accumulator = accumulator
+        , forest = forest
+        , cache = cache
+        }
+
+
+{-| Re-parse source text incrementally, reusing the previous Document's cache
+and accumulator where it is safe to do so. Use this for editor keystroke
+updates; use `parse` for initial load and document switches.
+-}
+reparse : Options -> Document -> String -> Document
+reparse options (Internal.Document prev) source =
+    let
+        params =
+            Internal.optionsToParams options
+
+        result =
+            Parser.Forest.parseIncrementallySkipAcc params
+                prev.cache
+                ( prev.accumulator, prev.forest )
+                (String.lines source)
+    in
+    Internal.Document
+        { accumulator = result.acc
+        , forest = result.forest
+        , cache = result.cache
+        }
+
+
+{-| Render a parsed Document to HTML output carrying `Event`s.
+-}
+render : Options -> Document -> Output Event
+render options (Internal.Document data) =
+    V3.Compiler.render (Internal.optionsToParams options)
+        ( data.accumulator, data.forest )
+        |> toEventOutput
+
+
+{-| Parse and render in one step (cold path).
+-}
+compile : Options -> String -> Output Event
+compile options source =
+    render options (parse options source)
+
+
+{-| Retarget a whole Output from `Event` to the consumer's own message type.
+-}
+mapEvent : (Event -> msg) -> Output Event -> Output msg
+mapEvent f output =
+    { title = Html.map f output.title
+    , body = List.map (Html.map f) output.body
+    , toc = List.map (Html.map f) output.toc
+    , banner = Maybe.map (Html.map f) output.banner
+    }
+
+
+{-| Convert the internal CompilerOutput Msg to an Output Event.
+-}
+toEventOutput : V3.Types.CompilerOutput V3.Types.Msg -> Output Event
+toEventOutput output =
+    { title = Html.map msgToEvent output.title
+    , body = List.map (Html.map msgToEvent) output.body
+    , toc = List.map (Html.map msgToEvent) output.toc
+    , banner = Maybe.map (Html.map msgToEvent) output.banner
+    }
