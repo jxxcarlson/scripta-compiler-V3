@@ -28,7 +28,7 @@ module Scripta exposing
 import Dict
 import Html exposing (Html)
 import Parser.Forest
-import Scripta.Internal as Internal exposing (Options(..))
+import Scripta.Internal as Internal exposing (Document(..), Options(..))
 import V3.Compiler
 import V3.Types
 
@@ -208,11 +208,15 @@ msgToEvent msg =
         V3.Types.CitationClick record ->
             ClickedCitation record
 
+        -- ExprMeta is scroll-position context, not part of the public API
         V3.Types.GoToDocument slug _ ->
             ClickedLink slug
 
 
 {-| Parse source text into a Document (cold path: full parse).
+
+For editor keystroke updates use `reparse`, which is incremental.
+
 -}
 parse : Options -> String -> Document
 parse options source =
@@ -223,7 +227,7 @@ parse options source =
         ( cache, accumulator, forest ) =
             Parser.Forest.parseIncrementally params Dict.empty (String.lines source)
     in
-    Internal.Document
+    Document
         { accumulator = accumulator
         , forest = forest
         , cache = cache
@@ -235,7 +239,7 @@ and accumulator where it is safe to do so. Use this for editor keystroke
 updates; use `parse` for initial load and document switches.
 -}
 reparse : Options -> Document -> String -> Document
-reparse options (Internal.Document prev) source =
+reparse options (Document prev) source =
     let
         params =
             Internal.optionsToParams options
@@ -246,7 +250,7 @@ reparse options (Internal.Document prev) source =
                 ( prev.accumulator, prev.forest )
                 (String.lines source)
     in
-    Internal.Document
+    Document
         { accumulator = result.acc
         , forest = result.forest
         , cache = result.cache
@@ -256,7 +260,7 @@ reparse options (Internal.Document prev) source =
 {-| Render a parsed Document to HTML output carrying `Event`s.
 -}
 render : Options -> Document -> Output Event
-render options (Internal.Document data) =
+render options (Document data) =
     V3.Compiler.render (Internal.optionsToParams options)
         ( data.accumulator, data.forest )
         |> toEventOutput
