@@ -257,15 +257,12 @@ type alias CompilerOutput msg =
 {-| Messages for interactive rendering.
 -}
 type Msg
-    = SendMeta ExprMeta
-    | SendBlockMeta BlockMeta
-    | SelectId String
+    = SelectId String
     | HighlightId String
     | ExpandImage String
     | FootnoteClick { targetId : String, returnId : String }
     | CitationClick { targetId : String, returnId : String }
     | GoToDocument String ExprMeta
-    | NoOp
 
 
 
