@@ -1248,6 +1248,9 @@ macroDict =
         , ( "underscore", \_ -> underscore )
         , ( "qed", \_ _ -> "\\hfill$\\square$" )
         , ( "tags", dontRender )
+        , ( "setcounter", dontRender )
+        , ( "abstract", \_ -> abstractInline )
+        , ( "bibitem", \_ exprs -> "[" ++ (Render.Export.Util.getArgs exprs |> String.join " ") ++ "]" )
         , ( "cite", \_ -> exportCite )
         , ( "box", \_ _ -> "$\\square$" )
         , ( "cbox", \_ _ -> "$\\boxtimes$" )
@@ -1263,6 +1266,14 @@ macroDict =
 dontRender : RenderSettings -> List Expression -> String
 dontRender _ _ =
     ""
+
+
+{-| Inline `[abstract ...]`. The bare `\abstract` token is the article class's
+abstract environment, so emit a plain labelled run of text instead.
+-}
+abstractInline : List Expression -> String
+abstractInline exprs =
+    "\\textbf{Abstract.} " ++ (Render.Export.Util.getArgs exprs |> String.join " ")
 
 
 errorHighlight : List Expression -> String
@@ -1380,6 +1391,30 @@ blockDict mathMacroDict =
         , ( "bibitem", \_ args body -> exportBibitem args body )
         , ( "beginBibliographyBlock", \_ args _ -> exportBibliographyBegin args )
         , ( "endBibliographyBlock", \_ _ _ -> "\\end{thebibliography}" )
+
+        -- Configuration blocks: no visible output
+        , ( "collection", \_ _ _ -> "" )
+        , ( "document", \_ _ _ -> "" )
+        , ( "type", \_ _ _ -> "" )
+        , ( "runninghead_", \_ _ _ -> "" )
+        , ( "shiftandsetcounter", \_ _ _ -> "" )
+        , ( "visibleBanner", \_ _ _ -> "" )
+
+        -- Blocks with no dedicated LaTeX environment
+        , ( "sh", \settings_ args body -> subheading settings_ args body )
+        , ( "compact", \_ _ body -> body )
+        , ( "identity", \_ _ body -> body )
+        , ( "datatable", \_ _ body -> body )
+        , ( "red", \_ _ body -> "\\textcolor{red}{" ++ body ++ "}" )
+        , ( "red2", \_ _ body -> "\\textcolor{red!70!black}{" ++ body ++ "}" )
+        , ( "blue", \_ _ body -> "\\textcolor{blue}{" ++ body ++ "}" )
+        , ( "q", \_ _ body -> "\\textbf{Question.} " ++ body )
+        , ( "a", \_ _ body -> "\\textbf{Answer.} " ++ body )
+        , ( "reveal", \_ _ body -> body )
+        , ( "more", \_ _ body -> body )
+        , ( "env", \_ args body -> "\\textbf{" ++ String.join " " args ++ "}\\quad " ++ body )
+        , ( "indent", \_ _ body -> "\\begin{adjustwidth}{0.75cm}{}\n" ++ body ++ "\n\\end{adjustwidth}" )
+        , ( "section*", \_ _ body -> "\\section*{" ++ body ++ "}" )
         ]
 
 
@@ -1464,7 +1499,7 @@ eqref exprs =
 
 par : List Expression -> String
 par _ =
-    [ "\\par\\par" ] |> String.join ""
+    "\n\n"
 
 
 markwith : List Expression -> String
@@ -1768,6 +1803,9 @@ exportExpr mathMacroDict settings expr =
             if List.member name [ "scheme", "compute", "data", "button", "newPost", "tableRow", "tableItem" ] then
                 "[" ++ name ++ "]:unknown"
 
+            else if name == "table" then
+                exportInlineTable mathMacroDict settings exps_
+
             else if name == "sup" then
                 renderSup name exps_
 
@@ -1851,6 +1889,65 @@ exportExpr mathMacroDict settings expr =
 
 
 {- HELPERS FOR exportExpr -}
+
+
+{-| Export an inline `[table [tableRow [tableItem ...]]]` expression to a
+LaTeX `tabular`.
+-}
+exportInlineTable : ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
+exportInlineTable mathMacroDict settings rowExprs =
+    let
+        isItem : Expression -> Bool
+        isItem expr =
+            case expr of
+                Fun "tableItem" _ _ ->
+                    True
+
+                _ ->
+                    False
+
+        cellsOf : Expression -> List Expression
+        cellsOf expr =
+            case expr of
+                Fun "tableRow" cells _ ->
+                    List.filter isItem cells
+
+                _ ->
+                    []
+
+        exportCell : Expression -> String
+        exportCell expr =
+            case expr of
+                Fun "tableItem" cellExprs _ ->
+                    exportExprList mathMacroDict settings cellExprs
+
+                _ ->
+                    ""
+
+        rows : List (List Expression)
+        rows =
+            rowExprs
+                |> List.filterMap
+                    (\e ->
+                        case e of
+                            Fun "tableRow" _ _ ->
+                                Just (cellsOf e)
+
+                            _ ->
+                                Nothing
+                    )
+
+        columnCount : Int
+        columnCount =
+            rows |> List.map List.length |> List.maximum |> Maybe.withDefault 1
+
+        renderedRows : String
+        renderedRows =
+            rows
+                |> List.map (\cells -> cells |> List.map exportCell |> String.join " & ")
+                |> String.join " \\\\\n"
+    in
+    "\\begin{tabular}{" ++ String.repeat columnCount "l" ++ "}\n" ++ renderedRows ++ "\n\\end{tabular}"
 
 
 renderSup name exps_ =

@@ -178,6 +178,7 @@ standardPackages =
 %% Packages
 
 \\usepackage{listings}
+\\usepackage{xcolor}    % always available so \\textcolor works
 
 %% Standard packages
 \\usepackage{geometry}
@@ -200,6 +201,7 @@ standardPackages =
 %% AMS
 \\usepackage{amssymb}
 \\usepackage{amsmath}
+\\usepackage{amsthm}    % for the proof environment
 
 \\usepackage{amscd}
 
@@ -293,7 +295,6 @@ commands =
 \\newcommand{\\blue}[1]{\\textcolor{blue}{#1}}
 \\newcommand{\\violet}[1]{\\textcolor{violet}{#1}}
 \\newcommand{\\highlight}[1]{\\texorpdfstring{\\protect\\hl{#1}}{#1}}
-\\newcommand{\\note}[2]{\\textcolor{blue}{#1}{\\hl{#1}}}
 
 % WTF?
 \\newcommand{\\remote}[1]{\\textcolor{red}{#1}}
@@ -304,8 +305,24 @@ commands =
 \\newcommand{\\smallsubheading}[1]{{\\bf\\small #1}\\par}
 %\\newcommand{\\term}[1]{{\\index{#1}}}
 %\\newcommand{\\termx}[1]{}
-\\newcommand{\\comment}[1]{}
+\\providecommand{\\comment}[1]{}
 \\newcommand{\\innertableofcontents}{}
+
+% Inline elements without a standard LaTeX command
+\\providecommand{\\boldItalic}[1]{\\textbf{\\textit{#1}}}
+\\providecommand{\\var}[1]{\\textit{#1}}
+\\providecommand{\\marked}[1]{#1}
+\\providecommand{\\bracket}[1]{[#1]}
+\\providecommand{\\sh}[1]{\\subheading{#1}}
+\\providecommand{\\ulink}[1]{#1}
+\\providecommand{\\reflink}[1]{#1}
+\\providecommand{\\cslink}[1]{#1}
+\\providecommand{\\progress}[1]{#1}
+\\providecommand{\\inlineimage}[1]{}
+\\newcommand{\\mdash}{---}
+\\newcommand{\\ndash}{--}
+% \\chapter does not exist in the article class; fall back to \\section
+\\providecommand{\\chapter}[1]{\\section{#1}}
 
 
 % Special character
@@ -324,6 +341,8 @@ commands =
 \\newtheorem{exercise}{Exercise}
 \\newtheorem{problem}{Problem}
 \\newtheorem{exercises}{Exercises}
+\\newtheorem{note}{Note}
+\\newtheorem{question}{Question}
 \\newcommand{\\bs}[1]{$\\backslash$#1}
 \\newcommand{\\texarg}[1]{\\{#1\\}}
 
@@ -335,10 +354,6 @@ commands =
 
 \\def\\changemargin#1#2{\\list{}{\\rightmargin#2\\leftmargin#1}\\item[]}
 \\let\\endchangemargin=\\endlist
-
-\\renewenvironment{indent}
-  {\\begin{adjustwidth}{0.75cm}{}}
-  {\\end{adjustwidth}}
 
 
 
