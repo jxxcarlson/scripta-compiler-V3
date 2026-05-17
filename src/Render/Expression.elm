@@ -246,6 +246,7 @@ markupDict =
         , ( "compute", renderCompute )
         , ( "data", renderData )
         , ( "button", renderButton )
+        , ( "progress", renderProgress )
 
         -- Misc
         , ( "hrule", renderHrule )
@@ -1417,6 +1418,42 @@ renderScheme _ _ args meta =
                ]
         )
         [ Html.text content ]
+
+
+renderProgress : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -> Html Msg
+renderProgress _ _ args meta =
+    let
+        argValues =
+            args
+                |> List.filterMap getTextContent
+                |> String.join " "
+                |> String.words
+                |> List.filterMap String.toInt
+
+        percentageString : Int -> Int -> String
+        percentageString num denom =
+            let
+                ratio =
+                    toFloat num / toFloat denom
+
+                percentage_ x =
+                    toFloat (round (1000.0 * x)) / 10
+            in
+            String.fromFloat (percentage_ ratio)
+    in
+    case argValues of
+        [ numerator, denominator ] ->
+            let
+                data =
+                    [ String.fromInt numerator
+                    , String.fromInt denominator
+                    , percentageString numerator denominator ++ "%"
+                    ]
+            in
+            Html.text (String.join " " data)
+
+        _ ->
+            Html.text "invalid args"
 
 
 {-| Render a compute placeholder (displays as "[compute: ...]").
