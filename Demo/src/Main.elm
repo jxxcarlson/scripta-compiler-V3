@@ -63,6 +63,11 @@ The value contains { filename: String, documents: List Document }
 port exportDocuments : { filename : String, documents : Encode.Value } -> Cmd msg
 
 
+{-| Trigger a file download containing a rendered HTML document.
+-}
+port downloadHtml : { filename : String, content : String } -> Cmd msg
+
+
 {-| Request the browser to open a file picker for importing documents.
 -}
 port requestImport : () -> Cmd msg
@@ -341,6 +346,7 @@ type Msg
     | EscapePressed
     | ShiftEscapePressed
     | ExportDocuments
+    | ExportHtmlFile
     | RequestImportDocuments
     | GotImportedDocuments Decode.Value
     | GotParseStartTime Int Time.Posix
@@ -601,6 +607,35 @@ update msg model =
                 { filename = filename
                 , documents = encodeDocuments model.documents
                 }
+            )
+
+        ExportHtmlFile ->
+            let
+                currentDoc =
+                    model.documents
+                        |> List.filter (\doc -> doc.id == model.currentDocumentId)
+                        |> List.head
+
+                title =
+                    Maybe.map .title currentDoc |> Maybe.withDefault "document"
+
+                sanitized =
+                    titleToFilename title
+
+                filename =
+                    (if sanitized == "" then
+                        "document"
+
+                     else
+                        sanitized
+                    )
+                        ++ ".html"
+
+                html =
+                    Scripta.exportHtml model.options model.document
+            in
+            ( model
+            , downloadHtml { filename = filename, content = html }
             )
 
         RequestImportDocuments ->
@@ -982,6 +1017,9 @@ viewHeader_ theme =
             , HA.style "flex-shrink" "0"
             ]
             [ Html.button
+                (HE.onClick ExportHtmlFile :: buttonStyle)
+                [ Html.text "Export HTML" ]
+            , Html.button
                 (HE.onClick ExportDocuments :: buttonStyle)
                 [ Html.text "Export" ]
             , Html.button
