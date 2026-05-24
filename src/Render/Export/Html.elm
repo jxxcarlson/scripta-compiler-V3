@@ -1,0 +1,1393 @@
+module Render.Export.Html exposing
+    ( export, exportExpr, rawExport
+    , defaultStyles
+    )
+
+{-| Static HTML export.
+
+Produces a complete standalone HTML document (with KaTeX CDN includes for
+math) from a parsed Scripta forest. The output contains no Scripta-authored
+JavaScript and no editor-sync hooks — it is meant for reading, printing,
+or hosting as a plain `.html` file.
+
+@docs export, exportExpr, rawExport
+@docs defaultStyles
+
+-}
+
+import Array
+import Dict exposing (Dict)
+import ETeX.MathMacros
+import ETeX.Transform
+import Either exposing (Either(..))
+import Generic.ASTTools as ASTTools
+import Generic.BlockUtilities
+import Generic.TextMacro
+import List.Extra
+import MiniLaTeX.Util
+import Render.Export.Util
+import Render.Settings exposing (RenderSettings)
+import Render.Types
+import RoseTree.Tree as Tree exposing (Tree(..))
+import Tools.Loop exposing (Step(..), loop)
+import V3.Types exposing (Expr(..), Expression, ExpressionBlock, Heading(..))
+
+
+
+-- TOP-LEVEL ENTRY POINTS
+
+
+{-| Export a parsed forest to a complete standalone HTML document.
+
+The document includes a `<head>` with KaTeX CDN links and a default
+stylesheet, and a `<body>` containing the title, optional TOC, and rendered
+body content.
+
+-}
+export : Render.Types.PublicationData -> RenderSettings -> List (Tree ExpressionBlock) -> String
+export publicationData settings_ ast =
+    let
+        titleData : Maybe ExpressionBlock
+        titleData =
+            ASTTools.getBlockByName "title" ast
+
+        title : String
+        title =
+            case titleData of
+                Nothing ->
+                    publicationData.title
+
+                Just expr ->
+                    case expr.body of
+                        Right [ Text str _ ] ->
+                            str
+
+                        _ ->
+                            publicationData.title
+
+        properties : Dict String String
+        properties =
+            Maybe.map .properties titleData
+                |> Maybe.map (Dict.insert "title" title)
+                |> Maybe.withDefault Dict.empty
+
+        settings : RenderSettings
+        settings =
+            { settings_ | properties = properties }
+
+        body : String
+        body =
+            rawExport settings ast
+
+        headerBlock : String
+        headerBlock =
+            renderHeader publicationData title properties
+    in
+    wrapDocument title (headerBlock ++ "\n" ++ body)
+
+
+{-| Export the body of the forest, without document scaffolding.
+
+Useful when embedding Scripta-rendered content inside another HTML page.
+
+-}
+rawExport : RenderSettings -> List (Tree ExpressionBlock) -> String
+rawExport settings ast_ =
+    let
+        mathMacroDict : ETeX.MathMacros.MathMacroDict
+        mathMacroDict =
+            ast_
+                |> ASTTools.getVerbatimBlockValue "mathmacros"
+                |> ETeX.Transform.makeMacroDict
+
+        ast : List (Tree ExpressionBlock)
+        ast =
+            ast_
+                |> ASTTools.filterForestOnLabelNames (\name -> not (name == Just "runninghead"))
+                |> List.map (Tree.mapValues Generic.BlockUtilities.condenseUrls)
+                |> encloseLists
+    in
+    ast
+        |> List.map (exportTree mathMacroDict settings)
+        |> List.filter (\s -> s /= "")
+        |> String.join "\n\n"
+
+
+
+-- DOCUMENT SCAFFOLDING
+
+
+wrapDocument : String -> String -> String
+wrapDocument title body =
+    String.join "\n"
+        [ "<!DOCTYPE html>"
+        , "<html lang=\"en\">"
+        , "<head>"
+        , "<meta charset=\"UTF-8\">"
+        , "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+        , "<title>" ++ escape title ++ "</title>"
+        , katexHead
+        , "<style>"
+        , defaultStyles
+        , "</style>"
+        , "</head>"
+        , "<body>"
+        , "<article class=\"scripta-doc\">"
+        , body
+        , "</article>"
+        , "</body>"
+        , "</html>"
+        ]
+
+
+{-| KaTeX CSS, JS, and auto-render configured for `\(...\)` / `\[...\]` and `$...$` / `$$...$$` delimiters.
+-}
+katexHead : String
+katexHead =
+    String.join "\n"
+        [ "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css\" integrity=\"sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV\" crossorigin=\"anonymous\">"
+        , "<script defer src=\"https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js\" integrity=\"sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8\" crossorigin=\"anonymous\"></script>"
+        , "<script defer src=\"https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js\" integrity=\"sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05\" crossorigin=\"anonymous\"></script>"
+        , "<script>"
+        , "document.addEventListener(\"DOMContentLoaded\", function() {"
+        , "  renderMathInElement(document.body, {"
+        , "    delimiters: ["
+        , "      {left: '$$', right: '$$', display: true},"
+        , "      {left: '\\\\[', right: '\\\\]', display: true},"
+        , "      {left: '\\\\(', right: '\\\\)', display: false},"
+        , "      {left: '$', right: '$', display: false}"
+        , "    ],"
+        , "    throwOnError: false"
+        , "  });"
+        , "});"
+        , "</script>"
+        ]
+
+
+renderHeader : Render.Types.PublicationData -> String -> Dict String String -> String
+renderHeader publicationData title properties =
+    let
+        authors : List String
+        authors =
+            case Dict.get "author" properties of
+                Just str ->
+                    String.split "," str |> List.map String.trim
+
+                Nothing ->
+                    publicationData.authorList
+
+        authorBlock : String
+        authorBlock =
+            case authors of
+                [] ->
+                    ""
+
+                _ ->
+                    "<div class=\"scripta-authors\">"
+                        ++ String.join ", " (List.map escape authors)
+                        ++ "</div>"
+
+        dateBlock : String
+        dateBlock =
+            case Dict.get "date" properties of
+                Just dateStr ->
+                    "<div class=\"scripta-date\">" ++ escape dateStr ++ "</div>"
+
+                Nothing ->
+                    ""
+
+        subtitleBlock : String
+        subtitleBlock =
+            case Dict.get "subtitle" properties of
+                Just sub ->
+                    "<div class=\"scripta-subtitle\">" ++ escape sub ++ "</div>"
+
+                Nothing ->
+                    ""
+    in
+    if title == "" then
+        ""
+
+    else
+        String.join "\n"
+            [ "<header class=\"scripta-title-block\">"
+            , "<h1 class=\"scripta-title\">" ++ escape title ++ "</h1>"
+            , subtitleBlock
+            , authorBlock
+            , dateBlock
+            , "</header>"
+            ]
+            |> stripEmptyLines
+
+
+stripEmptyLines : String -> String
+stripEmptyLines str =
+    str
+        |> String.lines
+        |> List.filter (\line -> String.trim line /= "")
+        |> String.join "\n"
+
+
+
+-- DEFAULT STYLES
+
+
+{-| Default stylesheet embedded in the document `<head>`. Exposed so callers
+can extract it (e.g. to ship as a separate file). Override by appending
+custom rules to the output, or by post-processing the HTML.
+-}
+defaultStyles : String
+defaultStyles =
+    """
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  color: #222;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+}
+.scripta-doc {
+  max-width: 800px;
+  margin: 2em auto;
+  padding: 0 1.5em;
+}
+.scripta-title-block { margin-bottom: 2em; border-bottom: 1px solid #eee; padding-bottom: 1em; }
+.scripta-title { font-size: 2em; margin: 0 0 0.2em 0; }
+.scripta-subtitle { font-size: 1.2em; color: #555; margin-bottom: 0.4em; }
+.scripta-authors { color: #555; margin-bottom: 0.2em; }
+.scripta-date { color: #777; font-size: 0.9em; }
+.scripta-section-1 { font-size: 1.5em; margin-top: 1.6em; }
+.scripta-section-2 { font-size: 1.3em; margin-top: 1.4em; }
+.scripta-section-3 { font-size: 1.15em; margin-top: 1.2em; }
+.scripta-section-4 { font-size: 1.0em; margin-top: 1.0em; font-style: italic; }
+.scripta-paragraph { margin: 0.7em 0; }
+.scripta-itemize, .scripta-enumerate, .scripta-description { margin: 0.6em 0 0.6em 1.5em; }
+.scripta-itemize li, .scripta-enumerate li { margin: 0.2em 0; }
+.scripta-description dt { font-weight: 600; margin-top: 0.3em; }
+.scripta-description dd { margin-left: 1.5em; margin-bottom: 0.3em; }
+.scripta-code-block {
+  background: #f6f8fa;
+  border: 1px solid #e1e4e8;
+  border-radius: 4px;
+  padding: 0.6em 0.8em;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.9em;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0.8em 0;
+}
+.scripta-inline-code {
+  background: #f6f8fa;
+  border-radius: 3px;
+  padding: 0.1em 0.3em;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.92em;
+}
+.scripta-math-display { margin: 1em 0; text-align: center; }
+.scripta-quote { border-left: 3px solid #ddd; padding-left: 1em; color: #555; margin: 0.8em 0; }
+.scripta-theorem, .scripta-lemma, .scripta-corollary, .scripta-proposition, .scripta-definition, .scripta-example, .scripta-remark, .scripta-note {
+  margin: 1em 0;
+}
+.scripta-theorem-label { font-weight: 600; }
+.scripta-proof { margin: 0.8em 0; }
+.scripta-proof::before { content: "Proof. "; font-style: italic; font-weight: 600; }
+.scripta-link { color: #0366d6; text-decoration: none; }
+.scripta-link:hover { text-decoration: underline; }
+.scripta-image { max-width: 100%; height: auto; display: block; margin: 0.8em auto; }
+.scripta-figure { margin: 1em 0; text-align: center; }
+.scripta-figure figcaption { font-size: 0.9em; color: #555; margin-top: 0.3em; }
+.scripta-error { color: #b00020; background: #fff0f0; padding: 0.3em 0.6em; border-radius: 3px; }
+.scripta-todo { color: #b58900; }
+.scripta-indent { margin-left: 1.5em; }
+.scripta-banner { margin: 0 0 1em 0; }
+.scripta-banner img { max-width: 100%; }
+.scripta-q { font-weight: 600; }
+.scripta-a { }
+"""
+
+
+
+-- TREE TRAVERSAL
+
+
+exportTree : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Tree ExpressionBlock -> String
+exportTree mathMacroDict settings tree =
+    let
+        block : ExpressionBlock
+        block =
+            Tree.value tree
+
+        children : List (Tree ExpressionBlock)
+        children =
+            Tree.children tree
+    in
+    case children of
+        [] ->
+            exportBlock mathMacroDict settings block
+
+        _ ->
+            case Generic.BlockUtilities.getExpressionBlockName block of
+                Just "item" ->
+                    handleItemWithChildren mathMacroDict settings tree children
+
+                Just "numbered" ->
+                    handleItemWithChildren mathMacroDict settings tree children
+
+                Just "desc" ->
+                    handleItemWithChildren mathMacroDict settings tree children
+
+                _ ->
+                    let
+                        rendered : String
+                        rendered =
+                            exportBlock mathMacroDict settings block
+
+                        childOutput : String
+                        childOutput =
+                            children
+                                |> List.map (exportTree mathMacroDict settings)
+                                |> List.filter (\s -> s /= "")
+                                |> String.join "\n"
+                    in
+                    if childOutput == "" then
+                        rendered
+
+                    else if rendered == "" then
+                        childOutput
+
+                    else
+                        rendered ++ "\n" ++ childOutput
+
+
+handleItemWithChildren : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Tree ExpressionBlock -> List (Tree ExpressionBlock) -> String
+handleItemWithChildren mathMacroDict settings tree children =
+    let
+        itemContent : String
+        itemContent =
+            exportBlock mathMacroDict settings (Tree.value tree)
+
+        childOutput : String
+        childOutput =
+            children
+                |> List.map (exportTree mathMacroDict settings)
+                |> List.filter (\s -> s /= "")
+                |> String.join "\n"
+    in
+    -- Splice children inside the <li>/<dd> by inserting them before the closing tag.
+    spliceInsideListItem itemContent childOutput
+
+
+spliceInsideListItem : String -> String -> String
+spliceInsideListItem itemHtml childHtml =
+    if childHtml == "" then
+        itemHtml
+
+    else
+        let
+            -- Insert child content before the final closing tag (e.g. "</li>" or "</dd>").
+            insertBefore : String -> String -> Maybe String
+            insertBefore tag s =
+                if String.endsWith tag s then
+                    Just (String.dropRight (String.length tag) s ++ "\n" ++ childHtml ++ "\n" ++ tag)
+
+                else
+                    Nothing
+        in
+        case insertBefore "</li>" itemHtml of
+            Just merged ->
+                merged
+
+            Nothing ->
+                case insertBefore "</dd>" itemHtml of
+                    Just merged ->
+                        merged
+
+                    Nothing ->
+                        itemHtml ++ "\n" ++ childHtml
+
+
+
+-- LIST ENCLOSURE
+-- Same machinery as LaTeX export: walk the forest and inject begin/end blocks
+-- around consecutive item / numbered / desc / bibitem siblings.
+
+
+type Status
+    = InsideItemizedList
+    | InsideNumberedList
+    | InsideDescriptionList
+    | InsideBibliography
+    | OutsideList
+
+
+type alias State =
+    { status : Status
+    , input : List (Tree ExpressionBlock)
+    , output : List (Tree ExpressionBlock)
+    , itemNumber : Int
+    }
+
+
+encloseLists : List (Tree ExpressionBlock) -> List (Tree ExpressionBlock)
+encloseLists blocks =
+    let
+        processedBlocks : List (Tree ExpressionBlock)
+        processedBlocks =
+            List.map processTreeChildren blocks
+    in
+    loop
+        { status = OutsideList, input = processedBlocks, output = [], itemNumber = 0 }
+        nextStep
+        |> List.reverse
+
+
+processTreeChildren : Tree ExpressionBlock -> Tree ExpressionBlock
+processTreeChildren (Tree block children) =
+    let
+        childList : List (Tree ExpressionBlock)
+        childList =
+            Array.toList children
+
+        processedChildren =
+            case childList of
+                [] ->
+                    Array.empty
+
+                _ ->
+                    encloseLists childList |> Array.fromList
+    in
+    Tree block processedChildren
+
+
+nextStep : State -> Step State (List (Tree ExpressionBlock))
+nextStep state =
+    case List.head state.input of
+        Nothing ->
+            case state.status of
+                InsideItemizedList ->
+                    Done (Tree.leaf endItemizedBlock :: state.output)
+
+                InsideNumberedList ->
+                    Done (Tree.leaf endNumberedBlock :: state.output)
+
+                InsideDescriptionList ->
+                    Done (Tree.leaf endDescriptionBlock :: state.output)
+
+                InsideBibliography ->
+                    Done (Tree.leaf endBibliographyBlock :: state.output)
+
+                OutsideList ->
+                    Done state.output
+
+        Just tree ->
+            Loop (nextState tree state)
+
+
+nextState : Tree ExpressionBlock -> State -> State
+nextState tree state =
+    let
+        name_ : Maybe String
+        name_ =
+            Tree.value tree |> Generic.BlockUtilities.getExpressionBlockName
+    in
+    case ( state.status, name_ ) of
+        ( OutsideList, Just "item" ) ->
+            { state | status = InsideItemizedList, itemNumber = 1, output = tree :: Tree.leaf beginItemizedBlock :: state.output, input = List.drop 1 state.input }
+
+        ( InsideItemizedList, Just "item" ) ->
+            { state | output = tree :: state.output, itemNumber = state.itemNumber + 1, input = List.drop 1 state.input }
+
+        ( InsideItemizedList, _ ) ->
+            { state | status = OutsideList, itemNumber = 0, output = tree :: Tree.leaf endItemizedBlock :: state.output, input = List.drop 1 state.input }
+
+        ( OutsideList, Just "numbered" ) ->
+            { state | status = InsideNumberedList, itemNumber = 1, output = tree :: Tree.leaf beginNumberedBlock :: state.output, input = List.drop 1 state.input }
+
+        ( InsideNumberedList, Just "numbered" ) ->
+            { state | output = tree :: state.output, itemNumber = state.itemNumber + 1, input = List.drop 1 state.input }
+
+        ( InsideNumberedList, _ ) ->
+            { state | status = OutsideList, itemNumber = 0, output = tree :: Tree.leaf endNumberedBlock :: state.output, input = List.drop 1 state.input }
+
+        ( OutsideList, Just "desc" ) ->
+            { state | status = InsideDescriptionList, itemNumber = 1, output = tree :: Tree.leaf beginDescriptionBlock :: state.output, input = List.drop 1 state.input }
+
+        ( InsideDescriptionList, Just "desc" ) ->
+            { state | output = tree :: state.output, itemNumber = state.itemNumber + 1, input = List.drop 1 state.input }
+
+        ( InsideDescriptionList, _ ) ->
+            { state | status = OutsideList, itemNumber = 0, output = tree :: Tree.leaf endDescriptionBlock :: state.output, input = List.drop 1 state.input }
+
+        ( OutsideList, Just "bibliography" ) ->
+            { state | status = InsideBibliography, output = Tree.leaf beginBibliographyBlock :: state.output, input = List.drop 1 state.input }
+
+        ( InsideBibliography, Just "bibitem" ) ->
+            { state | output = tree :: state.output, input = List.drop 1 state.input }
+
+        ( InsideBibliography, _ ) ->
+            { state | status = OutsideList, output = tree :: Tree.leaf endBibliographyBlock :: state.output, input = List.drop 1 state.input }
+
+        ( OutsideList, _ ) ->
+            { state | output = tree :: state.output, input = List.drop 1 state.input }
+
+
+emptyExpressionBlock : ExpressionBlock
+emptyExpressionBlock =
+    { heading = Paragraph
+    , indent = 0
+    , args = []
+    , properties = Dict.empty
+    , firstLine = ""
+    , body = Right []
+    , meta =
+        { id = ""
+        , position = 0
+        , lineNumber = 0
+        , bodyLineNumber = 0
+        , numberOfLines = 0
+        , begin = 0
+        , end = 0
+        , contentBegin = 0
+        , contentEnd = 0
+        , messages = []
+        , sourceText = ""
+        , error = Nothing
+        }
+    , style = {}
+    }
+
+
+beginItemizedBlock : ExpressionBlock
+beginItemizedBlock =
+    { emptyExpressionBlock | heading = Ordinary "beginBlock" }
+
+
+endItemizedBlock : ExpressionBlock
+endItemizedBlock =
+    { emptyExpressionBlock | heading = Ordinary "endBlock" }
+
+
+beginNumberedBlock : ExpressionBlock
+beginNumberedBlock =
+    { emptyExpressionBlock | heading = Ordinary "beginNumberedBlock" }
+
+
+endNumberedBlock : ExpressionBlock
+endNumberedBlock =
+    { emptyExpressionBlock | heading = Ordinary "endNumberedBlock" }
+
+
+beginDescriptionBlock : ExpressionBlock
+beginDescriptionBlock =
+    { emptyExpressionBlock | heading = Ordinary "beginDescriptionBlock" }
+
+
+endDescriptionBlock : ExpressionBlock
+endDescriptionBlock =
+    { emptyExpressionBlock | heading = Ordinary "endDescriptionBlock" }
+
+
+beginBibliographyBlock : ExpressionBlock
+beginBibliographyBlock =
+    { emptyExpressionBlock | heading = Ordinary "beginBibliographyBlock" }
+
+
+endBibliographyBlock : ExpressionBlock
+endBibliographyBlock =
+    { emptyExpressionBlock | heading = Ordinary "endBibliographyBlock" }
+
+
+
+-- BLOCK DISPATCH
+
+
+exportBlock : ETeX.MathMacros.MathMacroDict -> RenderSettings -> ExpressionBlock -> String
+exportBlock mathMacroDict settings block =
+    case block.heading of
+        Paragraph ->
+            case block.body of
+                Left str ->
+                    paragraphTag (escape str)
+
+                Right exprs_ ->
+                    let
+                        rendered =
+                            exportExprList mathMacroDict settings exprs_
+                    in
+                    if String.trim rendered == "" then
+                        ""
+
+                    else
+                        paragraphTag rendered
+
+        Ordinary name ->
+            case block.body of
+                Left _ ->
+                    ""
+
+                Right exprs_ ->
+                    let
+                        body =
+                            exportExprList mathMacroDict settings exprs_
+                    in
+                    case Dict.get name (blockDict mathMacroDict) of
+                        Just f ->
+                            f settings block.args body block.properties
+
+                        Nothing ->
+                            -- Fallback for unscaffolded ordinary blocks.
+                            genericBlock name body
+
+        Verbatim name ->
+            case block.body of
+                Left str ->
+                    exportVerbatimBlock mathMacroDict settings name str block
+
+                Right _ ->
+                    ""
+
+
+paragraphTag : String -> String
+paragraphTag body =
+    "<p class=\"scripta-paragraph\">" ++ body ++ "</p>"
+
+
+genericBlock : String -> String -> String
+genericBlock name body =
+    "<div class=\"scripta-block scripta-block-"
+        ++ escapeAttr name
+        ++ "\">"
+        ++ body
+        ++ "</div>"
+
+
+
+-- VERBATIM BLOCK DISPATCH
+
+
+exportVerbatimBlock : ETeX.MathMacros.MathMacroDict -> RenderSettings -> String -> String -> ExpressionBlock -> String
+exportVerbatimBlock mathMacroDict _ name str block =
+    case name of
+        "math" ->
+            displayMath mathMacroDict block str
+
+        "equation" ->
+            displayMath mathMacroDict block str
+
+        "aligned" ->
+            alignedMath mathMacroDict block str
+
+        "code" ->
+            codeBlock str
+
+        "verbatim" ->
+            codeBlock str
+
+        "verse" ->
+            "<pre class=\"scripta-code-block scripta-verse\">" ++ escape str ++ "</pre>"
+
+        "tabular" ->
+            -- TODO: real tabular rendering
+            todoBlock "verbatim:tabular" str
+
+        "csvtable" ->
+            -- TODO: real CSV table rendering
+            todoBlock "verbatim:csvtable" str
+
+        "chem" ->
+            "<div class=\"scripta-math-display\">\\[\\ce{" ++ str ++ "}\\]</div>"
+
+        "mathmacros" ->
+            -- Emit hidden LaTeX \newcommand definitions so KaTeX's auto-render
+            -- picks them up via \gdef-style macros. KaTeX supports \newcommand
+            -- when wrapped in a math block.
+            let
+                macros : String
+                macros =
+                    str |> ETeX.Transform.toLaTeXNewCommands
+            in
+            "<div class=\"scripta-math-display\" style=\"display:none\">\\[" ++ macros ++ "\\]</div>"
+
+        "texComment" ->
+            ""
+
+        "textmacros" ->
+            ""
+
+        "image" ->
+            todoBlock "verbatim:image" str
+
+        "quiver" ->
+            todoBlock "verbatim:quiver" str
+
+        "tikz" ->
+            todoBlock "verbatim:tikz" str
+
+        "load-files" ->
+            ""
+
+        "docinfo" ->
+            ""
+
+        "hide" ->
+            ""
+
+        _ ->
+            todoBlock ("verbatim:" ++ name) str
+
+
+displayMath : ETeX.MathMacros.MathMacroDict -> ExpressionBlock -> String -> String
+displayMath mathMacroDict block str =
+    let
+        cleaned : String
+        cleaned =
+            str
+                |> String.lines
+                |> List.filter (\line -> String.left 2 line /= "$$")
+                |> String.join "\n"
+                |> ETeX.Transform.transformETeX mathMacroDict
+                |> MiniLaTeX.Util.transformLabel
+
+        labelAttr : String
+        labelAttr =
+            case Dict.get "label" block.properties of
+                Just lab ->
+                    " id=\"eq-" ++ escapeAttr (String.trim lab) ++ "\""
+
+                Nothing ->
+                    ""
+    in
+    "<div class=\"scripta-math-display\"" ++ labelAttr ++ ">\\[" ++ cleaned ++ "\\]</div>"
+
+
+alignedMath : ETeX.MathMacros.MathMacroDict -> ExpressionBlock -> String -> String
+alignedMath mathMacroDict block str =
+    let
+        stripTrailingBackslashes : String -> String
+        stripTrailingBackslashes line =
+            if String.endsWith "\\\\" line then
+                String.dropRight 2 line |> String.trimRight
+
+            else
+                line
+
+        lines : List String
+        lines =
+            str
+                |> String.lines
+                |> List.map String.trim
+                |> List.filter (\line -> not (String.isEmpty line))
+                |> List.map stripTrailingBackslashes
+                |> List.map (ETeX.Transform.transformETeX mathMacroDict)
+                |> List.map MiniLaTeX.Util.transformLabel
+
+        joined : String
+        joined =
+            case List.reverse lines of
+                [] ->
+                    ""
+
+                lastLine :: restReversed ->
+                    (List.reverse restReversed |> List.map (\line -> line ++ "\\\\"))
+                        ++ [ lastLine ]
+                        |> String.join "\n"
+
+        labelAttr : String
+        labelAttr =
+            case Dict.get "label" block.properties of
+                Just lab ->
+                    " id=\"eq-" ++ escapeAttr (String.trim lab) ++ "\""
+
+                Nothing ->
+                    ""
+    in
+    "<div class=\"scripta-math-display\""
+        ++ labelAttr
+        ++ ">\\[\\begin{aligned}\n"
+        ++ joined
+        ++ "\n\\end{aligned}\\]</div>"
+
+
+codeBlock : String -> String
+codeBlock str =
+    "<pre class=\"scripta-code-block\"><code>" ++ escape str ++ "</code></pre>"
+
+
+todoBlock : String -> String -> String
+todoBlock name str =
+    "<div class=\"scripta-todo\" data-todo=\""
+        ++ escapeAttr name
+        ++ "\"><em>[TODO "
+        ++ escape name
+        ++ "]</em><pre>"
+        ++ escape str
+        ++ "</pre></div>"
+
+
+todoInline : String -> String
+todoInline name =
+    "<span class=\"scripta-todo\" data-todo=\"" ++ escapeAttr name ++ "\">[TODO " ++ escape name ++ "]</span>"
+
+
+
+-- ORDINARY BLOCK DICTIONARY
+-- Mirrors the LaTeX exporter's blockDict so that gaps in HTML coverage are
+-- visible. Each entry is keyed by the Scripta block name and receives the
+-- rendered body (HTML string) plus args and properties.
+
+
+type alias BlockRenderer =
+    RenderSettings -> List String -> String -> Dict String String -> String
+
+
+blockDict : ETeX.MathMacros.MathMacroDict -> Dict String BlockRenderer
+blockDict mathMacroDict =
+    Dict.fromList
+        [ -- Suppressed metadata blocks: rendered separately in the title block.
+          ( "title", emptyBlock )
+        , ( "subtitle", emptyBlock )
+        , ( "author", emptyBlock )
+        , ( "date", emptyBlock )
+        , ( "contents", emptyBlock )
+        , ( "hide", emptyBlock )
+        , ( "tags", emptyBlock )
+        , ( "docinfo", emptyBlock )
+        , ( "banner", emptyBlock )
+        , ( "set-key", emptyBlock )
+        , ( "endnotes", emptyBlock )
+        , ( "index", emptyBlock )
+        , ( "references", emptyBlock )
+        , ( "setcounter", emptyBlock )
+        , ( "collection", emptyBlock )
+        , ( "document", emptyBlock )
+        , ( "type", emptyBlock )
+        , ( "runninghead_", emptyBlock )
+        , ( "shiftandsetcounter", emptyBlock )
+        , ( "visibleBanner", emptyBlock )
+        , ( "bibliography", emptyBlock )
+        , ( "texComment", emptyBlock )
+        , ( "mathmacros", \_ _ _ _ -> "" )
+
+        -- Headings
+        , ( "chapter", \_ _ body _ -> "<h2 class=\"scripta-chapter\">" ++ body ++ "</h2>" )
+        , ( "section", renderSection )
+        , ( "section*", \_ _ body _ -> "<h3 class=\"scripta-section scripta-section-unnumbered\">" ++ body ++ "</h3>" )
+        , ( "subheading", \_ _ body _ -> "<div class=\"scripta-subheading\">" ++ body ++ "</div>" )
+        , ( "smallsubheading", \_ _ body _ -> "<div class=\"scripta-smallsubheading\">" ++ body ++ "</div>" )
+        , ( "sh", \_ _ body _ -> "<div class=\"scripta-subheading\">" ++ body ++ "</div>" )
+
+        -- List enclosure (begin/end pairs injected by encloseLists)
+        , ( "beginBlock", \_ _ _ _ -> "<ul class=\"scripta-itemize\">" )
+        , ( "endBlock", \_ _ _ _ -> "</ul>" )
+        , ( "beginNumberedBlock", \_ _ _ _ -> "<ol class=\"scripta-enumerate\">" )
+        , ( "endNumberedBlock", \_ _ _ _ -> "</ol>" )
+        , ( "beginDescriptionBlock", \_ _ _ _ -> "<dl class=\"scripta-description\">" )
+        , ( "endDescriptionBlock", \_ _ _ _ -> "</dl>" )
+        , ( "beginBibliographyBlock", \_ _ _ _ -> "<div class=\"scripta-bibliography\"><h2>References</h2><dl>" )
+        , ( "endBibliographyBlock", \_ _ _ _ -> "</dl></div>" )
+
+        -- List items
+        , ( "item", \_ _ body _ -> "<li>" ++ body ++ "</li>" )
+        , ( "itemList", \_ _ body _ -> body )
+        , ( "numbered", \_ _ body _ -> "<li>" ++ body ++ "</li>" )
+        , ( "desc", \_ args body _ -> descriptionItem args body )
+        , ( "descriptionItem", \_ args body _ -> descriptionItem args body )
+        , ( "bibitem", \_ args body _ -> bibitem args body )
+
+        -- Misc utility blocks
+        , ( "compact", \_ _ body _ -> body )
+        , ( "identity", \_ _ body _ -> body )
+        , ( "datatable", \_ _ body _ -> body )
+        , ( "reveal", \_ _ body _ -> body )
+        , ( "more", \_ _ body _ -> body )
+
+        -- Colored blocks
+        , ( "red", \_ _ body _ -> "<div class=\"scripta-color-red\" style=\"color:#d33\">" ++ body ++ "</div>" )
+        , ( "red2", \_ _ body _ -> "<div class=\"scripta-color-red2\" style=\"color:#a22\">" ++ body ++ "</div>" )
+        , ( "blue", \_ _ body _ -> "<div class=\"scripta-color-blue\" style=\"color:#3366cc\">" ++ body ++ "</div>" )
+
+        -- Q&A and environments
+        , ( "q", \_ _ body _ -> "<div class=\"scripta-q\"><strong>Question.</strong> " ++ body ++ "</div>" )
+        , ( "a", \_ _ body _ -> "<div class=\"scripta-a\"><strong>Answer.</strong> " ++ body ++ "</div>" )
+        , ( "env", renderEnv )
+        , ( "indent", \_ _ body _ -> "<div class=\"scripta-indent\">" ++ body ++ "</div>" )
+
+        -- Table: special-cased below (uses block.body directly), but include
+        -- a placeholder so the dispatcher reports unsupported text-body tables.
+        , ( "table", \_ _ body _ -> todoInline "table-text-body" )
+        , ( "box", \_ _ body _ -> todoBlock "box" body )
+        ]
+
+
+emptyBlock : BlockRenderer
+emptyBlock _ _ _ _ =
+    ""
+
+
+descriptionItem : List String -> String -> String
+descriptionItem args body =
+    let
+        label : String
+        label =
+            args
+                |> List.filter (\a -> not (String.contains "label:" a))
+                |> String.join " "
+    in
+    case args of
+        [] ->
+            "<dt></dt><dd>" ++ body ++ "</dd>"
+
+        _ ->
+            "<dt>" ++ escape label ++ "</dt><dd>" ++ body ++ "</dd>"
+
+
+bibitem : List String -> String -> String
+bibitem args body =
+    let
+        key : String
+        key =
+            List.head args |> Maybe.withDefault ""
+    in
+    "<dt id=\"bib-" ++ escapeAttr key ++ "\">[" ++ escape key ++ "]</dt><dd>" ++ body ++ "</dd>"
+
+
+renderSection : BlockRenderer
+renderSection _ args body _ =
+    let
+        levelStr : String
+        levelStr =
+            List.head args |> Maybe.withDefault "1"
+
+        ( tag, klass ) =
+            case levelStr of
+                "1" ->
+                    ( "h2", "scripta-section scripta-section-1" )
+
+                "2" ->
+                    ( "h3", "scripta-section scripta-section-2" )
+
+                "3" ->
+                    ( "h4", "scripta-section scripta-section-3" )
+
+                "4" ->
+                    ( "h5", "scripta-section scripta-section-4" )
+
+                _ ->
+                    ( "h6", "scripta-section scripta-section-other" )
+
+        slug : String
+        slug =
+            body
+                |> stripTags
+                |> String.words
+                |> MiniLaTeX.Util.normalizedWord
+    in
+    "<" ++ tag ++ " id=\"" ++ escapeAttr slug ++ "\" class=\"" ++ klass ++ "\">" ++ body ++ "</" ++ tag ++ ">"
+
+
+renderEnv : BlockRenderer
+renderEnv _ args body _ =
+    let
+        envName : String
+        envName =
+            args |> List.head |> Maybe.withDefault "env"
+
+        klass : String
+        klass =
+            "scripta-" ++ String.toLower envName
+    in
+    "<div class=\""
+        ++ escapeAttr klass
+        ++ "\"><span class=\"scripta-theorem-label\">"
+        ++ escape (capitalize envName)
+        ++ ".</span> "
+        ++ body
+        ++ "</div>"
+
+
+capitalize : String -> String
+capitalize str =
+    case String.uncons str of
+        Just ( c, rest ) ->
+            String.fromChar (Char.toUpper c) ++ rest
+
+        Nothing ->
+            str
+
+
+{-| Remove HTML tags from a string (rough — used only for slug generation).
+-}
+stripTags : String -> String
+stripTags str =
+    stripTagsHelp str ""
+
+
+stripTagsHelp : String -> String -> String
+stripTagsHelp input acc =
+    case String.uncons input of
+        Nothing ->
+            acc
+
+        Just ( '<', rest ) ->
+            case String.indexes ">" rest of
+                idx :: _ ->
+                    stripTagsHelp (String.dropLeft (idx + 1) rest) acc
+
+                [] ->
+                    acc
+
+        Just ( c, rest ) ->
+            stripTagsHelp rest (acc ++ String.fromChar c)
+
+
+
+-- EXPRESSION DISPATCH
+
+
+exportExprList : ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
+exportExprList mathMacroDict settings exprs =
+    List.map (exportExpr mathMacroDict settings) exprs |> String.join ""
+
+
+{-| Export a single expression to HTML.
+-}
+exportExpr : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Expression -> String
+exportExpr mathMacroDict settings expr =
+    case expr of
+        Text str _ ->
+            escape str
+
+        Fun name exps_ _ ->
+            exportFun mathMacroDict settings name exps_
+
+        VFun name body _ ->
+            exportVFun mathMacroDict name body
+
+        ExprList _ itemExprs _ ->
+            exportExprList mathMacroDict settings itemExprs
+
+
+exportFun : ETeX.MathMacros.MathMacroDict -> RenderSettings -> String -> List Expression -> String
+exportFun mathMacroDict settings name exps_ =
+    if List.member name [ "scheme", "compute", "data", "button", "newPost", "tableRow", "tableItem" ] then
+        todoInline ("inline:" ++ name)
+
+    else if name == "table" then
+        todoInline "table"
+
+    else if name == "sup" then
+        "<sup>" ++ (Render.Export.Util.getOneArg exps_ |> escape) ++ "</sup>"
+
+    else if name == "sub" then
+        "<sub>" ++ (Render.Export.Util.getOneArg exps_ |> escape) ++ "</sub>"
+
+    else if name == "bi" then
+        let
+            arg =
+                Render.Export.Util.getArgs exps_ |> String.join " " |> escape
+        in
+        "<strong><em>" ++ arg ++ "</em></strong>"
+
+    else if name == "ds" || name == "dollar" then
+        "$"
+
+    else if name == "lambda" then
+        case Generic.TextMacro.extract (Fun name exps_ { begin = 0, end = 0, index = 0, id = "" }) of
+            Just lambda ->
+                Generic.TextMacro.toString (exportExpr mathMacroDict settings) lambda
+
+            Nothing ->
+                todoInline "lambda"
+
+    else if name == "math" || name == "m" then
+        let
+            arg : String
+            arg =
+                case exps_ of
+                    [ Text str _ ] ->
+                        str
+
+                    _ ->
+                        ""
+        in
+        "\\(" ++ ETeX.Transform.transformETeX mathMacroDict arg ++ "\\)"
+
+    else if name == "chem" then
+        let
+            arg : String
+            arg =
+                case exps_ of
+                    [ Text str _ ] ->
+                        str
+
+                    _ ->
+                        ""
+        in
+        "\\(\\ce{" ++ arg ++ "}\\)"
+
+    else if name == "code" then
+        let
+            arg : String
+            arg =
+                case exps_ of
+                    [ Text str _ ] ->
+                        str
+
+                    _ ->
+                        ""
+        in
+        "<code class=\"scripta-inline-code\">" ++ escape arg ++ "</code>"
+
+    else
+        case Dict.get name macroDict of
+            Just f ->
+                f mathMacroDict settings exps_
+
+            Nothing ->
+                case Dict.get name simpleAliasDict of
+                    Just ( open, close ) ->
+                        open ++ exportExprList mathMacroDict settings exps_ ++ close
+
+                    Nothing ->
+                        -- Unknown inline function: render its children with a debug class.
+                        "<span class=\"scripta-unknown\" data-name=\""
+                            ++ escapeAttr name
+                            ++ "\">"
+                            ++ exportExprList mathMacroDict settings exps_
+                            ++ "</span>"
+
+
+exportVFun : ETeX.MathMacros.MathMacroDict -> String -> String -> String
+exportVFun mathMacroDict name body =
+    case name of
+        "math" ->
+            "\\(" ++ ETeX.Transform.transformETeX mathMacroDict body ++ "\\)"
+
+        "$" ->
+            "\\(" ++ ETeX.Transform.transformETeX mathMacroDict body ++ "\\)"
+
+        "m" ->
+            "\\(" ++ ETeX.Transform.transformETeX mathMacroDict body ++ "\\)"
+
+        "code" ->
+            "<code class=\"scripta-inline-code\">" ++ escape body ++ "</code>"
+
+        "`" ->
+            "<code class=\"scripta-inline-code\">" ++ escape body ++ "</code>"
+
+        "chem" ->
+            "\\(\\ce{" ++ body ++ "}\\)"
+
+        _ ->
+            escape body
+
+
+
+-- INLINE FUNCTION DICTIONARY
+
+
+type alias InlineRenderer =
+    ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
+
+
+{-| Inline functions that need argument introspection (links, refs, etc.)
+-}
+macroDict : Dict String InlineRenderer
+macroDict =
+    Dict.fromList
+        [ ( "link", \_ _ exprs -> link exprs )
+        , ( "ilink", \_ _ exprs -> ilink exprs )
+        , ( "wikilink", \_ _ exprs -> wikilink exprs )
+        , ( "mark", \_ _ exprs -> markwith exprs )
+        , ( "par", \_ _ _ -> "<br>" )
+        , ( "eqref", \_ _ exprs -> eqref exprs )
+        , ( "mathref", \_ _ exprs -> eqref exprs )
+        , ( "index", \_ _ _ -> "" )
+        , ( "index_", \_ _ _ -> "" )
+        , ( "image", \_ _ exprs -> imageInline exprs )
+        , ( "vspace", \_ _ exprs -> vspace exprs )
+        , ( "bolditalic", \_ _ exprs -> bolditalic exprs )
+        , ( "brackets", \_ _ exprs -> "[" ++ (Render.Export.Util.getArgs exprs |> List.map escape |> String.join " ") ++ "]" )
+        , ( "lb", \_ _ _ -> "[" )
+        , ( "rb", \_ _ _ -> "]" )
+        , ( "bt", \_ _ _ -> "`" )
+        , ( "underscore", \_ _ _ -> "_" )
+        , ( "qed", \_ _ _ -> "<span class=\"scripta-qed\">\u{00A0}\u{25A1}</span>" )
+        , ( "tags", \_ _ _ -> "" )
+        , ( "setcounter", \_ _ _ -> "" )
+        , ( "abstract", \_ _ exprs -> "<strong>Abstract.</strong> " ++ (Render.Export.Util.getArgs exprs |> List.map escape |> String.join " ") )
+        , ( "bibitem", \_ _ exprs -> "[" ++ (Render.Export.Util.getArgs exprs |> List.map escape |> String.join " ") ++ "]" )
+        , ( "cite", \_ _ exprs -> cite exprs )
+        , ( "box", \_ _ _ -> "\u{25A1}" )
+        , ( "cbox", \_ _ _ -> "\u{22A0}" )
+        , ( "rbox", \_ _ _ -> "<span style=\"color:#c33\">\u{25A1}</span>" )
+        , ( "crbox", \_ _ _ -> "<span style=\"color:#c33\">\u{22A0}</span>" )
+        , ( "fbox", \_ _ _ -> "\u{25A0}" )
+        , ( "frbox", \_ _ _ -> "<span style=\"color:#c33\">\u{25A0}</span>" )
+        , ( "xbox", \_ _ _ -> "\u{22A0}" )
+        , ( "errorHighlight", \_ _ exprs -> "<span class=\"scripta-error\">[" ++ (Render.Export.Util.getArgs exprs |> List.map escape |> String.join " ") ++ "]</span>" )
+        , ( "contents", \_ _ _ -> "" )
+        , ( "term", \_ _ exprs -> "<em>" ++ (Render.Export.Util.getArgs exprs |> List.map escape |> String.join " ") ++ "</em>" )
+        ]
+
+
+{-| Simple paired-tag aliases: name -> (open tag, close tag).
+-}
+simpleAliasDict : Dict String ( String, String )
+simpleAliasDict =
+    Dict.fromList
+        [ ( "italic", ( "<em>", "</em>" ) )
+        , ( "i", ( "<em>", "</em>" ) )
+        , ( "bold", ( "<strong>", "</strong>" ) )
+        , ( "b", ( "<strong>", "</strong>" ) )
+        , ( "strong", ( "<strong>", "</strong>" ) )
+        , ( "emph", ( "<em>", "</em>" ) )
+        , ( "em", ( "<em>", "</em>" ) )
+        , ( "large", ( "<span style=\"font-size:1.2em\">", "</span>" ) )
+        , ( "red", ( "<span style=\"color:#d33\">", "</span>" ) )
+        , ( "blue", ( "<span style=\"color:#3366cc\">", "</span>" ) )
+        , ( "green", ( "<span style=\"color:#3a3\">", "</span>" ) )
+        , ( "pink", ( "<span style=\"color:#e6a\">", "</span>" ) )
+        , ( "magenta", ( "<span style=\"color:#c3c\">", "</span>" ) )
+        , ( "violet", ( "<span style=\"color:#83c\">", "</span>" ) )
+        , ( "gray", ( "<span style=\"color:#888\">", "</span>" ) )
+        , ( "comment", ( "<span style=\"color:#3366cc\">", "</span>" ) )
+        , ( "strike", ( "<s>", "</s>" ) )
+        , ( "u", ( "<u>", "</u>" ) )
+        , ( "underline", ( "<u>", "</u>" ) )
+        , ( "group", ( "", "" ) )
+        ]
+
+
+
+-- INLINE HELPERS
+
+
+link : List Expression -> String
+link exprs =
+    let
+        args =
+            Render.Export.Util.getTwoArgs exprs
+    in
+    "<a class=\"scripta-link\" href=\""
+        ++ escapeAttr args.second
+        ++ "\">"
+        ++ escape args.first
+        ++ "</a>"
+
+
+ilink : List Expression -> String
+ilink exprs =
+    let
+        args =
+            Render.Export.Util.getTwoArgs exprs
+    in
+    "<a class=\"scripta-link\" href=\"https://scripta.io/s/"
+        ++ escapeAttr args.second
+        ++ "\">"
+        ++ escape args.first
+        ++ "</a>"
+
+
+wikilink : List Expression -> String
+wikilink exprs =
+    -- Treat the first text token as both link text and slug.
+    case exprs of
+        (Text first _) :: _ ->
+            "<a class=\"scripta-link\" href=\"https://scripta.io/s/"
+                ++ escapeAttr (String.trim first)
+                ++ "\">"
+                ++ escape first
+                ++ "</a>"
+
+        _ ->
+            ""
+
+
+markwith : List Expression -> String
+markwith exprs =
+    -- Produce a span with an id derived from the mark argument so anchors work.
+    let
+        arg : String
+        arg =
+            Render.Export.Util.getOneArg exprs |> String.trim
+    in
+    "<span id=\"" ++ escapeAttr arg ++ "\"></span>"
+
+
+eqref : List Expression -> String
+eqref exprs =
+    let
+        arg : String
+        arg =
+            Render.Export.Util.getOneArg exprs |> String.trim
+    in
+    "<a class=\"scripta-link\" href=\"#eq-" ++ escapeAttr arg ++ "\">(" ++ escape arg ++ ")</a>"
+
+
+cite : List Expression -> String
+cite exprs =
+    case exprs of
+        [ Text key _ ] ->
+            "<a class=\"scripta-link\" href=\"#bib-" ++ escapeAttr (String.trim key) ++ "\">[" ++ escape (String.trim key) ++ "]</a>"
+
+        _ ->
+            ""
+
+
+vspace : List Expression -> String
+vspace exprs =
+    let
+        ptStr : String
+        ptStr =
+            Render.Export.Util.getOneArg exprs
+                |> String.toFloat
+                |> Maybe.withDefault 0
+                |> (\x -> x * 0.25)
+                |> String.fromFloat
+    in
+    "<div style=\"height:" ++ ptStr ++ "em\"></div>"
+
+
+bolditalic : List Expression -> String
+bolditalic exprs =
+    let
+        arg : String
+        arg =
+            Render.Export.Util.getArgs exprs |> List.map escape |> String.join " "
+    in
+    "<strong><em>" ++ arg ++ "</em></strong>"
+
+
+imageInline : List Expression -> String
+imageInline exprs =
+    let
+        url : String
+        url =
+            Render.Export.Util.getOneArg exprs
+    in
+    "<img class=\"scripta-image\" src=\"" ++ escapeAttr url ++ "\" alt=\"\">"
+
+
+
+-- ESCAPING
+
+
+{-| Escape a string for HTML text content.
+-}
+escape : String -> String
+escape =
+    String.replace "&" "&amp;"
+        >> String.replace "<" "&lt;"
+        >> String.replace ">" "&gt;"
+
+
+{-| Escape a string for use inside a double-quoted HTML attribute.
+-}
+escapeAttr : String -> String
+escapeAttr =
+    String.replace "&" "&amp;"
+        >> String.replace "\"" "&quot;"
+        >> String.replace "<" "&lt;"
+        >> String.replace ">" "&gt;"

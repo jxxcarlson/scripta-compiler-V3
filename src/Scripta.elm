@@ -5,6 +5,7 @@ module Scripta exposing
     , Document
     , Event(..), Output
     , parse, reparse, render, compile, mapEvent
+    , exportHtml
     )
 
 {-| Public API for the Scripta compiler.
@@ -23,11 +24,20 @@ module Scripta exposing
 @docs Event, Output
 @docs parse, reparse, render, compile, mapEvent
 
+
+# Static export
+
+@docs exportHtml
+
 -}
 
 import Dict
+import Either
 import Html exposing (Html)
 import Parser.Forest
+import Render.Export.Html
+import Render.Settings
+import Render.Types
 import Scripta.Internal as Internal exposing (Document(..), Options(..))
 import V3.Compiler
 import V3.Types
@@ -293,3 +303,27 @@ toEventOutput output =
     , toc = List.map (Html.map msgToEvent) output.toc
     , banner = Maybe.map (Html.map msgToEvent) output.banner
     }
+
+
+{-| Export a parsed Document as a complete standalone HTML document (a single String).
+
+The output is meant for static viewing or printing: it includes a `<head>`
+that pulls KaTeX from a CDN for math rendering and a default stylesheet,
+plus a `<body>` containing the title, optional TOC, and rendered content.
+None of the interactive editor-sync handlers are included.
+
+-}
+exportHtml : Options -> Document -> String
+exportHtml _ (Document data) =
+    let
+        publicationData : Render.Types.PublicationData
+        publicationData =
+            { title = ""
+            , authorList = []
+            , kind = Render.Types.DKArticle
+            , date = Either.Right ""
+            }
+    in
+    Render.Export.Html.export publicationData
+        Render.Settings.defaultRenderSettings
+        data.forest

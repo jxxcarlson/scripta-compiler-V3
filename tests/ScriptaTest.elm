@@ -119,4 +119,38 @@ suite =
                         |> List.isEmpty
                         |> Expect.equal False
             ]
+        , describe "exportHtml"
+            [ test "produces a complete HTML document" <|
+                \_ ->
+                    let
+                        html =
+                            Scripta.parse Scripta.defaultOptions "Hello world."
+                                |> Scripta.exportHtml Scripta.defaultOptions
+                    in
+                    Expect.all
+                        [ \s -> Expect.equal True (String.startsWith "<!DOCTYPE html>" s)
+                        , \s -> Expect.equal True (String.contains "Hello world." s)
+                        , \s -> Expect.equal True (String.contains "</html>" s)
+                        , \s -> Expect.equal True (String.contains "katex" s)
+                        ]
+                        html
+            , test "renders a section as an <h2>" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "| section 1\nIntro\n\nBody text."
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> String.contains "<h2"
+                        |> Expect.equal True
+            , test "escapes HTML-special characters in text" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "5 < 6 and 6 > 5"
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> (\s -> String.contains "&lt;" s && String.contains "&gt;" s)
+                        |> Expect.equal True
+            , test "wraps inline math in KaTeX-compatible delimiters" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "An equation $x^2 + y^2 = z^2$."
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> String.contains "\\(x^2 + y^2 = z^2\\)"
+                        |> Expect.equal True
+            ]
         ]
