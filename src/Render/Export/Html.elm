@@ -304,6 +304,32 @@ body {
 .scripta-banner img { max-width: 100%; }
 .scripta-q { font-weight: 600; }
 .scripta-a { }
+.scripta-table {
+  border-collapse: collapse;
+  margin: 1em auto;
+}
+.scripta-table th, .scripta-table td {
+  padding: 4px 12px;
+  border-bottom: 1px solid #ddd;
+}
+.scripta-table th { border-bottom: 2px solid #333; text-align: left; }
+.scripta-table-caption, .scripta-table-title { font-size: 0.9em; color: #555; font-style: italic; margin-top: 0.4em; caption-side: bottom; }
+.scripta-box {
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 0.8em 1em;
+  margin: 1em 0;
+}
+.scripta-box-title { font-weight: 600; margin-bottom: 0.4em; }
+.scripta-abstract { margin: 1em 2em; font-size: 0.95em; }
+.scripta-abstract-label { font-weight: 600; margin-bottom: 0.3em; }
+.scripta-iframe { display: block; margin: 1em auto; max-width: 100%; }
+.scripta-svg { display: block; margin: 1em auto; text-align: center; }
+.scripta-qed { float: right; }
+.scripta-block-label, .scripta-theorem-label { font-weight: 600; }
+.scripta-center { margin: 0.8em 0; }
+.scripta-paragraph-block { margin: 0.7em 0 0.7em 2em; }
 """
 
 
@@ -621,6 +647,12 @@ exportBlock mathMacroDict settings block =
                     else
                         paragraphTag rendered
 
+        Ordinary "table" ->
+            exportXTable mathMacroDict settings block
+
+        Ordinary "banner" ->
+            exportBanner block
+
         Ordinary name ->
             case block.body of
                 Left _ ->
@@ -636,8 +668,10 @@ exportBlock mathMacroDict settings block =
                             f settings block.args body block.properties
 
                         Nothing ->
-                            -- Fallback for unscaffolded ordinary blocks.
-                            genericBlock name body
+                            -- Fallback for unknown ordinary blocks: render as
+                            -- a theorem-like environment with the block name
+                            -- as a bold label.
+                            namedEnvironment name body
 
         Verbatim name ->
             case block.body of
@@ -653,11 +687,16 @@ paragraphTag body =
     "<p class=\"scripta-paragraph\">" ++ body ++ "</p>"
 
 
-genericBlock : String -> String -> String
-genericBlock name body =
+{-| Render an unknown ordinary block as a theorem-like environment with the
+block name as a bold label.
+-}
+namedEnvironment : String -> String -> String
+namedEnvironment name body =
     "<div class=\"scripta-block scripta-block-"
         ++ escapeAttr name
-        ++ "\">"
+        ++ "\"><span class=\"scripta-block-label\">"
+        ++ escape (capitalize name)
+        ++ ".</span> "
         ++ body
         ++ "</div>"
 
@@ -667,7 +706,7 @@ genericBlock name body =
 
 
 exportVerbatimBlock : ETeX.MathMacros.MathMacroDict -> RenderSettings -> String -> String -> ExpressionBlock -> String
-exportVerbatimBlock mathMacroDict _ name str block =
+exportVerbatimBlock mathMacroDict settings name str block =
     case name of
         "math" ->
             displayMath mathMacroDict block str
@@ -688,20 +727,17 @@ exportVerbatimBlock mathMacroDict _ name str block =
             "<pre class=\"scripta-code-block scripta-verse\">" ++ escape str ++ "</pre>"
 
         "tabular" ->
-            -- TODO: real tabular rendering
-            todoBlock "verbatim:tabular" str
+            renderTabularBlock block str
 
         "csvtable" ->
-            -- TODO: real CSV table rendering
-            todoBlock "verbatim:csvtable" str
+            renderCsvTable block str
 
         "chem" ->
             "<div class=\"scripta-math-display\">\\[\\ce{" ++ str ++ "}\\]</div>"
 
         "mathmacros" ->
-            -- Emit hidden LaTeX \newcommand definitions so KaTeX's auto-render
-            -- picks them up via \gdef-style macros. KaTeX supports \newcommand
-            -- when wrapped in a math block.
+            -- Hidden LaTeX \newcommand definitions so KaTeX auto-render picks
+            -- them up. KaTeX supports \newcommand inside a math block.
             let
                 macros : String
                 macros =
@@ -716,7 +752,14 @@ exportVerbatimBlock mathMacroDict _ name str block =
             ""
 
         "image" ->
-            todoBlock "verbatim:image" str
+            renderVerbatimImage settings block str
+
+        "svg" ->
+            -- The body is raw SVG; pass it through unchanged inside a wrapper.
+            "<div class=\"scripta-svg\">" ++ str ++ "</div>"
+
+        "iframe" ->
+            renderIframeBlock block str
 
         "quiver" ->
             todoBlock "verbatim:quiver" str
@@ -727,10 +770,22 @@ exportVerbatimBlock mathMacroDict _ name str block =
         "load-files" ->
             ""
 
+        "load-data" ->
+            ""
+
         "docinfo" ->
             ""
 
         "hide" ->
+            ""
+
+        "settings" ->
+            ""
+
+        "setup" ->
+            ""
+
+        "include" ->
             ""
 
         _ ->
@@ -844,80 +899,172 @@ type alias BlockRenderer =
 blockDict : ETeX.MathMacros.MathMacroDict -> Dict String BlockRenderer
 blockDict mathMacroDict =
     Dict.fromList
-        [ -- Suppressed metadata blocks: rendered separately in the title block.
-          ( "title", emptyBlock )
-        , ( "subtitle", emptyBlock )
-        , ( "author", emptyBlock )
-        , ( "date", emptyBlock )
-        , ( "contents", emptyBlock )
-        , ( "hide", emptyBlock )
-        , ( "tags", emptyBlock )
-        , ( "docinfo", emptyBlock )
-        , ( "banner", emptyBlock )
-        , ( "set-key", emptyBlock )
-        , ( "endnotes", emptyBlock )
-        , ( "index", emptyBlock )
-        , ( "references", emptyBlock )
-        , ( "setcounter", emptyBlock )
-        , ( "collection", emptyBlock )
-        , ( "document", emptyBlock )
-        , ( "type", emptyBlock )
-        , ( "runninghead_", emptyBlock )
-        , ( "shiftandsetcounter", emptyBlock )
-        , ( "visibleBanner", emptyBlock )
-        , ( "bibliography", emptyBlock )
-        , ( "texComment", emptyBlock )
-        , ( "mathmacros", \_ _ _ _ -> "" )
+        ([ -- Suppressed metadata blocks: rendered separately in the title block.
+           ( "title", emptyBlock )
+         , ( "subtitle", emptyBlock )
+         , ( "author", emptyBlock )
+         , ( "date", emptyBlock )
+         , ( "contents", emptyBlock )
+         , ( "hide", emptyBlock )
+         , ( "comment", emptyBlock )
+         , ( "tags", emptyBlock )
+         , ( "docinfo", emptyBlock )
+         , ( "set-key", emptyBlock )
+         , ( "endnotes", emptyBlock )
+         , ( "index", emptyBlock )
+         , ( "references", emptyBlock )
+         , ( "setcounter", emptyBlock )
+         , ( "collection", emptyBlock )
+         , ( "document", emptyBlock )
+         , ( "type", emptyBlock )
+         , ( "runninghead_", emptyBlock )
+         , ( "shiftandsetcounter", emptyBlock )
+         , ( "visibleBanner", emptyBlock )
+         , ( "bibliography", emptyBlock )
+         , ( "texComment", emptyBlock )
+         , ( "book", emptyBlock )
+         , ( "mathmacros", \_ _ _ _ -> "" )
 
-        -- Headings
-        , ( "chapter", \_ _ body _ -> "<h2 class=\"scripta-chapter\">" ++ body ++ "</h2>" )
-        , ( "section", renderSection )
-        , ( "section*", \_ _ body _ -> "<h3 class=\"scripta-section scripta-section-unnumbered\">" ++ body ++ "</h3>" )
-        , ( "subheading", \_ _ body _ -> "<div class=\"scripta-subheading\">" ++ body ++ "</div>" )
-        , ( "smallsubheading", \_ _ body _ -> "<div class=\"scripta-smallsubheading\">" ++ body ++ "</div>" )
-        , ( "sh", \_ _ body _ -> "<div class=\"scripta-subheading\">" ++ body ++ "</div>" )
+         -- Headings
+         , ( "chapter", \_ _ body _ -> "<h1 class=\"scripta-chapter\">" ++ body ++ "</h1>" )
+         , ( "section", renderSection )
+         , ( "section*", \_ _ body _ -> "<h3 class=\"scripta-section scripta-section-unnumbered\">" ++ body ++ "</h3>" )
+         , ( "subheading", \_ _ body _ -> "<div class=\"scripta-subheading\">" ++ body ++ "</div>" )
+         , ( "smallsubheading", \_ _ body _ -> "<div class=\"scripta-smallsubheading\">" ++ body ++ "</div>" )
+         , ( "sh", \_ _ body _ -> "<div class=\"scripta-subheading\">" ++ body ++ "</div>" )
 
-        -- List enclosure (begin/end pairs injected by encloseLists)
-        , ( "beginBlock", \_ _ _ _ -> "<ul class=\"scripta-itemize\">" )
-        , ( "endBlock", \_ _ _ _ -> "</ul>" )
-        , ( "beginNumberedBlock", \_ _ _ _ -> "<ol class=\"scripta-enumerate\">" )
-        , ( "endNumberedBlock", \_ _ _ _ -> "</ol>" )
-        , ( "beginDescriptionBlock", \_ _ _ _ -> "<dl class=\"scripta-description\">" )
-        , ( "endDescriptionBlock", \_ _ _ _ -> "</dl>" )
-        , ( "beginBibliographyBlock", \_ _ _ _ -> "<div class=\"scripta-bibliography\"><h2>References</h2><dl>" )
-        , ( "endBibliographyBlock", \_ _ _ _ -> "</dl></div>" )
+         -- List enclosure (begin/end pairs injected by encloseLists)
+         , ( "beginBlock", \_ _ _ _ -> "<ul class=\"scripta-itemize\">" )
+         , ( "endBlock", \_ _ _ _ -> "</ul>" )
+         , ( "beginNumberedBlock", \_ _ _ _ -> "<ol class=\"scripta-enumerate\">" )
+         , ( "endNumberedBlock", \_ _ _ _ -> "</ol>" )
+         , ( "beginDescriptionBlock", \_ _ _ _ -> "<dl class=\"scripta-description\">" )
+         , ( "endDescriptionBlock", \_ _ _ _ -> "</dl>" )
+         , ( "beginBibliographyBlock", \_ _ _ _ -> "<div class=\"scripta-bibliography\"><h2>References</h2><dl>" )
+         , ( "endBibliographyBlock", \_ _ _ _ -> "</dl></div>" )
 
-        -- List items
-        , ( "item", \_ _ body _ -> "<li>" ++ body ++ "</li>" )
-        , ( "itemList", \_ _ body _ -> body )
-        , ( "numbered", \_ _ body _ -> "<li>" ++ body ++ "</li>" )
-        , ( "desc", \_ args body _ -> descriptionItem args body )
-        , ( "descriptionItem", \_ args body _ -> descriptionItem args body )
-        , ( "bibitem", \_ args body _ -> bibitem args body )
+         -- List items
+         , ( "item", \_ _ body _ -> "<li>" ++ body ++ "</li>" )
+         , ( "itemList", \_ _ body _ -> body )
+         , ( "numbered", \_ _ body _ -> "<li>" ++ body ++ "</li>" )
+         , ( "desc", \_ args body _ -> descriptionItem args body )
+         , ( "descriptionItem", \_ args body _ -> descriptionItem args body )
+         , ( "bibitem", \_ args body _ -> bibitem args body )
 
-        -- Misc utility blocks
-        , ( "compact", \_ _ body _ -> body )
-        , ( "identity", \_ _ body _ -> body )
-        , ( "datatable", \_ _ body _ -> body )
-        , ( "reveal", \_ _ body _ -> body )
-        , ( "more", \_ _ body _ -> body )
+         -- Layout and pass-through blocks
+         , ( "compact", \_ _ body _ -> body )
+         , ( "identity", \_ _ body _ -> body )
+         , ( "datatable", \_ _ body _ -> body )
+         , ( "reveal", \_ _ body _ -> body )
+         , ( "more", \_ _ body _ -> body )
+         , ( "paragraph", \_ _ body _ -> "<div class=\"scripta-paragraph-block\">" ++ body ++ "</div>" )
+         , ( "indent", \_ _ body _ -> "<div class=\"scripta-indent\">" ++ body ++ "</div>" )
+         , ( "center", \_ _ body _ -> "<div class=\"scripta-center\" style=\"text-align:center\">" ++ body ++ "</div>" )
+         , ( "quotation", renderQuotationBlock )
+         , ( "quote", renderQuotationBlock )
+         , ( "abstract", renderAbstractBlock )
 
-        -- Colored blocks
-        , ( "red", \_ _ body _ -> "<div class=\"scripta-color-red\" style=\"color:#d33\">" ++ body ++ "</div>" )
-        , ( "red2", \_ _ body _ -> "<div class=\"scripta-color-red2\" style=\"color:#a22\">" ++ body ++ "</div>" )
-        , ( "blue", \_ _ body _ -> "<div class=\"scripta-color-blue\" style=\"color:#3366cc\">" ++ body ++ "</div>" )
+         -- Colored blocks
+         , ( "red", \_ _ body _ -> "<div class=\"scripta-color-red\" style=\"color:#d33\">" ++ body ++ "</div>" )
+         , ( "red2", \_ _ body _ -> "<div class=\"scripta-color-red2\" style=\"color:#a22\">" ++ body ++ "</div>" )
+         , ( "blue", \_ _ body _ -> "<div class=\"scripta-color-blue\" style=\"color:#3366cc\">" ++ body ++ "</div>" )
 
-        -- Q&A and environments
-        , ( "q", \_ _ body _ -> "<div class=\"scripta-q\"><strong>Question.</strong> " ++ body ++ "</div>" )
-        , ( "a", \_ _ body _ -> "<div class=\"scripta-a\"><strong>Answer.</strong> " ++ body ++ "</div>" )
-        , ( "env", renderEnv )
-        , ( "indent", \_ _ body _ -> "<div class=\"scripta-indent\">" ++ body ++ "</div>" )
+         -- Q&A and environments
+         , ( "q", \_ _ body _ -> "<div class=\"scripta-q\"><strong>Question.</strong> " ++ body ++ "</div>" )
+         , ( "a", \_ _ body _ -> "<div class=\"scripta-a\"><strong>Answer.</strong> " ++ body ++ "</div>" )
+         , ( "env", renderEnv )
+         , ( "box", renderBoxBlock )
 
-        -- Table: special-cased below (uses block.body directly), but include
-        -- a placeholder so the dispatcher reports unsupported text-body tables.
-        , ( "table", \_ _ body _ -> todoInline "table-text-body" )
-        , ( "box", \_ _ body _ -> todoBlock "box" body )
-        ]
+         -- Proof: italic "Proof." label, QED at end
+         , ( "proof", \_ _ body _ -> "<div class=\"scripta-proof\">" ++ body ++ " <span class=\"scripta-qed\">\u{220E}</span></div>" )
+
+         -- ordinary "table" is handled before blockDict lookup; include a
+         -- placeholder so non-standard table shapes still produce some output.
+         , ( "table", \_ _ body _ -> "<div class=\"scripta-table-fallback\">" ++ body ++ "</div>" )
+         ]
+            ++ List.map (\name -> ( name, renderTheoremLike name )) theoremLikeNames
+        )
+
+
+theoremLikeNames : List String
+theoremLikeNames =
+    [ "theorem", "lemma", "corollary", "proposition", "definition"
+    , "remark", "note", "example", "exercise", "problem", "question"
+    , "axiom"
+    ]
+
+
+renderTheoremLike : String -> BlockRenderer
+renderTheoremLike name _ _ body properties =
+    let
+        number : String
+        number =
+            case Dict.get "label" properties of
+                Just l ->
+                    if l == "" then
+                        ""
+
+                    else
+                        " " ++ escape l
+
+                Nothing ->
+                    ""
+
+        title : String
+        title =
+            case Dict.get "title" properties of
+                Just t ->
+                    if t == "" then
+                        ""
+
+                    else
+                        " (" ++ escape t ++ ")"
+
+                Nothing ->
+                    ""
+    in
+    "<div class=\"scripta-"
+        ++ name
+        ++ "\"><span class=\"scripta-theorem-label\">"
+        ++ escape (capitalize name)
+        ++ number
+        ++ title
+        ++ ".</span> "
+        ++ body
+        ++ "</div>"
+
+
+renderQuotationBlock : BlockRenderer
+renderQuotationBlock _ _ body _ =
+    "<blockquote class=\"scripta-quote\">" ++ body ++ "</blockquote>"
+
+
+renderAbstractBlock : BlockRenderer
+renderAbstractBlock _ _ body _ =
+    "<div class=\"scripta-abstract\"><div class=\"scripta-abstract-label\">Abstract</div>" ++ body ++ "</div>"
+
+
+renderBoxBlock : BlockRenderer
+renderBoxBlock _ args body properties =
+    let
+        title : String
+        title =
+            case Dict.get "title" properties of
+                Just t ->
+                    t
+
+                Nothing ->
+                    String.join " " args
+
+        titleHtml : String
+        titleHtml =
+            if String.trim title == "" then
+                ""
+
+            else
+                "<div class=\"scripta-box-title\">" ++ escape title ++ "</div>"
+    in
+    "<div class=\"scripta-box\">" ++ titleHtml ++ "<div class=\"scripta-box-body\">" ++ body ++ "</div></div>"
 
 
 emptyBlock : BlockRenderer
@@ -1070,11 +1217,18 @@ exportExpr mathMacroDict settings expr =
 
 exportFun : ETeX.MathMacros.MathMacroDict -> RenderSettings -> String -> List Expression -> String
 exportFun mathMacroDict settings name exps_ =
-    if List.member name [ "scheme", "compute", "data", "button", "newPost", "tableRow", "tableItem" ] then
+    if List.member name [ "scheme", "compute", "data", "button", "newPost" ] then
         todoInline ("inline:" ++ name)
 
+    else if name == "tableRow" || name == "row" then
+        -- Stripped of context; render children inline.
+        exportExprList mathMacroDict settings exps_
+
+    else if name == "tableItem" || name == "cell" then
+        exportExprList mathMacroDict settings exps_
+
     else if name == "table" then
-        todoInline "table"
+        exportInlineTable mathMacroDict settings exps_
 
     else if name == "sup" then
         "<sup>" ++ (Render.Export.Util.getOneArg exps_ |> escape) ++ "</sup>"
@@ -1368,6 +1522,468 @@ imageInline exprs =
             Render.Export.Util.getOneArg exprs
     in
     "<img class=\"scripta-image\" src=\"" ++ escapeAttr url ++ "\" alt=\"\">"
+
+
+
+-- TABLES
+
+
+{-| Render an inline `[table [tableRow [tableItem ...]]]` or
+`[table [row [cell ...]]]` expression to an HTML `<table>`.
+-}
+exportInlineTable : ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
+exportInlineTable mathMacroDict settings rowExprs =
+    let
+        isRow : Expression -> Bool
+        isRow expr =
+            case expr of
+                Fun "tableRow" _ _ ->
+                    True
+
+                Fun "row" _ _ ->
+                    True
+
+                _ ->
+                    False
+
+        cellsOf : Expression -> List Expression
+        cellsOf expr =
+            case expr of
+                Fun "tableRow" cells _ ->
+                    List.filter isCellLike cells
+
+                Fun "row" cells _ ->
+                    List.filter isCellLike cells
+
+                _ ->
+                    []
+
+        isCellLike : Expression -> Bool
+        isCellLike expr =
+            case expr of
+                Fun "tableItem" _ _ ->
+                    True
+
+                Fun "cell" _ _ ->
+                    True
+
+                _ ->
+                    False
+
+        cellContents : Expression -> List Expression
+        cellContents expr =
+            case expr of
+                Fun "tableItem" exprs _ ->
+                    exprs
+
+                Fun "cell" exprs _ ->
+                    exprs
+
+                _ ->
+                    []
+
+        rows : List (List Expression)
+        rows =
+            rowExprs
+                |> List.filter isRow
+                |> List.map cellsOf
+
+        renderCell : Expression -> String
+        renderCell cell =
+            "<td class=\"scripta-cell\">" ++ exportExprList mathMacroDict settings (cellContents cell) ++ "</td>"
+
+        renderRow : List Expression -> String
+        renderRow cells =
+            "<tr>" ++ String.concat (List.map renderCell cells) ++ "</tr>"
+    in
+    case rows of
+        [] ->
+            ""
+
+        _ ->
+            "<table class=\"scripta-table\">" ++ String.concat (List.map renderRow rows) ++ "</table>"
+
+
+{-| Render an `Ordinary "table"` block whose body has `ExprList`-shaped rows
+and cells (the "xtable" form produced by the parser for `| table` blocks).
+-}
+exportXTable : ETeX.MathMacros.MathMacroDict -> RenderSettings -> ExpressionBlock -> String
+exportXTable mathMacroDict settings block =
+    let
+        widths : List Int
+        widths =
+            Dict.get "widths" block.properties
+                |> Maybe.withDefault ""
+                |> String.split ","
+                |> List.map String.trim
+                |> List.filterMap String.toInt
+
+        formats : List String
+        formats =
+            Dict.get "format" block.properties
+                |> Maybe.withDefault ""
+                |> String.toList
+                |> List.map (String.fromChar >> formatToTextAlign)
+
+        captionText : Maybe String
+        captionText =
+            Dict.get "caption" block.properties
+
+        tableNumber : Maybe String
+        tableNumber =
+            Dict.get "table" block.properties
+
+        captionLine : Maybe String
+        captionLine =
+            case ( tableNumber, captionText ) of
+                ( Just n, Just cap ) ->
+                    Just ("Table " ++ n ++ ". " ++ cap)
+
+                ( Just n, Nothing ) ->
+                    Just ("Table " ++ n)
+
+                ( Nothing, Just cap ) ->
+                    Just cap
+
+                ( Nothing, Nothing ) ->
+                    Nothing
+
+        renderCell : Int -> Expression -> String
+        renderCell index cell =
+            let
+                widthAttr : String
+                widthAttr =
+                    case List.Extra.getAt index widths of
+                        Just w ->
+                            " style=\"width:" ++ String.fromInt w ++ "px"
+
+                        Nothing ->
+                            " style=\""
+
+                alignAttr : String
+                alignAttr =
+                    case List.Extra.getAt index formats of
+                        Just a ->
+                            "text-align:" ++ a ++ ";"
+
+                        Nothing ->
+                            ""
+
+                content : String
+                content =
+                    case cell of
+                        ExprList _ exprs _ ->
+                            exportExprList mathMacroDict settings exprs
+
+                        _ ->
+                            exportExpr mathMacroDict settings cell
+            in
+            "<td" ++ widthAttr ++ alignAttr ++ "\">" ++ content ++ "</td>"
+
+        renderRow : Expression -> String
+        renderRow row =
+            case row of
+                ExprList _ cells _ ->
+                    "<tr>" ++ String.concat (List.indexedMap renderCell cells) ++ "</tr>"
+
+                _ ->
+                    ""
+
+        rowsHtml : String
+        rowsHtml =
+            case block.body of
+                Right rows ->
+                    String.concat (List.map renderRow rows)
+
+                Left _ ->
+                    ""
+
+        captionHtml : String
+        captionHtml =
+            case captionLine of
+                Just txt ->
+                    "<figcaption class=\"scripta-table-caption\">" ++ escape txt ++ "</figcaption>"
+
+                Nothing ->
+                    ""
+    in
+    if rowsHtml == "" then
+        ""
+
+    else
+        "<figure class=\"scripta-figure\"><table class=\"scripta-table\">"
+            ++ rowsHtml
+            ++ "</table>"
+            ++ captionHtml
+            ++ "</figure>"
+
+
+formatToTextAlign : String -> String
+formatToTextAlign fmt =
+    case fmt of
+        "l" ->
+            "left"
+
+        "r" ->
+            "right"
+
+        "c" ->
+            "center"
+
+        _ ->
+            "left"
+
+
+
+-- VERBATIM IMAGE / BANNER / TABULAR / CSV / IFRAME
+
+
+{-| Render a `| banner` block: emit an `<img>` whose src is the block's first
+line.
+-}
+exportBanner : ExpressionBlock -> String
+exportBanner block =
+    let
+        src : String
+        src =
+            String.trim block.firstLine
+    in
+    if src == "" then
+        ""
+
+    else
+        "<div class=\"scripta-banner\"><img src=\"" ++ escapeAttr src ++ "\" alt=\"\"></div>"
+
+
+{-| Render a `| image` verbatim block. The body is the URL; properties carry
+caption, width, figure number, description, float.
+-}
+renderVerbatimImage : RenderSettings -> ExpressionBlock -> String -> String
+renderVerbatimImage _ block str =
+    let
+        src : String
+        src =
+            String.trim str
+
+        description : String
+        description =
+            Dict.get "description" block.properties |> Maybe.withDefault ""
+
+        widthStyle : String
+        widthStyle =
+            case Dict.get "width" block.properties of
+                Just "fill" ->
+                    "width:100%"
+
+                Just "to-edges" ->
+                    "width:100%"
+
+                Just w ->
+                    case String.toInt w of
+                        Just _ ->
+                            "max-width:" ++ w ++ "px"
+
+                        Nothing ->
+                            ""
+
+                Nothing ->
+                    ""
+
+        floatStyle : String
+        floatStyle =
+            case Dict.get "float" block.properties of
+                Just "left" ->
+                    "float:left;margin:0 1em 0.5em 0"
+
+                Just "right" ->
+                    "float:right;margin:0 0 0.5em 1em"
+
+                _ ->
+                    ""
+
+        figureStyle : String
+        figureStyle =
+            if floatStyle == "" then
+                ""
+
+            else
+                " style=\"" ++ floatStyle ++ "\""
+
+        imgStyle : String
+        imgStyle =
+            if widthStyle == "" then
+                ""
+
+            else
+                " style=\"" ++ widthStyle ++ "\""
+
+        captionHtml : String
+        captionHtml =
+            case ( Dict.get "figure" block.properties, Dict.get "caption" block.properties ) of
+                ( Nothing, Nothing ) ->
+                    ""
+
+                ( Nothing, Just cap ) ->
+                    "<figcaption>" ++ escape cap ++ "</figcaption>"
+
+                ( Just fig, Nothing ) ->
+                    "<figcaption>Figure " ++ escape fig ++ "</figcaption>"
+
+                ( Just fig, Just cap ) ->
+                    "<figcaption><strong>Figure " ++ escape fig ++ ".</strong> " ++ escape cap ++ "</figcaption>"
+    in
+    "<figure class=\"scripta-figure\""
+        ++ figureStyle
+        ++ "><img class=\"scripta-image\" src=\""
+        ++ escapeAttr src
+        ++ "\" alt=\""
+        ++ escapeAttr description
+        ++ "\""
+        ++ imgStyle
+        ++ ">"
+        ++ captionHtml
+        ++ "</figure>"
+
+
+{-| Render a `| tabular` verbatim block. Each line is a row; cells are
+separated by `&`; lines may end with `\\\\`. Args specify column alignments
+(e.g. `l c r`).
+-}
+renderTabularBlock : ExpressionBlock -> String -> String
+renderTabularBlock block str =
+    let
+        formats : List String
+        formats =
+            block.args |> List.map (String.toLower >> formatToTextAlign)
+
+        stripBackslashes : String -> String
+        stripBackslashes line =
+            if String.endsWith "\\\\" line then
+                String.dropRight 2 line |> String.trimRight
+
+            else
+                line
+
+        rowsRaw : List (List String)
+        rowsRaw =
+            str
+                |> String.lines
+                |> List.map (String.trim >> stripBackslashes)
+                |> List.filter (\line -> line /= "")
+                |> List.map (\line -> String.split "&" line |> List.map String.trim)
+
+        renderCell : Int -> String -> String
+        renderCell index cell =
+            let
+                alignAttr : String
+                alignAttr =
+                    case List.Extra.getAt index formats of
+                        Just a ->
+                            " style=\"text-align:" ++ a ++ "\""
+
+                        Nothing ->
+                            ""
+            in
+            "<td" ++ alignAttr ++ ">" ++ escape cell ++ "</td>"
+
+        renderRow : List String -> String
+        renderRow cells =
+            "<tr>" ++ String.concat (List.indexedMap renderCell cells) ++ "</tr>"
+    in
+    if rowsRaw == [] then
+        ""
+
+    else
+        "<table class=\"scripta-table\">" ++ String.concat (List.map renderRow rowsRaw) ++ "</table>"
+
+
+{-| Render a `| csvtable` verbatim block. First line is the header; remaining
+lines are data rows. Cells are comma-separated.
+-}
+renderCsvTable : ExpressionBlock -> String -> String
+renderCsvTable block str =
+    let
+        parseRow : String -> List String
+        parseRow line =
+            String.split "," line |> List.map String.trim
+
+        rows : List (List String)
+        rows =
+            str
+                |> String.lines
+                |> List.filter (\line -> String.trim line /= "")
+                |> List.map parseRow
+
+        ( header, body ) =
+            case rows of
+                h :: rest ->
+                    ( h, rest )
+
+                [] ->
+                    ( [], [] )
+
+        title : String
+        title =
+            case Dict.get "title" block.properties of
+                Just t ->
+                    "<caption class=\"scripta-table-title\">" ++ escape t ++ "</caption>"
+
+                Nothing ->
+                    ""
+
+        renderHeaderRow : List String -> String
+        renderHeaderRow cells =
+            "<thead><tr>"
+                ++ String.concat (List.map (\c -> "<th>" ++ escape c ++ "</th>") cells)
+                ++ "</tr></thead>"
+
+        renderRow : List String -> String
+        renderRow cells =
+            "<tr>" ++ String.concat (List.map (\c -> "<td>" ++ escape c ++ "</td>") cells) ++ "</tr>"
+    in
+    case header of
+        [] ->
+            ""
+
+        _ ->
+            "<table class=\"scripta-table\">"
+                ++ title
+                ++ renderHeaderRow header
+                ++ "<tbody>"
+                ++ String.concat (List.map renderRow body)
+                ++ "</tbody></table>"
+
+
+{-| Render a `| iframe` verbatim block. The body is the embed URL.
+-}
+renderIframeBlock : ExpressionBlock -> String -> String
+renderIframeBlock block str =
+    let
+        src : String
+        src =
+            String.trim str
+
+        widthAttr : String
+        widthAttr =
+            Dict.get "width" block.properties
+                |> Maybe.withDefault "560"
+
+        heightAttr : String
+        heightAttr =
+            Dict.get "height" block.properties
+                |> Maybe.withDefault "315"
+    in
+    if src == "" then
+        ""
+
+    else
+        "<iframe class=\"scripta-iframe\" src=\""
+            ++ escapeAttr src
+            ++ "\" width=\""
+            ++ escapeAttr widthAttr
+            ++ "\" height=\""
+            ++ escapeAttr heightAttr
+            ++ "\" frameborder=\"0\" allowfullscreen></iframe>"
 
 
 

@@ -152,5 +152,41 @@ suite =
                         |> Scripta.exportHtml Scripta.defaultOptions
                         |> String.contains "\\(x^2 + y^2 = z^2\\)"
                         |> Expect.equal True
+            , test "wraps display math in KaTeX-compatible delimiters" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "$$\nE = m c^2\n$$"
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> String.contains "\\[E = m c^2\\]"
+                        |> Expect.equal True
+            , test "renders theorem block with class and label" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "| theorem\nThe sum of the squares of the legs equals the square of the hypotenuse."
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> (\s -> String.contains "scripta-theorem" s && String.contains "Theorem" s)
+                        |> Expect.equal True
+            , test "renders a box block with title" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "| box\ntitle: Note\n\nWatch out."
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> (\s -> String.contains "scripta-box" s && String.contains "Note" s)
+                        |> Expect.equal True
+            , test "renders a quotation block as <blockquote>" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "| quotation\nTo be or not to be."
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> String.contains "<blockquote"
+                        |> Expect.equal True
+            , test "renders a verbatim image as <figure><img>" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "|| image\nhttps://example.com/pic.jpg"
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> (\s -> String.contains "<figure" s && String.contains "https://example.com/pic.jpg" s)
+                        |> Expect.equal True
+            , test "renders a csvtable verbatim block with header" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "|| csvtable\nname,age\nAda,36\nGrace,85"
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> (\s -> String.contains "<thead>" s && String.contains "<th>name</th>" s && String.contains "<td>Ada</td>" s)
+                        |> Expect.equal True
             ]
         ]
