@@ -220,4 +220,33 @@ suite =
                         |> String.contains "ETeX error"
                         |> Expect.equal False
             ]
+        , describe "multi-line expressions"
+            [ test "frac with braces spanning lines does not produce an error" <|
+                \_ ->
+                    evalStr Dict.empty "\\frac{(2)\n(3)\n}{4}"
+                        |> String.contains "ETeX error"
+                        |> Expect.equal False
+            , test "line-wrapped equation with frac does not produce an error" <|
+                \_ ->
+                    evalStr Dict.empty "M(r) = \\frac{(4.84\\times10^{10})\n(4.63\\times10^{20})\n}{6.67\\times10^{-11}}"
+                        |> String.contains "ETeX error"
+                        |> Expect.equal False
+            ]
+        , describe "control symbols"
+            [ test "escaped dollar sign does not produce an error" <|
+                \_ ->
+                    evalStr Dict.empty "\\$10"
+                        |> String.contains "ETeX error"
+                        |> Expect.equal False
+            , test "escaped dollar sign is preserved in output" <|
+                \_ ->
+                    evalStr Dict.empty "\\$10"
+                        |> String.contains "\\$"
+                        |> Expect.equal True
+            , test "escaped percent sign does not produce an error" <|
+                \_ ->
+                    evalStr Dict.empty "50\\%"
+                        |> String.contains "ETeX error"
+                        |> Expect.equal False
+            ]
         ]

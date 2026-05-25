@@ -221,6 +221,7 @@ parseManyWithDict userMacroDict str =
         |> String.lines
         |> List.map String.trim
         |> groupEnvironmentLines
+        |> mergeBraceSpanningLines
         |> List.map
             (\chunk ->
                 if String.startsWith "\\begin{" chunk then
@@ -231,6 +232,74 @@ parseManyWithDict userMacroDict str =
             )
         |> Result.Extra.combine
         |> Result.map List.concat
+
+
+{-| Merge consecutive lines whose `{}` brace nesting is unbalanced, so that a
+brace group an author wrapped across several source lines (for example a
+`\\frac{...}{...}` whose numerator spans lines) is parsed as a single unit.
+
+Lines that are individually brace-balanced — ordinary lines and `\\\\`-separated
+rows alike — are left as separate chunks, so multi-line aligned input is
+unaffected. Environment chunks produced by `groupEnvironmentLines` are
+brace-balanced and therefore also pass through untouched.
+
+-}
+mergeBraceSpanningLines : List String -> List String
+mergeBraceSpanningLines lines =
+    let
+        step line ( pending, depth, result ) =
+            let
+                combined =
+                    if pending == "" then
+                        line
+
+                    else
+                        pending ++ " " ++ line
+
+                newDepth =
+                    depth + netBraceDepth line
+            in
+            if newDepth > 0 then
+                ( combined, newDepth, result )
+
+            else
+                ( "", 0, combined :: result )
+    in
+    case List.foldl step ( "", 0, [] ) lines of
+        ( "", _, result ) ->
+            List.reverse result
+
+        ( pending, _, result ) ->
+            List.reverse (pending :: result)
+
+
+{-| Net change in `{}` nesting contributed by a line: count of unescaped `{`
+minus unescaped `}`. Escaped braces (`\\{`, `\\}`) are literal and not counted.
+-}
+netBraceDepth : String -> Int
+netBraceDepth line =
+    String.foldl
+        (\c ( depth, escaped ) ->
+            if escaped then
+                ( depth, False )
+
+            else
+                case c of
+                    '\\' ->
+                        ( depth, True )
+
+                    '{' ->
+                        ( depth + 1, False )
+
+                    '}' ->
+                        ( depth - 1, False )
+
+                    _ ->
+                        ( depth, False )
+        )
+        ( 0, False )
+        line
+        |> Tuple.first
 
 
 {-| Group lines that form \\begin{...}...\\end{...} blocks into single strings,
@@ -1207,18 +1276,36 @@ rawBraceArg =
 
 macroParser : MathMacroDict -> PA.Parser Context Problem MathExpr
 macroParser userMacroDict =
-    (succeed identity
+    succeed identity
         |. symbol (Token "\\" ExpectingBackslash)
-        |= alphaNumParser_
-    )
-        |> PA.andThen
-            (\name ->
-                if isTextModeCommand name then
-                    many rawBraceArg |> map (\args -> Macro name args)
+        |= oneOf
+            [ alphaNumParser_
+                |> PA.andThen
+                    (\name ->
+                        if isTextModeCommand name then
+                            many rawBraceArg |> map (\args -> Macro name args)
 
-                else
-                    many (argParser userMacroDict) |> map (\args -> Macro name args)
-            )
+                        else
+                            many (argParser userMacroDict) |> map (\args -> Macro name args)
+                    )
+
+            -- LaTeX control symbol: a backslash followed by a single
+            -- non-alphanumeric character, e.g. \$ \% \& \# \_
+            , controlSymbolParser
+            ]
+
+
+{-| Parse a LaTeX control symbol — a single non-alphanumeric character whose
+leading backslash has already been consumed by `macroParser`. The result
+prints back verbatim (e.g. `\$` renders as a literal dollar sign in KaTeX).
+-}
+controlSymbolParser : PA.Parser Context Problem MathExpr
+controlSymbolParser =
+    succeed (\start end src -> AlphaNum ("\\" ++ String.slice start end src))
+        |= getOffset
+        |. chompIf (\c -> not (Char.isAlphaNum c)) ExpectingNotAlpha
+        |= getOffset
+        |= getSource
 
 
 
