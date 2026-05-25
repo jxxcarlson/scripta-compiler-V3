@@ -154,6 +154,12 @@ katexHead =
         , "    throwOnError: false"
         , "  });"
         , "});"
+        , "// ESC clears the URL fragment so :target highlights fall off."
+        , "document.addEventListener(\"keydown\", function(e) {"
+        , "  if (e.key === \"Escape\" && location.hash) {"
+        , "    history.replaceState(null, \"\", location.pathname + location.search);"
+        , "  }"
+        , "});"
         , "</script>"
         ]
 
@@ -283,6 +289,13 @@ body {
 .scripta-equation-spacer { flex: 1; }
 .scripta-equation-math { flex: 0 0 auto; }
 .scripta-equation-number { flex: 1; text-align: right; padding-right: 1em; }
+/* Highlight whichever equation the URL fragment points at. Press ESC to clear. */
+.scripta-equation:target,
+.scripta-math-display:target {
+  background-color: #fff3a8;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
 .scripta-quote { border-left: 3px solid #ddd; padding-left: 1em; color: #555; margin: 0.8em 0; }
 .scripta-theorem, .scripta-lemma, .scripta-corollary, .scripta-proposition, .scripta-definition, .scripta-example, .scripta-remark, .scripta-note {
   margin: 1em 0;
