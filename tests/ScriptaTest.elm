@@ -188,5 +188,63 @@ suite =
                         |> Scripta.exportHtml Scripta.defaultOptions
                         |> (\s -> String.contains "<thead>" s && String.contains "<th>name</th>" s && String.contains "<td>Ada</td>" s)
                         |> Expect.equal True
+            , test "[eqref] resolves to the equation number from the accumulator" <|
+                \_ ->
+                    let
+                        source =
+                            "| equation label:pythag\na^2 + b^2 = c^2\n\nAs shown in [eqref pythag]."
+                    in
+                    Scripta.parse Scripta.defaultOptions source
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> (\s ->
+                                -- The numbered equation has a number on the right
+                                String.contains "scripta-equation-number" s
+                                    -- and the eqref produced a real anchor with (number)
+                                    && not (String.contains "(??pythag)" s)
+                                    && not (String.contains "(pythag)" s)
+                                    && String.contains ">(1)</a>" s
+                           )
+                        |> Expect.equal True
+            , test "labeled equation gets an anchor id matching the reference dict" <|
+                \_ ->
+                    let
+                        source =
+                            "| equation label:pythag\na^2 + b^2 = c^2\n\nSee [eqref pythag]."
+
+                        html =
+                            Scripta.parse Scripta.defaultOptions source
+                                |> Scripta.exportHtml Scripta.defaultOptions
+                    in
+                    -- href="#some-id" must point to an existing id="some-id" elsewhere
+                    case extractHref html of
+                        Just hrefId ->
+                            String.contains ("id=\"" ++ hrefId ++ "\"") html
+                                |> Expect.equal True
+
+                        Nothing ->
+                            Expect.fail "no href found in eqref output"
             ]
         ]
+
+
+{-| Extract the first href="#…" anchor target from an HTML string.
+-}
+extractHref : String -> Maybe String
+extractHref html =
+    case String.indexes "href=\"#" html of
+        startIdx :: _ ->
+            let
+                after =
+                    String.dropLeft (startIdx + 7) html
+
+                endIdx =
+                    String.indexes "\"" after |> List.head |> Maybe.withDefault -1
+            in
+            if endIdx > 0 then
+                Just (String.left endIdx after)
+
+            else
+                Nothing
+
+        [] ->
+            Nothing

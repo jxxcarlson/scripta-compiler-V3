@@ -30,7 +30,7 @@ import Render.Settings exposing (RenderSettings)
 import Render.Types
 import RoseTree.Tree as Tree exposing (Tree(..))
 import Tools.Loop exposing (Step(..), loop)
-import V3.Types exposing (Expr(..), Expression, ExpressionBlock, Heading(..))
+import V3.Types exposing (Accumulator, Expr(..), Expression, ExpressionBlock, Heading(..))
 
 
 
@@ -44,8 +44,8 @@ stylesheet, and a `<body>` containing the title, optional TOC, and rendered
 body content.
 
 -}
-export : Render.Types.PublicationData -> RenderSettings -> List (Tree ExpressionBlock) -> String
-export publicationData settings_ ast =
+export : Render.Types.PublicationData -> RenderSettings -> Accumulator -> List (Tree ExpressionBlock) -> String
+export publicationData settings_ acc ast =
     let
         titleData : Maybe ExpressionBlock
         titleData =
@@ -77,7 +77,7 @@ export publicationData settings_ ast =
 
         body : String
         body =
-            rawExport settings ast
+            rawExport settings acc ast
 
         headerBlock : String
         headerBlock =
@@ -91,15 +91,9 @@ export publicationData settings_ ast =
 Useful when embedding Scripta-rendered content inside another HTML page.
 
 -}
-rawExport : RenderSettings -> List (Tree ExpressionBlock) -> String
-rawExport settings ast_ =
+rawExport : RenderSettings -> Accumulator -> List (Tree ExpressionBlock) -> String
+rawExport settings acc ast_ =
     let
-        mathMacroDict : ETeX.MathMacros.MathMacroDict
-        mathMacroDict =
-            ast_
-                |> ASTTools.getVerbatimBlockValue "mathmacros"
-                |> ETeX.Transform.makeMacroDict
-
         ast : List (Tree ExpressionBlock)
         ast =
             ast_
@@ -108,7 +102,7 @@ rawExport settings ast_ =
                 |> encloseLists
     in
     ast
-        |> List.map (exportTree mathMacroDict settings)
+        |> List.map (exportTree acc settings)
         |> List.filter (\s -> s /= "")
         |> String.join "\n\n"
 
@@ -285,6 +279,10 @@ body {
   font-size: 0.92em;
 }
 .scripta-math-display { margin: 1em 0; text-align: center; }
+.scripta-equation { display: flex; align-items: center; margin: 1em 0; }
+.scripta-equation-spacer { flex: 1; }
+.scripta-equation-math { flex: 0 0 auto; }
+.scripta-equation-number { flex: 1; text-align: right; padding-right: 1em; }
 .scripta-quote { border-left: 3px solid #ddd; padding-left: 1em; color: #555; margin: 0.8em 0; }
 .scripta-theorem, .scripta-lemma, .scripta-corollary, .scripta-proposition, .scripta-definition, .scripta-example, .scripta-remark, .scripta-note {
   margin: 1em 0;
@@ -337,8 +335,8 @@ body {
 -- TREE TRAVERSAL
 
 
-exportTree : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Tree ExpressionBlock -> String
-exportTree mathMacroDict settings tree =
+exportTree : Accumulator -> RenderSettings -> Tree ExpressionBlock -> String
+exportTree acc settings tree =
     let
         block : ExpressionBlock
         block =
@@ -350,29 +348,29 @@ exportTree mathMacroDict settings tree =
     in
     case children of
         [] ->
-            exportBlock mathMacroDict settings block
+            exportBlock acc settings block
 
         _ ->
             case Generic.BlockUtilities.getExpressionBlockName block of
                 Just "item" ->
-                    handleItemWithChildren mathMacroDict settings tree children
+                    handleItemWithChildren acc settings tree children
 
                 Just "numbered" ->
-                    handleItemWithChildren mathMacroDict settings tree children
+                    handleItemWithChildren acc settings tree children
 
                 Just "desc" ->
-                    handleItemWithChildren mathMacroDict settings tree children
+                    handleItemWithChildren acc settings tree children
 
                 _ ->
                     let
                         rendered : String
                         rendered =
-                            exportBlock mathMacroDict settings block
+                            exportBlock acc settings block
 
                         childOutput : String
                         childOutput =
                             children
-                                |> List.map (exportTree mathMacroDict settings)
+                                |> List.map (exportTree acc settings)
                                 |> List.filter (\s -> s /= "")
                                 |> String.join "\n"
                     in
@@ -386,17 +384,17 @@ exportTree mathMacroDict settings tree =
                         rendered ++ "\n" ++ childOutput
 
 
-handleItemWithChildren : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Tree ExpressionBlock -> List (Tree ExpressionBlock) -> String
-handleItemWithChildren mathMacroDict settings tree children =
+handleItemWithChildren : Accumulator -> RenderSettings -> Tree ExpressionBlock -> List (Tree ExpressionBlock) -> String
+handleItemWithChildren acc settings tree children =
     let
         itemContent : String
         itemContent =
-            exportBlock mathMacroDict settings (Tree.value tree)
+            exportBlock acc settings (Tree.value tree)
 
         childOutput : String
         childOutput =
             children
-                |> List.map (exportTree mathMacroDict settings)
+                |> List.map (exportTree acc settings)
                 |> List.filter (\s -> s /= "")
                 |> String.join "\n"
     in
@@ -628,8 +626,8 @@ endBibliographyBlock =
 -- BLOCK DISPATCH
 
 
-exportBlock : ETeX.MathMacros.MathMacroDict -> RenderSettings -> ExpressionBlock -> String
-exportBlock mathMacroDict settings block =
+exportBlock : Accumulator -> RenderSettings -> ExpressionBlock -> String
+exportBlock acc settings block =
     case block.heading of
         Paragraph ->
             case block.body of
@@ -639,7 +637,7 @@ exportBlock mathMacroDict settings block =
                 Right exprs_ ->
                     let
                         rendered =
-                            exportExprList mathMacroDict settings exprs_
+                            exportExprList acc settings exprs_
                     in
                     if String.trim rendered == "" then
                         ""
@@ -648,7 +646,7 @@ exportBlock mathMacroDict settings block =
                         paragraphTag rendered
 
         Ordinary "table" ->
-            exportXTable mathMacroDict settings block
+            exportXTable acc settings block
 
         Ordinary "banner" ->
             exportBanner block
@@ -661,9 +659,9 @@ exportBlock mathMacroDict settings block =
                 Right exprs_ ->
                     let
                         body =
-                            exportExprList mathMacroDict settings exprs_
+                            exportExprList acc settings exprs_
                     in
-                    case Dict.get name (blockDict mathMacroDict) of
+                    case Dict.get name blockDict of
                         Just f ->
                             f settings block.args body block.properties
 
@@ -676,7 +674,7 @@ exportBlock mathMacroDict settings block =
         Verbatim name ->
             case block.body of
                 Left str ->
-                    exportVerbatimBlock mathMacroDict settings name str block
+                    exportVerbatimBlock acc settings name str block
 
                 Right _ ->
                     ""
@@ -705,17 +703,17 @@ namedEnvironment name body =
 -- VERBATIM BLOCK DISPATCH
 
 
-exportVerbatimBlock : ETeX.MathMacros.MathMacroDict -> RenderSettings -> String -> String -> ExpressionBlock -> String
-exportVerbatimBlock mathMacroDict settings name str block =
+exportVerbatimBlock : Accumulator -> RenderSettings -> String -> String -> ExpressionBlock -> String
+exportVerbatimBlock acc _ name str block =
     case name of
         "math" ->
-            displayMath mathMacroDict block str
+            displayMath acc block str
 
         "equation" ->
-            displayMath mathMacroDict block str
+            displayMath acc block str
 
         "aligned" ->
-            alignedMath mathMacroDict block str
+            alignedMath acc block str
 
         "code" ->
             codeBlock str
@@ -738,12 +736,9 @@ exportVerbatimBlock mathMacroDict settings name str block =
         "mathmacros" ->
             -- Hidden LaTeX \newcommand definitions so KaTeX auto-render picks
             -- them up. KaTeX supports \newcommand inside a math block.
-            let
-                macros : String
-                macros =
-                    str |> ETeX.Transform.toLaTeXNewCommands
-            in
-            "<div class=\"scripta-math-display\" style=\"display:none\">\\[" ++ macros ++ "\\]</div>"
+            "<div class=\"scripta-math-display\" style=\"display:none\">\\["
+                ++ ETeX.Transform.toLaTeXNewCommands str
+                ++ "\\]</div>"
 
         "texComment" ->
             ""
@@ -752,7 +747,7 @@ exportVerbatimBlock mathMacroDict settings name str block =
             ""
 
         "image" ->
-            renderVerbatimImage settings block str
+            renderVerbatimImage block str
 
         "svg" ->
             -- The body is raw SVG; pass it through unchanged inside a wrapper.
@@ -792,8 +787,8 @@ exportVerbatimBlock mathMacroDict settings name str block =
             todoBlock ("verbatim:" ++ name) str
 
 
-displayMath : ETeX.MathMacros.MathMacroDict -> ExpressionBlock -> String -> String
-displayMath mathMacroDict block str =
+displayMath : Accumulator -> ExpressionBlock -> String -> String
+displayMath acc block str =
     let
         cleaned : String
         cleaned =
@@ -801,23 +796,14 @@ displayMath mathMacroDict block str =
                 |> String.lines
                 |> List.filter (\line -> String.left 2 line /= "$$")
                 |> String.join "\n"
-                |> ETeX.Transform.transformETeX mathMacroDict
+                |> ETeX.Transform.transformETeX acc.mathMacroDict
                 |> MiniLaTeX.Util.transformLabel
-
-        labelAttr : String
-        labelAttr =
-            case Dict.get "label" block.properties of
-                Just lab ->
-                    " id=\"eq-" ++ escapeAttr (String.trim lab) ++ "\""
-
-                Nothing ->
-                    ""
     in
-    "<div class=\"scripta-math-display\"" ++ labelAttr ++ ">\\[" ++ cleaned ++ "\\]</div>"
+    renderNumberedEquation block ("\\[" ++ cleaned ++ "\\]")
 
 
-alignedMath : ETeX.MathMacros.MathMacroDict -> ExpressionBlock -> String -> String
-alignedMath mathMacroDict block str =
+alignedMath : Accumulator -> ExpressionBlock -> String -> String
+alignedMath acc block str =
     let
         stripTrailingBackslashes : String -> String
         stripTrailingBackslashes line =
@@ -834,7 +820,7 @@ alignedMath mathMacroDict block str =
                 |> List.map String.trim
                 |> List.filter (\line -> not (String.isEmpty line))
                 |> List.map stripTrailingBackslashes
-                |> List.map (ETeX.Transform.transformETeX mathMacroDict)
+                |> List.map (ETeX.Transform.transformETeX acc.mathMacroDict)
                 |> List.map MiniLaTeX.Util.transformLabel
 
         joined : String
@@ -847,21 +833,40 @@ alignedMath mathMacroDict block str =
                     (List.reverse restReversed |> List.map (\line -> line ++ "\\\\"))
                         ++ [ lastLine ]
                         |> String.join "\n"
-
-        labelAttr : String
-        labelAttr =
-            case Dict.get "label" block.properties of
-                Just lab ->
-                    " id=\"eq-" ++ escapeAttr (String.trim lab) ++ "\""
-
-                Nothing ->
-                    ""
     in
-    "<div class=\"scripta-math-display\""
-        ++ labelAttr
-        ++ ">\\[\\begin{aligned}\n"
-        ++ joined
-        ++ "\n\\end{aligned}\\]</div>"
+    renderNumberedEquation block ("\\[\\begin{aligned}\n" ++ joined ++ "\n\\end{aligned}\\]")
+
+
+{-| Wrap a math expression with the block's id (used as cross-reference
+anchor) and, if the accumulator assigned one, an equation number on the
+right.
+-}
+renderNumberedEquation : ExpressionBlock -> String -> String
+renderNumberedEquation block math =
+    let
+        idAttr : String
+        idAttr =
+            if block.meta.id == "" then
+                ""
+
+            else
+                " id=\"" ++ escapeAttr block.meta.id ++ "\""
+
+        equationNumber : String
+        equationNumber =
+            Dict.get "equation-number" block.properties |> Maybe.withDefault ""
+    in
+    if equationNumber == "" then
+        "<div class=\"scripta-math-display\"" ++ idAttr ++ ">" ++ math ++ "</div>"
+
+    else
+        "<div class=\"scripta-equation\""
+            ++ idAttr
+            ++ "><div class=\"scripta-equation-spacer\"></div><div class=\"scripta-equation-math\">"
+            ++ math
+            ++ "</div><div class=\"scripta-equation-number\">("
+            ++ escape equationNumber
+            ++ ")</div></div>"
 
 
 codeBlock : String -> String
@@ -896,8 +901,8 @@ type alias BlockRenderer =
     RenderSettings -> List String -> String -> Dict String String -> String
 
 
-blockDict : ETeX.MathMacros.MathMacroDict -> Dict String BlockRenderer
-blockDict mathMacroDict =
+blockDict : Dict String BlockRenderer
+blockDict =
     Dict.fromList
         ([ -- Suppressed metadata blocks: rendered separately in the title block.
            ( "title", emptyBlock )
@@ -1192,43 +1197,43 @@ stripTagsHelp input acc =
 -- EXPRESSION DISPATCH
 
 
-exportExprList : ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
-exportExprList mathMacroDict settings exprs =
-    List.map (exportExpr mathMacroDict settings) exprs |> String.join ""
+exportExprList : Accumulator -> RenderSettings -> List Expression -> String
+exportExprList acc settings exprs =
+    List.map (exportExpr acc settings) exprs |> String.join ""
 
 
 {-| Export a single expression to HTML.
 -}
-exportExpr : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Expression -> String
-exportExpr mathMacroDict settings expr =
+exportExpr : Accumulator -> RenderSettings -> Expression -> String
+exportExpr acc settings expr =
     case expr of
         Text str _ ->
             escape str
 
         Fun name exps_ _ ->
-            exportFun mathMacroDict settings name exps_
+            exportFun acc settings name exps_
 
         VFun name body _ ->
-            exportVFun mathMacroDict name body
+            exportVFun acc name body
 
         ExprList _ itemExprs _ ->
-            exportExprList mathMacroDict settings itemExprs
+            exportExprList acc settings itemExprs
 
 
-exportFun : ETeX.MathMacros.MathMacroDict -> RenderSettings -> String -> List Expression -> String
-exportFun mathMacroDict settings name exps_ =
+exportFun : Accumulator -> RenderSettings -> String -> List Expression -> String
+exportFun acc settings name exps_ =
     if List.member name [ "scheme", "compute", "data", "button", "newPost" ] then
         todoInline ("inline:" ++ name)
 
     else if name == "tableRow" || name == "row" then
         -- Stripped of context; render children inline.
-        exportExprList mathMacroDict settings exps_
+        exportExprList acc settings exps_
 
     else if name == "tableItem" || name == "cell" then
-        exportExprList mathMacroDict settings exps_
+        exportExprList acc settings exps_
 
     else if name == "table" then
-        exportInlineTable mathMacroDict settings exps_
+        exportInlineTable acc settings exps_
 
     else if name == "sup" then
         "<sup>" ++ (Render.Export.Util.getOneArg exps_ |> escape) ++ "</sup>"
@@ -1249,7 +1254,7 @@ exportFun mathMacroDict settings name exps_ =
     else if name == "lambda" then
         case Generic.TextMacro.extract (Fun name exps_ { begin = 0, end = 0, index = 0, id = "" }) of
             Just lambda ->
-                Generic.TextMacro.toString (exportExpr mathMacroDict settings) lambda
+                Generic.TextMacro.toString (exportExpr acc settings) lambda
 
             Nothing ->
                 todoInline "lambda"
@@ -1265,7 +1270,7 @@ exportFun mathMacroDict settings name exps_ =
                     _ ->
                         ""
         in
-        "\\(" ++ ETeX.Transform.transformETeX mathMacroDict arg ++ "\\)"
+        "\\(" ++ ETeX.Transform.transformETeX acc.mathMacroDict arg ++ "\\)"
 
     else if name == "chem" then
         let
@@ -1296,33 +1301,33 @@ exportFun mathMacroDict settings name exps_ =
     else
         case Dict.get name macroDict of
             Just f ->
-                f mathMacroDict settings exps_
+                f acc settings exps_
 
             Nothing ->
                 case Dict.get name simpleAliasDict of
                     Just ( open, close ) ->
-                        open ++ exportExprList mathMacroDict settings exps_ ++ close
+                        open ++ exportExprList acc settings exps_ ++ close
 
                     Nothing ->
                         -- Unknown inline function: render its children with a debug class.
                         "<span class=\"scripta-unknown\" data-name=\""
                             ++ escapeAttr name
                             ++ "\">"
-                            ++ exportExprList mathMacroDict settings exps_
+                            ++ exportExprList acc settings exps_
                             ++ "</span>"
 
 
-exportVFun : ETeX.MathMacros.MathMacroDict -> String -> String -> String
-exportVFun mathMacroDict name body =
+exportVFun : Accumulator -> String -> String -> String
+exportVFun acc name body =
     case name of
         "math" ->
-            "\\(" ++ ETeX.Transform.transformETeX mathMacroDict body ++ "\\)"
+            "\\(" ++ ETeX.Transform.transformETeX acc.mathMacroDict body ++ "\\)"
 
         "$" ->
-            "\\(" ++ ETeX.Transform.transformETeX mathMacroDict body ++ "\\)"
+            "\\(" ++ ETeX.Transform.transformETeX acc.mathMacroDict body ++ "\\)"
 
         "m" ->
-            "\\(" ++ ETeX.Transform.transformETeX mathMacroDict body ++ "\\)"
+            "\\(" ++ ETeX.Transform.transformETeX acc.mathMacroDict body ++ "\\)"
 
         "code" ->
             "<code class=\"scripta-inline-code\">" ++ escape body ++ "</code>"
@@ -1342,7 +1347,7 @@ exportVFun mathMacroDict name body =
 
 
 type alias InlineRenderer =
-    ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
+    Accumulator -> RenderSettings -> List Expression -> String
 
 
 {-| Inline functions that need argument introspection (links, refs, etc.)
@@ -1355,8 +1360,9 @@ macroDict =
         , ( "wikilink", \_ _ exprs -> wikilink exprs )
         , ( "mark", \_ _ exprs -> markwith exprs )
         , ( "par", \_ _ _ -> "<br>" )
-        , ( "eqref", \_ _ exprs -> eqref exprs )
-        , ( "mathref", \_ _ exprs -> eqref exprs )
+        , ( "eqref", \acc _ exprs -> eqref acc exprs )
+        , ( "mathref", \acc _ exprs -> eqref acc exprs )
+        , ( "ref", \acc _ exprs -> ref acc exprs )
         , ( "index", \_ _ _ -> "" )
         , ( "index_", \_ _ _ -> "" )
         , ( "image", \_ _ exprs -> imageInline exprs )
@@ -1470,14 +1476,42 @@ markwith exprs =
     "<span id=\"" ++ escapeAttr arg ++ "\"></span>"
 
 
-eqref : List Expression -> String
-eqref exprs =
+eqref : Accumulator -> List Expression -> String
+eqref acc exprs =
     let
         arg : String
         arg =
             Render.Export.Util.getOneArg exprs |> String.trim
     in
-    "<a class=\"scripta-link\" href=\"#eq-" ++ escapeAttr arg ++ "\">(" ++ escape arg ++ ")</a>"
+    case Dict.get arg acc.reference of
+        Just { id, numRef } ->
+            "<a class=\"scripta-link\" href=\"#"
+                ++ escapeAttr id
+                ++ "\">("
+                ++ escape numRef
+                ++ ")</a>"
+
+        Nothing ->
+            "<span class=\"scripta-error\">(??" ++ escape arg ++ ")</span>"
+
+
+ref : Accumulator -> List Expression -> String
+ref acc exprs =
+    let
+        arg : String
+        arg =
+            Render.Export.Util.getOneArg exprs |> String.trim
+    in
+    case Dict.get arg acc.reference of
+        Just { id, numRef } ->
+            "<a class=\"scripta-link\" href=\"#"
+                ++ escapeAttr id
+                ++ "\">"
+                ++ escape numRef
+                ++ "</a>"
+
+        Nothing ->
+            "<span class=\"scripta-error\">??" ++ escape arg ++ "</span>"
 
 
 cite : List Expression -> String
@@ -1531,8 +1565,8 @@ imageInline exprs =
 {-| Render an inline `[table [tableRow [tableItem ...]]]` or
 `[table [row [cell ...]]]` expression to an HTML `<table>`.
 -}
-exportInlineTable : ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
-exportInlineTable mathMacroDict settings rowExprs =
+exportInlineTable : Accumulator -> RenderSettings -> List Expression -> String
+exportInlineTable acc settings rowExprs =
     let
         isRow : Expression -> Bool
         isRow expr =
@@ -1590,7 +1624,7 @@ exportInlineTable mathMacroDict settings rowExprs =
 
         renderCell : Expression -> String
         renderCell cell =
-            "<td class=\"scripta-cell\">" ++ exportExprList mathMacroDict settings (cellContents cell) ++ "</td>"
+            "<td class=\"scripta-cell\">" ++ exportExprList acc settings (cellContents cell) ++ "</td>"
 
         renderRow : List Expression -> String
         renderRow cells =
@@ -1607,8 +1641,8 @@ exportInlineTable mathMacroDict settings rowExprs =
 {-| Render an `Ordinary "table"` block whose body has `ExprList`-shaped rows
 and cells (the "xtable" form produced by the parser for `| table` blocks).
 -}
-exportXTable : ETeX.MathMacros.MathMacroDict -> RenderSettings -> ExpressionBlock -> String
-exportXTable mathMacroDict settings block =
+exportXTable : Accumulator -> RenderSettings -> ExpressionBlock -> String
+exportXTable acc settings block =
     let
         widths : List Int
         widths =
@@ -1673,10 +1707,10 @@ exportXTable mathMacroDict settings block =
                 content =
                     case cell of
                         ExprList _ exprs _ ->
-                            exportExprList mathMacroDict settings exprs
+                            exportExprList acc settings exprs
 
                         _ ->
-                            exportExpr mathMacroDict settings cell
+                            exportExpr acc settings cell
             in
             "<td" ++ widthAttr ++ alignAttr ++ "\">" ++ content ++ "</td>"
 
@@ -1758,8 +1792,8 @@ exportBanner block =
 {-| Render a `| image` verbatim block. The body is the URL; properties carry
 caption, width, figure number, description, float.
 -}
-renderVerbatimImage : RenderSettings -> ExpressionBlock -> String -> String
-renderVerbatimImage _ block str =
+renderVerbatimImage : ExpressionBlock -> String -> String
+renderVerbatimImage block str =
     let
         src : String
         src =

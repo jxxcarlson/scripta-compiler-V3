@@ -326,4 +326,5 @@ exportHtml _ (Document data) =
     in
     Render.Export.Html.export publicationData
         Render.Settings.defaultRenderSettings
+        data.accumulator
         data.forest
