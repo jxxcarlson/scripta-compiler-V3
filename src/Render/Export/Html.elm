@@ -729,13 +729,13 @@ exportVerbatimBlock acc _ name str block =
             alignedMath acc block str
 
         "code" ->
-            codeBlock str
+            codeBlock (stripTrailingFence str)
 
         "verbatim" ->
-            codeBlock str
+            codeBlock (stripTrailingFence str)
 
         "verse" ->
-            "<pre class=\"scripta-code-block scripta-verse\">" ++ escape str ++ "</pre>"
+            "<pre class=\"scripta-code-block scripta-verse\">" ++ escape (stripTrailingFence str) ++ "</pre>"
 
         "tabular" ->
             renderTabularBlock block str
@@ -885,6 +885,34 @@ renderNumberedEquation block math =
 codeBlock : String -> String
 codeBlock str =
     "<pre class=\"scripta-code-block\"><code>" ++ escape str ++ "</code></pre>"
+
+
+{-| Strip a trailing line of three or more backticks from a fenced code body.
+
+The block parser ends ``` blocks on a blank line, not on the closing fence,
+so when an author writes the canonical form
+
+    ```
+    print("hi")
+    ```
+
+the body arrives here as `"print(\"hi\")\n```"`. Trim the closing fence so it
+does not show up in the rendered output. A `\| code` block whose author never
+typed a fence is unaffected.
+
+-}
+stripTrailingFence : String -> String
+stripTrailingFence str =
+    case List.reverse (String.lines str) of
+        lastLine :: rest ->
+            if String.startsWith "```" (String.trim lastLine) then
+                List.reverse rest |> String.join "\n"
+
+            else
+                str
+
+        [] ->
+            str
 
 
 todoBlock : String -> String -> String

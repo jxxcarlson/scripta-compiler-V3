@@ -205,6 +205,21 @@ suite =
                                     && String.contains ">(1)</a>" s
                            )
                         |> Expect.equal True
+            , test "fenced code blocks do not include the trailing ``` in the output" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "```\nhello world\n```"
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> (\s ->
+                                String.contains "hello world" s
+                                    && not (String.contains "```" s)
+                           )
+                        |> Expect.equal True
+            , test "| code blocks render unchanged" <|
+                \_ ->
+                    Scripta.parse Scripta.defaultOptions "| code\nhello world"
+                        |> Scripta.exportHtml Scripta.defaultOptions
+                        |> String.contains "hello world"
+                        |> Expect.equal True
             , test "labeled equation gets an anchor id matching the reference dict" <|
                 \_ ->
                     let
