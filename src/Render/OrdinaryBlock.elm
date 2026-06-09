@@ -1646,9 +1646,9 @@ renderReveal params acc _ block children =
             ++ Render.Utility.rlBlockSync block.meta
         )
         [ Html.node "style" [] [ Html.text toggleCss ]
-        , Html.summary [ HA.style "cursor" "pointer", HA.style "font-weight" "bold" ]
+        , Html.summary [ HA.style "cursor" "pointer" ]
             [ Html.span [ HA.class "reveal-closed" ] [ Html.text closedText ]
-            , Html.span [ HA.class "reveal-open" ] [ Html.text "Less ..." ]
+            , Html.span [ HA.class "reveal-open", HA.style "font-style" "italic" ] [ Html.text closedText ]
             ]
         , Html.div [ HA.style "padding" "0.5em" ]
             (renderBody params acc block ++ children)
