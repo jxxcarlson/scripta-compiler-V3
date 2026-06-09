@@ -1,12 +1,12 @@
 module Scripta.Document exposing
     ( Document
-    , idsContainingSource, sourceOfId, title
+    , hasSections, idsContainingSource, sourceOfId, title
     )
 
 {-| Query functions over a parsed Scripta `Document`.
 
 @docs Document
-@docs idsContainingSource, sourceOfId, title
+@docs hasSections, idsContainingSource, sourceOfId, title
 
 -}
 
@@ -66,6 +66,24 @@ sourceOfId id (Internal.Document data) =
         |> List.filter (\block -> block.meta.id == id)
         |> List.head
         |> Maybe.map (\block -> block.meta.sourceText)
+
+
+{-| Whether the document contains at least one `section` block. Used to decide
+whether the rendered output includes a table of contents.
+-}
+hasSections : Document -> Bool
+hasSections (Internal.Document data) =
+    data.forest
+        |> flattenForest
+        |> List.any
+            (\block ->
+                case block.heading of
+                    Ordinary "section" ->
+                        True
+
+                    _ ->
+                        False
+            )
 
 
 {-| Return the document title (the text of its `title` block), or `""` if
