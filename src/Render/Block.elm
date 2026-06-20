@@ -57,7 +57,7 @@ renderParagraph params acc block children =
                         ++ [ HA.style "margin-bottom" (Render.Sizing.paragraphSpacingPx params.sizing)
                            , HA.style "margin-left" (Render.Sizing.marginLeftPx params.sizing)
                            , HA.style "margin-right" (Render.Sizing.marginRightPx params.sizing)
-                           , HA.style "line-height" "1.5"
+                           , HA.style "line-height" (Render.Sizing.lineHeight params.sizing)
                            ]
                     )
                     (Render.Expression.renderList params acc expressions)

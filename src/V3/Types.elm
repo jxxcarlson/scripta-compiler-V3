@@ -288,6 +288,8 @@ type alias SizingConfig =
     , indentation : Float -- in px, default 20.0, per indent level
     , indentUnit : Int -- spaces per indent level in source, default 2
     , scale : Float -- multiplier, default 1.0
+    , lineHeight : Float -- unitless ratio, default 1.5
+    , headingScale : List Float -- font-size ratio per section level, default [1.5,1.3,1.15,1.0]
     }
 
 
@@ -302,4 +304,6 @@ defaultSizingConfig =
     , indentation = 20.0
     , indentUnit = 2
     , scale = 1.0
+    , lineHeight = 1.5
+    , headingScale = [ 1.5, 1.3, 1.15, 1.0 ]
     }

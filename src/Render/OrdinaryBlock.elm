@@ -203,6 +203,7 @@ renderSection params acc _ block children =
         (tag
             (blockIdAndStyle block
                 ++ [ HA.style "font-weight" "normal"
+                   , HA.style "font-size" (Render.Sizing.headingSizePx level params.sizing)
                    , HA.style "margin-top" "1.5em"
                    , if level > 2 then
                         HA.style "font-style" "italic"
@@ -234,7 +235,10 @@ renderSubsection params acc _ block children =
     [ Html.div
         [ HA.id slug ]
         (Html.h3
-            (blockIdAndStyle block ++ Render.Utility.rlBlockSync block.meta)
+            (blockIdAndStyle block
+                ++ [ HA.style "font-size" (Render.Sizing.headingSizePx 2 params.sizing) ]
+                ++ Render.Utility.rlBlockSync block.meta
+            )
             (renderBody params acc block)
             :: children
         )
@@ -256,7 +260,10 @@ renderSubsubsection params acc _ block children =
     [ Html.div
         [ HA.id slug ]
         (Html.h4
-            (blockIdAndStyle block ++ Render.Utility.rlBlockSync block.meta)
+            (blockIdAndStyle block
+                ++ [ HA.style "font-size" (Render.Sizing.headingSizePx 3 params.sizing) ]
+                ++ Render.Utility.rlBlockSync block.meta
+            )
             (renderBody params acc block)
             :: children
         )

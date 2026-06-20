@@ -8,6 +8,7 @@ import Html.Attributes as HA
 import Html.Keyed
 import Html.Lazy
 import Render.Block
+import Render.Sizing
 import RoseTree.Tree as Tree exposing (Tree)
 import V3.Types exposing (Accumulator, CompilerParameters, ExpressionBlock, Msg(..))
 
@@ -33,7 +34,11 @@ renderTreeWrapped params acc tree =
     Html.Keyed.node "div"
         [ HA.id ("tree-" ++ block.meta.id) ]
         [ ( block.meta.id
-          , Html.div [] (renderTree params acc tree)
+          , Html.div
+                [ HA.style "font-size" (Render.Sizing.bodyFontSizePx params.sizing)
+                , HA.style "line-height" (Render.Sizing.lineHeight params.sizing)
+                ]
+                (renderTree params acc tree)
           )
         ]
 

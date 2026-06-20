@@ -1,8 +1,11 @@
 module Render.Sizing exposing
-    ( codeSize
+    ( bodyFontSizePx
+    , codeSize
+    , headingSizePx
     , indentPx
     , indentWithDeltaPx
     , itemSpacingPx
+    , lineHeight
     , marginLeftPx
     , marginLeftWithIndentPx
     , marginRightPx
@@ -134,3 +137,32 @@ marginLeftWithIndentPx rawIndent config =
             toFloat rawIndent / toFloat config.indentUnit
     in
     toPx config (config.marginLeft + config.indentation * level)
+
+
+{-| Unitless line-height ratio from config (scales with font size).
+-}
+lineHeight : SizingConfig -> String
+lineHeight config =
+    String.fromFloat config.lineHeight
+
+
+{-| Body text font size as a CSS px string (baseFontSize, scaled).
+-}
+bodyFontSizePx : SizingConfig -> String
+bodyFontSizePx config =
+    toPx config config.baseFontSize
+
+
+{-| Section-heading font size for a 1-based level, as baseFontSize times the
+ratio at that level in `headingScale` (falling back to 1.0 past the list).
+-}
+headingSizePx : Int -> SizingConfig -> String
+headingSizePx level config =
+    let
+        ratio =
+            config.headingScale
+                |> List.drop (level - 1)
+                |> List.head
+                |> Maybe.withDefault 1.0
+    in
+    toPx config (config.baseFontSize * ratio)

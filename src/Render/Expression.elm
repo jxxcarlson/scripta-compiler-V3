@@ -861,7 +861,7 @@ renderTitle : CompilerParameters -> Accumulator -> List Expression -> ExprMeta -
 renderTitle params acc args meta =
     Html.span
         (Render.Utility.rlSync meta
-            ++ [ HA.style "font-size" "32px" ]
+            ++ [ HA.style "font-size" "2em" ]
         )
         (renderList params acc args)
 
@@ -877,7 +877,7 @@ renderSubheading : CompilerParameters -> Accumulator -> List Expression -> ExprM
 renderSubheading params acc args meta =
     Html.div (Render.Utility.rlSync meta)
         [ Html.p
-            [ HA.style "font-size" "18px"
+            [ HA.style "font-size" "1.125em"
             , HA.style "margin-top" "8px"
             , HA.style "margin-bottom" "0"
             ]
@@ -896,7 +896,7 @@ renderSmallSubheading : CompilerParameters -> Accumulator -> List Expression -> 
 renderSmallSubheading params acc args meta =
     Html.div (Render.Utility.rlSync meta)
         [ Html.p
-            [ HA.style "font-size" "16px"
+            [ HA.style "font-size" "1em"
             , HA.style "font-style" "italic"
             , HA.style "margin-top" "8px"
             , HA.style "margin-bottom" "0"
