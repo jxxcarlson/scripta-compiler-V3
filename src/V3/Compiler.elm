@@ -137,7 +137,10 @@ findInTree name tree =
 -}
 blockToTitleHtml : ExpressionBlock -> Html Msg
 blockToTitleHtml block =
-    Html.span []
+    -- 1.32em renders the title ~32% larger than its container's font size
+    -- (e.g. the app's .doc-title-bar), while still scaling responsively.
+    -- font-weight normal overrides the container's bold so the title is not bold.
+    Html.span [ HA.style "font-size" "1.32em", HA.style "font-weight" "normal" ]
         [ Html.text (extractBlockText block) ]
 
 
