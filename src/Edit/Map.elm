@@ -2,14 +2,18 @@ module Edit.Map exposing
     ( Edit
     , charDelta, lineDelta
     , shiftBlockId, shiftExprId
+    , mapExprMeta
     )
 
 {-| Fast, pure metadata shift for RL-sync. See mydocs/diff-update-map-strategy.md.
 
 @docs Edit
 @docs charDelta, lineDelta
+@docs mapExprMeta
 
 -}
+
+import V3.Types exposing (Expr(..), ExprMeta, Expression)
 
 
 {-| A single edit against the pre-edit document (CodeMirror-style change).
@@ -78,3 +82,21 @@ shiftExprId dL id =
 
     else
         id
+
+
+{-| Apply f to every ExprMeta in an expression tree.
+-}
+mapExprMeta : (ExprMeta -> ExprMeta) -> Expression -> Expression
+mapExprMeta f expr =
+    case expr of
+        Text s m ->
+            Text s (f m)
+
+        Fun name args m ->
+            Fun name (List.map (mapExprMeta f) args) (f m)
+
+        VFun name s m ->
+            VFun name s (f m)
+
+        ExprList indent args m ->
+            ExprList indent (List.map (mapExprMeta f) args) (f m)

@@ -3,6 +3,7 @@ module EditMapTest exposing (suite)
 import Edit.Map as EM
 import Expect
 import Test exposing (Test, describe, test)
+import V3.Types exposing (Expr(..))
 
 
 suite : Test
@@ -51,5 +52,31 @@ suite =
                 \_ ->
                     EM.shiftExprId 4 "weird"
                         |> Expect.equal "weird"
+            ]
+        , describe "mapExprMeta"
+            [ test "applies f to a leaf Text meta" <|
+                \_ ->
+                    EM.mapExprMeta (\m -> { m | id = EM.shiftExprId 2 m.id })
+                        (Text "hi" { begin = 0, end = 1, index = 0, id = "e-3.0" })
+                        |> Expect.equal
+                            (Text "hi" { begin = 0, end = 1, index = 0, id = "e-5.0" })
+            , test "recurses into Fun children" <|
+                \_ ->
+                    let
+                        child =
+                            Text "x" { begin = 0, end = 0, index = 1, id = "e-3.1" }
+
+                        fun =
+                            Fun "bold" [ child ] { begin = 0, end = 5, index = 0, id = "e-3.0" }
+
+                        bump m =
+                            { m | id = EM.shiftExprId 1 m.id }
+                    in
+                    EM.mapExprMeta bump fun
+                        |> Expect.equal
+                            (Fun "bold"
+                                [ Text "x" { begin = 0, end = 0, index = 1, id = "e-4.1" } ]
+                                { begin = 0, end = 5, index = 0, id = "e-4.0" }
+                            )
             ]
         ]
