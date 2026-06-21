@@ -138,7 +138,7 @@ shiftBlock p dC dL block =
         -- entirely above the edit
         block
 
-    else if m.begin >= p then
+    else if m.begin > p then
         -- entirely below the edit: shift offsets, line numbers, ids
         { block
             | meta =

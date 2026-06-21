@@ -104,6 +104,11 @@ suite =
                 expectShiftEqualsReparse threePara
                     { offset = 12, removed = "", inserted = "Z" }
                     "abc\n\ndef\n\ngZhi"
+        , test "insert at block.begin joins the front of the block (Containing, not Below)" <|
+            \_ ->
+                expectShiftEqualsReparse threePara
+                    { offset = 10, removed = "", inserted = "X" }
+                    "abc\n\ndef\n\nXghi"
         , test "two sequential edits fold to the same metadata as reparse" <|
             \_ ->
                 -- e1: insert "X" at 6 -> "abc\n\ndXef\n\nghi"
