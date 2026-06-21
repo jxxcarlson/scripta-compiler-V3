@@ -164,4 +164,46 @@ suite =
                                 |> List.map (\b -> ( b.meta.begin, b.meta.end ))
                             )
             ]
+        , describe "Scripta.applyEdit"
+            [ test "applyEdit shifts the document forest like applyEditToForest" <|
+                \_ ->
+                    let
+                        edit =
+                            { offset = 6, removed = "", inserted = "X" }
+
+                        viaDoc =
+                            Scripta.applyEdit edit (Scripta.parse Scripta.defaultOptions threePara)
+                                |> forestOf
+                                |> blocksOf
+                                |> List.map (\b -> ( b.meta.begin, b.meta.end ))
+
+                        viaForest =
+                            EM.applyEditToForest edit (parseForest threePara)
+                                |> blocksOf
+                                |> List.map (\b -> ( b.meta.begin, b.meta.end ))
+                    in
+                    Expect.equal viaDoc viaForest
+            , test "applyEdits folds two edits in order" <|
+                \_ ->
+                    let
+                        e1 =
+                            { offset = 6, removed = "", inserted = "X" }
+
+                        e2 =
+                            { offset = 7, removed = "", inserted = "Y" }
+
+                        viaList =
+                            Scripta.applyEdits [ e1, e2 ] (Scripta.parse Scripta.defaultOptions threePara)
+                                |> forestOf
+                                |> blocksOf
+                                |> List.map (\b -> ( b.meta.begin, b.meta.end ))
+
+                        viaFold =
+                            Scripta.applyEdit e2 (Scripta.applyEdit e1 (Scripta.parse Scripta.defaultOptions threePara))
+                                |> forestOf
+                                |> blocksOf
+                                |> List.map (\b -> ( b.meta.begin, b.meta.end ))
+                    in
+                    Expect.equal viaList viaFold
+            ]
         ]

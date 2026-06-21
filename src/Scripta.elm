@@ -3,8 +3,10 @@ module Scripta exposing
     , withTheme, withWindowWidth, withContentWidth, withTOC, withMaxLevel, withSizing, withFilter
     , Theme(..), Filter(..), SizingConfig, defaultSizing
     , Document
+    , Edit
     , Event(..), Output
     , parse, reparse, render, compile, mapEvent
+    , applyEdit, applyEdits
     , exportHtml
     )
 
@@ -20,9 +22,10 @@ module Scripta exposing
 
 # Documents and rendering
 
-@docs Document
+@docs Document, Edit
 @docs Event, Output
 @docs parse, reparse, render, compile, mapEvent
+@docs applyEdit, applyEdits
 
 
 # Static export
@@ -32,6 +35,7 @@ module Scripta exposing
 -}
 
 import Dict
+import Edit.Map
 import Either
 import Html exposing (Html)
 import Parser.Forest
@@ -170,6 +174,13 @@ type alias Document =
     Internal.Document
 
 
+{-| A single source edit: a character range `removed` replaced by `inserted`,
+starting at character `offset` in the pre-edit document.
+-}
+type alias Edit =
+    Edit.Map.Edit
+
+
 {-| An interaction event emitted by rendered output.
 
   - `ClickedId` — the user clicked an element with the given id.
@@ -265,6 +276,25 @@ reparse options (Document prev) source =
         , forest = result.forest
         , cache = result.cache
         }
+
+
+{-| Apply one edit's fast metadata shift to a Document, keeping the RL-sync
+map (data-begin/data-end/data-lines/id) valid without reparsing content.
+
+This is the high-frequency path (run per keystroke). It does NOT refresh
+block content or rendering — use `reparse` on a longer debounce for that.
+-}
+applyEdit : Edit -> Document -> Document
+applyEdit edit (Document data) =
+    Document { data | forest = Edit.Map.applyEditToForest edit data.forest }
+
+
+{-| Apply a queue of edits in order (each in the coordinate space of the
+document produced by the previous edit).
+-}
+applyEdits : List Edit -> Document -> Document
+applyEdits edits doc =
+    List.foldl applyEdit doc edits
 
 
 {-| Render a parsed Document to HTML output carrying `Event`s.
