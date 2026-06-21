@@ -3,6 +3,7 @@ module Edit.Map exposing
     , charDelta, lineDelta
     , shiftBlockId, shiftExprId
     , mapExprMeta
+    , applyEditToForest
     )
 
 {-| Fast, pure metadata shift for RL-sync. See mydocs/diff-update-map-strategy.md.
@@ -11,10 +12,13 @@ module Edit.Map exposing
 @docs charDelta, lineDelta
 @docs shiftBlockId, shiftExprId
 @docs mapExprMeta
+@docs applyEditToForest
 
 -}
 
-import V3.Types exposing (Expr(..), ExprMeta, Expression)
+import Either
+import RoseTree.Tree as Tree exposing (Tree)
+import V3.Types exposing (Expr(..), ExprMeta, Expression, ExpressionBlock)
 
 
 {-| A single edit against the pre-edit document (CodeMirror-style change).
@@ -101,3 +105,80 @@ mapExprMeta f expr =
 
         ExprList indent args m ->
             ExprList indent (List.map (mapExprMeta f) args) (f m)
+
+
+{-| Apply one edit's metadata shift across the whole forest.
+-}
+applyEditToForest : Edit -> List (Tree ExpressionBlock) -> List (Tree ExpressionBlock)
+applyEditToForest edit forest =
+    let
+        p =
+            edit.offset
+
+        dC =
+            charDelta edit
+
+        dL =
+            lineDelta edit
+    in
+    if p < 0 || (dC == 0 && dL == 0) then
+        forest
+
+    else
+        List.map (Tree.mapValues (shiftBlock p dC dL)) forest
+
+
+shiftBlock : Int -> Int -> Int -> ExpressionBlock -> ExpressionBlock
+shiftBlock p dC dL block =
+    let
+        m =
+            block.meta
+    in
+    if m.end <= p then
+        -- entirely above the edit
+        block
+
+    else if m.begin >= p then
+        -- entirely below the edit: shift offsets, line numbers, ids
+        { block
+            | meta =
+                { m
+                    | position = m.position + dC
+                    , begin = m.begin + dC
+                    , end = m.end + dC
+                    , contentBegin = m.contentBegin + dC
+                    , contentEnd = m.contentEnd + dC
+                    , lineNumber = m.lineNumber + dL
+                    , bodyLineNumber = m.bodyLineNumber + dL
+                    , id =
+                        if dL == 0 then
+                            m.id
+
+                        else
+                            shiftBlockId dL m.id
+                }
+            , body =
+                if dL == 0 then
+                    block.body
+
+                else
+                    shiftBodyIds dL block.body
+        }
+
+    else
+        -- the edit lands inside this block: grow it, do not reparse content
+        { block
+            | meta =
+                { m
+                    | end = m.end + dC
+                    , contentEnd = m.contentEnd + dC
+                    , numberOfLines = m.numberOfLines + dL
+                }
+        }
+
+
+shiftBodyIds : Int -> Either.Either String (List Expression) -> Either.Either String (List Expression)
+shiftBodyIds dL body =
+    Either.map
+        (List.map (mapExprMeta (\meta -> { meta | id = shiftExprId dL meta.id })))
+        body
