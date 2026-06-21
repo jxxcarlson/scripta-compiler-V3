@@ -30,4 +30,26 @@ suite =
                     EM.lineDelta { offset = 5, removed = "a", inserted = "bc" }
                         |> Expect.equal 0
             ]
+        , describe "id surgery"
+            [ test "shiftBlockId bumps the line-number component" <|
+                \_ ->
+                    EM.shiftBlockId 3 "5-2"
+                        |> Expect.equal "8-2"
+            , test "shiftBlockId handles negative delta" <|
+                \_ ->
+                    EM.shiftBlockId -2 "5-2"
+                        |> Expect.equal "3-2"
+            , test "shiftBlockId leaves an empty id unchanged" <|
+                \_ ->
+                    EM.shiftBlockId 3 ""
+                        |> Expect.equal ""
+            , test "shiftExprId bumps the line-number component" <|
+                \_ ->
+                    EM.shiftExprId 4 "e-5.3"
+                        |> Expect.equal "e-9.3"
+            , test "shiftExprId leaves a non-e- id unchanged" <|
+                \_ ->
+                    EM.shiftExprId 4 "weird"
+                        |> Expect.equal "weird"
+            ]
         ]
