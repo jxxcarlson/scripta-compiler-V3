@@ -134,7 +134,7 @@ shiftBlock p dC dL block =
         m =
             block.meta
     in
-    if m.end <= p then
+    if m.end < p then
         -- entirely above the edit
         block
 
