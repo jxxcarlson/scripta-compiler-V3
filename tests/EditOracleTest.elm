@@ -1,6 +1,7 @@
 module EditOracleTest exposing (suite)
 
 import Edit.Map exposing (Edit)
+import Either
 import Expect
 import RoseTree.Tree as Tree exposing (Tree)
 import Scripta
@@ -77,6 +78,37 @@ threePara =
     "abc\n\ndef\n\nghi"
 
 
+exprIdsOf : Internal.Document -> List String
+exprIdsOf doc =
+    forestOf doc
+        |> List.concatMap flattenTree
+        |> List.concatMap
+            (\b ->
+                case b.body of
+                    Either.Right exprs ->
+                        List.concatMap collectIds exprs
+
+                    Either.Left _ ->
+                        []
+            )
+
+
+collectIds : V3.Types.Expr V3.Types.ExprMeta -> List String
+collectIds expr =
+    case expr of
+        V3.Types.Text _ m ->
+            [ m.id ]
+
+        V3.Types.Fun _ args m ->
+            m.id :: List.concatMap collectIds args
+
+        V3.Types.VFun _ _ m ->
+            [ m.id ]
+
+        V3.Types.ExprList _ args m ->
+            m.id :: List.concatMap collectIds args
+
+
 suite : Test
 suite =
     describe "Edit oracle: shift == reparse (structure-preserving)"
@@ -125,4 +157,25 @@ suite =
                         Scripta.parse Scripta.defaultOptions "abc\n\ndXYef\n\nghi"
                 in
                 Expect.equal (metaTuples shifted) (metaTuples reparsed)
+        , test "expression ids in a below-block bump to match reparse when a line is added (dL = 1)" <|
+            \_ ->
+                let
+                    base =
+                        "intro\n\nsome [b bold] text"
+
+                    -- insert "\nmore" at offset 5 (end of "intro"):
+                    -- "intro\nmore\n\nsome [b bold] text"
+                    edit =
+                        { offset = 5, removed = "", inserted = "\nmore" }
+
+                    edited =
+                        "intro\nmore\n\nsome [b bold] text"
+
+                    shifted =
+                        Scripta.applyEdit edit (Scripta.parse Scripta.defaultOptions base)
+
+                    reparsed =
+                        Scripta.parse Scripta.defaultOptions edited
+                in
+                Expect.equal (exprIdsOf shifted) (exprIdsOf reparsed)
         ]
