@@ -62,6 +62,8 @@ suite =
                             , indentation = 24.0
                             , indentUnit = 3
                             , scale = 1.5
+                            , lineHeight = 1.6
+                            , headingScale = [ 1.4, 1.2, 1.1, 1.0 ]
                             }
                     in
                     Scripta.defaultOptions
