@@ -9,6 +9,7 @@ module Edit.Map exposing
 
 @docs Edit
 @docs charDelta, lineDelta
+@docs shiftBlockId, shiftExprId
 @docs mapExprMeta
 
 -}
