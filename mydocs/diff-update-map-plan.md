@@ -379,9 +379,11 @@ git commit -m "feat(edit): mapExprMeta tree walk"
 
 | Case | Condition | Action |
 |------|-----------|--------|
-| Above | `meta.end <= P` | unchanged |
-| Containing | `meta.begin < P && P < meta.end` | `end += dC`, `contentEnd += dC`, `numberOfLines += dL` |
-| Below | `meta.begin >= P` | shift `position/begin/end/contentBegin/contentEnd += dC`, `lineNumber/bodyLineNumber += dL`, bump ids (only when `dL /= 0`), bump expression ids in `body` (only when `dL /= 0`) |
+| Above | `meta.end < P` | unchanged |
+| Containing | `meta.begin <= P && P <= meta.end` | `end += dC`, `contentEnd += dC`, `numberOfLines += dL` |
+| Below | `meta.begin > P` | shift `position/begin/end/contentBegin/contentEnd += dC`, `lineNumber/bodyLineNumber += dL`, bump ids (only when `dL /= 0`), bump expression ids in `body` (only when `dL /= 0`) |
+
+(Boundary comparisons are strict — an edit exactly at a block's `begin`/`end` is Containing, matching reparse. The original `<=`/`>=` draft was corrected during implementation; the Task 6 oracle pins both boundaries.)
 
 - [ ] **Step 1: Write the failing test**
 
@@ -537,11 +539,11 @@ shiftBlock p dC dL block =
         m =
             block.meta
     in
-    if m.end <= p then
+    if m.end < p then
         -- entirely above the edit
         block
 
-    else if m.begin >= p then
+    else if m.begin > p then
         -- entirely below the edit: shift offsets, line numbers, ids
         { block
             | meta =

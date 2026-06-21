@@ -97,11 +97,13 @@ the previous edit (the natural shape of a keystroke queue).
 Let `P = offset`, `dC = charDelta`, `dL = lineDelta`. Partition each block `B` by `P` vs
 `B.begin`/`B.end`:
 
-| Case       | Condition            | Action |
-|------------|----------------------|--------|
-| Above      | `B.end <= P`         | untouched |
-| Containing | `B.begin < P < B.end`| `end += dC`, `contentEnd += dC`, `numberOfLines += dL` (begin/lineNumber unchanged) |
-| Below      | `B.begin >= P`       | `begin/end/contentBegin/contentEnd += dC`, `lineNumber += dL`, recompute `id` |
+| Case       | Condition              | Action |
+|------------|------------------------|--------|
+| Above      | `B.end < P`            | untouched |
+| Containing | `B.begin <= P <= B.end`| `end += dC`, `contentEnd += dC`, `numberOfLines += dL` (begin/lineNumber unchanged) |
+| Below      | `B.begin > P`          | `begin/end/contentBegin/contentEnd += dC`, `lineNumber += dL`, recompute `id` |
+
+The boundary comparisons are **strict** so that an edit landing exactly at a block's `begin` or `end` is absorbed into that block (Containing), matching what the parser does on reparse: inserted text at a block boundary joins that block's front/back rather than shifting it. (Initial drafts used `end <= P` / `begin >= P`; both were corrected to strict comparisons during implementation, caught by the shift-vs-reparse oracle.) The three conditions are exhaustive and disjoint: `Above ∪ Containing ∪ Below` covers every block exactly once.
 
 **Tiering — the speed win:**
 
@@ -133,8 +135,9 @@ Scripta.applyEdit  : Edit -> Document -> Document
 Scripta.applyEdits : List Edit -> Document -> Document
 ```
 
-Forest traversal reuses the existing `mapForest`; a small `mapExprMeta` recurses expression
-trees (only invoked when `dL /= 0`).
+Forest traversal uses `List.map (Tree.mapValues (shiftBlock ...))` over the
+`List (Tree ExpressionBlock)`; a small `mapExprMeta` recurses expression trees (only
+invoked when `dL /= 0`).
 
 ## 5. Error handling / robustness
 
