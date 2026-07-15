@@ -221,15 +221,18 @@ makeOptions theme windowWidth =
         |> Scripta.withTheme theme
         |> Scripta.withWindowWidth contentWidth
         |> Scripta.withContentWidth contentWidth
-        |> Scripta.withSizing
-            { baseFontSize = 14.0
-            , paragraphSpacing = 18.0
-            , marginLeft = 0.0
-            , marginRight = 120.0
-            , indentation = 20.0
-            , indentUnit = 2
-            , scale = 1.0
-            }
+
+
+
+--|> Scripta.withSizing
+--    { baseFontSize = 14.0
+--    , paragraphSpacing = 18.0
+--    , marginLeft = 0.0
+--    , marginRight = 120.0
+--    , indentation = 20.0
+--    , indentUnit = 2
+--    , scale = 1.0
+--    }
 
 
 defaultDocument : Document
@@ -1245,14 +1248,21 @@ selectionStyleElement selectedId theme =
                 ".scripta-mark { background-color: " ++ highlightColor ++ "; }"
 
             else if selectedId /= "" then
-                "[id=\"" ++ selectedId ++ "\"] { background-color: " ++ bgColor ++ "; }\n"
-                    ++ ".scripta-mark[id=\"" ++ selectedId ++ "\"] { background-color: " ++ highlightColor ++ "; }"
+                "[id=\""
+                    ++ selectedId
+                    ++ "\"] { background-color: "
+                    ++ bgColor
+                    ++ "; }\n"
+                    ++ ".scripta-mark[id=\""
+                    ++ selectedId
+                    ++ "\"] { background-color: "
+                    ++ highlightColor
+                    ++ "; }"
 
             else
                 ""
     in
     Html.node "style" [] [ Html.text css ]
-
 
 
 
