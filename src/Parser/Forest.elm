@@ -152,12 +152,22 @@ parseIncrementallySkipAcc params cache ( prevAcc, prevForest ) lines =
             { cache = buildExpressionCache forest, acc = acc, forest = forest, accWasSkipped = False }
 
 
-{-| Walk the old and new forests together. If they have the same shape (same
-number of trees and children at every level, with matching headings and
-indents) and every block whose source text changed is accumulator-independent,
-return the old forest with the changed blocks replaced by their new versions.
-Unchanged blocks keep their accumulator-derived properties from the old forest.
-Otherwise return Nothing, stopping at the first mismatch.
+{-| Walk the old and new forests together, and return the forest to use with
+the previous accumulator, or Nothing if the previous accumulator can't be reused.
+
+Reuse requires:
+
+  - the same shape: the same number of trees and children at every level, with
+    matching headings and indents;
+  - every block keeps its id. The accumulator stores block ids and expression
+    ids (references, footnotes, terms, numbered items), and both embed the
+    line number, so a changed block that gains or loses lines invalidates it;
+  - every block whose source text changed is accumulator-independent, in both
+    its old and new versions.
+
+Unchanged blocks keep their accumulator-derived properties from the old forest,
+but take position metadata (offsets) from the new parse. Changed blocks are the
+new versions. Stops at the first mismatch.
 -}
 spliceIfAccIndependent : List (Tree ExpressionBlock) -> List (Tree ExpressionBlock) -> Maybe (List (Tree ExpressionBlock))
 spliceIfAccIndependent oldForest newForest =
@@ -194,16 +204,18 @@ spliceTree oldTree newTree =
         newBlock =
             Tree.value newTree
     in
-    if oldBlock.heading /= newBlock.heading || oldBlock.indent /= newBlock.indent then
+    if oldBlock.heading /= newBlock.heading || oldBlock.indent /= newBlock.indent || oldBlock.meta.id /= newBlock.meta.id then
         Nothing
 
     else
         let
             maybeBlock =
                 if oldBlock.meta.sourceText == newBlock.meta.sourceText then
-                    Just oldBlock
+                    Just { oldBlock | meta = newBlock.meta }
 
-                else if isAccumulatorIndependent newBlock then
+                else if isAccumulatorIndependent oldBlock && isAccumulatorIndependent newBlock then
+                    -- the old version must be checked too: removing a footnote,
+                    -- reference, etc. also changes the accumulator
                     Just newBlock
 
                 else
@@ -272,7 +284,7 @@ buildExpressionCache : List (Tree ExpressionBlock) -> ExpressionCache
 buildExpressionCache forest =
     forest
         |> List.concatMap flattenTree
-        |> List.map (\block -> ( block.meta.sourceText, block.body ))
+        |> List.map (\block -> ( block.meta.sourceText, { lineNumber = block.meta.lineNumber, body = block.body } ))
         |> Dict.fromList
 
 

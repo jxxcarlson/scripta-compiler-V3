@@ -11,6 +11,7 @@ module Parser.Pipeline exposing (toExpressionBlock, toExpressionBlockCached, toE
 -}
 
 import Dict
+import Edit.Map
 import Either exposing (Either(..))
 import Parser.Expression as Expression
 import Parser.Table
@@ -46,15 +47,26 @@ toExpressionBlockWithBody body block =
 
 
 {-| Convert a PrimitiveBlock to an ExpressionBlock, using the cache for expression parsing.
+On a hit for a block that has moved, expression ids are shifted to the block's
+new line, giving exactly what a fresh parse would.
 -}
 toExpressionBlockCached : ExpressionCache -> PrimitiveBlock -> ExpressionBlock
 toExpressionBlockCached cache block =
     case Dict.get block.meta.sourceText cache of
-        Just cachedBody ->
-            toExpressionBlockWithBody cachedBody block
+        Just cached ->
+            toExpressionBlockWithBody (shiftBodyIds (block.meta.lineNumber - cached.lineNumber) cached.body) block
 
         Nothing ->
             toExpressionBlock block
+
+
+shiftBodyIds : Int -> Either String (List Expression) -> Either String (List Expression)
+shiftBodyIds dL body =
+    if dL == 0 then
+        body
+
+    else
+        Either.map (List.map (Edit.Map.mapExprMeta (\m -> { m | id = Edit.Map.shiftExprId dL m.id }))) body
 
 
 transformBlockHeading block =

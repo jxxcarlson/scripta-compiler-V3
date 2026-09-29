@@ -424,9 +424,10 @@ finalize block =
         meta =
             block.meta
 
-        -- Use `meta.sourceText` (the original raw heading line, captured at
-        -- block construction) rather than `block.firstLine`, which for `|`,
-        -- `||`, `$$`, and ``` blocks has been stripped of the heading.
+        -- Use `meta.sourceText` (the raw heading line captured at block
+        -- construction, plus any header continuation lines) rather than
+        -- `block.firstLine`, which for `|`, `||`, `$$`, and ``` blocks has
+        -- been stripped of the heading.
         sourceText =
             if List.isEmpty reversedBody then
                 meta.sourceText
@@ -721,6 +722,8 @@ isKnownBlockName name =
 
 
 {-| Merge a continuation line's args and properties into a block.
+The line is part of the block's header: it is added to `sourceText`, and the
+content starts after it.
 -}
 mergeContinuationLine : Line -> PrimitiveBlock -> PrimitiveBlock
 mergeContinuationLine line block =
@@ -746,5 +749,11 @@ mergeContinuationLine line block =
     { block
         | args = mergedArgs
         , properties = mergedProps
-        , meta = { meta | numberOfLines = meta.numberOfLines + 1, bodyLineNumber = meta.bodyLineNumber + 1 }
+        , meta =
+            { meta
+                | numberOfLines = meta.numberOfLines + 1
+                , bodyLineNumber = meta.bodyLineNumber + 1
+                , sourceText = meta.sourceText ++ "\n" ++ line.content
+                , contentBegin = meta.contentBegin + String.length line.content + 1
+            }
     }

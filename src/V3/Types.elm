@@ -20,9 +20,11 @@ import Html exposing (Html)
 
 
 {-| Cache for expression parsing results, keyed by block source text.
+`lineNumber` is the block's line when the body was parsed; expression ids
+(`e-L.T`) embed it, so a hit for a block that has moved must shift them.
 -}
 type alias ExpressionCache =
-    Dict String (Either String (List Expression))
+    Dict String { lineNumber : Int, body : Either String (List Expression) }
 
 
 

@@ -551,4 +551,21 @@ suite =
                         |> List.map (.meta >> .id)
                         |> Expect.equal [ "0-0", "2-1" ]
             ]
+        , describe "header continuation lines"
+            [ test "sourceText includes continuation lines" <|
+                \_ ->
+                    p "| theorem\n| label:thm\nbody\n"
+                        |> List.map (.meta >> .sourceText)
+                        |> Expect.equal [ "| theorem\n| label:thm\nbody" ]
+            , test "begin/end span the whole block and contentBegin is at the body" <|
+                \_ ->
+                    let
+                        src =
+                            "Intro.\n\n| theorem\n| label:thm\nbody\n"
+                    in
+                    p src
+                        |> List.drop 1
+                        |> List.map (\b -> ( String.slice b.meta.begin b.meta.end src, String.slice b.meta.contentBegin b.meta.contentEnd src ))
+                        |> Expect.equal [ ( "| theorem\n| label:thm\nbody", "body" ) ]
+            ]
         ]
