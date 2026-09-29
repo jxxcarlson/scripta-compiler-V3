@@ -25,10 +25,11 @@ import V3.Types exposing (Expr(..), ExprMeta, Expression)
 
 
 type alias State =
-    { tokens : List Token
-    , tokenIndex : Int
+    { tokens : List Token -- tokens not yet consumed
+    , allTokens : List Token -- the full token list, for resuming after an error
     , committed : List Expression
     , stack : List Token
+    , depth : Int -- net bracket value of the stack: [ is +1, [[ is +2, ] is -1
     , lineNumber : Int
     , source : String
     }
@@ -41,37 +42,32 @@ parse lineNumber str =
         |> initWithTokens lineNumber str
         |> run
         |> .committed
-        |> fixup
+        |> List.map trimFirstArg
 
 
-fixup : List Expression -> List Expression
-fixup input =
-    case input of
-        (Fun name exprList meta) :: rest ->
-            let
-                newExprlist =
-                    case exprList of
-                        (Text str meta_) :: tail ->
-                            Text (String.trim str) meta_ :: tail
+{-| Trim the leading text argument of a top-level function (the space after its name).
+-}
+trimFirstArg : Expression -> Expression
+trimFirstArg expr =
+    case expr of
+        Fun name ((Text str meta_) :: tail) meta ->
+            Fun name (Text (String.trim str) meta_ :: tail) meta
 
-                        _ ->
-                            exprList
-            in
-            Fun name newExprlist meta :: fixup rest
-
-        other :: rest ->
-            other :: fixup rest
-
-        [] ->
-            []
+        _ ->
+            expr
 
 
 initWithTokens : Int -> String -> List Token -> State
 initWithTokens lineNumber source tokens =
-    { tokens = List.reverse tokens
-    , tokenIndex = 0
+    let
+        tokens_ =
+            List.reverse tokens
+    in
+    { tokens = tokens_
+    , allTokens = tokens_
     , committed = []
     , stack = []
+    , depth = 0
     , lineNumber = lineNumber
     , source = source
     }
@@ -85,30 +81,19 @@ run state =
 
 nextStep : State -> Step State State
 nextStep state =
-    case getToken state of
-        Nothing ->
+    case state.tokens of
+        [] ->
             if stackIsEmpty state then
                 Done state
 
             else
                 recoverFromError state
 
-        Just token ->
-            state
-                |> advanceTokenIndex
+        token :: rest ->
+            { state | tokens = rest }
                 |> pushOrCommit token
                 |> reduceState
                 |> Loop
-
-
-advanceTokenIndex : State -> State
-advanceTokenIndex state =
-    { state | tokenIndex = state.tokenIndex + 1 }
-
-
-getToken : State -> Maybe Token
-getToken state =
-    List.Extra.getAt state.tokenIndex state.tokens
 
 
 stackIsEmpty : State -> Bool
@@ -131,7 +116,23 @@ pushOrCommit token state =
 
 push : Token -> State -> State
 push token state =
-    { state | stack = token :: state.stack }
+    { state | stack = token :: state.stack, depth = state.depth + bracketValue token }
+
+
+bracketValue : Token -> Int
+bracketValue token =
+    case token of
+        LB _ ->
+            1
+
+        DLB _ ->
+            2
+
+        RB _ ->
+            -1
+
+        _ ->
+            0
 
 
 commit : Token -> State -> State
@@ -160,15 +161,40 @@ stringTokenToExpr lineNumber token =
 reduceState : State -> State
 reduceState state =
     if tokensAreReducible state then
-        { state | stack = [], committed = reduceStack state ++ state.committed }
+        { state | stack = [], depth = 0, committed = reduceStack state ++ state.committed }
 
     else
         state
 
 
+{-| `M.isReducible` walks the whole stack, so only call it when the stack could
+be reducible. A reducible stack always has net bracket value 0 (a function's
+arguments are balanced, and math/code segments contain no bracket tokens), and
+its last non-space token closes something: `]`, `$`, or a backtick. Pushing a
+space never changes reducibility, because `isReducible` ignores spaces. So when
+this precheck fails, `isReducible` would have returned False.
+-}
 tokensAreReducible : State -> Bool
 tokensAreReducible state =
-    M.isReducible (state.stack |> Symbol.toSymbols |> List.reverse)
+    let
+        couldReduce =
+            state.depth
+                == 0
+                && (case state.stack of
+                        (RB _) :: _ ->
+                            True
+
+                        (MathToken _) :: _ ->
+                            True
+
+                        (CodeToken _) :: _ ->
+                            True
+
+                        _ ->
+                            False
+                   )
+    in
+    couldReduce && M.isReducible (state.stack |> Symbol.toSymbols |> List.reverse)
 
 
 reduceStack : State -> List Expression
@@ -254,41 +280,54 @@ reduceTokensNonWikilink lineNumber source tokens =
 
 reduceRestOfTokens : Int -> String -> List Token -> List Expression
 reduceRestOfTokens lineNumber source tokens =
+    reduceRestOfTokensHelp lineNumber source tokens []
+
+
+{-| Accumulator loop, so a function with thousands of arguments does not grow the stack.
+-}
+reduceRestOfTokensHelp : Int -> String -> List Token -> List Expression -> List Expression
+reduceRestOfTokensHelp lineNumber source tokens acc =
     case tokens of
-        (LB _) :: _ ->
-            reduceSplit lineNumber source (splitTokens tokens)
-
-        (DLB _) :: _ ->
-            reduceSplit lineNumber source (splitTokens tokens)
-
-        (MathToken _) :: _ ->
-            reduceSplit lineNumber source (splitTokens tokens)
-
-        (CodeToken _) :: _ ->
-            reduceSplit lineNumber source (splitTokens tokens)
+        [] ->
+            List.reverse acc
 
         token :: rest ->
-            case stringTokenToExpr lineNumber token of
-                Just expr ->
-                    expr :: reduceRestOfTokens lineNumber source rest
+            if startsSegment token then
+                case splitTokens tokens of
+                    Nothing ->
+                        List.reverse (Text "error on match" dummyLocWithId :: acc)
 
-                Nothing ->
-                    [ Text "error converting Token" dummyLocWithId ]
+                    Just ( a, b ) ->
+                        reduceRestOfTokensHelp lineNumber source b (List.reverse (reduceTokens lineNumber source a) ++ acc)
 
-        [] ->
-            []
+            else
+                case stringTokenToExpr lineNumber token of
+                    Just expr ->
+                        reduceRestOfTokensHelp lineNumber source rest (expr :: acc)
+
+                    Nothing ->
+                        List.reverse (Text "error converting Token" dummyLocWithId :: acc)
 
 
-{-| Reduce the leading matched segment, then the remainder.
+{-| Tokens that open a segment: a function `[`, a wikilink `[[`, math `$`, or code `` ` ``.
 -}
-reduceSplit : Int -> String -> Maybe ( List Token, List Token ) -> List Expression
-reduceSplit lineNumber source split =
-    case split of
-        Nothing ->
-            [ Text "error on match" dummyLocWithId ]
+startsSegment : Token -> Bool
+startsSegment token =
+    case token of
+        LB _ ->
+            True
 
-        Just ( a, b ) ->
-            reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
+        DLB _ ->
+            True
+
+        MathToken _ ->
+            True
+
+        CodeToken _ ->
+            True
+
+        _ ->
+            False
 
 
 recoverFromError : State -> Step State State
@@ -335,14 +374,20 @@ recoverFromError state =
 -}
 resumeAfter : Meta -> Expression -> State -> Step State State
 resumeAfter meta expr state =
-    Loop { state | committed = expr :: state.committed, stack = [], tokenIndex = meta.index + 1 }
+    Loop
+        { state
+            | committed = expr :: state.committed
+            , stack = []
+            , depth = 0
+            , tokens = List.drop (meta.index + 1) state.allTokens
+        }
 
 
 {-| Commit an error expression and stop parsing.
 -}
 stopWith : Expression -> State -> Step State State
 stopWith expr state =
-    Done { state | committed = expr :: state.committed, stack = [] }
+    Done { state | committed = expr :: state.committed, stack = [], depth = 0 }
 
 
 
@@ -369,7 +414,7 @@ boostMeta lineNumber tokenIndex { begin, end, index } =
 
 splitTokens : List Token -> Maybe ( List Token, List Token )
 splitTokens tokens =
-    M.splitMatched (Symbol.toSymbols tokens) tokens
+    M.splitMatchedBy Symbol.toSymbol tokens
 
 
 makeId : Int -> Int -> String

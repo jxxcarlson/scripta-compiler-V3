@@ -1,8 +1,7 @@
-module Parser.Match exposing (getSegment, isReducible, match, splitAt, splitMatched)
+module Parser.Match exposing (getSegment, isReducible, match, splitAt, splitMatchedBy)
 
 import List.Extra
 import Parser.Symbol exposing (Symbol(..), value)
-import Tools.Loop exposing (Step(..), loop)
 
 
 isReducible : List Symbol -> Bool
@@ -38,20 +37,17 @@ isReducible symbols_ =
             False
 
 
+{-| True if the symbols are a sequence of strings and reducible segments.
+Self-recursive in tail position, so long argument lists do not grow the stack.
+-}
 hasReducibleArgs : List Symbol -> Bool
 hasReducibleArgs symbols =
     case symbols of
         [] ->
             True
 
-        L :: _ ->
-            reducibleAux symbols
-
-        DL :: _ ->
-            reducibleAux symbols
-
-        C :: _ ->
-            reducibleAux symbols
+        ST :: rest ->
+            hasReducibleArgs rest
 
         M :: _ ->
             let
@@ -64,29 +60,28 @@ hasReducibleArgs symbols =
             else
                 False
 
-        ST :: rest ->
-            hasReducibleArgs rest
+        first :: _ ->
+            if first == L || first == DL || first == C then
+                case splitMatchedBy identity symbols of
+                    Nothing ->
+                        False
 
-        _ ->
-            False
+                    Just ( a, b ) ->
+                        if isReducible a then
+                            hasReducibleArgs b
+
+                        else
+                            False
+
+            else
+                False
 
 
-{-| Split `items` just after the segment that `match` finds at the head of `symbols`.
-`symbols` is the symbol view of `items`, so the two lists have the same length.
+{-| Split `items` just after the segment that `matchBy` finds at its head.
 -}
-splitMatched : List Symbol -> List a -> Maybe ( List a, List a )
-splitMatched symbols items =
-    match symbols |> Maybe.map (\k -> splitAt (k + 1) items)
-
-
-reducibleAux : List Symbol -> Bool
-reducibleAux symbols =
-    case splitMatched symbols symbols of
-        Nothing ->
-            False
-
-        Just ( a, b ) ->
-            isReducible a && hasReducibleArgs b
+splitMatchedBy : (a -> Symbol) -> List a -> Maybe ( List a, List a )
+splitMatchedBy toSymbol items =
+    matchBy toSymbol items |> Maybe.map (\k -> splitAt (k + 1) items)
 
 
 dropLast : List a -> List a
@@ -101,10 +96,6 @@ dropLast list =
 splitAt : Int -> List a -> ( List a, List a )
 splitAt k list =
     ( List.take k list, List.drop k list )
-
-
-type alias State =
-    { symbols : List Symbol, index : Int, brackets : Int }
 
 
 getSegment : Symbol -> List Symbol -> List Symbol
@@ -124,42 +115,75 @@ getSegment sym symbols =
             sym :: seg_ ++ [ last ]
 
 
+{-| Index of the last item of the segment at the head of the list, or Nothing
+if there is no such segment. A `$` or backtick segment runs to the next matching
+delimiter (or to the end of the list if unclosed); a bracket segment runs until
+the brackets balance.
+-}
 match : List Symbol -> Maybe Int
-match symbols =
-    case List.head symbols of
-        Nothing ->
+match =
+    matchBy identity
+
+
+{-| `match` over any list, given a way to view each item as a Symbol.
+Items are converted only as far as the segment extends, so callers can pass a
+long list without converting all of it.
+-}
+matchBy : (a -> Symbol) -> List a -> Maybe Int
+matchBy toSymbol items =
+    case items of
+        [] ->
             Nothing
 
-        Just symbol ->
-            if List.member symbol [ C, M ] then
-                Just (List.length (getSegment symbol symbols) - 1)
+        first :: rest ->
+            let
+                symbol =
+                    toSymbol first
+            in
+            if symbol == C || symbol == M then
+                Just (delimiterEnd toSymbol symbol 1 rest)
 
             else if value symbol < 0 then
                 Nothing
 
             else
-                loop { symbols = List.drop 1 symbols, index = 1, brackets = value symbol } nextStep
+                bracketEnd toSymbol (value symbol) 1 rest
 
 
-nextStep : State -> Step State (Maybe Int)
-nextStep state =
-    case List.head state.symbols of
-        Nothing ->
-            Done Nothing
+delimiterEnd : (a -> Symbol) -> Symbol -> Int -> List a -> Int
+delimiterEnd toSymbol delimiter index items =
+    case items of
+        [] ->
+            -- unclosed: the segment runs to the last item
+            index - 1
 
-        Just sym ->
-            let
-                brackets =
-                    state.brackets + value sym
-            in
-            if brackets < 0 then
-                Done Nothing
-
-            else if brackets == 0 then
-                Done (Just state.index)
+        item :: rest ->
+            if toSymbol item == delimiter then
+                index
 
             else
-                Loop { symbols = List.drop 1 state.symbols, index = state.index + 1, brackets = brackets }
+                delimiterEnd toSymbol delimiter (index + 1) rest
+
+
+bracketEnd : (a -> Symbol) -> Int -> Int -> List a -> Maybe Int
+bracketEnd toSymbol brackets index items =
+    case items of
+        [] ->
+            Nothing
+
+        item :: rest ->
+            let
+                newBrackets =
+                    brackets + value (toSymbol item)
+            in
+            if newBrackets < 0 then
+                Nothing
+
+            else if newBrackets == 0 then
+                Just index
+
+            else
+                bracketEnd toSymbol newBrackets (index + 1) rest
 
 
 

@@ -357,4 +357,24 @@ suite =
                         |> Expect.equal
                             [ Fun "b" [ Text "" (), VFun "math" "y" (), Text " " (), VFun "code" "x" (), Text " z" () ] () ]
             ]
+        , describe "long lines"
+            -- These overflowed the JS stack before the parser was made tail-recursive.
+            [ test "many top-level functions" <|
+                \_ ->
+                    pe (String.repeat 8000 "a [b x] ")
+                        |> List.filter (\e -> shape e == Fun "b" [ Text "x" () ] ())
+                        |> List.length
+                        |> Expect.equal 8000
+            , test "many arguments inside one function" <|
+                \_ ->
+                    case pe ("[b " ++ String.repeat 8000 "a [i x] " ++ "]") of
+                        [ Fun "b" args _ ] ->
+                            args
+                                |> List.filter (\e -> shape e == Fun "i" [ Text " x" () ] ())
+                                |> List.length
+                                |> Expect.equal 8000
+
+                        other ->
+                            Expect.fail ("expected a single [b ...], got " ++ String.fromInt (List.length other) ++ " expressions")
+            ]
         ]

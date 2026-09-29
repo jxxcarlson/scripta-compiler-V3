@@ -11,6 +11,9 @@ const synthetic = [
   "[b x] `code [y] z` w", "[i `a` $b$ `c`]", "- one\n- two\n  continued\n. three\n\n| section 02\nTitle\n\n# H\n## H2\n### H3",
   "| theorem\n| numbered label:thm\nbody\n\n|| code\n| lang:elm\nx = 1\n\n| table\na & b\nc & [b d]",
   "- a\n  more\n- b\n\n. x\n. y\nz",
+  // error recovery in mid-line, followed by more content
+  "[ x] then [b y] and $z$", "a ] b [i c] d", "[b x] ] [i y] [ z [b w]", "[] [i ok] `c` $m$",
+  "p [b q $r s] t [i u]", "[b x `y] z [i w]", "[[ a ] b [i c]", "x [b [i y] z", "[b ] [i] []] [c d]",
 ];
 const all = [...sources, ...variants, ...synthetic];
 const { Elm } = require(jsPath);
