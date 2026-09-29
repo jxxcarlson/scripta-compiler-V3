@@ -1,0 +1,18 @@
+const fs = require('fs');
+const { execSync } = require('child_process');
+const [,, jsPath, repo] = process.argv;
+const files = execSync(`find ${repo} -name "*.scripta" -not -path "*/elm-stuff/*" -not -path "*/node_modules/*" -not -path "*/diff-harness/*"`).toString().trim().split('\n').sort();
+const sources = files.map(f => fs.readFileSync(f, 'utf8'));
+// Variants: without trailing blank lines (EOF path), and synthetic edge cases.
+const variants = sources.map(s => s.replace(/\s+$/, ''));
+const synthetic = [
+  "a [b c", "a ]b", "[ x]", "[]", "[b [i x] y] z", "$a$ `c` [b $x$] $y", "[b `c` d] `e $f$ g`",
+  "`unclosed code $x$", "$unclosed math `c`", "[[wiki link]] and [[", "[[a [b]]]", "\\alpha \\(x\\) [m \\beta]",
+  "[b x] `code [y] z` w", "[i `a` $b$ `c`]", "- one\n- two\n  continued\n. three\n\n| section 02\nTitle\n\n# H\n## H2\n### H3",
+  "| theorem\n| numbered label:thm\nbody\n\n|| code\n| lang:elm\nx = 1\n\n| table\na & b\nc & [b d]",
+  "- a\n  more\n- b\n\n. x\n. y\nz",
+];
+const all = [...sources, ...variants, ...synthetic];
+const { Elm } = require(jsPath);
+const app = Elm.DiffMain.init({ flags: all });
+app.ports.out.subscribe(res => { process.stdout.write(res.map((r, i) => `=== ${i}\n${r}\n`).join('')); });
