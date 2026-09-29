@@ -1,8 +1,11 @@
 # Parser refactor (branch `refactor-parser`)
 
-Simplification of the `Parser.*` modules, in three steps: remove dead code,
-collapse duplicate branches, fix latent bugs. All 255 tests pass (250 existing + 5 new).
-Diff: 319 insertions, 549 deletions; `src/Parser` went from ~1,975 to 1,700 lines of code.
+Simplification of the `Parser.*` modules. Steps 1–3 removed dead code,
+collapsed duplicate branches, and fixed latent bugs (319 insertions, 549 deletions;
+`src/Parser` went from ~1,975 to 1,700 lines of code). Step 4 made the
+expression parser linear-time and stack-safe. Step 5 replaced the three tree walks
+of incremental reparse with one. All 265 tests pass (250 original + 15 new).
+The remaining work is tracked in `parser-refactor/todo.md`.
 
 Tests must be run with `npx elm-test@0.19.2-0`. The global `elm-test` is
 0.19.1-revision7, which rejects `elm.json`'s `elm-version: 0.19.2`.
@@ -15,7 +18,12 @@ Besides the unit tests, a differential check compared the forest output
 
 - all 21 `.scripta` files in the repo,
 - the same files with trailing blank lines stripped,
-- 17 synthetic edge cases.
+- 17 synthetic edge cases (26 since step 4, which added mid-line error-recovery cases),
+- since step 5, 68 incremental reparses: `parseIncrementallySkipAcc` after a no-op,
+  a plain word change, an added `[ref …]`, and a paragraph inserted at the top.
+
+The harness is `parser-refactor/diff-harness/run-diff.sh [REF]`; see
+`parser-refactor/scripta-files-for-diff-testing.md`.
 
 After steps 1 and 2 the output was byte-identical to HEAD. (An early version of
 the `Line.classify` rewrite counted tabs as indentation; the differential check caught this
@@ -128,6 +136,47 @@ Verification:
   `tests/Parser/ExpressionParserTest.elm` fail on the old parser with the stack
   overflow.
 
+## Step 5: one tree walk for incremental reparse (to-do item #2)
+
+`parseIncrementallySkipAcc` decides whether it can reuse the previous
+accumulator. Before, it walked the old and new forests three times, with six
+functions: `forestStructureMatches`, `allChangedBlocksAreAccIndependent`,
+`spliceForest` and a per-tree helper for each. Now one function,
+`spliceIfAccIndependent`, does it in a single walk:
+
+- It returns `Just` the spliced forest exactly when the old check passed, and
+  otherwise `Nothing`, stopping at the first mismatch.
+- It loops over sibling blocks with an accumulator, so stack use grows with
+  nesting depth, not document length.
+- `parseToForestWithAccumulator`, `parseIncrementally` and the fallback path
+  share an `accumulate` helper (filter, then the accumulator pass).
+
+Verification:
+
+- The diff harness gained 68 incremental reparses: 28 take the skip path and 40
+  don't, identical to HEAD.
+- 8 new tests in `tests/Parser/ForestTest.elm` pin down when the accumulator pass
+  is skipped: plain text change, change in a code block, unchanged source (skip),
+  and added reference, section title change, inserted block, block kind change
+  (no skip). They pass on both the old and the new code.
+
+### Bugs found during step 5 (not fixed there, see to-do #6)
+
+Both were in HEAD; step 5 kept the behavior exactly. Probe tests confirmed each one.
+
+- **The skip path keeps stale positions.** An unchanged block is reused as the
+  *old* block, with its old `lineNumber`, `id`, `begin`/`end` and expression ids.
+  Reparsing `"alpha\n\nbeta"` into `"alpha\nmore\n\nbeta"` leaves the second
+  block with line 2, id `"2-1"` and begin 7; a fresh parse gives line 3, `"3-1"`
+  and 12. Any edit that changes a paragraph's length does this to every block
+  below it. Calling `Scripta.applyEdit` before `reparse` hides it, but
+  `mydocs/diff-update-map-strategy.md` treats `reparse` as the step that
+  corrects `applyEdit`'s approximations, and on this path it corrects nothing.
+- **The expression cache reuses old expression ids when a block moves**, even when
+  the accumulator pass runs. The cache is keyed by source text, so after inserting
+  a section at the top, the moved blocks keep `e-0.0`, `e-2.0`, `e-2.2` instead
+  of `e-3.0`, `e-5.0`, `e-5.2`.
+
 ## Known issues left alone
 
 - Cells in the same table row still share expression ids (e.g. `e-3.0` twice),
@@ -143,11 +192,10 @@ Verification:
 
 ## Possible next steps (structural)
 
-- **One walk in `Forest.elm`:** `forestStructureMatches`,
-  `allChangedBlocksAreAccIndependent`, and `spliceForest` walk the same pair of trees.
-  Replace them with one walk that returns `Maybe` forest. Also make
-  `parseToForestWithAccumulator` and `parseIncrementally` share one implementation.
+- ~~**One walk in `Forest.elm`**~~: done, see Step 5.
 - ~~**Quadratic expression parser**~~: done, see Step 4.
+- **Stale position metadata after incremental reparse** (to-do #6): see the bugs
+  found during step 5.
 - **List logic in one place:** continuation lines are merged both in
   `PrimitiveBlock.appendToLastListItem` and in `Pipeline.groupListItems`, and the
   `"- "` / `". "` prefix test exists three times.

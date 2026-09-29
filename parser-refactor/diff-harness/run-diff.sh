@@ -29,4 +29,5 @@ build new "$REPO/src"
 node "$HARNESS/run.js" "$WORK/build-base/diff.js" "$REPO" > "$WORK/base.out" 2>/dev/null
 node "$HARNESS/run.js" "$WORK/build-new/diff.js" "$REPO" > "$WORK/new.out" 2>/dev/null
 
+echo "incremental reparse cases: $(grep -c '^accWasSkipped = True' "$WORK/new.out") skipped the accumulator, $(grep -c '^accWasSkipped = False' "$WORK/new.out") did not"
 python3 "$HARNESS/compare.py" "$WORK/base.out" "$WORK/new.out"

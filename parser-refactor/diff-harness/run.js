@@ -16,6 +16,23 @@ const synthetic = [
   "p [b q $r s] t [i u]", "[b x `y] z [i w]", "[[ a ] b [i c]", "x [b [i y] z", "[b ] [i] []] [c d]",
 ];
 const all = [...sources, ...variants, ...synthetic];
+
+// Incremental reparse cases: [before, after] pairs, per real source.
+// Output indices continue after `all`.
+const isProseLine = l => l.includes(' the ') && !/^\s*(\||\$\$|```|-|\.|#)/.test(l);
+const edits = [];
+for (const src of sources) {
+  const lines = src.split('\n');
+  const k = lines.findIndex(isProseLine);
+  const withLine = text => lines.map((l, i) => (i === k ? text : l)).join('\n');
+  edits.push([src, src]);                                              // no-op
+  if (k >= 0) {
+    edits.push([src, withLine(lines[k].replace(' the ', ' THE '))]);    // plain word change
+    edits.push([src, withLine(lines[k] + ' [ref foo]')]);               // accumulator-dependent change
+  }
+  edits.push([src, 'New paragraph.\n\n' + src]);                     // structure change
+}
+
 const { Elm } = require(jsPath);
-const app = Elm.DiffMain.init({ flags: all });
+const app = Elm.DiffMain.init({ flags: { sources: all, edits } });
 app.ports.out.subscribe(res => { process.stdout.write(res.map((r, i) => `=== ${i}\n${r}\n`).join('')); });

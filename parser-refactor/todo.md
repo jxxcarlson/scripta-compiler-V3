@@ -38,13 +38,22 @@ old parser. Benchmark (`parser-refactor/bench/run-bench.sh`), median ms for
 
 Time now roughly doubles when the input doubles, up to n = 16000 (128 KB lines).
 
-## 2. Walk the old and new trees once in `Parser/Forest.elm`
+## 2. ~~Walk the old and new trees once in `Parser/Forest.elm`~~ (done)
 
-- `forestStructureMatches` (line 168), `allChangedBlocksAreAccIndependent`
-  (line 195) and `spliceForest` (line 272) each walk the same pair of trees.
-- Replace them with one walk that returns `Maybe` forest.
-- At the same time, `parseToForestWithAccumulator` (line 62) and
-  `parseIncrementally` (line 93) could share one implementation.
+`forestStructureMatches`, `allChangedBlocksAreAccIndependent` and `spliceForest`
+(six functions, three walks) are replaced by one `spliceIfAccIndependent`. It
+returns `Just` the spliced forest exactly when the old check passed, and stops at
+the first mismatch. It loops over siblings with an accumulator, so stack use grows
+with nesting depth, not document length. `parseToForestWithAccumulator`,
+`parseIncrementally` and the fallback path share an `accumulate` helper.
+
+Verified:
+
+- `run-diff.sh` now also compares 68 incremental reparses (no-op, plain word change,
+  `[ref …]` added, paragraph inserted at top) and reports how many took the skip
+  path: 28 skipped, 40 did not, identical to HEAD.
+- 8 new tests in `tests/Parser/ForestTest.elm` pin down when the accumulator pass
+  is skipped. They pass on both the old and new code.
 
 ## 3. Keep list handling in one place
 
@@ -67,6 +76,32 @@ Let `Parser/Match.elm` work on `Token` directly, using a
 to `Ordinary "table"` by `transformBlockHeading` (`Pipeline.elm:60`).
 A separate `parseBody` case would be cleaner. Check first that ordinary-block
 continuation lines can't affect table rows.
+
+## 6. Incremental reparse returns stale position metadata (bug, found during #2)
+
+Both problems are in HEAD, and #2 kept the behavior exactly. Both were
+confirmed with probe tests.
+
+- **Skip path keeps old metadata.** When `parseIncrementallySkipAcc` splices,
+  an unchanged block is the *old* block, with its old `lineNumber`, `id`,
+  `begin`/`end` and expression ids. If an edit changes a paragraph's length or
+  line count, every block below keeps stale positions. Example: reparse
+  `"alpha\n\nbeta"` → `"alpha\nmore\n\nbeta"`. The second block keeps line 2,
+  id `"2-1"`, begin 7, where a fresh parse gives line 3, `"3-1"`, 12.
+  Clients that call `Scripta.applyEdit` before `reparse` hide this, because
+  `applyEdit` has already shifted the old blocks. But `mydocs/diff-update-map-strategy.md`
+  treats `reparse` as "the authority that corrects" `applyEdit`'s
+  approximations, and on the skip path it corrects nothing.
+- **The expression cache reuses ids after a block moves, even on the full path.**
+  `ExpressionCache` is keyed by `sourceText`, and the cached body carries
+  `e-L.T` ids for the old line `L`. Example: insert a section at the top of
+  `"alpha\n\nbeta [b x]"`. The moved blocks keep ids `e-0.0`, `e-2.0`, `e-2.2`,
+  where a fresh parse gives `e-3.0`, `e-5.0`, `e-5.2`.
+
+Possible fix: on reuse (skip-path splice and cache hit), take position metadata
+from the fresh parse, and shift cached expression ids with `Edit.Map.shiftExprId`
+by the block's line delta. Keep only the accumulator-derived properties from the
+old block.
 
 ## Known issues (out of scope for now)
 
