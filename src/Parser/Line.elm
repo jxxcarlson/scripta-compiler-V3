@@ -6,7 +6,6 @@ module Parser.Line exposing (Line, classify)
 
 type alias Line =
     { indent : Int
-    , prefix : String
     , content : String
     , lineNumber : Int
     , position : Int
@@ -17,35 +16,24 @@ type alias Line =
 -}
 classify : Int -> Int -> String -> Line
 classify position lineNumber str =
-    let
-        leadingSpaces =
-            countLeadingSpaces str
-
-        prefix =
-            String.left leadingSpaces str
-
-        content =
-            str
-    in
-    { indent = leadingSpaces
-    , prefix = prefix
-    , content = content
+    { indent = countLeadingSpaces str
+    , content = str
     , lineNumber = lineNumber
     , position = position
     }
 
 
+{-| Count leading space characters only; tabs do not count as indentation.
+-}
 countLeadingSpaces : String -> Int
 countLeadingSpaces str =
-    str
-        |> String.toList
-        |> List.foldl
-            (\c ( count, counting ) ->
-                if counting && c == ' ' then
-                    ( count + 1, True )
+    String.length str - String.length (dropLeadingSpaces str)
 
-                else
-                    ( count, False )
-            )
-            ( 0, True )
-        |> Tuple.first
+
+dropLeadingSpaces : String -> String
+dropLeadingSpaces str =
+    if String.startsWith " " str then
+        dropLeadingSpaces (String.dropLeft 1 str)
+
+    else
+        str

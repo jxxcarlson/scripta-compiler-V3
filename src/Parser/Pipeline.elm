@@ -75,46 +75,45 @@ parseBody block =
             Right (parseLines block.meta.lineNumber block.body)
 
         Ordinary "item" ->
-            -- Single item: parse firstLine + body as one paragraph
-            let
-                content =
-                    (stripListPrefix block.firstLine :: block.body)
-                        |> String.join " "
-            in
-            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber content) emptyExprMeta ]
+            Right (parseSingleItem block)
 
         Ordinary "numbered" ->
-            -- Single numbered item: parse firstLine + body as one paragraph
-            let
-                content =
-                    (stripListPrefix block.firstLine :: block.body)
-                        |> String.join " "
-            in
-            Right [ ExprList block.indent (Expression.parse block.meta.lineNumber content) emptyExprMeta ]
+            Right (parseSingleItem block)
 
         Ordinary "itemList" ->
-            -- Multiple items: parse firstLine + each body line as separate ExprList
-            Right (parseListItems block.indent block.meta.lineNumber (block.firstLine :: block.body))
+            Right (parseListItems block.meta.lineNumber (block.firstLine :: block.body))
 
         Ordinary "numberedList" ->
-            -- Multiple numbered items: parse firstLine + each body line as separate ExprList
-            Right (parseListItems block.indent block.meta.lineNumber (block.firstLine :: block.body))
+            Right (parseListItems block.meta.lineNumber (block.firstLine :: block.body))
 
         Ordinary _ ->
             Right (parseLines block.meta.lineNumber block.body)
 
         Verbatim "table" ->
-            Right (Parser.Table.parseTable 0 block.body)
+            Right (Parser.Table.parseTable block.meta.bodyLineNumber block.body)
 
         Verbatim _ ->
             Left (String.join "\n" block.body)
 
 
-{-| Parse list items, each becoming an ExprList with its own indent level.
+{-| Single item: parse firstLine + body as one paragraph.
+-}
+parseSingleItem : PrimitiveBlock -> List Expression
+parseSingleItem block =
+    let
+        content =
+            (stripListPrefix block.firstLine :: block.body)
+                |> String.join " "
+    in
+    [ ExprList block.indent (Expression.parse block.meta.lineNumber content) emptyExprMeta ]
+
+
+{-| Multiple items: parse firstLine + each body line as a separate ExprList.
+Each item becomes an ExprList with its own indent level.
 Lines that don't start with "- " or ". " are appended to the previous item.
 -}
-parseListItems : Int -> Int -> List String -> List Expression
-parseListItems _ lineNumber items =
+parseListItems : Int -> List String -> List Expression
+parseListItems lineNumber items =
     items
         |> groupListItems
         |> List.map

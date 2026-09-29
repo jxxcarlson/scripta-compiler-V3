@@ -11,6 +11,24 @@ pe =
     PE.parse 0
 
 
+{-| Replace all metadata with a constant so tests can compare structure only.
+-}
+shape : Expression -> Expr ()
+shape expr =
+    case expr of
+        Text str _ ->
+            Text str ()
+
+        Fun name args _ ->
+            Fun name (List.map shape args) ()
+
+        VFun name content _ ->
+            VFun name content ()
+
+        ExprList indent args _ ->
+            ExprList indent (List.map shape args) ()
+
+
 suite : Test
 suite =
     describe "Parser.Expression"
@@ -324,5 +342,19 @@ suite =
                     in
                     wikilinkCount
                         |> Expect.equal 2
+            ]
+        , describe "code and math segments inside function arguments"
+            [ test "code followed by math" <|
+                \_ ->
+                    pe "[b `x` $y$ z]"
+                        |> List.map shape
+                        |> Expect.equal
+                            [ Fun "b" [ Text "" (), VFun "code" "x" (), Text " " (), VFun "math" "y" (), Text " z" () ] () ]
+            , test "math followed by code" <|
+                \_ ->
+                    pe "[b $y$ `x` z]"
+                        |> List.map shape
+                        |> Expect.equal
+                            [ Fun "b" [ Text "" (), VFun "math" "y" (), Text " " (), VFun "code" "x" (), Text " z" () ] () ]
             ]
         ]

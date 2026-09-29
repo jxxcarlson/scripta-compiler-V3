@@ -4,9 +4,7 @@ module Parser.Tokenizer exposing
     , TokenType(..)
     , Token_(..)
     , getMeta
-    , indexOf
     , run
-    , toString
     , type_
     )
 
@@ -88,34 +86,6 @@ type_ token =
 
         TokenError _ _ ->
             TTokenError
-
-
-indexOf : Token -> Int
-indexOf token =
-    case token of
-        LB meta ->
-            meta.index
-
-        DLB meta ->
-            meta.index
-
-        RB meta ->
-            meta.index
-
-        S _ meta ->
-            meta.index
-
-        W _ meta ->
-            meta.index
-
-        MathToken meta ->
-            meta.index
-
-        CodeToken meta ->
-            meta.index
-
-        TokenError _ meta ->
-            meta.index
 
 
 setIndex : Int -> Token -> Token
@@ -202,11 +172,6 @@ stringValue token =
             "tokenError"
 
 
-toString : List Token -> String
-toString tokens =
-    List.map stringValue tokens |> String.concat
-
-
 length : Token -> Int
 length token =
     let
@@ -265,21 +230,16 @@ nextStep state =
             newScanPointer =
                 state.scanpointer + length token + 1
 
-            ( tokens, tokenIndex, currentToken_ ) =
+            -- Adjacent text tokens accumulate in currentToken (already indexed
+            -- at state.tokenIndex) and are flushed when a non-text token arrives.
+            -- Text right after [ or [[ is the function name and is emitted alone.
+            ( tokens, tokenIndex, currentToken ) =
                 if isTextToken token then
                     if Maybe.map type_ (List.head state.tokens) == Just TLB || Maybe.map type_ (List.head state.tokens) == Just TDLB then
                         ( setIndex state.tokenIndex token :: state.tokens, state.tokenIndex + 1, Nothing )
 
                     else
                         ( state.tokens, state.tokenIndex, updateCurrentToken state.tokenIndex token state.currentToken )
-
-                else if type_ token == TLB || type_ token == TDLB then
-                    case state.currentToken of
-                        Nothing ->
-                            ( setIndex state.tokenIndex token :: state.tokens, state.tokenIndex + 1, Nothing )
-
-                        Just textToken ->
-                            ( setIndex (state.tokenIndex + 1) token :: setIndex state.tokenIndex textToken :: state.tokens, state.tokenIndex + 2, Nothing )
 
                 else
                     case state.currentToken of
@@ -288,13 +248,6 @@ nextStep state =
 
                         Just textToken ->
                             ( setIndex (state.tokenIndex + 1) token :: textToken :: state.tokens, state.tokenIndex + 2, Nothing )
-
-            currentToken =
-                if isTextToken token then
-                    currentToken_
-
-                else
-                    Nothing
         in
         Loop
             { state
@@ -473,20 +426,26 @@ rightBracketParser start index =
 
 
 textParser : Int -> Int -> TokenParser
-textParser start index =
-    PT.text (\c -> not <| List.member c (' ' :: languageChars)) (\c -> not <| List.member c (' ' :: languageChars))
-        |> Parser.map (\data -> S data.content { begin = start, end = start + data.end - data.begin - 1, index = index })
+textParser =
+    textParserStoppingAt languageChars
 
 
 mathTextParser : Int -> Int -> TokenParser
-mathTextParser start index =
-    PT.text (\c -> not <| List.member c (' ' :: mathChars)) (\c -> not <| List.member c (' ' :: languageChars))
-        |> Parser.map (\data -> S data.content { begin = start, end = start + data.end - data.begin - 1, index = index })
+mathTextParser =
+    textParserStoppingAt mathChars
 
 
 codeTextParser : Int -> Int -> TokenParser
-codeTextParser start index =
-    PT.text (\c -> not <| List.member c (' ' :: codeChars)) (\c -> not <| List.member c (' ' :: languageChars))
+codeTextParser =
+    textParserStoppingAt codeChars
+
+
+{-| A run of text. The first character may not be a space or one of `firstStopChars`;
+subsequent characters may not be a space or any language character.
+-}
+textParserStoppingAt : List Char -> Int -> Int -> TokenParser
+textParserStoppingAt firstStopChars start index =
+    PT.text (\c -> not <| List.member c (' ' :: firstStopChars)) (\c -> not <| List.member c (' ' :: languageChars))
         |> Parser.map (\data -> S data.content { begin = start, end = start + data.end - data.begin - 1, index = index })
 
 

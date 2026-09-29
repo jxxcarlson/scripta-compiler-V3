@@ -36,10 +36,18 @@ Pipeline:
 -}
 parse : List String -> List (Tree ExpressionBlock)
 parse lines =
+    parseWith Parser.Pipeline.toExpressionBlock lines
+
+
+{-| Parse lines into PrimitiveBlocks, build the forest by indentation, and
+convert each block with the given function.
+-}
+parseWith : (PrimitiveBlock -> ExpressionBlock) -> List String -> List (Tree ExpressionBlock)
+parseWith toExpressionBlock lines =
     lines
         |> Parser.PrimitiveBlock.parse
         |> Generic.ForestTransform.forestFromBlocks .indent
-        |> mapForest Parser.Pipeline.toExpressionBlock
+        |> mapForest toExpressionBlock
 
 
 {-| Parse source lines into a forest with accumulator.
@@ -53,17 +61,10 @@ Pipeline:
 -}
 parseToForestWithAccumulator : CompilerParameters -> List String -> ( Accumulator, List (Tree ExpressionBlock) )
 parseToForestWithAccumulator params lines =
-    let
-        initialData_ =
-            Generic.Acc.initialData
-
-        initialData =
-            { initialData_ | maxLevel = initialData_.maxLevel }
-    in
     lines
         |> parse
         |> filterForest params.filter
-        |> Generic.Acc.transformAccumulate initialData
+        |> Generic.Acc.transformAccumulate Generic.Acc.initialData
 
 
 {-| Filter the forest based on filter settings.
@@ -96,22 +97,13 @@ parseIncrementally :
     -> ( ExpressionCache, Accumulator, List (Tree ExpressionBlock) )
 parseIncrementally params cache lines =
     let
-        initialData_ =
-            Generic.Acc.initialData
-
-        initialData =
-            { initialData_ | maxLevel = initialData_.maxLevel }
-
         exprForest =
-            lines
-                |> Parser.PrimitiveBlock.parse
-                |> Generic.ForestTransform.forestFromBlocks .indent
-                |> mapForest (Parser.Pipeline.toExpressionBlockCached cache)
+            parseWith (Parser.Pipeline.toExpressionBlockCached cache) lines
 
         ( acc, finalForest ) =
             exprForest
                 |> filterForest params.filter
-                |> Generic.Acc.transformAccumulate initialData
+                |> Generic.Acc.transformAccumulate Generic.Acc.initialData
 
         newCache =
             buildExpressionCache finalForest
@@ -146,10 +138,7 @@ parseIncrementallySkipAcc :
 parseIncrementallySkipAcc params cache ( prevAcc, prevForest ) lines =
     let
         newExprForest =
-            lines
-                |> Parser.PrimitiveBlock.parse
-                |> Generic.ForestTransform.forestFromBlocks .indent
-                |> mapForest (Parser.Pipeline.toExpressionBlockCached cache)
+            parseWith (Parser.Pipeline.toExpressionBlockCached cache) lines
                 |> filterForest params.filter
     in
     if forestStructureMatches prevForest newExprForest && allChangedBlocksAreAccIndependent prevForest newExprForest then
@@ -164,15 +153,9 @@ parseIncrementallySkipAcc params cache ( prevAcc, prevForest ) lines =
 
     else
         let
-            initialData_ =
-                Generic.Acc.initialData
-
-            initialData =
-                { initialData_ | maxLevel = initialData_.maxLevel }
-
             ( acc, finalForest ) =
                 newExprForest
-                    |> Generic.Acc.transformAccumulate initialData
+                    |> Generic.Acc.transformAccumulate Generic.Acc.initialData
 
             newCache =
                 buildExpressionCache finalForest

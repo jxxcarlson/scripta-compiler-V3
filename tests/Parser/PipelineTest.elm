@@ -4,8 +4,9 @@ import Dict
 import Either exposing (Either(..))
 import Expect
 import Parser.Pipeline exposing (toExpressionBlock)
+import Parser.PrimitiveBlock
 import Test exposing (..)
-import V3.Types exposing (Expr(..), ExpressionBlock, Heading(..), PrimitiveBlock)
+import V3.Types exposing (Expr(..), ExprMeta, ExpressionBlock, Heading(..), PrimitiveBlock)
 
 
 suite : Test
@@ -158,5 +159,42 @@ suite =
                             toExpressionBlock primitive
                     in
                     Expect.equal (Just "my-id") (Dict.get "id" result.properties)
+            ]
+        , describe "table expression ids"
+            [ test "cell expressions carry the source line number of their row" <|
+                \_ ->
+                    let
+                        rowIds : Expr ExprMeta -> List String
+                        rowIds expr =
+                            case expr of
+                                ExprList _ cells _ ->
+                                    List.concatMap rowIds cells
+
+                                Text _ meta ->
+                                    [ meta.id ]
+
+                                Fun _ args meta ->
+                                    meta.id :: List.concatMap rowIds args
+
+                                VFun _ _ meta ->
+                                    [ meta.id ]
+
+                        ids =
+                            "intro\n\n| table\na & b\nc & d\n"
+                                |> String.lines
+                                |> Parser.PrimitiveBlock.parse
+                                |> List.map toExpressionBlock
+                                |> List.filter (\b -> b.heading == Ordinary "table")
+                                |> List.concatMap
+                                    (\b ->
+                                        case b.body of
+                                            Right rows ->
+                                                List.map rowIds rows
+
+                                            Left _ ->
+                                                []
+                                    )
+                    in
+                    Expect.equal [ [ "e-3.0", "e-3.0" ], [ "e-4.0", "e-4.0" ] ] ids
             ]
         ]

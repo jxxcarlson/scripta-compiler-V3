@@ -1,10 +1,6 @@
 module Parser.PrimitiveBlock exposing (parse)
 
 {-| Parse a list of strings into a list of primitive blocks.
-
-NOTE (TODO) for the moment we assume that the input ends with
-a blank line.
-
 -}
 
 import Dict exposing (Dict)
@@ -65,11 +61,8 @@ type alias State =
     { blocks : List PrimitiveBlock -- accumulated blocks (reversed)
     , currentBlock : Maybe PrimitiveBlock -- block being built
     , lines : List String -- remaining input lines
-    , inBlock : Bool -- are we currently in a block?
-    , indent : Int -- current indentation level
     , lineNumber : Int -- current line number
     , position : Int -- character position in source
-    , inVerbatim : Bool -- are we in a verbatim block?
     , blocksCommitted : Int -- number of committed blocks
     , inHeader : Bool -- are we still in the extended header (continuation lines)?
     }
@@ -80,11 +73,8 @@ init lines =
     { blocks = []
     , currentBlock = Nothing
     , lines = lines
-    , inBlock = False
-    , indent = 0
     , lineNumber = 0
     , position = 0
-    , inVerbatim = False
     , blocksCommitted = 0
     , inHeader = False
     }
@@ -98,22 +88,16 @@ nextStep : State -> Step State (List PrimitiveBlock)
 nextStep state =
     case List.head state.lines of
         Nothing ->
-            -- No more lines: finalize and return
-            case state.currentBlock of
-                Nothing ->
-                    Done (List.reverse state.blocks)
-
-                Just block ->
-                    let
-                        finalBlock =
-                            finalize block
-                    in
-                    Done (List.reverse (finalBlock :: state.blocks))
+            -- No more lines: commit any open block and return
+            Done (List.reverse (commitBlock state).blocks)
 
         Just rawLine ->
             let
                 currentLine =
                     Line.classify state.position state.lineNumber rawLine
+
+                next =
+                    advance currentLine state
 
                 isEmpty =
                     currentLine.indent == 0 && String.isEmpty (String.trim currentLine.content)
@@ -121,44 +105,41 @@ nextStep state =
                 isNonEmptyBlank =
                     currentLine.indent > 0 && String.isEmpty (String.trim (String.dropLeft currentLine.indent currentLine.content))
             in
-            case ( state.inBlock, isEmpty, isNonEmptyBlank ) of
+            case ( state.currentBlock /= Nothing, isEmpty, isNonEmptyBlank ) of
                 -- State 1: Not in block, empty line -> skip
                 ( False, True, _ ) ->
-                    Loop (advance currentLine state)
+                    Loop next
 
                 -- State 2: Not in block, non-empty blank line -> skip
                 ( False, False, True ) ->
-                    Loop (advance currentLine state)
+                    Loop next
 
                 -- State 3: Not in block, content line -> create new block
                 ( False, False, False ) ->
-                    Loop (createBlock currentLine state)
+                    Loop (createBlock currentLine next)
 
                 -- State 4: In block, non-empty content -> add line
                 ( True, False, _ ) ->
-                    Loop (addCurrentLine currentLine state)
+                    Loop (addCurrentLine currentLine next)
 
                 -- State 5: In block, empty line -> commit block
                 ( True, True, _ ) ->
-                    Loop (commitBlock currentLine state)
+                    Loop (commitBlock next)
 
 
 
 -- HELPER FUNCTIONS
 
 
-{-| Advance to the next line.
+{-| Advance past the current line. Every step does this; the handlers below
+receive the already-advanced state.
 -}
 advance : Line -> State -> State
 advance line state =
-    let
-        newPosition =
-            state.position + String.length line.content + 1
-    in
     { state
         | lines = List.drop 1 state.lines
         , lineNumber = state.lineNumber + 1
-        , position = newPosition
+        , position = state.position + String.length line.content + 1
     }
 
 
@@ -167,40 +148,19 @@ advance line state =
 createBlock : Line -> State -> State
 createBlock line state =
     let
-        -- Commit any existing block first
-        newState =
-            case state.currentBlock of
-                Nothing ->
-                    state
-
-                Just block ->
-                    { state
-                        | blocks = finalize block :: state.blocks
-                        , blocksCommitted = state.blocksCommitted + 1
-                    }
-
         newBlock =
-            blockFromLine line newState
-
-        newPosition =
-            state.position + String.length line.content + 1
+            blockFromLine line
     in
-    { newState
+    { state
         | currentBlock = Just newBlock
-        , lines = List.drop 1 state.lines
-        , lineNumber = state.lineNumber + 1
-        , position = newPosition
-        , inBlock = True
-        , indent = line.indent
-        , inVerbatim = isVerbatimLine line.content
         , inHeader = isBlockWithHeader newBlock
     }
 
 
 {-| Create a PrimitiveBlock from a Line.
 -}
-blockFromLine : Line -> State -> PrimitiveBlock
-blockFromLine line state =
+blockFromLine : Line -> PrimitiveBlock
+blockFromLine line =
     let
         headingData =
             getHeadingData line.content
@@ -273,9 +233,6 @@ Also handles continuation lines for extended header syntax.
 addCurrentLine : Line -> State -> State
 addCurrentLine line state =
     let
-        newPosition =
-            state.position + String.length line.content + 1
-
         -- Check if this is a continuation line for extended header syntax
         currentIsVerbatim =
             case Maybe.map .heading state.currentBlock of
@@ -290,80 +247,57 @@ addCurrentLine line state =
     in
     if isContinuation then
         -- Merge continuation line's args/properties into the current block
-        { state
-            | currentBlock = Maybe.map (mergeContinuationLine line) state.currentBlock
-            , lines = List.drop 1 state.lines
-            , lineNumber = state.lineNumber + 1
-            , position = newPosition
-        }
+        { state | currentBlock = Maybe.map (mergeContinuationLine line) state.currentBlock }
 
     else
         -- Normal line processing (end of header, now in body)
-        let
-            -- Check if this line has the same list heading as current block
-            lineHeading =
-                inspectHeading line.content
-
-            currentHeading =
-                Maybe.map .heading state.currentBlock
-
-            -- Coalesce lists: item -> itemList, numbered -> numberedList
-            coalescedBlock =
-                case ( currentHeading, lineHeading ) of
-                    ( Just (Ordinary "item"), Just (Ordinary "item") ) ->
-                        state.currentBlock
-                            |> Maybe.map (\b -> { b | heading = Ordinary "itemList" })
-                            |> Maybe.map (addListLineToBlock line)
-
-                    ( Just (Ordinary "itemList"), Just (Ordinary "item") ) ->
-                        state.currentBlock
-                            |> Maybe.map (addListLineToBlock line)
-
-                    ( Just (Ordinary "numbered"), Just (Ordinary "numbered") ) ->
-                        state.currentBlock
-                            |> Maybe.map (\b -> { b | heading = Ordinary "numberedList" })
-                            |> Maybe.map (addListLineToBlock line)
-
-                    ( Just (Ordinary "numberedList"), Just (Ordinary "numbered") ) ->
-                        state.currentBlock
-                            |> Maybe.map (addListLineToBlock line)
-
-                    ( Just (Ordinary "itemList"), Nothing ) ->
-                        -- Continuation of last item in list
-                        state.currentBlock
-                            |> Maybe.map (appendToLastListItem line)
-
-                    ( Just (Ordinary "numberedList"), Nothing ) ->
-                        -- Continuation of last numbered item in list
-                        state.currentBlock
-                            |> Maybe.map (appendToLastListItem line)
-
-                    _ ->
-                        state.currentBlock
-                            |> Maybe.map (addLineToBlock line)
-        in
         { state
-            | currentBlock = coalescedBlock
-            , lines = List.drop 1 state.lines
-            , lineNumber = state.lineNumber + 1
-            , position = newPosition
+            | currentBlock = Maybe.map (addBodyLine line) state.currentBlock
             , inHeader = False
         }
 
 
-{-| Inspect a line to determine what heading it would produce.
+{-| Add a body line to a block, coalescing list items:
+consecutive `item` lines become an `itemList`, consecutive `numbered` lines a
+`numberedList`, and a non-item line inside a list continues its last item.
 -}
-inspectHeading : String -> Maybe Heading
-inspectHeading content =
+addBodyLine : Line -> PrimitiveBlock -> PrimitiveBlock
+addBodyLine line block =
+    case ( block.heading, inspectListKind line.content ) of
+        ( Ordinary name, Just kind ) ->
+            if name == kind.item then
+                addListLineToBlock line { block | heading = Ordinary kind.list }
+
+            else if name == kind.list then
+                addListLineToBlock line block
+
+            else
+                addLineToBlock line block
+
+        ( Ordinary "itemList", Nothing ) ->
+            appendToLastListItem line block
+
+        ( Ordinary "numberedList", Nothing ) ->
+            appendToLastListItem line block
+
+        _ ->
+            addLineToBlock line block
+
+
+{-| If a line is a list item, return the block names for a single item of
+that kind and for a list of them.
+-}
+inspectListKind : String -> Maybe { item : String, list : String }
+inspectListKind content =
     let
         trimmed =
             String.trim content
     in
     if String.startsWith "- " trimmed then
-        Just (Ordinary "item")
+        Just { item = "item", list = "itemList" }
 
     else if String.startsWith ". " trimmed then
-        Just (Ordinary "numbered")
+        Just { item = "numbered", list = "numberedList" }
 
     else
         Nothing
@@ -439,12 +373,9 @@ addLineToBlock line block =
 
 {-| Commit the current block and reset for the next one.
 -}
-commitBlock : Line -> State -> State
-commitBlock line state =
+commitBlock : State -> State
+commitBlock state =
     let
-        newPosition =
-            state.position + String.length line.content + 1
-
         committedBlocks =
             case state.currentBlock of
                 Nothing ->
@@ -461,11 +392,6 @@ commitBlock line state =
     { state
         | blocks = committedBlocks
         , currentBlock = Nothing
-        , lines = List.drop 1 state.lines
-        , lineNumber = state.lineNumber + 1
-        , position = newPosition
-        , inBlock = False
-        , inVerbatim = False
         , blocksCommitted = state.blocksCommitted + 1
         , inHeader = False
     }
@@ -484,24 +410,16 @@ finalize block =
             List.reverse block.body
 
         -- For paragraphs, firstLine is content, not a header
+        firstLineIsContent =
+            (block.heading == Paragraph || block.heading == Ordinary "section")
+                && not (String.isEmpty block.firstLine)
+
         finalBody =
-            case block.heading of
-                Paragraph ->
-                    if String.isEmpty block.firstLine then
-                        reversedBody
+            if firstLineIsContent then
+                block.firstLine :: reversedBody
 
-                    else
-                        block.firstLine :: reversedBody
-
-                Ordinary "section" ->
-                    if String.isEmpty block.firstLine then
-                        reversedBody
-
-                    else
-                        block.firstLine :: reversedBody
-
-                _ ->
-                    reversedBody
+            else
+                reversedBody
 
         meta =
             block.meta
@@ -586,28 +504,13 @@ getHeadingData line =
         }
 
     else if String.startsWith "# " trimmed then
-        -- Markdown heading level 1
-        { heading = Ordinary "section"
-        , args = [ "1" ]
-        , properties = Dict.singleton "level" "1"
-        , firstLine = String.dropLeft 2 trimmed
-        }
+        markdownHeading 1 trimmed
 
     else if String.startsWith "## " trimmed then
-        -- Markdown heading level 2
-        { heading = Ordinary "section"
-        , args = [ "2" ]
-        , properties = Dict.singleton "level" "2"
-        , firstLine = String.dropLeft 3 trimmed
-        }
+        markdownHeading 2 trimmed
 
     else if String.startsWith "### " trimmed then
-        -- Markdown heading level 3
-        { heading = Ordinary "section"
-        , args = [ "3" ]
-        , properties = Dict.singleton "level" "3"
-        , firstLine = String.dropLeft 4 trimmed
-        }
+        markdownHeading 3 trimmed
 
     else if String.startsWith "- " trimmed then
         -- List item (preserve full line including prefix)
@@ -632,6 +535,21 @@ getHeadingData line =
         , properties = Dict.empty
         , firstLine = line
         }
+
+
+{-| Markdown-style section heading (`#`, `##`, `###`) of the given level.
+-}
+markdownHeading : Int -> String -> HeadingData
+markdownHeading level trimmed =
+    let
+        levelString =
+            String.fromInt level
+    in
+    { heading = Ordinary "section"
+    , args = [ levelString ]
+    , properties = Dict.singleton "level" levelString
+    , firstLine = String.dropLeft (level + 1) trimmed
+    }
 
 
 {-| Parse verbatim heading: || blockname arg1 arg2 ...
@@ -681,17 +599,13 @@ getHeading line =
                 properties_
 
             else
-                case List.head args of
-                    Nothing ->
-                        Dict.insert "level" "1" properties_
-
-                    Just str ->
-                        case String.toInt str of
-                            Nothing ->
-                                Dict.insert "level" "1" properties_
-
-                            Just _ ->
-                                Dict.insert "level" str properties_
+                let
+                    level =
+                        List.head args
+                            |> Maybe.andThen (\str -> String.toInt str |> Maybe.map (\_ -> str))
+                            |> Maybe.withDefault "1"
+                in
+                Dict.insert "level" level properties_
     in
     { heading =
         if isVerbatimName name then
@@ -708,23 +622,6 @@ getHeading line =
 isVerbatimName : String -> Bool
 isVerbatimName str =
     List.member str verbatimNames
-
-
-
--- VERBATIM DETECTION
-
-
-{-| Check if a line starts a verbatim block.
--}
-isVerbatimLine : String -> Bool
-isVerbatimLine line =
-    let
-        trimmed =
-            String.trim line
-    in
-    String.startsWith "|| " trimmed
-        || String.startsWith "```" trimmed
-        || String.startsWith "$$" trimmed
 
 
 

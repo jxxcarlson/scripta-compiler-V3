@@ -1,4 +1,4 @@
-module Parser.Match exposing (getSegment, isReducible, match, splitAt)
+module Parser.Match exposing (getSegment, isReducible, match, splitAt, splitMatched)
 
 import List.Extra
 import Parser.Symbol exposing (Symbol(..), value)
@@ -71,19 +71,17 @@ hasReducibleArgs symbols =
             False
 
 
-split : List Symbol -> Maybe ( List Symbol, List Symbol )
-split symbols =
-    case match symbols of
-        Nothing ->
-            Nothing
-
-        Just k ->
-            Just (splitAt (k + 1) symbols)
+{-| Split `items` just after the segment that `match` finds at the head of `symbols`.
+`symbols` is the symbol view of `items`, so the two lists have the same length.
+-}
+splitMatched : List Symbol -> List a -> Maybe ( List a, List a )
+splitMatched symbols items =
+    match symbols |> Maybe.map (\k -> splitAt (k + 1) items)
 
 
 reducibleAux : List Symbol -> Bool
 reducibleAux symbols =
-    case split symbols of
+    case splitMatched symbols symbols of
         Nothing ->
             False
 
@@ -113,7 +111,7 @@ getSegment : Symbol -> List Symbol -> List Symbol
 getSegment sym symbols =
     let
         seg_ =
-            takeWhile (\sym_ -> sym_ /= sym) (List.drop 1 symbols)
+            List.Extra.takeWhile (\sym_ -> sym_ /= sym) (List.drop 1 symbols)
 
         n =
             List.length seg_
@@ -165,22 +163,7 @@ nextStep state =
 
 
 
--- List.Extra replacements
-
-
-takeWhile : (a -> Bool) -> List a -> List a
-takeWhile predicate list =
-    case list of
-        [] ->
-            []
-
-        x :: xs ->
-            if predicate x then
-                x :: takeWhile predicate xs
-
-            else
-                []
-
+-- LIST HELPERS
 
 lastTwo : List a -> Maybe ( a, a )
 lastTwo list =

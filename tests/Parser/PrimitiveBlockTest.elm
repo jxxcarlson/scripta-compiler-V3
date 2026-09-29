@@ -539,4 +539,16 @@ suite =
                         ]
                         block
             ]
+        , describe "block ids"
+            [ test "every block gets an id, including the last one when input has no trailing blank line" <|
+                \_ ->
+                    p "alpha\n\nbeta"
+                        |> List.map (.meta >> .id)
+                        |> Expect.equal [ "0-0", "2-1" ]
+            , test "ids are the same whether or not the input ends with a blank line" <|
+                \_ ->
+                    p "alpha\n\nbeta\n"
+                        |> List.map (.meta >> .id)
+                        |> Expect.equal [ "0-0", "2-1" ]
+            ]
         ]

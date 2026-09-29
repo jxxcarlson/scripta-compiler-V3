@@ -25,13 +25,10 @@ import V3.Types exposing (Expr(..), ExprMeta, Expression)
 
 
 type alias State =
-    { step : Int
-    , tokens : List Token
-    , numberOfTokens : Int
+    { tokens : List Token
     , tokenIndex : Int
     , committed : List Expression
     , stack : List Token
-    , messages : List String
     , lineNumber : Int
     , source : String
     }
@@ -39,11 +36,12 @@ type alias State =
 
 parse : Int -> String -> List Expression
 parse lineNumber str =
-    let
-        state =
-            parseToState lineNumber str
-    in
-    state.committed |> fixup
+    str
+        |> Token.run
+        |> initWithTokens lineNumber str
+        |> run
+        |> .committed
+        |> fixup
 
 
 fixup : List Expression -> List Expression
@@ -68,27 +66,12 @@ fixup input =
             []
 
 
-parseToState : Int -> String -> State
-parseToState lineNumber str =
-    str
-        |> Token.run
-        |> parseTokenListToState lineNumber str
-
-
-parseTokenListToState : Int -> String -> List Token -> State
-parseTokenListToState lineNumber source tokens =
-    tokens |> initWithTokens lineNumber source |> run
-
-
 initWithTokens : Int -> String -> List Token -> State
 initWithTokens lineNumber source tokens =
-    { step = 0
-    , tokens = List.reverse tokens
-    , numberOfTokens = List.length tokens
+    { tokens = List.reverse tokens
     , tokenIndex = 0
     , committed = []
     , stack = []
-    , messages = []
     , lineNumber = lineNumber
     , source = source
     }
@@ -115,7 +98,6 @@ nextStep state =
                 |> advanceTokenIndex
                 |> pushOrCommit token
                 |> reduceState
-                |> (\st -> { st | step = st.step + 1 })
                 |> Loop
 
 
@@ -136,44 +118,15 @@ stackIsEmpty state =
 
 pushOrCommit : Token -> State -> State
 pushOrCommit token state =
-    case token of
-        S _ _ ->
-            pushOrCommit_ token state
+    case ( token, state.stack ) of
+        ( S _ _, [] ) ->
+            commit token state
 
-        W _ _ ->
-            pushOrCommit_ token state
+        ( W _ _, [] ) ->
+            commit token state
 
-        MathToken _ ->
-            pushOnStack_ token state
-
-        CodeToken _ ->
-            pushOnStack_ token state
-
-        LB _ ->
-            pushOnStack_ token state
-
-        DLB _ ->
-            pushOnStack_ token state
-
-        RB _ ->
-            pushOnStack_ token state
-
-        TokenError _ _ ->
-            pushOnStack_ token state
-
-
-pushOnStack_ : Token -> State -> State
-pushOnStack_ token state =
-    { state | stack = token :: state.stack }
-
-
-pushOrCommit_ : Token -> State -> State
-pushOrCommit_ token state =
-    if List.isEmpty state.stack then
-        commit token state
-
-    else
-        push token state
+        _ ->
+            push token state
 
 
 push : Token -> State -> State
@@ -195,10 +148,10 @@ stringTokenToExpr : Int -> Token -> Maybe Expression
 stringTokenToExpr lineNumber token =
     case token of
         S str loc ->
-            Just (Text str (boostMeta lineNumber (Token.indexOf token) loc))
+            Just (Text str (boostMeta lineNumber loc.index loc))
 
         W str loc ->
-            Just (Text str (boostMeta lineNumber (Token.indexOf token) loc))
+            Just (Text str (boostMeta lineNumber loc.index loc))
 
         _ ->
             Nothing
@@ -303,48 +256,39 @@ reduceRestOfTokens : Int -> String -> List Token -> List Expression
 reduceRestOfTokens lineNumber source tokens =
     case tokens of
         (LB _) :: _ ->
-            case splitTokens tokens of
-                Nothing ->
-                    [ Text "error on match" dummyLocWithId ]
-
-                Just ( a, b ) ->
-                    reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
+            reduceSplit lineNumber source (splitTokens tokens)
 
         (DLB _) :: _ ->
-            case splitTokens tokens of
-                Nothing ->
-                    [ Text "error on match" dummyLocWithId ]
-
-                Just ( a, b ) ->
-                    reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
+            reduceSplit lineNumber source (splitTokens tokens)
 
         (MathToken _) :: _ ->
-            let
-                ( a, b ) =
-                    splitTokensWithSegment tokens
-            in
-            reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
+            reduceSplit lineNumber source (splitTokens tokens)
 
         (CodeToken _) :: _ ->
-            let
-                ( a, b ) =
-                    splitTokensWithSegment tokens
-            in
-            reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
+            reduceSplit lineNumber source (splitTokens tokens)
 
-        (S str meta) :: _ ->
-            Text str (boostMeta lineNumber (Token.indexOf (S str meta)) meta) :: reduceRestOfTokens lineNumber source (List.drop 1 tokens)
-
-        token :: _ ->
+        token :: rest ->
             case stringTokenToExpr lineNumber token of
                 Just expr ->
-                    expr :: reduceRestOfTokens lineNumber source (List.drop 1 tokens)
+                    expr :: reduceRestOfTokens lineNumber source rest
 
                 Nothing ->
                     [ Text "error converting Token" dummyLocWithId ]
 
-        _ ->
+        [] ->
             []
+
+
+{-| Reduce the leading matched segment, then the remainder.
+-}
+reduceSplit : Int -> String -> Maybe ( List Token, List Token ) -> List Expression
+reduceSplit lineNumber source split =
+    case split of
+        Nothing ->
+            [ Text "error on match" dummyLocWithId ]
+
+        Just ( a, b ) ->
+            reduceTokens lineNumber source a ++ reduceRestOfTokens lineNumber source b
 
 
 recoverFromError : State -> Step State State
@@ -360,89 +304,45 @@ recoverFromError state =
                         Nothing ->
                             dlbMeta
             in
-            Done
-                { state
-                    | committed =
-                        redLiteral state.lineNumber dlbMeta closeMeta state.source
-                            :: state.committed
-                    , stack = []
-                    , tokenIndex = 0
-                    , numberOfTokens = 0
-                    , messages = prependMessage state.lineNumber "Unclosed [[" state.messages
-                }
+            stopWith (redLiteral state.lineNumber dlbMeta closeMeta state.source) state
 
         (LB _) :: (RB meta) :: _ ->
-            Loop
-                { state
-                    | committed = errorMessage "[?]" :: state.committed
-                    , stack = []
-                    , tokenIndex = meta.index + 1
-                    , messages = prependMessage state.lineNumber "Brackets must enclose something" state.messages
-                }
+            resumeAfter meta (errorMessage "[?]") state
 
         (LB _) :: (S fName meta) :: _ ->
-            Loop
-                { state
-                    | committed = errorMessage ("[" ++ fName ++ "]?") :: state.committed
-                    , stack = []
-                    , tokenIndex = meta.index + 1
-                    , messages = prependMessage state.lineNumber "Missing right bracket" state.messages
-                }
+            resumeAfter meta (errorMessage ("[" ++ fName ++ "]?")) state
 
         (LB _) :: (W " " meta) :: _ ->
-            Loop
-                { state
-                    | committed = errorMessage "[ - can't have space after the bracket " :: state.committed
-                    , stack = []
-                    , tokenIndex = meta.index + 1
-                    , messages = prependMessage state.lineNumber "Can't have space after left bracket" state.messages
-                }
+            resumeAfter meta (errorMessage "[ - can't have space after the bracket ") state
 
         (LB _) :: [] ->
-            Done
-                { state
-                    | committed = errorMessage "[...?" :: state.committed
-                    , stack = []
-                    , tokenIndex = 0
-                    , numberOfTokens = 0
-                    , messages = prependMessage state.lineNumber "That left bracket needs something after it" state.messages
-                }
+            stopWith (errorMessage "[...?") state
 
         (RB meta) :: _ ->
-            Loop
-                { state
-                    | committed = errorMessage " extra ]?" :: state.committed
-                    , stack = []
-                    , tokenIndex = meta.index + 1
-                    , messages = prependMessage state.lineNumber "Extra right bracket(s)" state.messages
-                }
+            resumeAfter meta (errorMessage " extra ]?") state
 
         (MathToken meta) :: _ ->
-            Loop
-                { state
-                    | committed = errorMessage "$?$" :: state.committed
-                    , stack = []
-                    , tokenIndex = meta.index + 1
-                    , numberOfTokens = 0
-                    , messages = prependMessage state.lineNumber "opening dollar sign needs to be matched" state.messages
-                }
+            resumeAfter meta (errorMessage "$?$") state
 
         (CodeToken meta) :: _ ->
-            Loop
-                { state
-                    | committed = errorMessage "`?`" :: state.committed
-                    , stack = []
-                    , tokenIndex = meta.index + 1
-                    , numberOfTokens = 0
-                    , messages = prependMessage state.lineNumber "opening backtick needs to be matched" state.messages
-                }
+            resumeAfter meta (errorMessage "`?`") state
 
         _ ->
-            Done
-                { state
-                    | committed = errorMessage " ?!? " :: state.committed
-                    , messages = prependMessage state.lineNumber "Unknown error" state.messages
-                }
+            stopWith (errorMessage " ?!? ") state
+
+
+{-| Commit an error expression, clear the stack, and resume parsing after the given token.
+-}
+resumeAfter : Meta -> Expression -> State -> Step State State
+resumeAfter meta expr state =
+    Loop { state | committed = expr :: state.committed, stack = [], tokenIndex = meta.index + 1 }
+
+
+{-| Commit an error expression and stop parsing.
+-}
+stopWith : Expression -> State -> Step State State
+stopWith expr state =
+    Done { state | committed = expr :: state.committed, stack = [] }
 
 
 
@@ -469,22 +369,7 @@ boostMeta lineNumber tokenIndex { begin, end, index } =
 
 splitTokens : List Token -> Maybe ( List Token, List Token )
 splitTokens tokens =
-    case M.match (Symbol.toSymbols tokens) of
-        Nothing ->
-            Nothing
-
-        Just k ->
-            Just (M.splitAt (k + 1) tokens)
-
-
-splitTokensWithSegment : List Token -> ( List Token, List Token )
-splitTokensWithSegment tokens =
-    M.splitAt (segLength tokens + 1) tokens
-
-
-segLength : List Token -> Int
-segLength tokens =
-    M.getSegment M (tokens |> Symbol.toSymbols) |> List.length
+    M.splitMatched (Symbol.toSymbols tokens) tokens
 
 
 makeId : Int -> Int -> String
@@ -492,24 +377,14 @@ makeId lineNumber tokenIndex =
     "e-" ++ String.fromInt lineNumber ++ "." ++ String.fromInt tokenIndex
 
 
-dummyTokenIndex : Int
-dummyTokenIndex =
-    0
-
-
 dummyLocWithId : ExprMeta
 dummyLocWithId =
-    { begin = 0, end = 0, index = dummyTokenIndex, id = "dummy" }
+    { begin = 0, end = 0, index = 0, id = "dummy" }
 
 
 errorMessage : String -> Expression
 errorMessage message =
     Fun "errorHighlight" [ Text message dummyLocWithId ] dummyLocWithId
-
-
-prependMessage : Int -> String -> List String -> List String
-prependMessage lineNumber message messages =
-    (message ++ " (line " ++ String.fromInt lineNumber ++ ")") :: List.take 2 messages
 
 
 {-| List of function names that should be parsed as VFun (verbatim functions).
