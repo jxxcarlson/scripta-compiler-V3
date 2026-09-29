@@ -77,31 +77,51 @@ to `Ordinary "table"` by `transformBlockHeading` (`Pipeline.elm:60`).
 A separate `parseBody` case would be cleaner. Check first that ordinary-block
 continuation lines can't affect table rows.
 
-## 6. Incremental reparse returns stale position metadata (bug, found during #2)
+## 6. ~~Incremental reparse returns stale position metadata~~ (done)
 
-Both problems are in HEAD, and #2 kept the behavior exactly. Both were
-confirmed with probe tests.
+Goal, checked by an oracle: an incremental reparse must give exactly the forest
+and accumulator that a fresh parse of the same text gives. Four problems, all in
+HEAD, were fixed:
 
-- **Skip path keeps old metadata.** When `parseIncrementallySkipAcc` splices,
-  an unchanged block is the *old* block, with its old `lineNumber`, `id`,
-  `begin`/`end` and expression ids. If an edit changes a paragraph's length or
-  line count, every block below keeps stale positions. Example: reparse
-  `"alpha\n\nbeta"` → `"alpha\nmore\n\nbeta"`. The second block keeps line 2,
-  id `"2-1"`, begin 7, where a fresh parse gives line 3, `"3-1"`, 12.
-  Clients that call `Scripta.applyEdit` before `reparse` hide this, because
-  `applyEdit` has already shifted the old blocks. But `mydocs/diff-update-map-strategy.md`
-  treats `reparse` as "the authority that corrects" `applyEdit`'s
-  approximations, and on the skip path it corrects nothing.
-- **The expression cache reuses ids after a block moves, even on the full path.**
-  `ExpressionCache` is keyed by `sourceText`, and the cached body carries
-  `e-L.T` ids for the old line `L`. Example: insert a section at the top of
-  `"alpha\n\nbeta [b x]"`. The moved blocks keep ids `e-0.0`, `e-2.0`, `e-2.2`,
-  where a fresh parse gives `e-3.0`, `e-5.0`, `e-5.2`.
+1. **Expression cache reused old expression ids after a block moved.** The cache
+   now records the line each body was parsed at (`ExpressionCache` values are
+   `{ lineNumber, body }`). On a hit, `Pipeline.toExpressionBlockCached` shifts
+   the `e-L.T` ids by the block's line change with `Edit.Map.shiftExprId`.
+2. **The skip path kept stale positions and ids.** The accumulator stores block ids
+   and expression ids (references, footnotes, terms, numbered items, Q&A), and both
+   embed the line number. So the previous accumulator can be reused only if every
+   block keeps its id. If a changed block gains or loses lines, the reparse now takes
+   the full path. When skipping, unchanged blocks keep their accumulator-derived
+   properties but take `meta` (offsets) from the new parse.
+3. **Removing accumulator-dependent content went unnoticed.** Only the new version of
+   a changed block was checked, so deleting a footnote, `[index …]` etc. reused a
+   stale accumulator. Now the old and new versions must both be
+   accumulator-independent.
+4. **Header continuation lines were missing from `sourceText`.** Lines like
+   `| width:300` or `| label:foo` were merged into args/properties but not into
+   `meta.sourceText`. As a result, edits to them were invisible to change detection
+   (skip path and cache), and `end`, `contentBegin` and `contentEnd` were wrong for
+   such blocks: `end` stopped short and `contentBegin` pointed into the header.
+   `mergeContinuationLine` now adds the line to `sourceText` and moves
+   `contentBegin` past it.
 
-Possible fix: on reuse (skip-path splice and cache hit), take position metadata
-from the fresh parse, and shift cached expression ids with `Edit.Map.shiftExprId`
-by the block's line delta. Keep only the accumulator-derived properties from the
-old block.
+Cost: pressing Enter in a plain paragraph now takes the full path. On
+`mlttv1.scripta` (2,850 lines) that reparse takes ~5.4 ms instead of ~2.6 ms,
+against ~46 ms for a cold parse. Typing within a line still takes the skip path
+(~1.5 ms).
+
+Verified:
+
+- `tests/Parser/IncrementalOracleTest.elm`: 11 cases (skip and full path,
+  continuation-line edits, footnote removal). Each compares the reparse with a fresh parse.
+- `parser-refactor/diff-harness/run-oracle.sh`: 2,604 generated edits over all
+  repo documents (insert char, add line, delete line, append `[ref …]` at ~40
+  lines per document). 0 mismatches: 217 skip path, 2,387 full path. Before the
+  fix, the first version of this check found 9 mismatches, which led to fixes 3 and 4.
+- 2 new tests in `PrimitiveBlockTest` for continuation-line `sourceText` and offsets.
+- `run-diff.sh` against HEAD: first-parse output differs only for the 5 inputs with
+  header continuation lines (offsets and `sourceText`), as intended.
+- All 278 tests pass, including `EditOracleTest` (shift == reparse).
 
 ## Known issues (out of scope for now)
 

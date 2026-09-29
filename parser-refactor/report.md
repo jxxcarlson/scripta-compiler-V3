@@ -4,7 +4,8 @@ Simplification of the `Parser.*` modules. Steps 1–3 removed dead code,
 collapsed duplicate branches, and fixed latent bugs (319 insertions, 549 deletions;
 `src/Parser` went from ~1,975 to 1,700 lines of code). Step 4 made the
 expression parser linear-time and stack-safe. Step 5 replaced the three tree walks
-of incremental reparse with one. All 265 tests pass (250 original + 15 new).
+of incremental reparse with one. Step 6 made incremental reparse agree
+exactly with a fresh parse. All 278 tests pass (250 original + 28 new).
 The remaining work is tracked in `parser-refactor/todo.md`.
 
 Tests must be run with `npx elm-test@0.19.2-0`. The global `elm-test` is
@@ -177,6 +178,33 @@ Both were in HEAD; step 5 kept the behavior exactly. Probe tests confirmed each 
   a section at the top, the moved blocks keep `e-0.0`, `e-2.0`, `e-2.2` instead
   of `e-3.0`, `e-5.0`, `e-5.2`.
 
+## Step 6: incremental reparse equals a fresh parse (to-do item #6)
+
+The two bugs found during step 5, plus two more found by the new corpus oracle,
+are fixed. An incremental reparse (`Scripta.reparse`) now gives exactly the
+forest and accumulator that a fresh parse of the same text gives.
+
+- **Expression cache:** it now records each body's line number; on a hit,
+  expression ids are shifted to the block's new line.
+- **Skip path:** the previous accumulator is reused only if every block keeps its
+  id, because the accumulator stores block and expression ids. Unchanged blocks
+  take fresh offsets from the new parse.
+- **Removed accumulator content:** a changed block's old version must also be
+  accumulator-independent (deleting a footnote or `[index …]` used to leave
+  stale entries).
+- **Header continuation lines** (`| width:300`, `| label:foo`) are now part of
+  `meta.sourceText`. Before, edits to them went undetected, and those blocks had
+  wrong `end` / `contentBegin` / `contentEnd`.
+
+Cost: Enter inside a plain paragraph now runs the full accumulator pass
+(~5.4 ms instead of ~2.6 ms on the 2,850-line `mlttv1.scripta`; a cold parse
+is ~46 ms).
+
+Verification: 11 oracle unit tests (`IncrementalOracleTest.elm`), 2 new
+`PrimitiveBlockTest` cases, and `run-oracle.sh`, which checks 2,604 generated
+edits over all repo documents with 0 mismatches. Details are in
+`parser-refactor/todo.md`, item 6.
+
 ## Known issues left alone
 
 - Cells in the same table row still share expression ids (e.g. `e-3.0` twice),
@@ -194,8 +222,7 @@ Both were in HEAD; step 5 kept the behavior exactly. Probe tests confirmed each 
 
 - ~~**One walk in `Forest.elm`**~~: done, see Step 5.
 - ~~**Quadratic expression parser**~~: done, see Step 4.
-- **Stale position metadata after incremental reparse** (to-do #6): see the bugs
-  found during step 5.
+- ~~**Stale position metadata after incremental reparse**~~: done, see Step 6.
 - **List logic in one place:** continuation lines are merged both in
   `PrimitiveBlock.appendToLastListItem` and in `Pipeline.groupListItems`, and the
   `"- "` / `". "` prefix test exists three times.

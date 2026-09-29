@@ -69,3 +69,16 @@ same files with trailing blank lines stripped, and 42–58 the synthetic cases i
 - `run.js`: collects inputs and runs the worker
 - `compare.py`: summarizes differences
 - `run-diff.sh`: builds both versions, runs, compares
+
+## Incremental reparse oracle
+
+`parser-refactor/diff-harness/run-oracle.sh` checks the working tree only.
+For every `.scripta` file, at about 40 evenly spaced lines, it applies four
+edits: insert a character, add a line, delete the line, append `[ref foo]`.
+For each edit it checks that an incremental reparse (`parseIncrementally`, then
+`parseIncrementallySkipAcc`) gives the same forest and accumulator as a fresh
+parse. It prints each mismatch and a summary line with the skip/full counts
+(2,604 edits; about 1 minute).
+
+- `OracleMain.elm`: Elm worker that does the comparison
+- `oracle.js`: generates the edits and prints the report
