@@ -61,8 +61,14 @@ Pipeline:
 -}
 parseToForestWithAccumulator : CompilerParameters -> List String -> ( Accumulator, List (Tree ExpressionBlock) )
 parseToForestWithAccumulator params lines =
-    lines
-        |> parse
+    parse lines |> accumulate params
+
+
+{-| Filter the forest, then run the accumulator pass (numbering, references, etc.).
+-}
+accumulate : CompilerParameters -> List (Tree ExpressionBlock) -> ( Accumulator, List (Tree ExpressionBlock) )
+accumulate params forest =
+    forest
         |> filterForest params.filter
         |> Generic.Acc.transformAccumulate Generic.Acc.initialData
 
@@ -97,18 +103,11 @@ parseIncrementally :
     -> ( ExpressionCache, Accumulator, List (Tree ExpressionBlock) )
 parseIncrementally params cache lines =
     let
-        exprForest =
+        ( acc, forest ) =
             parseWith (Parser.Pipeline.toExpressionBlockCached cache) lines
-
-        ( acc, finalForest ) =
-            exprForest
-                |> filterForest params.filter
-                |> Generic.Acc.transformAccumulate Generic.Acc.initialData
-
-        newCache =
-            buildExpressionCache finalForest
+                |> accumulate params
     in
-    ( newCache, acc, finalForest )
+    ( buildExpressionCache forest, acc, forest )
 
 
 {-| Result of an incremental parse with accumulator skip optimization.
@@ -137,84 +136,86 @@ parseIncrementallySkipAcc :
     -> IncrementalResult
 parseIncrementallySkipAcc params cache ( prevAcc, prevForest ) lines =
     let
-        newExprForest =
+        newForest =
             parseWith (Parser.Pipeline.toExpressionBlockCached cache) lines
                 |> filterForest params.filter
     in
-    if forestStructureMatches prevForest newExprForest && allChangedBlocksAreAccIndependent prevForest newExprForest then
-        let
-            splicedForest =
-                spliceForest prevForest newExprForest
+    case spliceIfAccIndependent prevForest newForest of
+        Just splicedForest ->
+            { cache = buildExpressionCache splicedForest, acc = prevAcc, forest = splicedForest, accWasSkipped = True }
 
-            newCache =
-                buildExpressionCache splicedForest
-        in
-        { cache = newCache, acc = prevAcc, forest = splicedForest, accWasSkipped = True }
+        Nothing ->
+            let
+                ( acc, forest ) =
+                    Generic.Acc.transformAccumulate Generic.Acc.initialData newForest
+            in
+            { cache = buildExpressionCache forest, acc = acc, forest = forest, accWasSkipped = False }
+
+
+{-| Walk the old and new forests together. If they have the same shape (same
+number of trees and children at every level, with matching headings and
+indents) and every block whose source text changed is accumulator-independent,
+return the old forest with the changed blocks replaced by their new versions.
+Unchanged blocks keep their accumulator-derived properties from the old forest.
+Otherwise return Nothing, stopping at the first mismatch.
+-}
+spliceIfAccIndependent : List (Tree ExpressionBlock) -> List (Tree ExpressionBlock) -> Maybe (List (Tree ExpressionBlock))
+spliceIfAccIndependent oldForest newForest =
+    spliceForestHelp oldForest newForest []
+
+
+{-| Accumulator loop over sibling trees, so long documents do not grow the stack.
+Recursion into children goes only as deep as the document's nesting.
+-}
+spliceForestHelp : List (Tree ExpressionBlock) -> List (Tree ExpressionBlock) -> List (Tree ExpressionBlock) -> Maybe (List (Tree ExpressionBlock))
+spliceForestHelp oldForest newForest acc =
+    case ( oldForest, newForest ) of
+        ( [], [] ) ->
+            Just (List.reverse acc)
+
+        ( oldTree :: oldRest, newTree :: newRest ) ->
+            case spliceTree oldTree newTree of
+                Just tree ->
+                    spliceForestHelp oldRest newRest (tree :: acc)
+
+                Nothing ->
+                    Nothing
+
+        _ ->
+            Nothing
+
+
+spliceTree : Tree ExpressionBlock -> Tree ExpressionBlock -> Maybe (Tree ExpressionBlock)
+spliceTree oldTree newTree =
+    let
+        oldBlock =
+            Tree.value oldTree
+
+        newBlock =
+            Tree.value newTree
+    in
+    if oldBlock.heading /= newBlock.heading || oldBlock.indent /= newBlock.indent then
+        Nothing
 
     else
         let
-            ( acc, finalForest ) =
-                newExprForest
-                    |> Generic.Acc.transformAccumulate Generic.Acc.initialData
+            maybeBlock =
+                if oldBlock.meta.sourceText == newBlock.meta.sourceText then
+                    Just oldBlock
 
-            newCache =
-                buildExpressionCache finalForest
+                else if isAccumulatorIndependent newBlock then
+                    Just newBlock
+
+                else
+                    Nothing
         in
-        { cache = newCache, acc = acc, forest = finalForest, accWasSkipped = False }
+        case maybeBlock of
+            Nothing ->
+                Nothing
 
-
-{-| Check if two forests have the same structure (same headings and indents at each position).
--}
-forestStructureMatches : List (Tree ExpressionBlock) -> List (Tree ExpressionBlock) -> Bool
-forestStructureMatches oldForest newForest =
-    List.length oldForest
-        == List.length newForest
-        && List.all identity (List.map2 treeStructureMatches oldForest newForest)
-
-
-treeStructureMatches : Tree ExpressionBlock -> Tree ExpressionBlock -> Bool
-treeStructureMatches oldTree newTree =
-    let
-        oldBlock =
-            Tree.value oldTree
-
-        newBlock =
-            Tree.value newTree
-    in
-    oldBlock.heading
-        == newBlock.heading
-        && oldBlock.indent
-        == newBlock.indent
-        && List.length (Tree.children oldTree)
-        == List.length (Tree.children newTree)
-        && List.all identity (List.map2 treeStructureMatches (Tree.children oldTree) (Tree.children newTree))
-
-
-{-| Check that all changed blocks between old and new forests are accumulator-independent.
--}
-allChangedBlocksAreAccIndependent : List (Tree ExpressionBlock) -> List (Tree ExpressionBlock) -> Bool
-allChangedBlocksAreAccIndependent oldForest newForest =
-    List.all identity (List.map2 treeChangesAreAccIndependent oldForest newForest)
-
-
-treeChangesAreAccIndependent : Tree ExpressionBlock -> Tree ExpressionBlock -> Bool
-treeChangesAreAccIndependent oldTree newTree =
-    let
-        oldBlock =
-            Tree.value oldTree
-
-        newBlock =
-            Tree.value newTree
-
-        thisBlockOk =
-            if oldBlock.meta.sourceText == newBlock.meta.sourceText then
-                True
-
-            else
-                isAccumulatorIndependent newBlock
-    in
-    thisBlockOk
-        && List.all identity (List.map2 treeChangesAreAccIndependent (Tree.children oldTree) (Tree.children newTree))
+            Just block ->
+                spliceIfAccIndependent (Tree.children oldTree) (Tree.children newTree)
+                    |> Maybe.map (Tree.branch block)
 
 
 {-| A block is accumulator-independent if it neither updates nor consumes
@@ -263,37 +264,6 @@ exprUsesAccumulator expr =
 
         ExprList _ children _ ->
             List.any exprUsesAccumulator children
-
-
-{-| Splice changed blocks from the new forest into the old forest.
-Unchanged blocks keep their accumulator-derived properties from the old forest.
-Changed blocks use the freshly parsed version (safe because they are acc-independent).
--}
-spliceForest : List (Tree ExpressionBlock) -> List (Tree ExpressionBlock) -> List (Tree ExpressionBlock)
-spliceForest oldForest newForest =
-    List.map2 spliceTree oldForest newForest
-
-
-spliceTree : Tree ExpressionBlock -> Tree ExpressionBlock -> Tree ExpressionBlock
-spliceTree oldTree newTree =
-    let
-        oldBlock =
-            Tree.value oldTree
-
-        newBlock =
-            Tree.value newTree
-
-        resultBlock =
-            if oldBlock.meta.sourceText == newBlock.meta.sourceText then
-                oldBlock
-
-            else
-                newBlock
-
-        resultChildren =
-            List.map2 spliceTree (Tree.children oldTree) (Tree.children newTree)
-    in
-    Tree.branch resultBlock resultChildren
 
 
 {-| Build an expression cache from a forest of ExpressionBlocks.

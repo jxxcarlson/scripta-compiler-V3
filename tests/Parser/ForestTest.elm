@@ -174,4 +174,86 @@ suite =
                         [ Just "1-0", Just "4-1", Just "7-2", Just "10-3" ]
                         ids
             ]
+        , describe "parseIncrementallySkipAcc"
+            [ test "plain text change in a paragraph skips the accumulator pass" <|
+                \_ ->
+                    reparse "Alpha one.\n\n| section\nIntro\n\nBeta two.\n" "Alpha ONE.\n\n| section\nIntro\n\nBeta two.\n"
+                        |> .accWasSkipped
+                        |> Expect.equal True
+            , test "skip path keeps unchanged blocks and takes the new version of changed ones" <|
+                \_ ->
+                    let
+                        before =
+                            "Alpha one.\n\n| section\nIntro\n"
+
+                        ( _, _, oldForest ) =
+                            PF.parseIncrementally TestData.defaultCompilerParameters Dict.empty (String.lines before)
+
+                        result =
+                            reparse before "Alpha ONE.\n\n| section\nIntro\n"
+                    in
+                    Expect.all
+                        [ \r ->
+                            Expect.equal
+                                [ "Alpha ONE.", "| section\nIntro" ]
+                                (List.map (Tree.value >> .meta >> .sourceText) r.forest)
+                        , \r ->
+                            Expect.equal
+                                (List.drop 1 oldForest |> List.map Tree.value)
+                                (List.drop 1 r.forest |> List.map Tree.value)
+                        ]
+                        result
+            , test "change inside a code block skips the accumulator pass" <|
+                \_ ->
+                    reparse "Text.\n\n| code\nx = 1\n" "Text.\n\n| code\nx = 2\n"
+                        |> .accWasSkipped
+                        |> Expect.equal True
+            , test "adding a reference to a paragraph runs the accumulator pass" <|
+                \_ ->
+                    reparse "Alpha one.\n\nBeta.\n" "Alpha one [ref foo].\n\nBeta.\n"
+                        |> .accWasSkipped
+                        |> Expect.equal False
+            , test "changing a section title runs the accumulator pass" <|
+                \_ ->
+                    reparse "| section\nIntro\n\nText.\n" "| section\nIntroduction\n\nText.\n"
+                        |> .accWasSkipped
+                        |> Expect.equal False
+            , test "inserting a block runs the accumulator pass" <|
+                \_ ->
+                    reparse "Alpha.\n\nBeta.\n" "New.\n\nAlpha.\n\nBeta.\n"
+                        |> .accWasSkipped
+                        |> Expect.equal False
+            , test "changing a block's kind runs the accumulator pass" <|
+                \_ ->
+                    reparse "Alpha.\n\nBeta.\n" "Alpha.\n\n| theorem\nBeta.\n"
+                        |> .accWasSkipped
+                        |> Expect.equal False
+            , test "unchanged source skips the accumulator pass and returns the same forest" <|
+                \_ ->
+                    let
+                        src =
+                            "Alpha [ref foo].\n\n| section\nIntro\n"
+
+                        ( _, _, oldForest ) =
+                            PF.parseIncrementally TestData.defaultCompilerParameters Dict.empty (String.lines src)
+
+                        result =
+                            reparse src src
+                    in
+                    Expect.equal ( True, oldForest ) ( result.accWasSkipped, result.forest )
+            ]
         ]
+
+
+{-| Parse `before` as Scripta.parse does, then reparse `after` as Scripta.reparse does.
+-}
+reparse : String -> String -> PF.IncrementalResult
+reparse before after =
+    let
+        params =
+            TestData.defaultCompilerParameters
+
+        ( cache, acc, forest ) =
+            PF.parseIncrementally params Dict.empty (String.lines before)
+    in
+    PF.parseIncrementallySkipAcc params cache ( acc, forest ) (String.lines after)
