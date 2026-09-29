@@ -82,6 +82,52 @@ the intended fixes.
    `bodyLineNumber + k`, its actual source line.
    Test: `tests/Parser/PipelineTest.elm`, "table expression ids".
 
+## Step 4: linear-time expression parser (to-do item #1)
+
+The expression parser now runs in linear time and no longer crashes on long
+lines, and its output hasn't changed.
+
+Before and after (median ms to parse one line of the given shape, n = 2000;
+from `parser-refactor/bench/run-bench.sh`):
+
+| shape | before | after |
+|---|---:|---:|
+| `a [b x] ` × n | 130 | 25 |
+| `[b ` + `a [i x] ` × n + `]` | 3048 | 25 |
+| `[b ` + `x [i y] ` × n (unclosed) | 2880 | 26 |
+| `$x$ ` × n | 88 | 13 |
+| `[b ` + `$x$ ` × n + `]` | 1526 | 13 |
+
+Time now roughly doubles when the input doubles, tested up to 128 KB lines.
+Timings for real documents change much less, since most paragraphs are
+short; full documents were not benchmarked.
+
+The fixes, all in `Parser/Expression.elm` and `Parser/Match.elm`:
+
+- **Tokens are popped from the front of the list.** Previously each step looked
+  up `getAt tokenIndex`, walking from the start every time. Error recovery now
+  resumes by dropping tokens from the full list, and only on errors.
+- **The expensive reducibility check is skipped when it can't succeed.** The
+  parser tracks bracket depth, and only calls `isReducible` when depth is 0 and
+  the top token is `]`, `$` or a backtick. The comment on `tokensAreReducible`
+  explains why that precheck can't change the result.
+- **Segment matching converts tokens only as far as it needs to.** The new
+  `Match.matchBy` / `splitMatchedBy` convert tokens to symbols while walking the
+  segment, instead of converting the whole remainder for every argument.
+
+Stack overflows fixed: HEAD crashed with `RangeError: Maximum call stack size
+exceeded` on lines of about 32 KB. `fixup` became `List.map trimFirstArg`,
+`reduceRestOfTokens` became an accumulator loop, and `hasReducibleArgs` absorbed
+`reducibleAux` so it calls itself directly in tail position.
+
+Verification:
+
+- The output comparison (`run-diff.sh`) reports `IDENTICAL` to HEAD, including
+  9 new cases with errors mid-line, added because the resume logic changed.
+- 257 tests pass. Two new long-line tests in
+  `tests/Parser/ExpressionParserTest.elm` fail on the old parser with the stack
+  overflow.
+
 ## Known issues left alone
 
 - Cells in the same table row still share expression ids (e.g. `e-3.0` twice),
@@ -101,9 +147,7 @@ the intended fixes.
   `allChangedBlocksAreAccIndependent`, and `spliceForest` walk the same pair of trees.
   Replace them with one walk that returns `Maybe` forest. Also make
   `parseToForestWithAccumulator` and `parseIncrementally` share one implementation.
-- **Quadratic expression parser:** `getToken` uses `List.Extra.getAt tokenIndex`,
-  and `isReducible` re-reverses the stack every step. Consume tokens from the head
-  of the list instead. Error recovery (`tokenIndex = meta.index + 1`) becomes a drop.
+- ~~**Quadratic expression parser**~~: done, see Step 4.
 - **List logic in one place:** continuation lines are merged both in
   `PrimitiveBlock.appendToLastListItem` and in `Pipeline.groupListItems`, and the
   `"- "` / `". "` prefix test exists three times.
