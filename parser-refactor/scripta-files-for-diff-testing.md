@@ -82,3 +82,13 @@ parse. It prints each mismatch and a summary line with the skip/full counts
 
 - `OracleMain.elm`: Elm worker that does the comparison
 - `oracle.js`: generates the edits and prints the report
+
+## Block span check
+
+`parser-refactor/diff-harness/run-span-check.sh` checks the working tree only.
+For every block in every `.scripta` file it verifies that
+`String.slice begin end source` equals the block's lines as written. It prints
+each mismatch and a summary (2,214 blocks; a few seconds).
+
+- `SpanCheck.elm`: Elm worker that does the check
+- `span.js`: collects the documents and prints the report

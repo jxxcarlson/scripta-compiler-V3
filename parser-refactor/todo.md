@@ -132,20 +132,24 @@ Verified:
   header continuation lines (offsets and `sourceText`), as intended.
 - All 278 tests pass, including `EditOracleTest` (shift == reparse).
 
-## 7. Indented multi-line blocks have wrong `end` / `contentEnd` (bug, found during #3)
+## 7. ~~Indented multi-line blocks have wrong `end` / `contentEnd`~~ (done)
 
-`PrimitiveBlock.addLineToBlock` strips the block's indentation from body lines,
-and `finalize` computes `end = begin + String.length sourceText` from that stripped
-text. So for an indented block, `end` (and `contentEnd`) falls short by the
-indentation width for every line after the first, and `String.slice begin end source`
-cuts the block off early. This affects editor sync (`data-end`) for nested content.
-A span check over the corpus found 43 such blocks (34 paragraphs, 4 sections,
-5 equations), all indented, in `mlttv1.scripta` and `welcome.scripta`.
+`PrimitiveBlock` now tracks `meta.end` line by line: each function that adds a
+line to a block (`addLineToBlock`, `addRawLineToBlock`, `mergeContinuationLine`)
+sets it to that line's `lineEnd` (`position + length` as written). `finalize` no
+longer computes `end` from `sourceText`, and `contentEnd` is the tracked `end`.
+`sourceText` of an indented block stays dedented after the first line (it is the
+cache key and is used for text search); a test records this.
 
-Possible fix: compute `end` from the raw line positions (the last line's
-`position + length`) instead of from `sourceText`. Decide separately whether
-`sourceText` of an indented block should stay dedented (it is the cache key and
-is used by `Scripta.Document` for text search).
+Verified:
+
+- New `parser-refactor/diff-harness/run-span-check.sh`: for every block in every
+  repo document, `String.slice begin end source` equals the block's lines as
+  written. 0 mismatches in 2,214 blocks (HEAD before the fix: 43).
+- 2 new `PrimitiveBlockTest` cases ("indented blocks"). All 281 tests pass,
+  including `EditOracleTest`.
+- `run-diff.sh`: only documents with indented blocks change, and every differing
+  fragment shown differs only in `end`/`contentEnd`. `run-oracle.sh`: 0 mismatches.
 
 ## Known issues (out of scope for now)
 

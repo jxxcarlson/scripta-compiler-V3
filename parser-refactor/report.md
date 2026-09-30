@@ -6,7 +6,8 @@ collapsed duplicate branches, and fixed latent bugs (319 insertions, 549 deletio
 expression parser linear-time and stack-safe. Step 5 replaced the three tree walks
 of incremental reparse with one. Step 6 made incremental reparse agree
 exactly with a fresh parse. Step 7 did the smaller cleanups (lists, `TokenType`,
-tables). All 279 tests pass (250 original + 29 new).
+tables). Step 8 fixed `end` offsets of indented blocks. All 281 tests pass
+(250 original + 31 new).
 The remaining work is tracked in `parser-refactor/todo.md`.
 
 Tests must be run with `npx elm-test@0.19.2-0`. The global `elm-test` is
@@ -228,6 +229,19 @@ Indented multi-line blocks have `end`/`contentEnd` computed from dedented
 `sourceText`, so they fall short by the indentation width per line. A span check
 over the corpus found 43 such blocks.
 
+## Step 8: block offsets for indented blocks (to-do item #7)
+
+For an indented multi-line block, `end` and `contentEnd` were computed from
+`sourceText`, whose body lines have the indentation removed, so they fell short by
+the indentation width for every line after the first. `PrimitiveBlock` now tracks
+`end` from the raw line positions as lines are added. `sourceText` is unchanged
+(still dedented).
+
+A new check, `parser-refactor/diff-harness/run-span-check.sh`, verifies for every
+block in every repo document that `begin`/`end` cut exactly the block's source
+lines: 0 mismatches in 2,214 blocks, against 43 before the fix. All 281 tests pass
+(2 new), and the reparse oracle still reports 0 mismatches.
+
 ## Known issues left alone
 
 - Cells in the same table row still share expression ids (e.g. `e-3.0` twice),
@@ -249,4 +263,4 @@ over the corpus found 43 such blocks.
 - ~~**List logic in one place**~~: done, see Step 7.
 - ~~**Drop `Parser.Symbol`**~~: dropped `TokenType` instead, see Step 7.
 - ~~**Tables**~~: done, see Step 7.
-- **Indented blocks' `end` offsets** (to-do #7): see the bug found during step 7.
+- ~~**Indented blocks' `end` offsets**~~: done, see Step 8.
