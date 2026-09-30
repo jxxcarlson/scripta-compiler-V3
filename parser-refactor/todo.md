@@ -55,27 +55,36 @@ Verified:
 - 8 new tests in `tests/Parser/ForestTest.elm` pin down when the accumulator pass
   is skipped. They pass on both the old and new code.
 
-## 3. Keep list handling in one place
+## 3. ~~Keep list handling in one place~~ (done)
 
-- Continuation lines are merged in both `appendToLastListItem`
-  (`Parser/PrimitiveBlock.elm:327`) and `groupListItems`
-  (`Parser/Pipeline.elm:138`).
-- The `"- "` / `". "` prefix test is written three times: `inspectListKind`
-  (`PrimitiveBlock.elm:290`), `groupListItems`, and `stripListPrefix`
-  (`Pipeline.elm:166`).
+- New module `Parser/ListItem.elm` holds the only copy of the list syntax:
+  `kind` (`"- "` → item/itemList, `". "` → numbered/numberedList) and `stripPrefix`.
+  `PrimitiveBlock.getHeadingData`, `PrimitiveBlock.addBodyLine` and
+  `Pipeline.groupListItems` all use it.
+- `PrimitiveBlock` no longer merges a list item's continuation lines
+  (`appendToLastListItem` is gone). List blocks keep their lines raw, and
+  `Pipeline.groupListItems` does all the grouping. Parsed expressions are unchanged.
+- Bug fixed along the way: merging in `PrimitiveBlock` meant `sourceText` was not
+  the source (`"- b\n  more"` became `"- b more"`), so a list's `end` fell short.
+  New test in `PrimitiveBlockTest` ("list continuation lines").
 
-## 4. Drop `Parser.Symbol`
+## 4. ~~Drop `Parser.Symbol`~~: dropped `TokenType` instead (done)
 
-Let `Parser/Match.elm` work on `Token` directly, using a
-`bracketValue : Token -> Int`, instead of converting with `toSymbols`
-(`Parser/Symbol.elm:45`).
+After #1, `Symbol` is converted lazily and only when a reduction is possible, so
+the performance reason for removing it is gone. It gives `Match` a tiny alphabet,
+which its 20 tests use (`[L, ST, R]`). The redundant copy was the `TokenType`
+enum (`TLB`, `TRB`, …) and `Tokenizer.type_`, used in only three places.
+Those are now direct pattern matches on `Token` (`Expression.isExpr`,
+`Tokenizer.isTextToken`, `Tokenizer.lastIsOpenBracket`). Output identical.
 
-## 5. Stop treating tables as verbatim and then relabelling them
+## 5. ~~Stop treating tables as verbatim and then relabelling them~~ (done)
 
-`table` is listed in `verbatimNames` (`PrimitiveBlock.elm:13`), then renamed
-to `Ordinary "table"` by `transformBlockHeading` (`Pipeline.elm:60`).
-A separate `parseBody` case would be cleaner. Check first that ordinary-block
-continuation lines can't affect table rows.
+`table` moved from `verbatimNames` to `ordinaryNames`, so it parses as
+`Ordinary "table"` directly. `Pipeline.transformBlockHeading` is gone, and
+`Pipeline.parseBody` has an `Ordinary "table"` case. The only parsing difference
+between verbatim and ordinary blocks is the rule for `| word` lines directly under
+the header, and no table in the corpus has a row starting with `|`. Forest output
+identical.
 
 ## 6. ~~Incremental reparse returns stale position metadata~~ (done)
 
@@ -122,6 +131,21 @@ Verified:
 - `run-diff.sh` against HEAD: first-parse output differs only for the 5 inputs with
   header continuation lines (offsets and `sourceText`), as intended.
 - All 278 tests pass, including `EditOracleTest` (shift == reparse).
+
+## 7. Indented multi-line blocks have wrong `end` / `contentEnd` (bug, found during #3)
+
+`PrimitiveBlock.addLineToBlock` strips the block's indentation from body lines,
+and `finalize` computes `end = begin + String.length sourceText` from that stripped
+text. So for an indented block, `end` (and `contentEnd`) falls short by the
+indentation width for every line after the first, and `String.slice begin end source`
+cuts the block off early. This affects editor sync (`data-end`) for nested content.
+A span check over the corpus found 43 such blocks (34 paragraphs, 4 sections,
+5 equations), all indented, in `mlttv1.scripta` and `welcome.scripta`.
+
+Possible fix: compute `end` from the raw line positions (the last line's
+`position + length`) instead of from `sourceText`. Decide separately whether
+`sourceText` of an indented block should stay dedented (it is the cache key and
+is used by `Scripta.Document` for text search).
 
 ## Known issues (out of scope for now)
 

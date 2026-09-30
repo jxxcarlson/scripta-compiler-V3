@@ -5,7 +5,8 @@ collapsed duplicate branches, and fixed latent bugs (319 insertions, 549 deletio
 `src/Parser` went from ~1,975 to 1,700 lines of code). Step 4 made the
 expression parser linear-time and stack-safe. Step 5 replaced the three tree walks
 of incremental reparse with one. Step 6 made incremental reparse agree
-exactly with a fresh parse. All 278 tests pass (250 original + 28 new).
+exactly with a fresh parse. Step 7 did the smaller cleanups (lists, `TokenType`,
+tables). All 279 tests pass (250 original + 29 new).
 The remaining work is tracked in `parser-refactor/todo.md`.
 
 Tests must be run with `npx elm-test@0.19.2-0`. The global `elm-test` is
@@ -205,6 +206,28 @@ Verification: 11 oracle unit tests (`IncrementalOracleTest.elm`), 2 new
 edits over all repo documents with 0 mismatches. Details are in
 `parser-refactor/todo.md`, item 6.
 
+## Step 7: smaller cleanups (to-do items #3, #4, #5)
+
+- **#3, lists in one place:** new `Parser/ListItem.elm` holds the list syntax
+  (`kind`, `stripPrefix`), used by `PrimitiveBlock` and `Pipeline`. List blocks
+  keep raw lines, and only `Pipeline.groupListItems` merges continuation lines.
+  This also fixed list `sourceText`/`end`, which were computed from merged lines.
+- **#4, `TokenType` removed instead of `Symbol`:** after step 4, `Symbol` costs
+  little and gives `Match` a small alphabet for its tests. The redundant copy was
+  `Tokenizer.TokenType` / `type_`, now replaced by pattern matches.
+- **#5, tables are ordinary blocks:** `table` moved from `verbatimNames` to
+  `ordinaryNames`, which removes `Pipeline.transformBlockHeading`.
+
+Verification: all 279 tests pass. `run-diff.sh` against the previous commit
+differs only in the two synthetic list inputs with continuation lines (their
+`sourceText`/`end`). `run-oracle.sh` finds 0 mismatches in 2,604 edits.
+
+### Bug found during step 7 (to-do #7)
+
+Indented multi-line blocks have `end`/`contentEnd` computed from dedented
+`sourceText`, so they fall short by the indentation width per line. A span check
+over the corpus found 43 such blocks.
+
 ## Known issues left alone
 
 - Cells in the same table row still share expression ids (e.g. `e-3.0` twice),
@@ -223,10 +246,7 @@ edits over all repo documents with 0 mismatches. Details are in
 - ~~**One walk in `Forest.elm`**~~: done, see Step 5.
 - ~~**Quadratic expression parser**~~: done, see Step 4.
 - ~~**Stale position metadata after incremental reparse**~~: done, see Step 6.
-- **List logic in one place:** continuation lines are merged both in
-  `PrimitiveBlock.appendToLastListItem` and in `Pipeline.groupListItems`, and the
-  `"- "` / `". "` prefix test exists three times.
-- **Drop `Parser.Symbol`:** it is a third view of `Token`, used only for bracket
-  depth in `Match`. Match on `Token` with a `bracketValue : Token -> Int`.
-- **Tables:** stop routing `table` through `verbatimNames` and then relabelling it
-  `Ordinary` in `Pipeline.transformBlockHeading`.
+- ~~**List logic in one place**~~: done, see Step 7.
+- ~~**Drop `Parser.Symbol`**~~: dropped `TokenType` instead, see Step 7.
+- ~~**Tables**~~: done, see Step 7.
+- **Indented blocks' `end` offsets** (to-do #7): see the bug found during step 7.
