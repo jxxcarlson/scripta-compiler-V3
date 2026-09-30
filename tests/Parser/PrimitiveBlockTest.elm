@@ -579,4 +579,20 @@ suite =
                         |> List.map (\b -> ( b.meta.sourceText, String.slice b.meta.begin b.meta.end src ))
                         |> Expect.equal [ ( "- a\n- b\n  more", "- a\n- b\n  more" ) ]
             ]
+        , describe "indented blocks"
+            [ test "begin/end span an indented multi-line block as written" <|
+                \_ ->
+                    let
+                        src =
+                            "| theorem\nStatement.\n\n  alpha\n  beta\n  gamma\n"
+                    in
+                    p src
+                        |> List.map (\b -> String.slice b.meta.begin b.meta.end src)
+                        |> Expect.equal [ "| theorem\nStatement.", "  alpha\n  beta\n  gamma" ]
+            , test "sourceText of an indented block stays dedented after the first line" <|
+                \_ ->
+                    p "Top.\n\n  alpha\n  beta\n"
+                        |> List.map (.meta >> .sourceText)
+                        |> Expect.equal [ "Top.", "  alpha\nbeta" ]
+            ]
         ]

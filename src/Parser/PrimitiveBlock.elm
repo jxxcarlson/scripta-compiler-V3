@@ -203,7 +203,7 @@ blockFromLine line =
             , bodyLineNumber = bodyLineNumber
             , numberOfLines = 1
             , begin = line.position
-            , end = line.position + String.length line.content
+            , end = lineEnd line
             , contentBegin = contentBegin_
             , contentEnd = contentEnd_
             , messages = []
@@ -295,7 +295,7 @@ addRawLineToBlock line block =
     in
     { block
         | body = line.content :: block.body
-        , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
+        , meta = { meta | numberOfLines = meta.numberOfLines + 1, end = lineEnd line }
     }
 
 
@@ -318,7 +318,7 @@ addLineToBlock line block =
     in
     { block
         | body = contentToAdd :: block.body -- prepend (will reverse later)
-        , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
+        , meta = { meta | numberOfLines = meta.numberOfLines + 1, end = lineEnd line }
     }
 
 
@@ -391,10 +391,19 @@ finalize block =
         , meta =
             { meta
                 | sourceText = sourceText
-                , end = meta.begin + String.length sourceText
-                , contentEnd = meta.begin + String.length sourceText
+                , contentEnd = meta.end
             }
     }
+
+
+{-| Offset just past the last character of a line, as written in the source.
+A block's `end` is the `lineEnd` of its last line. It is tracked line by line,
+not computed from `sourceText`, because body lines of an indented block are
+stored with the indentation removed.
+-}
+lineEnd : Line -> Int
+lineEnd line =
+    line.position + String.length line.content
 
 
 {-| Set the block ID.
@@ -700,5 +709,6 @@ mergeContinuationLine line block =
                 , bodyLineNumber = meta.bodyLineNumber + 1
                 , sourceText = meta.sourceText ++ "\n" ++ line.content
                 , contentBegin = meta.contentBegin + String.length line.content + 1
+                , end = lineEnd line
             }
     }
