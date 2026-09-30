@@ -441,8 +441,8 @@ suite =
                     in
                     -- 4 lines: header + 2 continuations + body
                     Expect.equal (Just 4) (Maybe.map (\b -> b.meta.numberOfLines) block)
-            , test "table is parsed as verbatim block" <|
-                -- M14: table is in verbatimNames
+            , test "table is parsed as an ordinary block" <|
+                -- Its rows are parsed by Parser.Table in Pipeline.parseBody
                 \_ ->
                     let
                         blocks =
@@ -451,7 +451,7 @@ suite =
                         block =
                             List.head blocks
                     in
-                    Expect.equal (Just (Verbatim "table")) (Maybe.map .heading block)
+                    Expect.equal (Just (Ordinary "table")) (Maybe.map .heading block)
             , test "code is parsed as verbatim block" <|
                 \_ ->
                     let
@@ -567,5 +567,16 @@ suite =
                         |> List.drop 1
                         |> List.map (\b -> ( String.slice b.meta.begin b.meta.end src, String.slice b.meta.contentBegin b.meta.contentEnd src ))
                         |> Expect.equal [ ( "| theorem\n| label:thm\nbody", "body" ) ]
+            ]
+        , describe "list continuation lines"
+            [ test "sourceText and begin/end keep a list item's continuation line as written" <|
+                \_ ->
+                    let
+                        src =
+                            "- a\n- b\n  more\n"
+                    in
+                    p src
+                        |> List.map (\b -> ( b.meta.sourceText, String.slice b.meta.begin b.meta.end src ))
+                        |> Expect.equal [ ( "- a\n- b\n  more", "- a\n- b\n  more" ) ]
             ]
         ]

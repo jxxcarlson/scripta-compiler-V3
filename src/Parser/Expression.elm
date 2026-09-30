@@ -19,7 +19,7 @@ module Parser.Expression exposing (parse)
 import List.Extra
 import Parser.Match as M
 import Parser.Symbol as Symbol exposing (Symbol(..))
-import Parser.Tokenizer as Token exposing (Meta, Token, TokenType(..), Token_(..))
+import Parser.Tokenizer as Token exposing (Meta, Token, Token_(..))
 import Tools.Loop exposing (Step(..), loop)
 import V3.Types exposing (Expr(..), ExprMeta, Expression)
 
@@ -401,10 +401,12 @@ unbracket list =
 
 isExpr : List Token -> Bool
 isExpr tokens =
-    List.map Token.type_ (List.take 1 tokens)
-        == [ TLB ]
-        && List.map Token.type_ (List.take 1 (List.reverse tokens))
-        == [ TRB ]
+    case ( tokens, List.reverse tokens ) of
+        ( (LB _) :: _, (RB _) :: _ ) ->
+            True
+
+        _ ->
+            False
 
 
 boostMeta : Int -> Int -> { begin : Int, end : Int, index : Int } -> ExprMeta

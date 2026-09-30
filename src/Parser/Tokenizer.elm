@@ -1,11 +1,9 @@
 module Parser.Tokenizer exposing
     ( Meta
     , Token
-    , TokenType(..)
     , Token_(..)
     , getMeta
     , run
-    , type_
     )
 
 import Parser.Advanced as Parser exposing (DeadEnd)
@@ -47,45 +45,6 @@ type Mode
     = Normal
     | InMath
     | InCode
-
-
-type TokenType
-    = TLB
-    | TDLB
-    | TRB
-    | TS
-    | TW
-    | TMath
-    | TCode
-    | TTokenError
-
-
-type_ : Token -> TokenType
-type_ token =
-    case token of
-        LB _ ->
-            TLB
-
-        DLB _ ->
-            TDLB
-
-        RB _ ->
-            TRB
-
-        S _ _ ->
-            TS
-
-        W _ _ ->
-            TW
-
-        MathToken _ ->
-            TMath
-
-        CodeToken _ ->
-            TCode
-
-        TokenError _ _ ->
-            TTokenError
 
 
 setIndex : Int -> Token -> Token
@@ -235,7 +194,7 @@ nextStep state =
             -- Text right after [ or [[ is the function name and is emitted alone.
             ( tokens, tokenIndex, currentToken ) =
                 if isTextToken token then
-                    if Maybe.map type_ (List.head state.tokens) == Just TLB || Maybe.map type_ (List.head state.tokens) == Just TDLB then
+                    if lastIsOpenBracket state.tokens then
                         ( setIndex state.tokenIndex token :: state.tokens, state.tokenIndex + 1, Nothing )
 
                     else
@@ -271,7 +230,30 @@ updateCurrentToken index token currentToken =
 
 isTextToken : Token -> Bool
 isTextToken token =
-    List.member (type_ token) [ TW, TS ]
+    case token of
+        S _ _ ->
+            True
+
+        W _ _ ->
+            True
+
+        _ ->
+            False
+
+
+{-| True if the most recently emitted token (head of the reversed list) is `[` or `[[`.
+-}
+lastIsOpenBracket : List Token -> Bool
+lastIsOpenBracket tokens =
+    case tokens of
+        (LB _) :: _ ->
+            True
+
+        (DLB _) :: _ ->
+            True
+
+        _ ->
+            False
 
 
 mergeToken : Token -> Token -> Token

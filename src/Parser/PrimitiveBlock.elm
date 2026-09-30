@@ -5,6 +5,7 @@ module Parser.PrimitiveBlock exposing (parse)
 
 import Dict exposing (Dict)
 import Parser.Line as Line exposing (Line)
+import Parser.ListItem as ListItem
 import Tools.KV
 import Tools.Loop exposing (Step(..), loop)
 import V3.Types exposing (BlockMeta, Heading(..), PrimitiveBlock)
@@ -19,7 +20,6 @@ verbatimNames =
     , "aligned"
     , "array"
     , "textarray"
-    , "table"
     , "code"
     , "verse"
     , "verbatim"
@@ -257,93 +257,44 @@ addCurrentLine line state =
         }
 
 
-{-| Add a body line to a block, coalescing list items:
-consecutive `item` lines become an `itemList`, consecutive `numbered` lines a
-`numberedList`, and a non-item line inside a list continues its last item.
+{-| Add a body line to a block, coalescing list items: consecutive `item`
+lines become an `itemList`, and consecutive `numbered` lines a `numberedList`.
 -}
 addBodyLine : Line -> PrimitiveBlock -> PrimitiveBlock
 addBodyLine line block =
-    case ( block.heading, inspectListKind line.content ) of
+    case ( block.heading, ListItem.kind line.content ) of
         ( Ordinary name, Just kind ) ->
             if name == kind.item then
-                addListLineToBlock line { block | heading = Ordinary kind.list }
+                addRawLineToBlock line { block | heading = Ordinary kind.list }
 
             else if name == kind.list then
-                addListLineToBlock line block
+                addRawLineToBlock line block
 
             else
                 addLineToBlock line block
 
         ( Ordinary "itemList", Nothing ) ->
-            appendToLastListItem line block
+            -- continuation of the last item; Pipeline.groupListItems merges it
+            addRawLineToBlock line block
 
         ( Ordinary "numberedList", Nothing ) ->
-            appendToLastListItem line block
+            addRawLineToBlock line block
 
         _ ->
             addLineToBlock line block
 
 
-{-| If a line is a list item, return the block names for a single item of
-that kind and for a list of them.
+{-| Add a line to a block's body exactly as written. List blocks keep their
+lines raw: nested items are identified by their indent.
 -}
-inspectListKind : String -> Maybe { item : String, list : String }
-inspectListKind content =
+addRawLineToBlock : Line -> PrimitiveBlock -> PrimitiveBlock
+addRawLineToBlock line block =
     let
-        trimmed =
-            String.trim content
-    in
-    if String.startsWith "- " trimmed then
-        Just { item = "item", list = "itemList" }
-
-    else if String.startsWith ". " trimmed then
-        Just { item = "numbered", list = "numberedList" }
-
-    else
-        Nothing
-
-
-{-| Add a list item line to a block, preserving indentation and list prefix.
--}
-addListLineToBlock : Line -> PrimitiveBlock -> PrimitiveBlock
-addListLineToBlock line block =
-    let
-        -- Preserve full line content including indentation and prefix
-        -- This allows nested list items to be identified by their indent
-        contentToAdd =
-            line.content
-
         meta =
             block.meta
     in
     { block
-        | body = contentToAdd :: block.body
-        , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
-    }
-
-
-{-| Append a continuation line to the last list item in a list block.
--}
-appendToLastListItem : Line -> PrimitiveBlock -> PrimitiveBlock
-appendToLastListItem line block =
-    let
-        contentToAdd =
-            String.trim line.content
-
-        meta =
-            block.meta
-
-        -- body is in reverse order, so first element is the last item
-        updatedBody =
-            case block.body of
-                lastItem :: rest ->
-                    (lastItem ++ " " ++ contentToAdd) :: rest
-
-                [] ->
-                    [ contentToAdd ]
-    in
-    { block
-        | body = updatedBody
+        | body = line.content :: block.body
         , meta = { meta | numberOfLines = meta.numberOfLines + 1 }
     }
 
@@ -513,29 +464,22 @@ getHeadingData line =
     else if String.startsWith "### " trimmed then
         markdownHeading 3 trimmed
 
-    else if String.startsWith "- " trimmed then
-        -- List item (preserve full line including prefix)
-        { heading = Ordinary "item"
-        , args = []
-        , properties = Dict.empty
-        , firstLine = trimmed
-        }
-
-    else if String.startsWith ". " trimmed then
-        -- Numbered item (preserve full line including prefix)
-        { heading = Ordinary "numbered"
-        , args = []
-        , properties = Dict.empty
-        , firstLine = trimmed
-        }
-
     else
-        -- Paragraph
-        { heading = Paragraph
-        , args = []
-        , properties = Dict.empty
-        , firstLine = line
-        }
+        case ListItem.kind trimmed of
+            Just kind ->
+                -- List item (preserve full line including prefix)
+                { heading = Ordinary kind.item
+                , args = []
+                , properties = Dict.empty
+                , firstLine = trimmed
+                }
+
+            Nothing ->
+                { heading = Paragraph
+                , args = []
+                , properties = Dict.empty
+                , firstLine = line
+                }
 
 
 {-| Markdown-style section heading (`#`, `##`, `###`) of the given level.
@@ -658,6 +602,7 @@ ordinaryNames =
     , "index"
     , "bibliography"
     , "quotation"
+    , "table"
     , "item"
     , "numbered"
     , "heading"

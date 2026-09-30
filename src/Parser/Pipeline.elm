@@ -14,6 +14,7 @@ import Dict
 import Edit.Map
 import Either exposing (Either(..))
 import Parser.Expression as Expression
+import Parser.ListItem as ListItem
 import Parser.Table
 import V3.Types exposing (BlockMeta, Expr(..), ExprMeta, Expression, ExpressionBlock, ExpressionCache, Heading(..), PrimitiveBlock)
 
@@ -35,7 +36,7 @@ toExpressionBlock block =
 -}
 toExpressionBlockWithBody : Either String (List Expression) -> PrimitiveBlock -> ExpressionBlock
 toExpressionBlockWithBody body block =
-    { heading = transformBlockHeading block
+    { heading = block.heading
     , indent = block.indent
     , args = block.args
     , properties = block.properties |> Dict.insert "id" block.meta.id
@@ -69,15 +70,6 @@ shiftBodyIds dL body =
         Either.map (List.map (Edit.Map.mapExprMeta (\m -> { m | id = Edit.Map.shiftExprId dL m.id }))) body
 
 
-transformBlockHeading block =
-    case block.heading of
-        Verbatim "table" ->
-            Ordinary "table"
-
-        _ ->
-            block.heading
-
-
 {-| Parse the body based on block heading type.
 -}
 parseBody : PrimitiveBlock -> Either String (List Expression)
@@ -98,11 +90,11 @@ parseBody block =
         Ordinary "numberedList" ->
             Right (parseListItems block.meta.lineNumber (block.firstLine :: block.body))
 
+        Ordinary "table" ->
+            Right (Parser.Table.parseTable block.meta.bodyLineNumber block.body)
+
         Ordinary _ ->
             Right (parseLines block.meta.lineNumber block.body)
-
-        Verbatim "table" ->
-            Right (Parser.Table.parseTable block.meta.bodyLineNumber block.body)
 
         Verbatim _ ->
             Left (String.join "\n" block.body)
@@ -114,7 +106,7 @@ parseSingleItem : PrimitiveBlock -> List Expression
 parseSingleItem block =
     let
         content =
-            (stripListPrefix block.firstLine :: block.body)
+            (ListItem.stripPrefix block.firstLine :: block.body)
                 |> String.join " "
     in
     [ ExprList block.indent (Expression.parse block.meta.lineNumber content) emptyExprMeta ]
@@ -134,7 +126,7 @@ parseListItems lineNumber items =
                     itemIndent =
                         measureIndent item
                 in
-                ExprList itemIndent (Expression.parse lineNumber (stripListPrefix item)) emptyExprMeta
+                ExprList itemIndent (Expression.parse lineNumber (ListItem.stripPrefix item)) emptyExprMeta
             )
 
 
@@ -145,50 +137,23 @@ measureIndent str =
     String.length str - String.length (String.trimLeft str)
 
 
-{-| Group list items: lines without "- " or ". " prefix are appended to previous item.
+{-| Group list items: a line that is not itself a list item continues the
+previous item.
 -}
 groupListItems : List String -> List String
 groupListItems items =
     List.foldl
         (\line acc ->
-            let
-                trimmed =
-                    String.trim line
-            in
-            if String.startsWith "- " trimmed || String.startsWith ". " trimmed then
-                -- New list item
-                line :: acc
+            case ( ListItem.kind line, acc ) of
+                ( Nothing, prev :: rest ) ->
+                    (prev ++ " " ++ String.trim line) :: rest
 
-            else
-                -- Continuation: append to previous item
-                case acc of
-                    prev :: rest ->
-                        (prev ++ " " ++ trimmed) :: rest
-
-                    [] ->
-                        [ line ]
+                _ ->
+                    line :: acc
         )
         []
         items
         |> List.reverse
-
-
-{-| Strip list prefix ("- " or ". ") from a string.
--}
-stripListPrefix : String -> String
-stripListPrefix str =
-    let
-        trimmed =
-            String.trim str
-    in
-    if String.startsWith "- " trimmed then
-        String.dropLeft 2 trimmed
-
-    else if String.startsWith ". " trimmed then
-        String.dropLeft 2 trimmed
-
-    else
-        trimmed
 
 
 {-| Parse multiple lines into a list of expressions.
