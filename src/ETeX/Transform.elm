@@ -210,16 +210,16 @@ evalStr userDefinedMacroDict str =
 
 evalStrResult : MathMacroDict -> String -> Result (List (DeadEnd Context Problem)) String
 evalStrResult userDefinedMacroDict str =
-    parseManyWithDict userDefinedMacroDict (String.trim str)
+    parseManyWithDict userDefinedMacroDict (trimMath str)
         |> Result.map (\result -> List.map (expandMacroWithDict userDefinedMacroDict) result |> printList)
 
 
 parseManyWithDict : MathMacroDict -> String -> Result (List (DeadEnd Context Problem)) (List MathExpr)
 parseManyWithDict userMacroDict str =
     str
-        |> String.trim
+        |> trimMath
         |> String.lines
-        |> List.map String.trim
+        |> List.map trimMath
         |> groupEnvironmentLines
         |> mergeBraceSpanningLines
         |> List.map
@@ -232,6 +232,44 @@ parseManyWithDict userMacroDict str =
             )
         |> Result.Extra.combine
         |> Result.map List.concat
+
+
+{-| Trim whitespace like `String.trim`, but keep a space that follows an
+unescaped backslash: `\ ` is a control space, and trimming it would leave a
+lone `\` that cannot parse. What counts is the number of backslashes before the
+space: an odd number (`\ `, `\\\ `) means the last one is unescaped, so the space
+is kept; an even number (`\\ `, a line break) means it is not, and the space is
+trimmed as usual.
+-}
+trimMath : String -> String
+trimMath str =
+    let
+        trimmed =
+            String.trim str
+
+        trailingBackslashes =
+            trimmed
+                |> String.reverse
+                |> String.toList
+                |> List.foldl
+                    (\c ( count, counting ) ->
+                        if counting && c == '\\' then
+                            ( count + 1, True )
+
+                        else
+                            ( count, False )
+                    )
+                    ( 0, True )
+                |> Tuple.first
+
+        endsWithControlSpace =
+            modBy 2 trailingBackslashes == 1 && String.length (String.trimRight str) < String.length str
+    in
+    if endsWithControlSpace then
+        trimmed ++ " "
+
+    else
+        trimmed
 
 
 {-| Merge consecutive lines whose `{}` brace nesting is unbalanced, so that a

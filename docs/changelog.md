@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- **Fix: `$\ $` (a control space) rendered as "[ETeX error]".** The ETeX step trimmed math
+  before parsing, so a trailing `\ ` became a lone `\`, which cannot parse. A new `trimMath`
+  keeps a space that follows an unescaped backslash (an odd number of backslashes); after `\\`
+  (a line break) the space is still trimmed. Affects on-screen rendering (`evalStr`) and LaTeX
+  export (`transformETeX`). Tests: 4 in `tests/ETeX/TransformTest.elm`, 2 end-to-end in
+  `tests/ControlSpaceTest.elm` (checked to fail without the fix); 296 in all, passing.
+
 ## 1.0.0 — 2026-10-27
 
 First release as the Elm package `jxxcarlson/scripta-compiler-v3` (MIT).

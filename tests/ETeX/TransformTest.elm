@@ -232,6 +232,26 @@ suite =
                         |> String.contains "ETeX error"
                         |> Expect.equal False
             ]
+        , describe "control space (backslash-space)"
+            [ test "math that is only a control space renders without error" <|
+                \_ ->
+                    evalStr Dict.empty "\\ "
+                        |> Expect.equal "\\ "
+            , test "a control space at the end of the math is kept" <|
+                \_ ->
+                    evalStr Dict.empty "x\\ "
+                        |> (\out -> ( String.contains "ETeX error" out, String.endsWith "\\ " out ))
+                        |> Expect.equal ( False, True )
+            , test "LaTeX export keeps a lone control space" <|
+                \_ ->
+                    transformETeX Dict.empty "\\ "
+                        |> Expect.equal "\\ "
+            , test "a trailing space after a line break \\\\ is still trimmed" <|
+                \_ ->
+                    evalStr Dict.empty "a \\\\ "
+                        |> String.contains "ETeX error"
+                        |> Expect.equal False
+            ]
         , describe "control symbols"
             [ test "escaped dollar sign does not produce an error" <|
                 \_ ->
