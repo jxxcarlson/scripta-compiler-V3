@@ -7,7 +7,8 @@ module Scripta exposing
     , Event(..), Output
     , parse, reparse, render, compile, mapEvent
     , applyEdit, applyEdits
-    , exportHtml
+    , exportHtml, exportLaTeX, exportRawLaTeX
+    , prettyPrint
     )
 
 {-| Public API for the Scripta compiler.
@@ -30,7 +31,12 @@ module Scripta exposing
 
 # Static export
 
-@docs exportHtml
+@docs exportHtml, exportLaTeX, exportRawLaTeX
+
+
+# Source
+
+@docs prettyPrint
 
 -}
 
@@ -40,6 +46,8 @@ import Either
 import Html exposing (Html)
 import Parser.Forest
 import Render.Export.Html
+import Render.Export.LaTeX
+import Render.Pretty
 import Render.Settings
 import Render.Types
 import Scripta.Internal as Internal exposing (Document(..), Options(..))
@@ -358,3 +366,33 @@ exportHtml _ (Document data) =
         Render.Settings.defaultRenderSettings
         data.accumulator
         data.forest
+
+
+{-| Export a parsed document as a complete LaTeX document, with preamble, ready
+for `xelatex`. The title and authors go into the document's title block.
+-}
+exportLaTeX : { title : String, authors : List String } -> Document -> String
+exportLaTeX info (Document data) =
+    Render.Export.LaTeX.export
+        { title = info.title
+        , authorList = info.authors
+        , kind = Render.Types.DKArticle
+        , date = Either.Right ""
+        }
+        Render.Settings.defaultRenderSettings
+        data.forest
+
+
+{-| Export a parsed document as LaTeX: the body only, without the preamble.
+-}
+exportRawLaTeX : Document -> String
+exportRawLaTeX (Document data) =
+    Render.Export.LaTeX.rawExport Render.Settings.defaultRenderSettings data.forest
+
+
+{-| Pretty-print Scripta source text: parse it and write it back out with
+standard indentation and spacing.
+-}
+prettyPrint : String -> String
+prettyPrint =
+    Render.Pretty.print
