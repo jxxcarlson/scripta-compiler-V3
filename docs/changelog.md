@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.1 — 2026-10-27
+## 1.0.1 — 2026-10-26
 
 - **ETeX now comes from the package `jxxcarlson/etex` (≥ 1.1.0)** instead of a copy in
   `src/ETeX/`, which is deleted. The two had drifted apart; their code was merged into etex 1.1.0
@@ -14,7 +14,7 @@
   export (`transformETeX`). Tests: 4 in `tests/ETeX/TransformTest.elm`, 2 end-to-end in
   `tests/ControlSpaceTest.elm` (checked to fail without the fix); 296 in all, passing.
 
-## 1.0.0 — 2026-10-27
+## 1.0.0 — 2026-10-26
 
 First release as the Elm package `jxxcarlson/scripta-compiler-v3` (MIT).
 
