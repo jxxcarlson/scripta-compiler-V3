@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 — 2026-10-27
 
 - **ETeX now comes from the package `jxxcarlson/etex` (≥ 1.1.0)** instead of a copy in
   `src/ETeX/`, which is deleted. The two had drifted apart; their code was merged into etex 1.1.0
