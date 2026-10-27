@@ -12,3 +12,4 @@ tools/toLaTeXExport/worker.js
 .DS_Store
 Demo/build/
 
+docs.json
