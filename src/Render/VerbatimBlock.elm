@@ -4,7 +4,6 @@ module Render.VerbatimBlock exposing (render)
 -}
 
 import Dict exposing (Dict)
-import ETeX.Let
 import ETeX.Transform
 import Either exposing (Either(..))
 import Html exposing (Html)
@@ -164,7 +163,7 @@ renderEquation params acc _ block _ =
 
         -- Resolve LET/IN blocks first, before line-by-line processing
         reduced =
-            ETeX.Let.reduce raw
+            ETeX.Transform.reduceLet raw
 
         -- Process content: if it contains &, handle alignment
         -- But first check if & only appears inside environments (e.g. pmatrix)

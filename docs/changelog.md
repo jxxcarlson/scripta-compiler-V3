@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **ETeX now comes from the package `jxxcarlson/etex` (≥ 1.1.0)** instead of a copy in
+  `src/ETeX/`, which is deleted. The two had drifted apart; their code was merged into etex 1.1.0
+  first. Export output is byte-identical on all 193 cases of scripta-app-v4's export harness.
+  The ETeX tests moved to the etex repo (compiler tests: 215, passing). `Demo/elm.json` lists
+  the etex dependency, since the Demo compiles `../src`.
 - **Fix: `$\ $` (a control space) rendered as "[ETeX error]".** The ETeX step trimmed math
   before parsing, so a trailing `\ ` became a lone `\`, which cannot parse. A new `trimMath`
   keeps a space that follows an unescaped backslash (an odd number of backslashes); after `\\`

@@ -17,7 +17,6 @@ or hosting as a plain `.html` file.
 
 import Array
 import Dict exposing (Dict)
-import ETeX.MathMacros
 import ETeX.Transform
 import Either exposing (Either(..))
 import Generic.ASTTools as ASTTools

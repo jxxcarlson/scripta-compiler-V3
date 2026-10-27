@@ -11,7 +11,6 @@ module Render.Export.LaTeX exposing
 
 import Array
 import Dict exposing (Dict)
-import ETeX.MathMacros
 import ETeX.Transform
 import Either exposing (Either(..))
 import Generic.ASTTools as ASTTools
@@ -325,7 +324,7 @@ annotateWithLineNumber block output =
         output
 
 
-exportTree : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Tree ExpressionBlock -> String
+exportTree : ETeX.Transform.MathMacroDict -> RenderSettings -> Tree ExpressionBlock -> String
 exportTree mathMacroDict settings tree =
     let
         block =
@@ -424,7 +423,7 @@ exportTree mathMacroDict settings tree =
     annotateWithLineNumber block result
 
 
-handleItemWithChildren : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Tree ExpressionBlock -> List (Tree ExpressionBlock) -> String
+handleItemWithChildren : ETeX.Transform.MathMacroDict -> RenderSettings -> Tree ExpressionBlock -> List (Tree ExpressionBlock) -> String
 handleItemWithChildren mathMacroDict settings tree children =
     let
         -- Export the item content
@@ -794,7 +793,7 @@ nextState tree state =
             { state | output = tree :: state.output, input = List.drop 1 state.input }
 
 
-exportBlock : ETeX.MathMacros.MathMacroDict -> RenderSettings -> ExpressionBlock -> String
+exportBlock : ETeX.Transform.MathMacroDict -> RenderSettings -> ExpressionBlock -> String
 exportBlock mathMacroDict settings block =
     case block.heading of
         Paragraph ->
@@ -1109,7 +1108,7 @@ addTikzPictureClosing flagUp str =
         str
 
 
-processAlignedBlock : { a | properties : Dict String String } -> String -> ETeX.MathMacros.MathMacroDict -> String
+processAlignedBlock : { a | properties : Dict String String } -> String -> ETeX.Transform.MathMacroDict -> String
 processAlignedBlock block str mathMacroDict =
     let
         maybeLabel : Maybe String
@@ -1176,7 +1175,7 @@ fixChars str =
     str |> String.replace "{" "\\{" |> String.replace "}" "\\}"
 
 
-renderDefs : ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
+renderDefs : ETeX.Transform.MathMacroDict -> RenderSettings -> List Expression -> String
 renderDefs mathMacroDict settings exprs =
     "%% Macro definitions from Markup text:\n"
         ++ exportExprList mathMacroDict settings exprs
@@ -1351,7 +1350,7 @@ exportBibitem args body =
 -- BLOCKDICT
 
 
-blockDict : ETeX.MathMacros.MathMacroDict -> Dict String (RenderSettings -> List String -> String -> String)
+blockDict : ETeX.Transform.MathMacroDict -> Dict String (RenderSettings -> List String -> String -> String)
 blockDict mathMacroDict =
     Dict.fromList
         [ ( "title", \_ _ _ -> "" )
@@ -1784,7 +1783,7 @@ macro1 name arg =
                 "\\" ++ fName ++ "{" ++ mapChars2 (String.trimLeft arg) ++ "}"
 
 
-exportExprList : ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
+exportExprList : ETeX.Transform.MathMacroDict -> RenderSettings -> List Expression -> String
 exportExprList mathMacroDict settings exprs =
     List.map (exportExpr mathMacroDict settings) exprs |> String.join "" |> mapChars1
 
@@ -1796,7 +1795,7 @@ extract the text content and render as LaTeX math mode, matching the behavior
 of $...$ expressions (parsed as VFun).
 
 -}
-exportExpr : ETeX.MathMacros.MathMacroDict -> RenderSettings -> Expression -> String
+exportExpr : ETeX.Transform.MathMacroDict -> RenderSettings -> Expression -> String
 exportExpr mathMacroDict settings expr =
     case expr of
         Fun name exps_ _ ->
@@ -1894,7 +1893,7 @@ exportExpr mathMacroDict settings expr =
 {-| Export an inline `[table [tableRow [tableItem ...]]]` expression to a
 LaTeX `tabular`.
 -}
-exportInlineTable : ETeX.MathMacros.MathMacroDict -> RenderSettings -> List Expression -> String
+exportInlineTable : ETeX.Transform.MathMacroDict -> RenderSettings -> List Expression -> String
 exportInlineTable mathMacroDict settings rowExprs =
     let
         isItem : Expression -> Bool
@@ -2031,7 +2030,7 @@ encloseWithBraces str_ =
     "{" ++ String.trim str_ ++ "}"
 
 
-renderVerbatim : ETeX.MathMacros.MathMacroDict -> String -> String -> String
+renderVerbatim : ETeX.Transform.MathMacroDict -> String -> String -> String
 renderVerbatim mathMacroDict name body =
     case Dict.get name verbatimExprDict of
         Nothing ->
